@@ -1,0 +1,21 @@
+{
+    /* multiline comment
+    test */
+    "int": 57,
+    "double": 85.5,
+    "false": false, // sqd
+    "true": true,
+    "null": null,
+    "array": [
+        5, 7, 8, 9
+    ],
+    "double-array": [
+        [5, 7, 2],
+        [8, 9, 1],
+        [1, 2, 7]
+    ],
+    "map": {
+        "string": "te\rst",
+        "char": '\n'
+    }
+}
