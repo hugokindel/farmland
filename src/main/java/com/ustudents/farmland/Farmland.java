@@ -7,6 +7,7 @@ import com.ustudents.farmland.cli.print.Out;
 import com.ustudents.farmland.common.Resources;
 import com.ustudents.farmland.core.ImGuiManager;
 import com.ustudents.farmland.core.SceneManager;
+import com.ustudents.farmland.core.Timer;
 import com.ustudents.farmland.core.Window;
 import com.ustudents.farmland.game.scene.ExampleScene;
 import org.joml.Vector2i;
@@ -25,6 +26,9 @@ public class Farmland extends Runnable {
     @Option(names = "--no-imgui", description = "Disable ImGui completely (debug graphical interface).")
     private boolean noImGui;
 
+    @Option(names = "--vsync", description = "Enable vertical synchronisation.")
+    private boolean vsync;
+
     /** The scene manager (handling every scene). */
     private final SceneManager sceneManager;
 
@@ -32,7 +36,7 @@ public class Farmland extends Runnable {
 
     private final ImGuiManager imGuiManager;
 
-    private float deltaTime;
+    private final Timer timer;
 
     /** Class constructor. */
     public Farmland() {
@@ -45,6 +49,7 @@ public class Farmland extends Runnable {
         window = new Window();
         sceneManager = new SceneManager();
         imGuiManager = new ImGuiManager();
+        timer = new Timer();
     }
 
     /**
@@ -76,7 +81,7 @@ public class Farmland extends Runnable {
     private void initialize() {
         Resources.load();
 
-        window.initialize("Farmland", new Vector2i(1280, 720));
+        window.initialize("Farmland", new Vector2i(1280, 720), vsync);
         if (!noImGui) {
             imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
         }
@@ -89,7 +94,7 @@ public class Farmland extends Runnable {
     private void loop() {
         while (!window.shouldClose()) {
             processInput();
-            update(0.0);
+            update();
             render();
 
             sceneManager.updateRegistry();
@@ -103,12 +108,15 @@ public class Farmland extends Runnable {
     }
 
     /** Updates the game logic. */
-    private void update(double dt) {
-        sceneManager.update(dt);
+    private void update() {
+        timer.update();
+        Out.println(timer.getDeltaTime());
+        sceneManager.update(timer.getDeltaTime());
     }
 
     /** Renders the game. */
     private void render() {
+        timer.render();
         window.clear();
         if (!noImGui) {
             imGuiManager.startFrame();
@@ -139,11 +147,28 @@ public class Farmland extends Runnable {
         return sceneManager;
     }
 
+    public Window getWindow() {
+        return window;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
     public static Farmland get() {
         return Main.farmland;
     }
 
     public static boolean isDebugging() {
         return Main.farmland != null && Main.farmland.isDebugging;
+    }
+
+    public boolean getVsync() {
+        return vsync;
+    }
+
+    public void setVsync(boolean vsync) {
+        this.vsync = vsync;
+        window.setVsync(vsync);
     }
 }
