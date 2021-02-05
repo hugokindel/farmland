@@ -22,6 +22,9 @@ public class Farmland extends Runnable {
     @Option(names = "--debug", description = "Enable debug output.")
     private boolean isDebugging;
 
+    @Option(names = "--no-imgui", description = "Disable ImGui completely (debug graphical interface).")
+    private boolean noImGui;
+
     /** The scene manager (handling every scene). */
     private final SceneManager sceneManager;
 
@@ -36,6 +39,7 @@ public class Farmland extends Runnable {
         // Default values for options.
         noAnsiCodes = false;
         isDebugging = false;
+        noImGui = false;
 
         // Game managers.
         window = new Window();
@@ -73,7 +77,9 @@ public class Farmland extends Runnable {
         Resources.load();
 
         window.initialize("Farmland", new Vector2i(1280, 720));
-        imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
+        if (!noImGui) {
+            imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
+        }
         sceneManager.initialize(ExampleScene.class);
 
         window.show(true);
@@ -104,10 +110,14 @@ public class Farmland extends Runnable {
     /** Renders the game. */
     private void render() {
         window.clear();
-        imGuiManager.startFrame();
+        if (!noImGui) {
+            imGuiManager.startFrame();
+        }
         sceneManager.render();
-        sceneManager.renderImGui();
-        imGuiManager.endFrame();
+        if (!noImGui) {
+            sceneManager.renderImGui();
+            imGuiManager.endFrame();
+        }
         window.swap();
     }
 
@@ -116,7 +126,9 @@ public class Farmland extends Runnable {
         window.show(false);
 
         sceneManager.destroy();
-        imGuiManager.destroy();
+        if (!noImGui) {
+            imGuiManager.destroy();
+        }
         window.destroy();
 
         Resources.save();
