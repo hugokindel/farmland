@@ -4,17 +4,14 @@ import com.ustudents.farmland.cli.option.Runnable;
 import com.ustudents.farmland.cli.option.annotation.Command;
 import com.ustudents.farmland.cli.option.annotation.Option;
 import com.ustudents.farmland.cli.print.Out;
-import com.ustudents.farmland.cli.print.style.BackgroundColor;
-import com.ustudents.farmland.cli.print.style.Style;
-import com.ustudents.farmland.cli.print.style.TextColor;
 import com.ustudents.farmland.common.Resources;
+import com.ustudents.farmland.core.ImGuiManager;
 import com.ustudents.farmland.core.SceneManager;
-import com.ustudents.farmland.json.Json;
-import com.ustudents.farmland.json.JsonWriter;
+import com.ustudents.farmland.core.Window;
+import com.ustudents.farmland.game.scene.ExampleScene;
+import org.joml.Vector2i;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 /** The main class of the project. */
 @Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
@@ -26,13 +23,24 @@ public class Farmland extends Runnable {
     private boolean isDebugging;
 
     /** The scene manager (handling every scene). */
-    private static SceneManager sceneManager;
+    private final SceneManager sceneManager;
+
+    private final Window window;
+
+    private final ImGuiManager imGuiManager;
+
+    private float deltaTime;
 
     /** Class constructor. */
     public Farmland() {
         // Default values for options.
         noAnsiCodes = false;
         isDebugging = false;
+
+        // Game managers.
+        window = new Window();
+        sceneManager = new SceneManager();
+        imGuiManager = new ImGuiManager();
     }
 
     /**
@@ -63,21 +71,23 @@ public class Farmland extends Runnable {
     /** Initialize everything. */
     private void initialize() {
         Resources.load();
-        sceneManager = new SceneManager();
+
+        window.initialize("Farmland", new Vector2i(1280, 720));
+        imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
+        sceneManager.initialize(ExampleScene.class);
+
+        window.show(true);
     }
 
     /** Starts the game loop. */
     private void loop() {
-        int i = 0;
-
-        while (i < 2) {
+        while (!window.shouldClose()) {
             processInput();
             update(0.0);
             render();
 
             sceneManager.updateRegistry();
-
-            i++;
+            window.pollEvents();
         }
     }
 
@@ -93,12 +103,22 @@ public class Farmland extends Runnable {
 
     /** Renders the game. */
     private void render() {
+        window.clear();
+        imGuiManager.startFrame();
         sceneManager.render();
+        sceneManager.renderImGui();
+        imGuiManager.endFrame();
+        window.swap();
     }
 
     /** Destroy everything. */
     private void destroy() {
+        window.show(false);
+
         sceneManager.destroy();
+        imGuiManager.destroy();
+        window.destroy();
+
         Resources.save();
     }
 

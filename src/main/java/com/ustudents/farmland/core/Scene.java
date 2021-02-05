@@ -32,6 +32,10 @@ public abstract class Scene {
     /** Renders the scene every frame. */
     public abstract void render();
 
+    public void renderImGui() {
+
+    }
+
     /** Destroys the scene (called when changing scene or quitting the game). */
     public abstract void destroy();
 
