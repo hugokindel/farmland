@@ -1,16 +1,13 @@
 package com.ustudents.farmland.game.scene;
 
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.cli.print.Out;
-import com.ustudents.farmland.common.Resources;
 import com.ustudents.farmland.core.Scene;
-import com.ustudents.farmland.graphics.Shader;
 import imgui.ImGui;
 import imgui.flag.ImGuiInputTextFlags;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
-public class ExampleScene extends Scene {
+public class MainMenu extends Scene {
     private ImString str = new ImString(5);
     private float[] flt = new float[1];
     private int count = 0;
@@ -61,8 +58,21 @@ public class ExampleScene extends Scene {
         if (showDemo.get()) {
             ImGui.showDemoWindow(showDemo);
         }
-        if (ImGui.button("test")) {
-            Out.printlnDebug("test");
+        ImGui.separator();
+        if (ImGui.button("Single Player Menu")) {
+            Farmland.get().getSceneManager().changeScene(SinglePlayerMenu.class);
+        }
+        if (ImGui.button("Multi Player Menu")) {
+            Farmland.get().getSceneManager().changeScene(MultiPlayerMenu.class);
+        }
+        if (ImGui.button("Option Menu")) {
+            Farmland.get().getSceneManager().changeScene(OptionMenu.class);
+        }
+        if (ImGui.button("Credit Menu")) {
+            Farmland.get().getSceneManager().changeScene(CreditMenu.class);
+        }
+        if (ImGui.button("Quit")) {
+            System.exit(0);
         }
     }
 
