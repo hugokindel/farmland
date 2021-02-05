@@ -3,6 +3,7 @@ package com.ustudents.farmland.core;
 import com.ustudents.farmland.cli.print.Out;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
@@ -20,6 +21,7 @@ public class Window {
     private Vector2i size;
     private long windowHandle;
     private String glslVersion;
+    public Input input;
 
     public void initialize(String name, Vector2i size, boolean vsync) {
         this.name = name;
@@ -40,6 +42,7 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
+        input = new Input();
         windowHandle = glfwCreateWindow(size.x, size.y, name, NULL, NULL);
 
         if (windowHandle == NULL) {
@@ -47,12 +50,6 @@ public class Window {
             Out.printlnError(errorMessage);
             throw new RuntimeException(errorMessage);
         }
-
-        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-                glfwSetWindowShouldClose(window, true);
-            }
-        });
 
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1);
@@ -70,6 +67,9 @@ public class Window {
                     (vidmode.height() - pHeight.get(0)) / 2
             );
         }
+        glfwSetKeyCallback(windowHandle, input.getKeyBoard());
+        glfwSetCursorPosCallback(windowHandle, input.getMouseMove());
+        glfwSetMouseButtonCallback(windowHandle, input.getMouseButton());
 
         glfwMakeContextCurrent(windowHandle);
         setVsync(vsync);

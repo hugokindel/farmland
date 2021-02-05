@@ -6,11 +6,13 @@ import com.ustudents.farmland.cli.option.annotation.Option;
 import com.ustudents.farmland.cli.print.Out;
 import com.ustudents.farmland.common.Resources;
 import com.ustudents.farmland.core.ImGuiManager;
+import com.ustudents.farmland.core.Input;
 import com.ustudents.farmland.core.SceneManager;
 import com.ustudents.farmland.core.Timer;
 import com.ustudents.farmland.core.Window;
 import com.ustudents.farmland.game.scene.ExampleScene;
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFW;
 
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
@@ -93,10 +95,12 @@ public class Farmland extends Runnable {
     /** Starts the game loop. */
     private void loop() {
         while (!window.shouldClose()) {
+            if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
+                break;
+            }
             processInput();
             update();
             render();
-
             sceneManager.updateRegistry();
             window.pollEvents();
         }
@@ -132,7 +136,6 @@ public class Farmland extends Runnable {
     /** Destroy everything. */
     private void destroy() {
         window.show(false);
-
         sceneManager.destroy();
         if (!noImGui) {
             imGuiManager.destroy();
