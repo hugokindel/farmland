@@ -1,7 +1,10 @@
 package com.ustudents.farmland.game.scene;
 
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.cli.print.Out;
+import com.ustudents.farmland.common.Resources;
 import com.ustudents.farmland.core.Scene;
+import com.ustudents.farmland.graphics.Shader;
 import imgui.ImGui;
 import imgui.flag.ImGuiInputTextFlags;
 import imgui.type.ImBoolean;
@@ -22,11 +25,8 @@ public class ExampleScene extends Scene {
         showDemo = new ImBoolean(false);
         vsyncCurrentState = Farmland.get().getVsync();
         useVsync = new ImBoolean(Farmland.get().getVsync());
-    }
 
-    @Override
-    public void processInput() {
-
+        //Shader shader = Resources.loadShader("spritebatch");
     }
 
     @Override
@@ -60,6 +60,9 @@ public class ExampleScene extends Scene {
         ImGui.checkbox("Show Demo Window", showDemo);
         if (showDemo.get()) {
             ImGui.showDemoWindow(showDemo);
+        }
+        if (ImGui.button("test")) {
+            Out.printlnDebug("test");
         }
     }
 

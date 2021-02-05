@@ -1,9 +1,13 @@
 package com.ustudents.farmland.common;
 
+import com.ustudents.farmland.graphics.Shader;
 import com.ustudents.farmland.json.JsonReader;
 import com.ustudents.farmland.json.JsonWriter;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -13,18 +17,20 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Resources {
     private static final String dataDirectoryName = "data";
     private static final String logsDirectoryName = "logs";
+    private static final String shadersDirectoryName = "shaders";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
     private static final Lock settingsWriteLock = settingsLock.writeLock();
     private static Map<String, Object> settings;
+    private static Map<String, Shader> shaders;
 
     /**
      * Gets the data directory's path.
      *
      * @return the path.
      */
-    public static String getDataDirectory() throws Exception {
+    public static String getDataDirectory() {
         return createPathIfNeeded(dataDirectoryName);
     }
 
@@ -33,8 +39,12 @@ public class Resources {
      *
      * @return the path.
      */
-    public static String getLogsDirectory() throws Exception {
+    public static String getLogsDirectory() {
         return createPathIfNeeded(getDataDirectory() + "/" + logsDirectoryName);
+    }
+
+    public static String getShadersDirectory() {
+        return createPathIfNeeded(getDataDirectory() + "/" + shadersDirectoryName);
     }
 
     /**
@@ -43,9 +53,15 @@ public class Resources {
      * @param filepath The path to use.
      * @return the path.
      */
-    private static String createPathIfNeeded(String filepath) throws Exception {
-        FileUtil.createDirectoryIfNeeded(filepath);
-        return filepath;
+    private static String createPathIfNeeded(String filepath) {
+        try {
+            FileUtil.createDirectoryIfNeeded(filepath);
+            return filepath;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     /**
@@ -83,10 +99,16 @@ public class Resources {
     /** Loads everything. */
     public static void load() {
         loadSettings();
+
+        shaders = new HashMap<>();
     }
 
     /** Saves everything. */
-    public static void save() {
+    public static void saveAndUnload() {
+        for (Map.Entry<String, Shader> shaderSet : shaders.entrySet()) {
+            shaderSet.getValue().destroy();
+        }
+
         saveSettings();
     }
 
@@ -116,5 +138,24 @@ public class Resources {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static Shader loadShader(String name) {
+        if (!shaders.containsKey(name)) {
+            try {
+                String vertexShaderCode = Files.readString(Paths.get(getShadersDirectory() + "/" + name + ".vert"));
+                String fragmentShaderCode = Files.readString(Paths.get(getShadersDirectory() + "/" + name + ".frag"));
+                shaders.put(name, new Shader(vertexShaderCode, fragmentShaderCode));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        return shaders.get(name);
+    }
+
+    public static Shader getShader(String name) {
+        return shaders.get(name);
     }
 }

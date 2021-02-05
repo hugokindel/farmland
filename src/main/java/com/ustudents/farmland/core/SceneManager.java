@@ -14,10 +14,13 @@ public class SceneManager {
     /** The current scene ID. */
     int currentSceneIndex;
 
+    boolean transitioningScene;
+
     /** Class constructor. */
     public SceneManager() {
         scenes = new ArrayList<>();
         currentSceneIndex = 0;
+        transitioningScene = false;
     }
 
     public <T extends Scene> void initialize(Class<T> classType, Object... args) {
@@ -46,18 +49,11 @@ public class SceneManager {
 
         int index = scenes.size() - 1;
 
-        currentSceneIndex = index;
+        transitioningScene = true;
         scenes.get(index).create(this);
         scenes.get(index).initialize();
 
         return (T)scenes.get(index);
-    }
-
-    /** Processes input of the scene. */
-    public void processInput() {
-        if (scenes.size() > currentSceneIndex) {
-            getScene().processInput();
-        }
     }
 
     /** Updates the scene. */
@@ -88,9 +84,13 @@ public class SceneManager {
     }
 
     /** Updates the registry of the scene. */
-    public void updateRegistry() {
+    public void endFrame() {
         if (scenes.size() > currentSceneIndex) {
             getScene().getRegistry().update();
+        }
+
+        if (transitioningScene) {
+            currentSceneIndex = scenes.size() - 1;
         }
     }
 

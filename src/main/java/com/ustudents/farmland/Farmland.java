@@ -14,8 +14,6 @@ import com.ustudents.farmland.game.scene.ExampleScene;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-
 /** The main class of the project. */
 @Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
 public class Farmland extends Runnable {
@@ -81,6 +79,10 @@ public class Farmland extends Runnable {
 
     /** Initialize everything. */
     private void initialize() {
+        if (isDebugging()) {
+            Out.printlnDebug("Initializing...");
+        }
+
         Resources.load();
 
         window.initialize("Farmland", new Vector2i(1280, 720), vsync);
@@ -90,31 +92,30 @@ public class Farmland extends Runnable {
         sceneManager.initialize(ExampleScene.class);
 
         window.show(true);
+
+        if (isDebugging()) {
+            Out.printlnDebug("Initialized.");
+        }
     }
 
     /** Starts the game loop. */
     private void loop() {
+        window.pollEvents();
+
         while (!window.shouldClose()) {
             if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
                 break;
             }
-            processInput();
             update();
             render();
-            sceneManager.updateRegistry();
+            sceneManager.endFrame();
             window.pollEvents();
         }
-    }
-
-    /** Processes the input. */
-    private void processInput() {
-        sceneManager.processInput();
     }
 
     /** Updates the game logic. */
     private void update() {
         timer.update();
-        Out.println(timer.getDeltaTime());
         sceneManager.update(timer.getDeltaTime());
     }
 
@@ -135,6 +136,10 @@ public class Farmland extends Runnable {
 
     /** Destroy everything. */
     private void destroy() {
+        if (isDebugging()) {
+            Out.printlnDebug("Destroying...");
+        }
+
         window.show(false);
         sceneManager.destroy();
         if (!noImGui) {
@@ -142,7 +147,11 @@ public class Farmland extends Runnable {
         }
         window.destroy();
 
-        Resources.save();
+        Resources.saveAndUnload();
+
+        if (isDebugging()) {
+            Out.printlnDebug("Destroyed.");
+        }
     }
 
     /** @return the scene manager. */

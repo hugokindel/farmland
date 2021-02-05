@@ -13,7 +13,7 @@ public class Input {
     private final GLFWCursorPosCallback mouseMove;
     private final GLFWMouseButtonCallback mouseButton;
 
-    public Input(){
+    public Input() {
         keyBoard = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
