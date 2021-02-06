@@ -1,6 +1,7 @@
 # Project
 data/logs/
 data/settings.json
+imgui.ini
 
 # macOS
 .DS_Store

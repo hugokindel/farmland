@@ -38,12 +38,15 @@ public class Farmland extends Runnable {
 
     private final Timer timer;
 
+    private boolean shouldClose;
+
     /** Class constructor. */
     public Farmland() {
         // Default values for options.
         noAnsiCodes = false;
         isDebugging = false;
         noImGui = false;
+        shouldClose = false;
 
         // Game managers.
         window = new Window();
@@ -102,10 +105,11 @@ public class Farmland extends Runnable {
     private void loop() {
         window.pollEvents();
 
-        while (!window.shouldClose()) {
+        while (!window.shouldClose() && !shouldClose) {
             if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
                 break;
             }
+
             update();
             render();
             sceneManager.endFrame();
@@ -182,5 +186,9 @@ public class Farmland extends Runnable {
     public void setVsync(boolean vsync) {
         this.vsync = vsync;
         window.setVsync(vsync);
+    }
+
+    public void close() {
+        shouldClose = true;
     }
 }

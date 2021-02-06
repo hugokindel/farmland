@@ -3,6 +3,7 @@ package com.ustudents.farmland.core;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.cli.print.Out;
 import org.joml.Vector2i;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -140,6 +141,15 @@ public class Window {
 
     public String getGlslVersion() {
         return glslVersion;
+    }
+
+    public Vector2i getPosition() {
+        IntBuffer x = BufferUtils.createIntBuffer(1);
+        IntBuffer y = BufferUtils.createIntBuffer(1);
+
+        glfwGetWindowPos(windowHandle, x, y);
+
+        return new Vector2i(x.get(0), y.get(0));
     }
 
     private void findGlslVersion() {
