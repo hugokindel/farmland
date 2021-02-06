@@ -103,8 +103,23 @@ public class Farmland extends Runnable {
         window.pollEvents();
 
         while (!window.shouldClose()) {
+            if (Input.isMouseRelease(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+                Out.println("Left click");
+            }
             if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
                 break;
+            }
+            if (Input.isKeyDown(GLFW.GLFW_KEY_A)) {
+                Out.println("You already press A");
+            }
+            if (Input.isKeyUp(GLFW.GLFW_KEY_B)) {
+                //Out.println("You already press B");
+            }
+            if (Input.isKeyPressed(GLFW.GLFW_KEY_C)) {
+                Out.println("You already press C");
+            }
+            if (Input.isKeyReleased(GLFW.GLFW_KEY_D)) {
+                Out.println("You already press D");
             }
             update();
             render();
