@@ -76,6 +76,14 @@ tasks {
     "test"(Test::class) {
         useJUnitPlatform()
     }
+
+    jar {
+        manifest {
+            attributes(
+                    "Main-Class" to "com.ustudents.farmland.Main"
+            )
+        }
+    }
 }
 
 // Gradle has an issue supporting unicode within Powershell or cmd.exe,

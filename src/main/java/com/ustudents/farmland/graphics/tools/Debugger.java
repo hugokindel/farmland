@@ -234,7 +234,7 @@ public class Debugger {
     private void drawSettings() {
         ImGuiUtils.setNextWindowWithSizeCentered(300, 300, ImGuiCond.Appearing);
 
-        ImGui.begin("Settings");
+        ImGui.begin("Settings", showSettingsWindow);
 
         ImGui.checkbox("Enable V-sync", useVsync);
 
@@ -244,7 +244,7 @@ public class Debugger {
     private void drawPerformanceCounter() {
         ImGuiUtils.setNextWindowWithSizeCentered(200, 100, ImGuiCond.Appearing);
 
-        ImGui.begin("Performance counter");
+        ImGui.begin("Performance counter", showPerformanceCounter);
 
         int fps = Farmland.get().getTimer().getFPS();
         double ms = BigDecimal.valueOf(Farmland.get().getTimer().getFrameDuration())

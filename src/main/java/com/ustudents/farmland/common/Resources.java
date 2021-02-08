@@ -1,6 +1,7 @@
 package com.ustudents.farmland.common;
 
 import com.ustudents.farmland.graphics.Shader;
+import com.ustudents.farmland.graphics.Texture;
 import com.ustudents.farmland.json.JsonReader;
 import com.ustudents.farmland.json.JsonWriter;
 
@@ -18,12 +19,14 @@ public class Resources {
     private static final String dataDirectoryName = "data";
     private static final String logsDirectoryName = "logs";
     private static final String shadersDirectoryName = "shaders";
+    private static final String texturesDirectoryName = "textures";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
     private static final Lock settingsWriteLock = settingsLock.writeLock();
     private static Map<String, Object> settings;
     private static Map<String, Shader> shaders;
+    private static Map<String, Texture> textures;
 
     /**
      * Gets the data directory's path.
@@ -45,6 +48,10 @@ public class Resources {
 
     public static String getShadersDirectory() {
         return createPathIfNeeded(getDataDirectory() + "/" + shadersDirectoryName);
+    }
+
+    public static String getTexturesDirectory() {
+        return createPathIfNeeded(getDataDirectory() + "/" + texturesDirectoryName);
     }
 
     /**
@@ -101,6 +108,7 @@ public class Resources {
         loadSettings();
 
         shaders = new HashMap<>();
+        textures = new HashMap<>();
     }
 
     /** Saves everything. */
@@ -140,22 +148,36 @@ public class Resources {
         }
     }
 
-    public static Shader loadShader(String name) {
-        if (!shaders.containsKey(name)) {
+    public static Shader loadShader(String fileName) {
+        if (!shaders.containsKey(fileName)) {
             try {
-                String vertexShaderCode = Files.readString(Paths.get(getShadersDirectory() + "/" + name + ".vert"));
-                String fragmentShaderCode = Files.readString(Paths.get(getShadersDirectory() + "/" + name + ".frag"));
-                shaders.put(name, new Shader(vertexShaderCode, fragmentShaderCode));
+                String vertexShaderCode = Files.readString(
+                        Paths.get(getShadersDirectory() + "/" + fileName + ".vert"));
+                String fragmentShaderCode = Files.readString(
+                        Paths.get(getShadersDirectory() + "/" + fileName + ".frag"));
+                shaders.put(fileName, new Shader(vertexShaderCode, fragmentShaderCode));
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
         }
 
-        return shaders.get(name);
+        return shaders.get(fileName);
     }
 
-    public static Shader getShader(String name) {
-        return shaders.get(name);
+    public static Shader getShader(String fileName) {
+        return shaders.get(fileName);
+    }
+
+    public static Texture loadTexture(String filePath) {
+        if (!textures.containsKey(filePath)) {
+            textures.put(filePath, new Texture(getTexturesDirectory() + "/" + filePath));
+        }
+
+        return textures.get(filePath);
+    }
+
+    public static Texture getTexture(String filePath) {
+        return textures.get(filePath);
     }
 }

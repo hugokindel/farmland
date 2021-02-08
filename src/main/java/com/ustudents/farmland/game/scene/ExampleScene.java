@@ -9,14 +9,17 @@ import com.ustudents.farmland.game.component.CameraFollowComponent;
 import com.ustudents.farmland.game.component.SpriteComponent;
 import com.ustudents.farmland.game.component.TransformComponent;
 import com.ustudents.farmland.graphics.Shader;
+import com.ustudents.farmland.graphics.SpriteBatch;
+import com.ustudents.farmland.graphics.Texture;
 import org.joml.Vector2f;
+import org.joml.Vector4i;
+
+import static org.lwjgl.opengl.GL32.*;
+import java.io.FileWriter;
 
 public class ExampleScene extends Scene {
     @Override
     public void initialize() {
-        Shader shader = Resources.loadShader("spritebatch");
-        Out.println(shader);
-
         Entity playerContainer = registry.createEntity();
         playerContainer.setName("playerContainer");
 
@@ -53,16 +56,31 @@ public class ExampleScene extends Scene {
         player4.setName("player4");
         player4.setParent(playerContainer);
         player1.getComponents();
+
+        shader = Resources.loadShader("spritebatch");
+        texture = Resources.loadTexture("forx.png");
+        texture2 = Resources.loadTexture("lwjgl.jpg");
+        spriteBatch = new SpriteBatch();
     }
+
+    Shader shader;
+    Texture texture;
+    Texture texture2;
+    SpriteBatch spriteBatch;
+    float pos = 0.0f;
 
     @Override
     public void update(double dt) {
-
+        pos += 30 * dt;
     }
 
     @Override
     public void render() {
-
+        spriteBatch.begin();
+        spriteBatch.draw(texture, new Vector4i(0, 0, 400, 400), 100, 100, 1);
+        spriteBatch.draw(texture, new Vector4i(0, 0, 400, 400), 500, 500, 1);
+        spriteBatch.draw(texture2, new Vector4i(0, 0, 400, 400), pos, 0, 1);
+        spriteBatch.end();
     }
 
     @Override
@@ -71,7 +89,9 @@ public class ExampleScene extends Scene {
     }
 
     @Override
-    public void destroy() {
-
+    public void destroy()
+    {
+        shader.destroy();
+        texture.destroy();
     }
 }

@@ -11,8 +11,12 @@ import com.ustudents.farmland.core.SceneManager;
 import com.ustudents.farmland.core.Timer;
 import com.ustudents.farmland.core.Window;
 import com.ustudents.farmland.game.scene.ExampleScene;
+import com.ustudents.farmland.graphics.Texture;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
 
 /** The main class of the project. */
 @Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")

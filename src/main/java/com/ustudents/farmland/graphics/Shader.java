@@ -5,27 +5,36 @@ import org.joml.*;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.lwjgl.opengl.GL32.*;
 
-@SuppressWarnings({"unused"})
+//@SuppressWarnings({"unused"})
 public class Shader {
     private int programHandle;
     private int vertexShaderHandle;
     private int fragmentShaderHandle;
-    private Map<String, VertexVariable> vertexAttributes;
-    private Map<String, VertexVariable> uniformVariables;
+    private Set<VertexVariable> vertexAttributes;
+    private Set<VertexVariable> uniformVariables;
+    private boolean destroyed;
 
     public Shader(String vertexShader, String fragmentShader) {
         compileProgram(vertexShader, fragmentShader);
+        destroyed = false;
     }
 
     public void destroy() {
-        destroyProgram();
+        if (!destroyed) {
+            destroyProgram();
+            destroyed = true;
+        }
     }
 
     public void bind() {
@@ -48,16 +57,16 @@ public class Shader {
         return fragmentShaderHandle;
     }
 
-    public Map<String, VertexVariable> getVertexAttributes() {
+    public Set<VertexVariable> getVertexAttributes() {
         return vertexAttributes;
     }
 
-    public Map<String, VertexVariable> getUniformVariables() {
+    public Set<VertexVariable> getUniformVariables() {
         return uniformVariables;
     }
 
     public void setUniform1i(String name, int value) {
-        glUniform1i(uniformVariables.get(name).location, value);
+        glUniform1i(findUniformLocation(name), value);
     }
 
     public void setUniform1i(int location, int value) {
@@ -65,7 +74,7 @@ public class Shader {
     }
 
     public void setUniform2i(String name, int value1, int value2) {
-        glUniform2i(uniformVariables.get(name).location, value1, value2);
+        glUniform2i(findUniformLocation(name), value1, value2);
     }
 
     public void setUniform2i(int location, int value1, int value2) {
@@ -73,7 +82,7 @@ public class Shader {
     }
 
     public void setUniform2i(String name, Vector2i value) {
-        glUniform2i(uniformVariables.get(name).location, value.x, value.y);
+        glUniform2i(findUniformLocation(name), value.x, value.y);
     }
 
     public void setUniform2i(int location, Vector2i value) {
@@ -81,7 +90,7 @@ public class Shader {
     }
 
     public void setUniform3i(String name, int value1, int value2, int value3) {
-        glUniform3i(uniformVariables.get(name).location, value1, value2, value3);
+        glUniform3i(findUniformLocation(name), value1, value2, value3);
     }
 
     public void setUniform3i(int location, int value1, int value2, int value3) {
@@ -89,7 +98,7 @@ public class Shader {
     }
 
     public void setUniform3i(String name, Vector3i value) {
-        glUniform3i(uniformVariables.get(name).location, value.x, value.y, value.z);
+        glUniform3i(findUniformLocation(name), value.x, value.y, value.z);
     }
 
     public void setUniform3i(int location, Vector3i value) {
@@ -97,7 +106,7 @@ public class Shader {
     }
 
     public void setUniform4i(String name, int value1, int value2, int value3, int value4) {
-        glUniform4i(uniformVariables.get(name).location, value1, value2, value3, value4);
+        glUniform4i(findUniformLocation(name), value1, value2, value3, value4);
     }
 
     public void setUniform4i(int location, int value1, int value2, int value3, int value4) {
@@ -105,7 +114,7 @@ public class Shader {
     }
 
     public void setUniform4i(String name, Vector4i value) {
-        glUniform4i(uniformVariables.get(name).location, value.x, value.y, value.z, value.w);
+        glUniform4i(findUniformLocation(name), value.x, value.y, value.z, value.w);
     }
 
     public void setUniform4i(int location, Vector4i value) {
@@ -113,7 +122,7 @@ public class Shader {
     }
 
     public void setUniform1f(String name, float value) {
-        glUniform1f(uniformVariables.get(name).location, value);
+        glUniform1f(findUniformLocation(name), value);
     }
 
     public void setUniform1f(int location, float value) {
@@ -121,7 +130,7 @@ public class Shader {
     }
 
     public void setUniform2f(String name, float value1, float value2) {
-        glUniform2f(uniformVariables.get(name).location, value1, value2);
+        glUniform2f(findUniformLocation(name), value1, value2);
     }
 
     public void setUniform2f(int location, float value1, float value2) {
@@ -129,7 +138,7 @@ public class Shader {
     }
 
     public void setUniform2f(String name, Vector2f value) {
-        glUniform2f(uniformVariables.get(name).location, value.x, value.y);
+        glUniform2f(findUniformLocation(name), value.x, value.y);
     }
 
     public void setUniform2f(int location, Vector2f value) {
@@ -137,7 +146,7 @@ public class Shader {
     }
 
     public void setUniform3f(String name, float value1, float value2, float value3) {
-        glUniform3f(uniformVariables.get(name).location, value1, value2, value3);
+        glUniform3f(findUniformLocation(name), value1, value2, value3);
     }
 
     public void setUniform3f(int location, float value1, float value2, float value3) {
@@ -145,7 +154,7 @@ public class Shader {
     }
 
     public void setUniform3f(String name, Vector3f value) {
-        glUniform3f(uniformVariables.get(name).location, value.x, value.y, value.z);
+        glUniform3f(findUniformLocation(name), value.x, value.y, value.z);
     }
 
     public void setUniform3f(int location, Vector3f value) {
@@ -153,7 +162,7 @@ public class Shader {
     }
 
     public void setUniform4f(String name, float value1, float value2, float value3, float value4) {
-        glUniform4f(uniformVariables.get(name).location, value1, value2, value3, value4);
+        glUniform4f(findUniformLocation(name), value1, value2, value3, value4);
     }
 
     public void setUniform4f(int location, float value1, float value2, float value3, float value4) {
@@ -161,7 +170,7 @@ public class Shader {
     }
 
     public void setUniform4f(String name, Vector4f value) {
-        glUniform4f(uniformVariables.get(name).location, value.x, value.y, value.z, value.w);
+        glUniform4f(findUniformLocation(name), value.x, value.y, value.z, value.w);
     }
 
     public void setUniform4f(int location, Vector4f value) {
@@ -169,7 +178,7 @@ public class Shader {
     }
 
     public void setUniform4f(String name, Color value) {
-        glUniform4f(uniformVariables.get(name).location, value.r, value.g, value.b, value.a);
+        glUniform4f(findUniformLocation(name), value.r, value.g, value.b, value.a);
     }
 
     public void setUniform4f(int location, Color value) {
@@ -177,7 +186,7 @@ public class Shader {
     }
 
     public void setUniform1fv(String name, float[] values) {
-        glUniform1fv(uniformVariables.get(name).location, values);
+        glUniform1fv(findUniformLocation(name), values);
     }
 
     public void setUniform1fv(int location, float[] values) {
@@ -185,7 +194,7 @@ public class Shader {
     }
 
     public void setUniform2fv(String name, float[] values) {
-        glUniform2fv(uniformVariables.get(name).location, values);
+        glUniform2fv(findUniformLocation(name), values);
     }
 
     public void setUniform2fv(int location, float[] values) {
@@ -193,7 +202,7 @@ public class Shader {
     }
 
     public void setUniform3fv(String name, float[] values) {
-        glUniform3fv(uniformVariables.get(name).location, values);
+        glUniform3fv(findUniformLocation(name), values);
     }
 
     public void setUniform3fv(int location, float[] values) {
@@ -201,7 +210,7 @@ public class Shader {
     }
 
     public void setUniform4fv(String name, float[] values) {
-        glUniform4fv(uniformVariables.get(name).location, values);
+        glUniform4fv(findUniformLocation(name), values);
     }
 
     public void setUniform4fv(int location, float[] values) {
@@ -209,7 +218,7 @@ public class Shader {
     }
 
     public void setUniformMatrix4fv(String name, Matrix4f matrix) {
-        setUniformMatrix4fv(uniformVariables.get(name).location, matrix, false);
+        setUniformMatrix4fv(findUniformLocation(name), matrix, false);
     }
 
     public void setUniformMatrix4fv(int location, Matrix4f matrix) {
@@ -217,7 +226,7 @@ public class Shader {
     }
 
     public void setUniformMatrix4fv(String name, Matrix4f matrix, boolean transpose) {
-        setUniformMatrix4fv(uniformVariables.get(name).location, matrix, transpose);
+        setUniformMatrix4fv(findUniformLocation(name), matrix, transpose);
     }
 
     public void setUniformMatrix4fv(int location, Matrix4f matrix, boolean transpose) {
@@ -228,7 +237,7 @@ public class Shader {
     }
 
     public void setUniformMatrix3fv(String name, Matrix3f matrix) {
-        setUniformMatrix3fv(uniformVariables.get(name).location, matrix, false);
+        setUniformMatrix3fv(findUniformLocation(name), matrix, false);
     }
 
     public void setUniformMatrix3fv(int location, Matrix3f matrix) {
@@ -236,7 +245,7 @@ public class Shader {
     }
 
     public void setUniformMatrix3fv(String name, Matrix3f matrix, boolean transpose) {
-        setUniformMatrix3fv(uniformVariables.get(name).location, matrix, transpose);
+        setUniformMatrix3fv(findUniformLocation(name), matrix, transpose);
     }
 
     public void setUniformMatrix3fv(int location, Matrix3f matrix, boolean transpose) {
@@ -247,7 +256,7 @@ public class Shader {
     }
 
     public void setUniformMatrix2fv(String name, Matrix2f matrix) {
-        setUniformMatrix2fv(uniformVariables.get(name).location, matrix, false);
+        setUniformMatrix2fv(findUniformLocation(name), matrix, false);
     }
 
     public void setUniformMatrix2fv(int location, Matrix2f matrix) {
@@ -255,7 +264,7 @@ public class Shader {
     }
 
     public void setUniformMatrix2fv(String name, Matrix2f matrix, boolean transpose) {
-        setUniformMatrix2fv(uniformVariables.get(name).location, matrix, transpose);
+        setUniformMatrix2fv(findUniformLocation(name), matrix, transpose);
     }
 
     public void setUniformMatrix2fv(int location, Matrix2f matrix, boolean transpose) {
@@ -265,6 +274,62 @@ public class Shader {
         }
     }
 
+    public void setVertexAttribute(String name, int size, int type, boolean normalize, int stride, Buffer buffer) {
+        glVertexAttribPointer(findAttributeLocation(name), size, type, normalize, stride, (ByteBuffer)buffer);
+    }
+
+    public void setVertexAttribute(int location, int size, int type, boolean normalize, int stride, Buffer buffer) {
+        glVertexAttribPointer(location, size, type, normalize, stride, (ByteBuffer)buffer);
+    }
+
+    public void setVertexAttribute(String name, int size, int type, boolean normalize, int stride, int offset) {
+        glVertexAttribPointer(findAttributeLocation(name), size, type, normalize, stride, offset);
+    }
+
+    public void setVertexAttribute(int location, int size, int type, boolean normalize, int stride, int offset) {
+        glVertexAttribPointer(location, size, type, normalize, stride, offset);
+    }
+
+    public void disableVertexAttribute(String name) {
+        glDisableVertexAttribArray(findAttributeLocation(name));
+    }
+
+    public void disableVertexAttribute(int location) {
+        glDisableVertexAttribArray(location);
+    }
+
+    public void enableVertexAttribute(String name) {
+        glEnableVertexAttribArray(findAttributeLocation(name));
+    }
+
+    public void enableVertexAttribute(int location) {
+        glEnableVertexAttribArray(location);
+    }
+
+    public void setAttribute4f(String name, float value1, float value2, float value3, float value4) {
+        glVertexAttrib4f(findAttributeLocation(name), value1, value2, value3, value4);
+    }
+
+    public int findAttributeLocation(String name) {
+        for (VertexVariable attribute : vertexAttributes) {
+            if (attribute.name.equals(name)) {
+                return attribute.location;
+            }
+        }
+        
+        return -1;
+    }
+
+    public int findUniformLocation(String name) {
+        for (VertexVariable uniform : uniformVariables) {
+            if (uniform.name.equals(name)) {
+                return uniform.location;
+            }
+        }
+
+        return -1;
+    }
+    
     private void compileProgram(String vertexShader, String fragmentShader) {
         vertexShaderHandle = compileShader(GL_VERTEX_SHADER, vertexShader);
         fragmentShaderHandle = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
@@ -272,6 +337,8 @@ public class Shader {
         linkProgram();
         vertexAttributes = fetchAttributes();
         uniformVariables = fetchUniforms();
+        destroyShader(vertexShaderHandle);
+        destroyShader(fragmentShaderHandle);
     }
 
     private int compileShader(int type, String code) {
@@ -320,15 +387,13 @@ public class Shader {
 
         if (linkingStatus == 0) {
             String errorMessage = "Could not link program!";
-            int len = glGetProgrami(programHandle, GL_INFO_LOG_LENGTH);
-            String err = glGetProgramInfoLog(programHandle, len);
             Out.printlnError(errorMessage);
             throw new IllegalStateException(errorMessage);
         }
     }
 
-    private Map<String, VertexVariable> fetchAttributes() {
-        Map<String, VertexVariable> vertexAttributes = new HashMap<>();
+    private Set<VertexVariable> fetchAttributes() {
+        Set<VertexVariable> vertexAttributes = new HashSet<>();
         int numberOfAttributes = glGetProgrami(programHandle, GL_ACTIVE_ATTRIBUTES);
 
         for (int i = 0; i < numberOfAttributes; i++) {
@@ -340,14 +405,14 @@ public class Shader {
             int size = sizeBuffer.get(0);
             int location = glGetAttribLocation(programHandle, name);
 
-            vertexAttributes.put(name, new VertexVariable(type, size, location));
+            vertexAttributes.add(new VertexVariable(name, type, size, location));
         }
 
         return vertexAttributes;
     }
 
-    private Map<String, VertexVariable> fetchUniforms() {
-        Map<String, VertexVariable> uniformVariables = new HashMap<>();
+    private Set<VertexVariable> fetchUniforms() {
+        Set<VertexVariable> uniformVariables = new HashSet<>();
         int numberOfAttributes = glGetProgrami(programHandle, GL_ACTIVE_UNIFORMS);
 
         for (int i = 0; i < numberOfAttributes; i++) {
@@ -359,7 +424,7 @@ public class Shader {
             int size = sizeBuffer.get(0);
             int location = glGetUniformLocation(programHandle, name);
 
-            uniformVariables.put(name, new VertexVariable(type, size, location));
+            uniformVariables.add(new VertexVariable(name, type, size, location));
         }
 
         return uniformVariables;
@@ -373,12 +438,8 @@ public class Shader {
     }
 
     private void destroyProgram() {
-        destroyShader(vertexShaderHandle);
-        destroyShader(fragmentShaderHandle);
         glDeleteProgram(programHandle);
     }
-
-    // TODO
 
     @Override
     public String toString() {
@@ -388,6 +449,7 @@ public class Shader {
                 ", fragmentShaderHandle=" + fragmentShaderHandle +
                 ", vertexAttributes=" + vertexAttributes +
                 ", uniformVariables=" + uniformVariables +
+                ", destroyed=" + destroyed +
                 '}';
     }
 }
