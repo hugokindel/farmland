@@ -1,5 +1,7 @@
 package com.ustudents.farmland.graphics;
 
+import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.cli.print.Out;
 import com.ustudents.farmland.common.Resources;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -206,6 +208,7 @@ public class SpriteBatch {
     private final Shader shader;
     private final Renderer renderer;
     private final List<Element> elements;
+    private final Camera camera;
     private int size;
     private Matrix4f projection;
     private float globalAlpha;
@@ -215,12 +218,13 @@ public class SpriteBatch {
     private boolean destroyed;
 
     public SpriteBatch() {
-        this(Objects.requireNonNull(Resources.loadShader("spritebatch")));
+        this(Objects.requireNonNull(Resources.loadShader("spritebatch")), Farmland.get().getSceneManager().getScene().getCamera());
     }
 
-    public SpriteBatch(Shader shader) {
+    public SpriteBatch(Shader shader, Camera camera) {
         this.elements = new ArrayList<>(2048);
         this.shader = shader;
+        this.camera = camera;
         this.renderer = new Renderer(2048, shader.getVertexAttributes());
         this.destroyed = false;
         this.projection = new Matrix4f();
@@ -234,17 +238,16 @@ public class SpriteBatch {
     }
 
     public void begin() {
+        Out.println(camera.getZoom());
         renderer.clear();
         elements.clear();
         size = 0;
         shouldSortByLayer = true;
 
-        OrthoCamera c = new OrthoCamera(1000);
-        c.setSize(1280, 720);
-
-        if (!projection.equals(c.viewproj())) {
+        if (!projection.equals(camera.viewproj())) {
             shouldUpdateMatrixUniform = true;
-            projection = c.viewproj();
+            projection = new Matrix4f();
+            camera.viewproj().get(projection);
         }
 
         if (globalAlpha != 1.0f) {

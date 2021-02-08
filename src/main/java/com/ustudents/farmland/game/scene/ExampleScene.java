@@ -1,11 +1,9 @@
 package com.ustudents.farmland.game.scene;
 
-import com.ustudents.farmland.cli.print.Out;
 import com.ustudents.farmland.common.Resources;
+import com.ustudents.farmland.core.Input;
 import com.ustudents.farmland.core.Scene;
 import com.ustudents.farmland.ecs.Entity;
-import com.ustudents.farmland.event.EventDispatcher;
-import com.ustudents.farmland.event.EventListener;
 import com.ustudents.farmland.game.component.BoxColliderComponent;
 import com.ustudents.farmland.game.component.CameraFollowComponent;
 import com.ustudents.farmland.game.component.SpriteComponent;
@@ -15,9 +13,6 @@ import com.ustudents.farmland.graphics.SpriteBatch;
 import com.ustudents.farmland.graphics.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector4i;
-
-import static org.lwjgl.opengl.GL32.*;
-import java.io.FileWriter;
 
 public class ExampleScene extends Scene {
     @Override
@@ -74,6 +69,14 @@ public class ExampleScene extends Scene {
     @Override
     public void update(double dt) {
         pos += 30 * dt;
+
+        int scroll = Input.scroll();
+
+        if(scroll != 0 && getCamera().getZoom()<=2000
+                && getCamera().getZoom()>=50){
+            camera.reload(camera.getZoom() - 50*scroll);
+            camera.setSize(1280, 720);
+        }
     }
 
     @Override

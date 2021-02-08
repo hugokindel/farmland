@@ -6,12 +6,18 @@ import com.ustudents.farmland.cli.option.annotation.Option;
 import com.ustudents.farmland.core.SceneManager;
 import com.ustudents.farmland.ecs.Component;
 import com.ustudents.farmland.ecs.Entity;
+import com.ustudents.farmland.graphics.Camera;
 import com.ustudents.farmland.graphics.tools.annotation.Editable;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
+import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
+import imgui.internal.flag.ImGuiItemFlags;
 import imgui.type.*;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -98,6 +104,21 @@ public class Debugger {
         ImGui.begin("Scene hierarchy", showSceneHierarchyWindow);
 
         ImGui.text(sceneManager.getScene().getClass().getSimpleName());
+
+        ImGui.separator();
+
+        int flags = ImGuiTreeNodeFlags.Leaf;
+        if (selectedInspectorEntity == -2) {
+            flags |= ImGuiTreeNodeFlags.Selected;
+        }
+        if (ImGui.treeNodeEx("Camera", flags)) {
+            if (ImGui.isItemClicked()) {
+                selectedInspectorEntity = -2;
+            }
+
+            ImGui.treePop();
+        }
+
         ImGui.separator();
 
         drawEntitiesTree(sceneManager.getScene().getRegistry().getEntitiesAtRoot(), true);
@@ -137,13 +158,49 @@ public class Debugger {
 
         ImGui.begin("Inspector", showInspectorWindow);
 
-        if (selectedInspectorEntity != -1) {
+        if (selectedInspectorEntity == -2) {
+            ImGui.text("Camera");
+
+            ImGui.separator();
+            Camera camera = sceneManager.getScene().getCamera();
+            Vector2f position = camera.getPosition();
+
+            if (ImGui.treeNode("Transform")) {
+                ImGuiUtils.setEnabled(false);
+                drawField("position", Vector2f.class, new float[] {position.x, position.y});
+                drawField("rotation", Float.class, new ImFloat(camera.getRotation()));
+                drawField("zoom", Float.class, new ImFloat(camera.getZoom()));
+                ImGuiUtils.setEnabled(true);
+
+                ImGui.treePop();
+            }
+
+            if (ImGui.treeNode("Limits")) {
+                ImGuiUtils.setEnabled(false);
+                drawField("minimalZoom", Float.class, new ImFloat(camera.getMinimalZoom()));
+                drawField("maximalZoom", Float.class, new ImFloat(camera.getMaximalZoom()));
+                ImGuiUtils.setEnabled(true);
+
+                ImGui.treePop();
+            }
+
+            if (ImGui.treeNode("Advanced")) {
+                ImGuiUtils.setEnabled(false);
+                drawField("view", Matrix3x2f.class, camera.getViewAsArray());
+                drawField("viewProjection", Matrix4f.class, camera.getViewProjectionAsArray());
+                ImGuiUtils.setEnabled(true);
+
+                ImGui.treePop();
+            }
+
+        } else if (selectedInspectorEntity != -1) {
             Entity entity = sceneManager.getScene().getRegistry().getEntityById(selectedInspectorEntity);
             int entityId = entity.getId();
             List<Component> components = new ArrayList<>(entity.getComponents());
             components.sort(Comparator.comparingInt(Component::getId));
 
             ImGui.text(entity.getNameOrIdentifier());
+
             ImGui.separator();
 
             if (components.size() > 0) {
@@ -211,21 +268,14 @@ public class Debugger {
         }
 
         for (Field field : fields) {
-            Class<?> type = field.getType();
-            String name = field.getName();
-            Object value = values.get(entityId).get(componentId).get(field.getName());
+            ImGuiUtils.setEnabled(false);
 
-            if (type == Vector2f.class) {
-                ImGui.inputFloat2(name, (float[])value);
-            } else if (type == Float.class) {
-                ImGui.inputFloat(name, (ImFloat)value);
-            } else if (type == Integer.class) {
-                ImGui.inputInt(name, (ImInt)value);
-            } else if (type == String.class) {
-                ImGui.inputText(name, (ImString)value);
-            } else {
-                ImGui.text("Unknown value type");
-            }
+            String name = field.getName();
+            Class<?> type = field.getType();
+            Object value = values.get(entityId).get(componentId).get(field.getName());
+            drawField(name, type, value);
+
+            ImGuiUtils.setEnabled(true);
         }
 
         component.renderImGui();
@@ -252,11 +302,35 @@ public class Debugger {
 
         ImGui.text("FPS: " + fps);
         ImGui.text("Framerate: " + ms + "/ms");
+        ImGui.text("Number of entities: " + sceneManager.getScene().getRegistry().getTotalNumberOfEntities());
 
         ImGui.end();
     }
 
     private void drawDemo() {
         ImGui.showDemoWindow(showDemoWindow);
+    }
+
+    private void drawField(String name, Class<?> type, Object value) {
+        if (type == Vector2f.class) {
+            ImGui.inputFloat2(name, (float[])value);
+        } else if (type == Float.class) {
+            ImGui.inputFloat(name, (ImFloat)value);
+        } else if (type == Integer.class) {
+            ImGui.inputInt(name, (ImInt)value);
+        } else if (type == String.class) {
+            ImGui.inputText(name, (ImString)value);
+        } else if (type == Matrix4f.class) {
+            ImGui.text(name);
+            ImGui.inputFloat4("m0", ((float[][])value)[0]);
+            ImGui.inputFloat4("m1", ((float[][])value)[1]);
+            ImGui.inputFloat4("m2", ((float[][])value)[2]);
+            ImGui.inputFloat4("m3", ((float[][])value)[3]);
+        } else if (type == Matrix3x2f.class) {
+            ImGui.text(name);
+            ImGui.inputFloat2("m0", ((float[][])value)[0]);
+            ImGui.inputFloat2("m1", ((float[][])value)[1]);
+            ImGui.inputFloat2("m2", ((float[][])value)[2]);
+        }
     }
 }

@@ -4,9 +4,7 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.cli.print.Out;
 import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWKeyCallbackI;
-import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
@@ -54,7 +52,7 @@ public class Window {
             throw new RuntimeException(errorMessage);
         }
 
-        try ( MemoryStack stack = stackPush() ) {
+        try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
 
@@ -86,6 +84,15 @@ public class Window {
             Out.printlnDebug("OpenGL renderer: " + glGetString(GL_RENDERER));
             Out.printlnDebug("OpenGL shading language version: " + glGetString(GL_SHADING_LANGUAGE_VERSION));
         }
+
+        GLFWScrollCallback scrollCallback;
+        glfwSetScrollCallback(windowHandle, scrollCallback = new GLFWScrollCallback() {
+            @Override
+            public void invoke(long window, double xoffset, double yoffset) {
+                Out.println(xoffset);
+                Out.println(yoffset);
+            }
+        });
     }
 
     public void clear() {

@@ -2,6 +2,8 @@ package com.ustudents.farmland.graphics.tools;
 
 import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
+import imgui.flag.ImGuiStyleVar;
+import imgui.internal.flag.ImGuiItemFlags;
 import org.joml.Vector2i;
 
 public class ImGuiUtils {
@@ -28,5 +30,15 @@ public class ImGuiUtils {
                 windowPos.y + (float)windowSize.y / 2 - height / 2,
                 cond
         );
+    }
+
+    public static void setEnabled(boolean enabled) {
+        if (enabled) {
+            imgui.internal.ImGui.popItemFlag();
+            ImGui.popStyleVar();
+        } else {
+            imgui.internal.ImGui.pushItemFlag(ImGuiItemFlags.Disabled, true);
+            ImGui.pushStyleVar(ImGuiStyleVar.Alpha, ImGui.getStyle().getAlpha() * 0.5f);
+        }
     }
 }

@@ -1,9 +1,10 @@
 package com.ustudents.farmland.core;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.cli.print.Out;
+import org.lwjgl.glfw.*;
+
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
 public class Input {
     private static final int[] keyStates = new int[GLFW.GLFW_KEY_LAST];
@@ -11,9 +12,12 @@ public class Input {
     private static final int[] mouseStates = new int[GLFW.GLFW_MOUSE_BUTTON_LAST];
     private static final boolean[] mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
     private double mouseX,mouseY;
+    private static double scrollX,scrollY;
     private final GLFWKeyCallback keyBoard;
     private final GLFWCursorPosCallback mouseMove;
     private final GLFWMouseButtonCallback mouseButton;
+    private static GLFWScrollCallback scrollCallback;
+
 
     public Input() {
         init();
@@ -112,6 +116,31 @@ public class Input {
             mouseStates[button] = -1;
         }
         return releaseKey;
+    }
+
+    private static void hasScroll(){
+        glfwSetScrollCallback(Farmland.get().getWindow().getHandle(), scrollCallback = new GLFWScrollCallback() {
+            @Override
+            public void invoke(long window, double xoffset, double yoffset) {
+                scrollX = xoffset;
+                scrollY = yoffset;
+            }
+        });
+    }
+
+    public static int scroll(){
+        if(scrollCallback == null) {
+            hasScroll();
+        }
+        Out.println(scrollY);
+        if(scrollY<0){
+            scrollY = 0;
+            return -1;
+        }else if(scrollY>0){
+            scrollY = 0;
+            return 1;
+        }
+        return 0;
     }
 
     public double getMouseX() {

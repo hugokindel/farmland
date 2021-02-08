@@ -1,6 +1,7 @@
 package com.ustudents.farmland.core;
 
 import com.ustudents.farmland.ecs.Registry;
+import com.ustudents.farmland.graphics.Camera;
 
 /** Defines a scene element. */
 public abstract class Scene {
@@ -10,6 +11,8 @@ public abstract class Scene {
     /** The scene manager handling the scene. */
     protected  SceneManager sceneManager;
 
+    protected Camera camera;
+
     /**
      * Initialize the variables of the scene.
      *
@@ -18,6 +21,8 @@ public abstract class Scene {
     void create(SceneManager sceneManager) {
         this.registry = new Registry();
         this.sceneManager = sceneManager;
+        this.camera = new Camera(1000, 50, 2000);
+        this.camera.setSize(1280, 720);
     }
 
     /** Initialize the scene (called when created). */
@@ -44,5 +49,9 @@ public abstract class Scene {
     /** @return the scene manager of the scene. */
     public SceneManager getSceneManager() {
         return sceneManager;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }
