@@ -118,6 +118,7 @@ public class Farmland extends Runnable {
                 break;
             }
 
+            sceneManager.startFrame();
             update();
             render();
             sceneManager.endFrame();

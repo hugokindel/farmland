@@ -238,7 +238,6 @@ public class SpriteBatch {
     }
 
     public void begin() {
-        Out.println(camera.getZoom());
         renderer.clear();
         elements.clear();
         size = 0;

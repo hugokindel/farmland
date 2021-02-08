@@ -57,7 +57,6 @@ public class SceneManager {
 
         transitioningScene = true;
         scenes.get(index).create(this);
-        scenes.get(index).initialize();
 
         return (T)scenes.get(index);
     }
@@ -93,14 +92,18 @@ public class SceneManager {
         }
     }
 
+    public void startFrame() {
+        if (transitioningScene) {
+            currentSceneIndex = scenes.size() - 1;
+            scenes.get(currentSceneIndex).initialize();
+            transitioningScene = false;
+        }
+    }
+
     /** Updates the registry of the scene. */
     public void endFrame() {
         if (scenes.size() > currentSceneIndex) {
             getScene().getRegistry().update();
-        }
-
-        if (transitioningScene) {
-            currentSceneIndex = scenes.size() - 1;
         }
     }
 
