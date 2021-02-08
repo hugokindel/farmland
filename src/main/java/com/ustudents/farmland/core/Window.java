@@ -78,7 +78,7 @@ public class Window {
         setVsync(vsync);
 
         GL.createCapabilities();
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.1725f, 0.1882f, 0.2117f, 1.0f);
 
         if (Farmland.isDebugging()) {
             Out.printlnDebug("OpenGL version: " + glGetString(GL_VERSION));
