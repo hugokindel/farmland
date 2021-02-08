@@ -132,7 +132,6 @@ public class Input {
         if(scrollCallback == null) {
             hasScroll();
         }
-        Out.println(scrollY);
         if(scrollY<0){
             scrollY = 0;
             return -1;

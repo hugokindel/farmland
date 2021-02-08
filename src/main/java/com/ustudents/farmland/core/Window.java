@@ -84,15 +84,6 @@ public class Window {
             Out.printlnDebug("OpenGL renderer: " + glGetString(GL_RENDERER));
             Out.printlnDebug("OpenGL shading language version: " + glGetString(GL_SHADING_LANGUAGE_VERSION));
         }
-
-        GLFWScrollCallback scrollCallback;
-        glfwSetScrollCallback(windowHandle, scrollCallback = new GLFWScrollCallback() {
-            @Override
-            public void invoke(long window, double xoffset, double yoffset) {
-                Out.println(xoffset);
-                Out.println(yoffset);
-            }
-        });
     }
 
     public void clear() {
