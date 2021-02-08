@@ -253,17 +253,17 @@ public class SpriteBatch {
         }
     }
 
-    public void draw(Texture texture, Vector4i clip, float x, float y, int layer) {
+    public void draw(Texture texture, Vector4i region, float x, float y, int layer) {
         Element element = new Element();
 
         element.texture = texture;
         element.position = new Vector2f(x, y);
-        element.dimensions = new Vector2f(clip.z, clip.w);
+        element.dimensions = new Vector2f(region.z, region.w);
         element.scale = new Vector2f(1.0f, 1.0f);
         element.origin = new Vector2f(0.0f, 0.0f);
         element.region = new Vector4f(
-                (float)clip.x / texture.getWidth(), (float)clip.y / texture.getHeight(),
-                (float)(clip.x + clip.z) / texture.getWidth(), (float)(clip.y + clip.w) / texture.getHeight()
+                (float)region.x / texture.getWidth(), (float)region.y / texture.getHeight(),
+                (float)(region.x + region.z) / texture.getWidth(), (float)(region.y + region.w) / texture.getHeight()
         );
         element.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         element.rotation = 0.0f;

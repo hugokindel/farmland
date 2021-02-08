@@ -9,9 +9,7 @@ import java.nio.*;
 import static java.lang.Math.*;
 import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.stb.STBImage.*;
-import static org.lwjgl.stb.STBImageResize.*;
 import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 public class Texture {
     private ByteBuffer data;

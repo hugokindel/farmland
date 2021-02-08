@@ -44,6 +44,8 @@ public class Farmland extends Runnable {
 
     private boolean shouldClose;
 
+    private boolean imGuiVisible;
+
     /** Class constructor. */
     public Farmland() {
         // Default values for options.
@@ -51,6 +53,7 @@ public class Farmland extends Runnable {
         isDebugging = false;
         noImGui = false;
         shouldClose = false;
+        imGuiVisible = true;
 
         // Game managers.
         window = new Window();
@@ -124,6 +127,9 @@ public class Farmland extends Runnable {
     /** Updates the game logic. */
     private void update() {
         timer.update();
+        if (Input.isKeyPressed(GLFW.GLFW_KEY_F1)) {
+            imGuiVisible = !imGuiVisible;
+        }
         sceneManager.update(timer.getDeltaTime());
     }
 
@@ -131,11 +137,11 @@ public class Farmland extends Runnable {
     private void render() {
         timer.render();
         window.clear();
-        if (!noImGui) {
+        if (!noImGui && imGuiVisible) {
             imGuiManager.startFrame();
         }
         sceneManager.render();
-        if (!noImGui) {
+        if (!noImGui && imGuiVisible) {
             sceneManager.renderImGui();
             imGuiManager.endFrame();
         }
@@ -150,7 +156,7 @@ public class Farmland extends Runnable {
 
         window.show(false);
         sceneManager.destroy();
-        if (!noImGui) {
+        if (!noImGui && imGuiVisible) {
             imGuiManager.destroy();
         }
         window.destroy();
