@@ -11,6 +11,7 @@ import com.ustudents.farmland.core.SceneManager;
 import com.ustudents.farmland.core.Timer;
 import com.ustudents.farmland.core.Window;
 import com.ustudents.farmland.game.scene.ExampleScene;
+import com.ustudents.farmland.game.scene.MainMenu;
 import com.ustudents.farmland.graphics.Texture;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
@@ -99,7 +100,7 @@ public class Farmland extends Runnable {
         if (!noImGui) {
             imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
         }
-        sceneManager.initialize(ExampleScene.class);
+        sceneManager.initialize(MainMenu.class);
 
         window.show(true);
 

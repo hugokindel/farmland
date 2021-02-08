@@ -2,7 +2,9 @@ package com.ustudents.farmland.game.scene;
 
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.Scene;
+import com.ustudents.farmland.graphics.tools.ImGuiUtils;
 import imgui.ImGui;
+import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiInputTextFlags;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
@@ -41,24 +43,9 @@ public class MainMenu extends Scene {
 
     @Override
     public void renderImGui() {
-        ImGui.text("FPS: " + Farmland.get().getTimer().getFPS());
-        ImGui.text("Framerate: " + Farmland.get().getTimer().getFrameDuration());
-        ImGui.checkbox("use vsync", useVsync);
-        ImGui.separator();
-        if (ImGui.button("Save")) {
-            count++;
-        }
-        ImGui.sameLine();
-        ImGui.text(String.valueOf(count));
-        ImGui.inputText("string", str, ImGuiInputTextFlags.CallbackResize);
-        ImGui.sliderFloat("float", flt, 0, 1);
-        ImGui.separator();
-        ImGui.text("Extra");
-        ImGui.checkbox("Show Demo Window", showDemo);
-        if (showDemo.get()) {
-            ImGui.showDemoWindow(showDemo);
-        }
-        ImGui.separator();
+        ImGuiUtils.setNextWindowWithSizeCentered(300, 300, ImGuiCond.Appearing);
+        ImGui.begin("Main Menu");
+
         if (ImGui.button("Single Player Menu")) {
             Farmland.get().getSceneManager().changeScene(SinglePlayerMenu.class);
         }
@@ -71,9 +58,14 @@ public class MainMenu extends Scene {
         if (ImGui.button("Credit Menu")) {
             Farmland.get().getSceneManager().changeScene(CreditMenu.class);
         }
+        if (ImGui.button("Example Scene")) {
+            Farmland.get().getSceneManager().changeScene(ExampleScene.class);
+        }
         if (ImGui.button("Quit")) {
             System.exit(0);
         }
+
+        ImGui.end();
     }
 
     @Override
