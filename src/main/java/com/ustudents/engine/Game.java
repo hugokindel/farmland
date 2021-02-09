@@ -10,8 +10,6 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.Window;
-import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.scene.MainMenu;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
@@ -67,7 +65,7 @@ public abstract class Game extends Runnable {
     @Override
     public int run(String[] args) {
         Out.start(args, false, false);
-        if (!readArguments(args, Farmland.class)) {
+        if (!readArguments(args, getClass())) {
             return 1;
         }
         Out.canUseAnsiCode(!noAnsiCodes);
