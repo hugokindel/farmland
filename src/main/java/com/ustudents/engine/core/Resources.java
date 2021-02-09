@@ -117,6 +117,10 @@ public class Resources {
             shaderSet.getValue().destroy();
         }
 
+        for (Map.Entry<String, Texture> texuresSet : textures.entrySet()) {
+            texuresSet.getValue().destroy();
+        }
+
         saveSettings();
     }
 
