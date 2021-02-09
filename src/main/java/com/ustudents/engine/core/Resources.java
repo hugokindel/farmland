@@ -1,5 +1,7 @@
 package com.ustudents.engine.core;
 
+import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.Shader;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.core.json.JsonReader;
@@ -114,11 +116,11 @@ public class Resources {
     /** Saves everything. */
     public static void saveAndUnload() {
         for (Map.Entry<String, Shader> shaderSet : shaders.entrySet()) {
-            shaderSet.getValue().destroy();
+            unloadShader(shaderSet.getKey());
         }
 
         for (Map.Entry<String, Texture> texuresSet : textures.entrySet()) {
-            texuresSet.getValue().destroy();
+            unloadTexture(texuresSet.getKey());
         }
 
         saveSettings();
@@ -154,6 +156,10 @@ public class Resources {
 
     public static Shader loadShader(String fileName) {
         if (!shaders.containsKey(fileName)) {
+            if (Game.get().isDebugging()) {
+                Out.printlnDebug("Shader loaded: " + getShadersDirectory() + "/" + fileName + ".(vert|frag)");
+            }
+
             try {
                 String vertexShaderCode = Files.readString(
                         Paths.get(getShadersDirectory() + "/" + fileName + ".vert"));
@@ -173,8 +179,23 @@ public class Resources {
         return shaders.get(fileName);
     }
 
+    public static void unloadShader(String fileName) {
+        if (shaders.containsKey(fileName)) {
+            if (Game.get().isDebugging()) {
+                Out.printlnDebug("Shader unloaded: " + getShadersDirectory() + "/" + fileName + ".(vert|frag)");
+            }
+
+            shaders.get(fileName).destroy();
+            shaders.remove(fileName);
+        }
+    }
+
     public static Texture loadTexture(String filePath) {
         if (!textures.containsKey(filePath)) {
+            if (Game.get().isDebugging()) {
+                Out.printlnDebug("Texture loaded: " + getTexturesDirectory() + "/" + filePath + "");
+            }
+
             textures.put(filePath, new Texture(getTexturesDirectory() + "/" + filePath));
         }
 
@@ -183,5 +204,16 @@ public class Resources {
 
     public static Texture getTexture(String filePath) {
         return textures.get(filePath);
+    }
+
+    public static void unloadTexture(String filePath) {
+        if (textures.containsKey(filePath)) {
+            if (Game.get().isDebugging()) {
+                Out.printlnDebug("Texture unloaded: " + getTexturesDirectory() + "/" + filePath + "");
+            }
+
+            textures.get(filePath).destroy();
+            textures.remove(filePath);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -14,7 +15,7 @@ import java.util.*;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class SpriteBatch {
+public class Spritebatch {
     public static class Element
     {
         Texture texture;
@@ -37,69 +38,68 @@ public class SpriteBatch {
         private final int vao;
         private final int vbo;
         private final int ebo;
-        private boolean destroyed;
 
         public Renderer(int maxNumberOfSprites, Set<VertexVariable> attributes) {
             vertices = BufferUtils.createFloatBuffer(maxNumberOfSprites * 32);
-
-            shader.bind();
 
             vao = glGenVertexArrays();
             vbo = glGenBuffers();
             ebo = glGenBuffers();
 
-            glBindVertexArray(vao);
+            shader.bind();
 
-            // This happens within the VAO context.
+            // This happens within the shader context.
             {
-                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                glBindVertexArray(vao);
 
-                for (VertexVariable attribute : attributes) {
-                    attribute.bind();
-                }
+                // This happens within the VAO context.
+                {
+                    glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-                glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
-
-                // Defines 6 vertices with the following indices:
-                //
-                // 0---1
-                // |  /|
-                // | / |
-                // 2---3
-                int[] indices = new int[]{0, 1, 2, 2, 3, 1};
-                IntBuffer indiceArray = BufferUtils.createIntBuffer(maxNumberOfSprites * 6);
-
-                for (int i = 0; i < maxNumberOfSprites; ++i) {
-                    for (int j = 0; j < 6; ++j) {
-                        indiceArray.put(i * 6 + j, indices[j] + i * 4);
+                    for (VertexVariable attribute : attributes) {
+                        attribute.bind();
                     }
+
+                    glBufferData(GL_ARRAY_BUFFER, vertices, GL_DYNAMIC_DRAW);
+
+                    // Defines 6 vertices with the following indices:
+                    //
+                    // 0---1
+                    // |  /|
+                    // | / |
+                    // 2---3
+                    int[] indices = new int[]{0, 1, 2, 2, 3, 1};
+                    IntBuffer indiceArray = BufferUtils.createIntBuffer(maxNumberOfSprites * 6);
+
+                    for (int i = 0; i < maxNumberOfSprites; ++i) {
+                        for (int j = 0; j < 6; ++j) {
+                            indiceArray.put(i * 6 + j, indices[j] + i * 4);
+                        }
+                    }
+
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indiceArray, GL_DYNAMIC_DRAW);
+
+                    glBindBuffer(GL_ARRAY_BUFFER, 0);
                 }
 
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indiceArray, GL_DYNAMIC_DRAW);
-
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                glBindVertexArray(0);
             }
 
-            glBindVertexArray(0);
-
-            destroyed = false;
+            glUseProgram(0);
         }
 
         public void destroy() {
-            if (!destroyed) {
-                glDeleteBuffers(vbo);
-                glDeleteBuffers(ebo);
-                glDeleteVertexArrays(vao);
-                destroyed = true;
-            }
+            glDeleteBuffers(vbo);
+            glDeleteBuffers(ebo);
+            glDeleteVertexArrays(vao);
         }
 
         public void clear() {
             vertices.clear();
         }
 
-        public void putElement(SpriteBatch.Element element) {
+        public void putElement(Spritebatch.Element element) {
             // Top left (0).
             putVertex(new Vector4f(
                     element.scale.x * element.position.x,
@@ -216,27 +216,35 @@ public class SpriteBatch {
     private boolean shouldSortByLayer;
     private boolean destroyed;
 
-    public SpriteBatch() {
+    public Spritebatch() {
         this(Game.get().getSceneManager().getScene().getCamera());
     }
 
-    public SpriteBatch(Camera camera) {
+    public Spritebatch(Camera camera) {
         this(camera, Objects.requireNonNull(Resources.loadShader("spritebatch")));
     }
 
-    public SpriteBatch(Camera camera, Shader shader) {
+    public Spritebatch(Camera camera, Shader shader) {
         this.elements = new ArrayList<>(2048);
         this.shader = shader;
         this.camera = camera;
         this.renderer = new Renderer(2048, shader.getVertexAttributes());
         this.destroyed = false;
         this.projection = new Matrix4f();
+
+        if (Game.get().isDebugging()) {
+            Out.printlnDebug("Spritebatch created.");
+        }
     }
 
     public void destroy() {
         if (!destroyed) {
             renderer.destroy();
             destroyed = true;
+
+            if (Game.get().isDebugging()) {
+                Out.printlnDebug("Spritebatch destroyed.");
+            }
         }
     }
 

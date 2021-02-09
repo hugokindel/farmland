@@ -61,7 +61,7 @@ public class MainMenu extends Scene {
             Game.get().getSceneManager().changeScene(ExampleScene.class);
         }
         if (ImGui.button("Quit")) {
-            System.exit(0);
+            Game.get().close();
         }
 
         ImGui.end();

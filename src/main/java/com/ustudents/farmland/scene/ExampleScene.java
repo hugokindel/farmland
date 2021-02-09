@@ -99,7 +99,7 @@ public class ExampleScene extends Scene {
     @Override
     public void destroy()
     {
-        texture.destroy();
-        texture2.destroy();
+        Resources.unloadTexture("forx.png");
+        Resources.unloadTexture("lwjgl.jpg");
     }
 }

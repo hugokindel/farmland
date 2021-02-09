@@ -1,5 +1,7 @@
 package com.ustudents.engine.scene;
 
+import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.utility.TypeUtil;
 import com.ustudents.engine.graphic.imgui.Debugger;
 
@@ -47,10 +49,7 @@ public class SceneManager {
             scenes.add(TypeUtil.createInstance(classType, args));
         }
 
-        int index = scenes.size() - 1;
-
         transitioningScene = true;
-        scenes.get(index).create(this);
     }
 
     /** Updates the scene. */
@@ -82,20 +81,34 @@ public class SceneManager {
         if (scenes.size() > currentSceneIndex) {
             getScene().getSpriteBatch().destroy();
             getScene().destroy();
+
+            if (Game.get().isDebugging()) {
+                Out.printlnDebug("Scene destroyed.");
+            }
         }
     }
 
     public void startFrame() {
         if (transitioningScene) {
             currentSceneIndex = scenes.size() - 1;
-            scenes.get(currentSceneIndex).initialize();
 
             if (currentSceneIndex > 0) {
                 scenes.get(currentSceneIndex - 1).getSpriteBatch().destroy();
                 scenes.get(currentSceneIndex - 1).destroy();
+
+                if (Game.get().isDebugging()) {
+                    Out.printlnDebug("Previous scene destroyed.");
+                }
             }
 
+            scenes.get(currentSceneIndex).create(this);
+            scenes.get(currentSceneIndex).initialize();
+
             transitioningScene = false;
+
+            if (Game.get().isDebugging()) {
+                Out.printlnDebug("New scene created.");
+            }
         }
     }
 

@@ -3,7 +3,7 @@ package com.ustudents.farmland.system;
 import com.ustudents.engine.core.ecs.Entity;
 import com.ustudents.engine.core.ecs.Registry;
 import com.ustudents.engine.core.ecs.System;
-import com.ustudents.engine.graphic.SpriteBatch;
+import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.farmland.component.SpriteComponent;
 import com.ustudents.farmland.component.TransformComponent;
 
@@ -21,7 +21,7 @@ public class RenderSystem extends System {
             return;
         }
 
-        SpriteBatch spriteBatch = getScene().getSpriteBatch();
+        Spritebatch spriteBatch = getScene().getSpriteBatch();
 
         spriteBatch.begin();
 
