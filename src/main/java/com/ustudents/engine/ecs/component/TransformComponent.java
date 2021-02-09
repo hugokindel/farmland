@@ -1,17 +1,20 @@
-package com.ustudents.farmland.component;
+package com.ustudents.engine.ecs.component;
 
-import com.ustudents.engine.core.ecs.Component;
+import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 
 
 public class TransformComponent extends Component {
+    /** The position in the world (in world coordinates). */
     @Editable
     public Vector2f position;
 
+    /** The scale to use (default is x1,x1). */
     @Editable
     public Vector2f scale;
 
+     /** The rotation. */
     @Editable
     public Float rotation;
 

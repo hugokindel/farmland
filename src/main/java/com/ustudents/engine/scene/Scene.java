@@ -1,7 +1,8 @@
 package com.ustudents.engine.scene;
 
+import com.ustudents.engine.ecs.system.SpriteRenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
-import com.ustudents.engine.core.ecs.Registry;
+import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
 
 /** Defines a scene element. */
@@ -31,6 +32,11 @@ public abstract class Scene {
 
     /** Initialize the scene (called when created). */
     public abstract void initialize();
+
+    void _initialize() {
+        registry.addSystem(SpriteRenderSystem.class);
+        initialize();
+    }
 
     /** Updates the logic every frame. */
     public abstract void update(double dt);

@@ -102,7 +102,7 @@ public class SceneManager {
             }
 
             scenes.get(currentSceneIndex).create(this);
-            scenes.get(currentSceneIndex).initialize();
+            scenes.get(currentSceneIndex)._initialize();
 
             transitioningScene = false;
 

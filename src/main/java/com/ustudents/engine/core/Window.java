@@ -39,8 +39,8 @@ public class Window {
         }
 
         glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_VISIBLE, 0);
+        glfwWindowHint(GLFW_RESIZABLE, 0);
 
         findGlslVersion();
 

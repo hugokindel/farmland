@@ -1,4 +1,4 @@
-package com.ustudents.engine.core.ecs;
+package com.ustudents.engine.ecs;
 
 /** Defines a component from an ECS point of view (a structure of data). */
 public class Component {

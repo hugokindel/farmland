@@ -1,14 +1,14 @@
-package com.ustudents.farmland.system;
+package com.ustudents.engine.ecs.system;
 
-import com.ustudents.engine.core.ecs.Entity;
-import com.ustudents.engine.core.ecs.Registry;
-import com.ustudents.engine.core.ecs.System;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.Registry;
+import com.ustudents.engine.ecs.System;
 import com.ustudents.engine.graphic.Spritebatch;
-import com.ustudents.farmland.component.SpriteComponent;
-import com.ustudents.farmland.component.TransformComponent;
+import com.ustudents.engine.ecs.component.SpriteComponent;
+import com.ustudents.engine.ecs.component.TransformComponent;
 
-public class RenderSystem extends System {
-    public RenderSystem(Registry registry) {
+public class SpriteRenderSystem extends System {
+    public SpriteRenderSystem(Registry registry) {
         super(registry);
 
         requireComponent(TransformComponent.class);

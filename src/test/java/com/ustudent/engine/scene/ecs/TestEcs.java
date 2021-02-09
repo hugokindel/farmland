@@ -1,11 +1,11 @@
 package com.ustudent.engine.scene.ecs;
 
-import com.ustudents.engine.core.ecs.Entity;
-import com.ustudents.engine.core.ecs.Registry;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.Registry;
 import com.ustudents.farmland.component.BoxColliderComponent;
 import com.ustudents.farmland.component.CameraFollowComponent;
-import com.ustudents.farmland.component.SpriteComponent;
-import com.ustudents.farmland.component.TransformComponent;
+import com.ustudents.engine.ecs.component.SpriteComponent;
+import com.ustudents.engine.ecs.component.TransformComponent;
 import org.joml.Vector2f;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

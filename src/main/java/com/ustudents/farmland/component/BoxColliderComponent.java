@@ -1,6 +1,6 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.core.ecs.Component;
+import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 
 public class BoxColliderComponent extends Component {

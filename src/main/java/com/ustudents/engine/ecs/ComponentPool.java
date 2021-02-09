@@ -1,4 +1,4 @@
-package com.ustudents.engine.core.ecs;
+package com.ustudents.engine.ecs;
 
 import java.util.ArrayList;
 import java.util.HashMap;

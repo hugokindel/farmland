@@ -1,4 +1,4 @@
-package com.ustudents.engine.core.ecs;
+package com.ustudents.engine.ecs;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.scene.Scene;
