@@ -1,4 +1,4 @@
-package com.ustudent.farmland.ecs;
+package com.ustudent.engine.scene.ecs;
 
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.ecs.Registry;

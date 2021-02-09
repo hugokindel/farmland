@@ -1,4 +1,4 @@
-package com.ustudent.farmland.json;
+package com.ustudent.engine.core.json;
 
 import com.ustudents.engine.core.json.JsonWriter;
 import org.junit.jupiter.api.Test;
