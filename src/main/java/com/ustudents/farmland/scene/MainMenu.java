@@ -1,6 +1,6 @@
 package com.ustudents.farmland.scene;
 
-import com.ustudents.farmland.Farmland;
+import com.ustudents.engine.Game;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.graphics.imgui.ImGuiUtils;
 import imgui.ImGui;
@@ -21,8 +21,8 @@ public class MainMenu extends Scene {
         str = new ImString(5);
         flt = new float[1];
         showDemo = new ImBoolean(false);
-        vsyncCurrentState = Farmland.get().getVsync();
-        useVsync = new ImBoolean(Farmland.get().getVsync());
+        vsyncCurrentState = Game.get().getVsync();
+        useVsync = new ImBoolean(Game.get().getVsync());
 
         //Shader shader = Resources.loadShader("spritebatch");
     }
@@ -31,7 +31,7 @@ public class MainMenu extends Scene {
     public void update(double dt) {
         if (vsyncCurrentState != useVsync.get()) {
             vsyncCurrentState = useVsync.get();
-            Farmland.get().setVsync(vsyncCurrentState);
+            Game.get().setVsync(vsyncCurrentState);
         }
     }
 
@@ -46,19 +46,19 @@ public class MainMenu extends Scene {
         ImGui.begin("Main Menu");
 
         if (ImGui.button("Single Player Menu")) {
-            Farmland.get().getSceneManager().changeScene(SinglePlayerMenu.class);
+            Game.get().getSceneManager().changeScene(SinglePlayerMenu.class);
         }
         if (ImGui.button("Multi Player Menu")) {
-            Farmland.get().getSceneManager().changeScene(MultiPlayerMenu.class);
+            Game.get().getSceneManager().changeScene(MultiPlayerMenu.class);
         }
         if (ImGui.button("Option Menu")) {
-            Farmland.get().getSceneManager().changeScene(OptionMenu.class);
+            Game.get().getSceneManager().changeScene(OptionMenu.class);
         }
         if (ImGui.button("Credit Menu")) {
-            Farmland.get().getSceneManager().changeScene(CreditMenu.class);
+            Game.get().getSceneManager().changeScene(CreditMenu.class);
         }
         if (ImGui.button("Example Scene")) {
-            Farmland.get().getSceneManager().changeScene(ExampleScene.class);
+            Game.get().getSceneManager().changeScene(ExampleScene.class);
         }
         if (ImGui.button("Quit")) {
             System.exit(0);

@@ -1,6 +1,6 @@
 package com.ustudents.engine.input;
 
-import com.ustudents.farmland.Farmland;
+import com.ustudents.engine.Game;
 import org.lwjgl.glfw.*;
 
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
@@ -117,7 +117,7 @@ public class Input {
     }
 
     private static void hasScroll(){
-        glfwSetScrollCallback(Farmland.get().getWindow().getHandle(), scrollCallback = new GLFWScrollCallback() {
+        glfwSetScrollCallback(Game.get().getWindow().getHandle(), scrollCallback = new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
                 scrollX = xoffset;

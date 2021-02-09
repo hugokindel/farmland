@@ -27,14 +27,8 @@ public class SceneManager {
         debugTools = new Debugger();
     }
 
-    public <T extends Scene> void initialize(Class<T> classType, Object... args) {
+    public void initialize() {
         debugTools.initialize(this);
-
-        if (args.length == 0) {
-            changeScene(classType);
-        } else {
-            changeScene(classType, args);
-        }
     }
 
     /**

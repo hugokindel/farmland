@@ -1,6 +1,6 @@
 package com.ustudents.farmland.system;
 
-import com.ustudents.farmland.Farmland;
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.scene.ecs.Entity;
@@ -22,7 +22,7 @@ public class RenderSystem extends System {
             TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
             SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
 
-            if (Farmland.get().isDebugging()) {
+            if (Game.get().isDebugging()) {
                 Out.printlnDebug("Render entity " + Style.Bold + entity.getId() + Style.Reset + ": ");
                 Out.printlnDebug(" - " + transformComponent);
                 Out.printlnDebug(" - " + spriteComponent);

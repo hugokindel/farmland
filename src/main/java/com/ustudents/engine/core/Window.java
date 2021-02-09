@@ -1,7 +1,7 @@
 package com.ustudents.engine.core;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.input.Input;
-import com.ustudents.farmland.Farmland;
 import com.ustudents.engine.core.cli.print.Out;
 import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
@@ -79,7 +79,7 @@ public class Window {
         GL.createCapabilities();
         glClearColor(0.1725f, 0.1882f, 0.2117f, 1.0f);
 
-        if (Farmland.get().isDebugging()) {
+        if (Game.get().isDebugging()) {
             Out.printlnDebug("OpenGL version: " + glGetString(GL_VERSION));
             Out.printlnDebug("OpenGL vendor: " + glGetString(GL_VENDOR));
             Out.printlnDebug("OpenGL renderer: " + glGetString(GL_RENDERER));

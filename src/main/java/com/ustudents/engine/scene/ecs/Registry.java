@@ -1,6 +1,6 @@
 package com.ustudents.engine.scene.ecs;
 
-import com.ustudents.farmland.Farmland;
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.utility.TypeUtil;
@@ -177,7 +177,7 @@ public class Registry {
         entitiesToBeAdded.add(entity);
         totalNumberOfEntities++;
 
-        if (Farmland.get().isDebugging()) {
+        if (Game.get().isDebugging()) {
             Out.printlnDebug("entity " + Style.Bold + entityId + Style.Reset + ": created");
         }
 
@@ -202,7 +202,7 @@ public class Registry {
         entitiesToBeDeleted.add(entity);
         totalNumberOfEntities--;
 
-        if (Farmland.get().isDebugging()) {
+        if (Game.get().isDebugging()) {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": killed");
         }
     }
@@ -530,7 +530,7 @@ public class Registry {
         ((ComponentPool<T>)componentPools.get(componentId)).set(entityId, component);
         signaturePerEntity.get(entityId).set(componentId);
 
-        if (Farmland.get().isDebugging()) {
+        if (Game.get().isDebugging()) {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " + Style.Bold + component.getId() + Style.Reset + ": added");
         }
     }
@@ -616,7 +616,7 @@ public class Registry {
         ((ComponentPool<T>)componentPools.get(componentId)).remove(entityId);
         signaturePerEntity.get(entityId).clear(componentId);
 
-        if (Farmland.get().isDebugging()) {
+        if (Game.get().isDebugging()) {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " + Style.Bold + componentId + Style.Reset + ": removed");
         }
     }

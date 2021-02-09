@@ -1,7 +1,7 @@
 package com.ustudents.engine.graphics.imgui;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.graphics.imgui.annotation.Editable;
-import com.ustudents.farmland.Farmland;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.scene.ecs.Component;
@@ -33,14 +33,14 @@ public class Debugger {
 
     public void initialize(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
-        vsyncCurrentState = Farmland.get().getVsync();
-        useVsync = new ImBoolean(Farmland.get().getVsync());
+        vsyncCurrentState = Game.get().getVsync();
+        useVsync = new ImBoolean(Game.get().getVsync());
     }
 
     public void update(double dt) {
         if (useVsync != null && vsyncCurrentState != useVsync.get()) {
             vsyncCurrentState = useVsync.get();
-            Farmland.get().setVsync(vsyncCurrentState);
+            Game.get().setVsync(vsyncCurrentState);
         }
     }
 
@@ -67,7 +67,7 @@ public class Debugger {
         if (ImGui.beginMainMenuBar()) {
             if (ImGui.beginMenu("File")) {
                 if (ImGui.menuItem("Quit")) {
-                    Farmland.get().close();
+                    Game.get().close();
                 }
 
                 ImGui.endMenu();
@@ -292,8 +292,8 @@ public class Debugger {
 
         ImGui.begin("Performance counter", showPerformanceCounter);
 
-        int fps = Farmland.get().getTimer().getFPS();
-        double ms = BigDecimal.valueOf(Farmland.get().getTimer().getFrameDuration())
+        int fps = Game.get().getTimer().getFPS();
+        double ms = BigDecimal.valueOf(Game.get().getTimer().getFrameDuration())
                 .setScale(3, RoundingMode.HALF_UP).doubleValue();
 
         ImGui.text("FPS: " + fps);

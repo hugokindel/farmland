@@ -1,6 +1,6 @@
 package com.ustudents.engine.graphics;
 
-import com.ustudents.farmland.Farmland;
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -217,7 +217,7 @@ public class SpriteBatch {
     private boolean destroyed;
 
     public SpriteBatch() {
-        this(Objects.requireNonNull(Resources.loadShader("spritebatch")), Farmland.get().getSceneManager().getScene().getCamera());
+        this(Objects.requireNonNull(Resources.loadShader("spritebatch")), Game.get().getSceneManager().getScene().getCamera());
     }
 
     public SpriteBatch(Shader shader, Camera camera) {

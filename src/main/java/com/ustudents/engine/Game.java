@@ -40,6 +40,10 @@ public abstract class Game extends Runnable {
 
     protected boolean imGuiVisible;
 
+    private static Game game;
+
+    private static String instanceName;
+
     /** Class constructor. */
     public Game() {
         // Default values for options.
@@ -54,6 +58,8 @@ public abstract class Game extends Runnable {
         sceneManager = new SceneManager();
         imGuiManager = new ImGuiManager();
         timer = new Timer();
+        game = this;
+        instanceName = "game";
     }
 
     /**
@@ -64,6 +70,9 @@ public abstract class Game extends Runnable {
      */
     @Override
     public int run(String[] args) {
+        if (getClass().getAnnotation(Command.class) != null) {
+            instanceName = getClass().getAnnotation(Command.class).name();
+        }
         Out.start(args, false, false);
         if (!readArguments(args, getClass())) {
             return 1;
@@ -105,6 +114,7 @@ public abstract class Game extends Runnable {
         if (!noImGui) {
             imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
         }
+        sceneManager.initialize();
         initialize();
         window.show(true);
 
@@ -206,5 +216,13 @@ public abstract class Game extends Runnable {
 
     public void close() {
         shouldClose = true;
+    }
+
+    public static Game get() {
+        return game;
+    }
+
+    public static String getInstanceName() {
+        return instanceName;
     }
 }

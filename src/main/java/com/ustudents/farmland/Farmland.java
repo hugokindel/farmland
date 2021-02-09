@@ -7,13 +7,9 @@ import com.ustudents.farmland.scene.MainMenu;
 /** The main class of the project. */
 @Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
 public class Farmland extends Game {
-    public static Farmland get() {
-        return Main.farmland;
-    }
-
     @Override
     protected void initialize() {
-        sceneManager.initialize(MainMenu.class);
+        sceneManager.changeScene(MainMenu.class);
     }
 
     @Override

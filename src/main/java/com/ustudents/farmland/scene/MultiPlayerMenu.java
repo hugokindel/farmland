@@ -1,6 +1,6 @@
 package com.ustudents.farmland.scene;
 
-import com.ustudents.farmland.Farmland;
+import com.ustudents.engine.Game;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.graphics.imgui.ImGuiUtils;
 import imgui.ImGui;
@@ -23,10 +23,10 @@ public class MultiPlayerMenu extends Scene {
         ImGui.begin("Multiplayer Menu");
 
         if (ImGui.button("Main Menu")) {
-            Farmland.get().getSceneManager().changeScene(MainMenu.class);
+            Game.get().getSceneManager().changeScene(MainMenu.class);
         }
         if (ImGui.button("Waiting Room")) {
-            Farmland.get().getSceneManager().changeScene(WaitingRoom.class);
+            Game.get().getSceneManager().changeScene(WaitingRoom.class);
         }
 
         ImGui.end();

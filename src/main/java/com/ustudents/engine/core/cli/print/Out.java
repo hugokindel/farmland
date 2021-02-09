@@ -1,7 +1,6 @@
 package com.ustudents.engine.core.cli.print;
 
-import com.ustudents.farmland.Farmland;
-import com.ustudents.engine.core.cli.option.annotation.Command;
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.core.cli.print.style.TextColor;
 import com.ustudents.engine.core.Resources;
@@ -20,7 +19,7 @@ import java.util.Date;
 @SuppressWarnings({"unused"})
 public class Out {
     /** The prefix to use for every messages. */
-    private static final String basePrefix = "[" + Farmland.class.getAnnotation(Command.class).name().toLowerCase() + "]";
+    private static final String basePrefix = "[" + Game.getInstanceName().toLowerCase() + "]";
 
     /** The prefix to use for every info. */
     private static final String infoPrefix = "[info]";
@@ -94,7 +93,7 @@ public class Out {
             removeOldestLogFile();
             fileOutput = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
                     Resources.getLogsDirectory() +
-                            "/" + Farmland.class.getAnnotation(Command.class).name().toLowerCase() +
+                            "/" + Game.getInstanceName().toLowerCase() +
                             "-" + new SimpleDateFormat("yyyy_MM_dd-HH-mm-ss")
                             .format(new Date()) + ".log", false), StandardCharsets.UTF_8)));
         } catch (Exception e) {

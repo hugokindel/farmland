@@ -1,6 +1,6 @@
 package com.ustudents.farmland.scene;
 
-import com.ustudents.farmland.Farmland;
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.Scene;
@@ -98,7 +98,7 @@ public class ExampleScene extends Scene {
         ImGui.begin("Example Scene");
 
         if (ImGui.button("Main Menu")) {
-            Farmland.get().getSceneManager().changeScene(MainMenu.class);
+            Game.get().getSceneManager().changeScene(MainMenu.class);
         }
 
         ImGui.end();
