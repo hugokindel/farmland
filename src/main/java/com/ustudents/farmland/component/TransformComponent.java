@@ -1,6 +1,6 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.scene.ecs.Component;
+import com.ustudents.engine.core.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 

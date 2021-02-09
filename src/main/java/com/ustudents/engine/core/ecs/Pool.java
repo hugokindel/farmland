@@ -1,4 +1,4 @@
-package com.ustudents.engine.scene.ecs;
+package com.ustudents.engine.core.ecs;
 
 /** Interface for pools containing entities. */
 public interface Pool {

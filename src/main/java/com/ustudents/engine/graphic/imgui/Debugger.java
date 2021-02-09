@@ -4,8 +4,8 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.scene.SceneManager;
-import com.ustudents.engine.scene.ecs.Component;
-import com.ustudents.engine.scene.ecs.Entity;
+import com.ustudents.engine.core.ecs.Component;
+import com.ustudents.engine.core.ecs.Entity;
 import com.ustudents.engine.graphic.Camera;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -30,6 +30,7 @@ public class Debugger {
     private static ImBoolean useVsync;
     private int selectedInspectorEntity = -1;
     SceneManager sceneManager;
+    //private final Map<Integer, Map<Integer, Map<String, Object>>> values = new HashMap<>();
 
     public void initialize(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
@@ -200,9 +201,9 @@ public class Debugger {
             ImGui.separator();
 
             if (components.size() > 0) {
-                if (!values.containsKey(entityId)) {
+                /*if (!values.containsKey(entityId)) {
                     values.put(entityId, new HashMap<>());
-                }
+                }*/
 
                 for (Component component : components) {
                     if (ImGui.treeNode(component.getClass().getSimpleName())) {
@@ -222,15 +223,13 @@ public class Debugger {
         ImGui.end();
     }
 
-    private final Map<Integer, Map<Integer, Map<String, Object>>> values = new HashMap<>();
-
     private void drawEditableFields(int entityId, Component component) {
         int componentId = component.getId();
         ArrayList<Field> fields = new ArrayList<>(Arrays.asList(Runnable.class.getDeclaredFields()));
         fields.addAll(Arrays.asList(component.getClass().getDeclaredFields()));
         fields.removeIf(field -> !field.isAnnotationPresent(Editable.class));
 
-        if (!values.get(entityId).containsKey(componentId)) {
+        /*if (!values.get(entityId).containsKey(componentId)) {
             values.get(entityId).put(componentId, new HashMap<>());
 
             for (Field field : fields) {
@@ -261,17 +260,35 @@ public class Debugger {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
 
-        for (Field field : fields) {
-            ImGuiUtils.setEnabled(false);
+        try {
+            for (Field field : fields) {
+                ImGuiUtils.setEnabled(false);
 
-            String name = field.getName();
-            Class<?> type = field.getType();
-            Object value = values.get(entityId).get(componentId).get(field.getName());
-            drawField(name, type, value);
+                String name = field.getName();
+                Class<?> type = field.getType();
+                //Object value = values.get(entityId).get(componentId).get(field.getName());
+                Object value = null;
+                if (type == Vector2f.class) {
+                    Vector2f originalValue = (Vector2f)field.get(component);
+                    value = new float[]{originalValue.x, originalValue.y};
+                } else if (type == Float.class) {
+                    Float originalValue = (Float)field.get(component);
+                    value = new ImFloat(originalValue);
+                } else if (type == Integer.class) {
+                    Integer originalValue = (Integer)field.get(component);
+                    value = new ImInt(originalValue);
+                } else if (type == String.class) {
+                    String originalValue = (String)field.get(component);
+                    value = new ImString(originalValue);
+                }
+                drawField(name, type, value);
 
-            ImGuiUtils.setEnabled(true);
+                ImGuiUtils.setEnabled(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         component.renderImGui();

@@ -40,7 +40,7 @@ public class SceneManager {
      *
      * @return the scene.
      */
-    public <T extends Scene> T changeScene(Class<T> classType, Object... args) {
+    public <T extends Scene> void changeScene(Class<T> classType, Object... args) {
         if (args.length == 0) {
             scenes.add(TypeUtil.createInstance(classType));
         } else {
@@ -51,21 +51,21 @@ public class SceneManager {
 
         transitioningScene = true;
         scenes.get(index).create(this);
-
-        return (T)scenes.get(index);
     }
 
     /** Updates the scene. */
     public void update(double dt) {
         if (scenes.size() > currentSceneIndex) {
-            debugTools.update(dt);
             getScene().update(dt);
+            getScene().getRegistry().update(dt);
+            debugTools.update(dt);
         }
     }
 
     /** Renders the scene. */
     public void render() {
         if (scenes.size() > currentSceneIndex) {
+            getScene().getRegistry().render();
             getScene().render();
         }
     }
@@ -95,7 +95,7 @@ public class SceneManager {
     /** Updates the registry of the scene. */
     public void endFrame() {
         if (scenes.size() > currentSceneIndex) {
-            getScene().getRegistry().update();
+            getScene().getRegistry().updateEntities();
         }
     }
 

@@ -1,4 +1,7 @@
-package com.ustudents.engine.scene.ecs;
+package com.ustudents.engine.core.ecs;
+
+import com.ustudents.engine.Game;
+import com.ustudents.engine.scene.Scene;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -20,6 +23,14 @@ public class System {
         signature = new BitSet();
         entities = new ArrayList<>();
         this.registry = registry;
+    }
+
+    public void update(double dt) {
+
+    }
+
+    public void render() {
+
     }
 
     /**
@@ -54,5 +65,9 @@ public class System {
      */
     protected  <T extends Component> void requireComponent(Class<T> classType) {
         signature.set(registry.getComponentTypeRegistry().getIdForType(classType));
+    }
+
+    protected Scene getScene() {
+        return Game.get().getSceneManager().getScene();
     }
 }

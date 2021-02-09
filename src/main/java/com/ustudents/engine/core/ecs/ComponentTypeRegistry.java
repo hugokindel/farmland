@@ -1,4 +1,4 @@
-package com.ustudents.engine.scene.ecs;
+package com.ustudents.engine.core.ecs;
 
 import java.util.HashMap;
 

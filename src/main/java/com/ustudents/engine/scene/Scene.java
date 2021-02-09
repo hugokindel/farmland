@@ -1,6 +1,7 @@
 package com.ustudents.engine.scene;
 
-import com.ustudents.engine.scene.ecs.Registry;
+import com.ustudents.engine.graphic.SpriteBatch;
+import com.ustudents.engine.core.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
 
 /** Defines a scene element. */
@@ -13,6 +14,8 @@ public abstract class Scene {
 
     protected Camera camera;
 
+    protected SpriteBatch spriteBatch;
+
     /**
      * Initialize the variables of the scene.
      *
@@ -23,6 +26,7 @@ public abstract class Scene {
         this.sceneManager = sceneManager;
         this.camera = new Camera(1000, 50, 2000);
         this.camera.setSize(1280, 720);
+        this.spriteBatch = new SpriteBatch(this.camera);
     }
 
     /** Initialize the scene (called when created). */
@@ -53,5 +57,9 @@ public abstract class Scene {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
     }
 }

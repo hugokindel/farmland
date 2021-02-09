@@ -25,10 +25,10 @@ public class SpriteBatch {
         Vector4f region;
         Color color;
         float rotation;
-        int layer;
+        int zIndex;
 
-        public int getLayer() {
-            return layer;
+        public int getzIndex() {
+            return zIndex;
         }
     }
 
@@ -217,10 +217,14 @@ public class SpriteBatch {
     private boolean destroyed;
 
     public SpriteBatch() {
-        this(Objects.requireNonNull(Resources.loadShader("spritebatch")), Game.get().getSceneManager().getScene().getCamera());
+        this(Game.get().getSceneManager().getScene().getCamera());
     }
 
-    public SpriteBatch(Shader shader, Camera camera) {
+    public SpriteBatch(Camera camera) {
+        this(camera, Objects.requireNonNull(Resources.loadShader("spritebatch")));
+    }
+
+    public SpriteBatch(Camera camera, Shader shader) {
         this.elements = new ArrayList<>(2048);
         this.shader = shader;
         this.camera = camera;
@@ -254,11 +258,11 @@ public class SpriteBatch {
         }
     }
 
-    public void draw(Texture texture, Vector4i region, float x, float y, int layer) {
+    public void draw(Texture texture, Vector4i region, Vector2f position, int zIndex) {
         Element element = new Element();
 
         element.texture = texture;
-        element.position = new Vector2f(x, y);
+        element.position = new Vector2f(position.x, position.y);
         element.dimensions = new Vector2f(region.z, region.w);
         element.scale = new Vector2f(1.0f, 1.0f);
         element.origin = new Vector2f(0.0f, 0.0f);
@@ -268,7 +272,7 @@ public class SpriteBatch {
         );
         element.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         element.rotation = 0.0f;
-        element.layer = layer;
+        element.zIndex = zIndex;
 
         elements.add(element);
         size++;
@@ -280,7 +284,7 @@ public class SpriteBatch {
         }
 
         if (shouldSortByLayer) {
-            elements.sort(Comparator.comparingInt(Element::getLayer));
+            elements.sort(Comparator.comparingInt(Element::getzIndex));
         }
 
         renderer.draw();

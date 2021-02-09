@@ -1,7 +1,7 @@
 package com.ustudent.engine.scene.ecs;
 
-import com.ustudents.engine.scene.ecs.Entity;
-import com.ustudents.engine.scene.ecs.Registry;
+import com.ustudents.engine.core.ecs.Entity;
+import com.ustudents.engine.core.ecs.Registry;
 import com.ustudents.farmland.component.BoxColliderComponent;
 import com.ustudents.farmland.component.CameraFollowComponent;
 import com.ustudents.farmland.component.SpriteComponent;
@@ -23,7 +23,7 @@ public class TestEcs {
     public void testEntityCreation() {
         registry.createEntity();
 
-        registry.update();
+        registry.updateEntities();
 
         assertEquals(registry.getTotalNumberOfEntities(), 1);
         assertEquals(registry.getLastEntityNumber(), 1);
@@ -36,7 +36,7 @@ public class TestEcs {
         registry.createEntity();
         registry.createEntity();
 
-        registry.update();
+        registry.updateEntities();
 
         assertEquals(registry.getTotalNumberOfEntities(), 3);
         assertEquals(registry.getLastEntityNumber(), 3);
@@ -49,11 +49,11 @@ public class TestEcs {
     public void testEntityDestruction() {
         registry.createEntity();
 
-        registry.update();
+        registry.updateEntities();
 
         registry.killEntity(registry.getEntityById(0));
 
-        registry.update();
+        registry.updateEntities();
 
         assertEquals(registry.getTotalNumberOfEntities(), 0);
         assertEquals(registry.getLastEntityNumber(), 1);
@@ -66,7 +66,7 @@ public class TestEcs {
         entity.addComponent(TransformComponent.class);
         entity.addComponent(CameraFollowComponent.class);
 
-        registry.update();
+        registry.updateEntities();
 
         assertEquals(registry.getTotalNumberOfEntities(), 1);
         assertEquals(registry.getLastEntityNumber(), 1);
@@ -80,7 +80,7 @@ public class TestEcs {
         entity.addComponent(TransformComponent.class);
         entity.addComponent(CameraFollowComponent.class);
 
-        registry.update();
+        registry.updateEntities();
 
         entity.removeComponent(CameraFollowComponent.class);
 
@@ -129,7 +129,7 @@ public class TestEcs {
         player4.setParent(playerContainer);
         player1.getComponents();
 
-        registry.update();
+        registry.updateEntities();
 
         assertEquals(registry.getTotalNumberOfEntities(), 5);
         assertEquals(playerContainer.getName(), "player-container");

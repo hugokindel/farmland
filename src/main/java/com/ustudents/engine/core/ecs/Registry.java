@@ -1,4 +1,4 @@
-package com.ustudents.engine.scene.ecs;
+package com.ustudents.engine.core.ecs;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
@@ -652,7 +652,7 @@ public class Registry {
     }
 
     /** Updates the registry (takes care of all recently created entities and all recently killed entities). */
-    public void update() {
+    public void updateEntities() {
         addCreatedEntities();
         removeKilledEntities();
     }
@@ -670,6 +670,18 @@ public class Registry {
     /** @return the component type registry. */
     public ComponentTypeRegistry getComponentTypeRegistry() {
         return componentTypeRegistry;
+    }
+
+    public void update(double dt) {
+        for (Map.Entry<Integer, System> system : systems.entrySet()) {
+            system.getValue().update(dt);
+        }
+    }
+
+    public void render() {
+        for (Map.Entry<Integer, System> system : systems.entrySet()) {
+            system.getValue().render();
+        }
     }
 
     /** Add recently created entities to all systems. */
