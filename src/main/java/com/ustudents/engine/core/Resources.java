@@ -1,7 +1,7 @@
 package com.ustudents.engine.core;
 
-import com.ustudents.engine.graphics.Shader;
-import com.ustudents.engine.graphics.Texture;
+import com.ustudents.engine.graphic.Shader;
+import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.utility.FileUtil;

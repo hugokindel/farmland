@@ -5,7 +5,7 @@ import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.graphics.imgui.ImGuiManager;
+import com.ustudents.engine.graphic.imgui.ImGuiManager;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;

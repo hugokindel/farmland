@@ -1,7 +1,7 @@
 package com.ustudents.engine.scene;
 
 import com.ustudents.engine.scene.ecs.Registry;
-import com.ustudents.engine.graphics.Camera;
+import com.ustudents.engine.graphic.Camera;
 
 /** Defines a scene element. */
 public abstract class Scene {

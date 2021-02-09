@@ -1,4 +1,4 @@
-package com.ustudents.engine.graphics;
+package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.utility.FileUtil;
 

@@ -1,4 +1,4 @@
-package com.ustudents.engine.graphics.imgui;
+package com.ustudents.engine.graphic.imgui;
 
 import com.ustudents.engine.Game;
 import imgui.ImGui;

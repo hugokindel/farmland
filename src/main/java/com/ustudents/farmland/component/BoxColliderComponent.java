@@ -1,7 +1,7 @@
 package com.ustudents.farmland.component;
 
 import com.ustudents.engine.scene.ecs.Component;
-import com.ustudents.engine.graphics.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.imgui.annotation.Editable;
 
 public class BoxColliderComponent extends Component {
     @Editable

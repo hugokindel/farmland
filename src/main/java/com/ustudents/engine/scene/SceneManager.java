@@ -1,7 +1,7 @@
 package com.ustudents.engine.scene;
 
 import com.ustudents.engine.utility.TypeUtil;
-import com.ustudents.engine.graphics.imgui.Debugger;
+import com.ustudents.engine.graphic.imgui.Debugger;
 
 import java.util.ArrayList;
 import java.util.List;

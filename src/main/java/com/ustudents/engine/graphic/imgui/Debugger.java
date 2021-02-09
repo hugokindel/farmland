@@ -1,12 +1,12 @@
-package com.ustudents.engine.graphics.imgui;
+package com.ustudents.engine.graphic.imgui;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.graphics.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.scene.ecs.Component;
 import com.ustudents.engine.scene.ecs.Entity;
-import com.ustudents.engine.graphics.Camera;
+import com.ustudents.engine.graphic.Camera;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiTreeNodeFlags;

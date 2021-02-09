@@ -1,4 +1,4 @@
-package com.ustudents.engine.graphics;
+package com.ustudents.engine.graphic;
 
 import static org.lwjgl.opengl.GL33.*;
 

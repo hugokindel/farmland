@@ -1,4 +1,4 @@
-package com.ustudents.engine.graphics.imgui.annotation;
+package com.ustudents.engine.graphic.imgui.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
