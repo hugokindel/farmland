@@ -16,7 +16,6 @@ import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
 /** The main class of the project. */
-@Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
 public abstract class Game extends Runnable {
     @Option(names = "--no-ansi", description = "Disable ANSI code usage (useful for Windows compatibility).")
     protected boolean noAnsiCodes;
