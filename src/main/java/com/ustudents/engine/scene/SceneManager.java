@@ -63,9 +63,8 @@ public class SceneManager {
 
     /** Updates the scene. */
     public void update(double dt) {
-        debugTools.update(dt);
-
         if (scenes.size() > currentSceneIndex) {
+            debugTools.update(dt);
             getScene().update(dt);
         }
     }
@@ -78,9 +77,8 @@ public class SceneManager {
     }
 
     public void renderImGui() {
-        debugTools.renderImGui();
-
         if (scenes.size() > currentSceneIndex) {
+            debugTools.renderImGui();
             getScene().renderImGui();
         }
     }

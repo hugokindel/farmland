@@ -1,5 +1,6 @@
 package com.ustudents.engine.core.cli.option;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
@@ -45,6 +46,9 @@ public abstract class Runnable {
     protected <T extends Runnable> boolean readArguments(String[] args, Class<T> classWithArgs) {
         ArrayList<Field> fields = new ArrayList<>(Arrays.asList(Runnable.class.getDeclaredFields()));
         fields.addAll(Arrays.asList(classWithArgs.getDeclaredFields()));
+        if (classWithArgs.getSuperclass() == Game.class) {
+            fields.addAll(Arrays.asList(classWithArgs.getSuperclass().getDeclaredFields()));
+        }
         fields.removeIf(field -> !field.isAnnotationPresent(Option.class));
 
         for (String arg : args) {

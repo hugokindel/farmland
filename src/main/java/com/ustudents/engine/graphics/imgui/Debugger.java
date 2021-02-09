@@ -38,7 +38,7 @@ public class Debugger {
     }
 
     public void update(double dt) {
-        if (vsyncCurrentState != useVsync.get()) {
+        if (useVsync != null && vsyncCurrentState != useVsync.get()) {
             vsyncCurrentState = useVsync.get();
             Farmland.get().setVsync(vsyncCurrentState);
         }

@@ -22,7 +22,7 @@ public class RenderSystem extends System {
             TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
             SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
 
-            if (Farmland.isDebugging()) {
+            if (Farmland.get().isDebugging()) {
                 Out.printlnDebug("Render entity " + Style.Bold + entity.getId() + Style.Reset + ": ");
                 Out.printlnDebug(" - " + transformComponent);
                 Out.printlnDebug(" - " + spriteComponent);
