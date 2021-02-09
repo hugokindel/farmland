@@ -80,6 +80,7 @@ public class SceneManager {
     /** Destroys the scene. */
     public void destroy() {
         if (scenes.size() > currentSceneIndex) {
+            getScene().getSpriteBatch().destroy();
             getScene().destroy();
         }
     }
@@ -88,6 +89,12 @@ public class SceneManager {
         if (transitioningScene) {
             currentSceneIndex = scenes.size() - 1;
             scenes.get(currentSceneIndex).initialize();
+
+            if (currentSceneIndex > 0) {
+                scenes.get(currentSceneIndex - 1).getSpriteBatch().destroy();
+                scenes.get(currentSceneIndex - 1).destroy();
+            }
+
             transitioningScene = false;
         }
     }
