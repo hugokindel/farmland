@@ -1,6 +1,6 @@
 package com.ustudent.farmland.json;
 
-import com.ustudents.farmland.json.JsonReader;
+import com.ustudents.engine.core.json.JsonReader;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
