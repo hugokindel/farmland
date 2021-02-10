@@ -152,9 +152,7 @@ public class Window {
     }
 
     private void findGlslVersion() {
-        final boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
-
-        glslVersion = "#version 150";
+        glslVersion = "#version 330 core";
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
