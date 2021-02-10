@@ -4,6 +4,8 @@ import com.ustudents.farmland.cli.print.Out;
 import com.ustudents.farmland.common.Resources;
 import com.ustudents.farmland.core.Scene;
 import com.ustudents.farmland.ecs.Entity;
+import com.ustudents.farmland.event.EventDispatcher;
+import com.ustudents.farmland.event.EventListener;
 import com.ustudents.farmland.game.component.BoxColliderComponent;
 import com.ustudents.farmland.game.component.CameraFollowComponent;
 import com.ustudents.farmland.game.component.SpriteComponent;
@@ -58,8 +60,8 @@ public class ExampleScene extends Scene {
         player1.getComponents();
 
         shader = Resources.loadShader("spritebatch");
-        texture = Resources.loadTexture("lwjgl3.jpg");
-        texture2 = Resources.loadTexture("lwjgl3.jpg");
+        texture = Resources.loadTexture("forx.png");
+        texture2 = Resources.loadTexture("lwjgl.jpg");
         spriteBatch = new SpriteBatch();
     }
 
