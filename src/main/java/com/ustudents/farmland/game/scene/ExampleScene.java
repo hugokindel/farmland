@@ -4,6 +4,8 @@ import com.ustudents.farmland.cli.print.Out;
 import com.ustudents.farmland.common.Resources;
 import com.ustudents.farmland.core.Scene;
 import com.ustudents.farmland.ecs.Entity;
+import com.ustudents.farmland.event.EventDispatcher;
+import com.ustudents.farmland.event.EventListener;
 import com.ustudents.farmland.game.component.BoxColliderComponent;
 import com.ustudents.farmland.game.component.CameraFollowComponent;
 import com.ustudents.farmland.game.component.SpriteComponent;
