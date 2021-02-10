@@ -1,15 +1,16 @@
-package com.ustudents.farmland;
+package com.ustudents.examples;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.option.annotation.Command;
+import com.ustudents.examples.scenes.EcsExample;
 import com.ustudents.farmland.scene.MainMenu;
 
 /** The main class of the project. */
-@Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
-public class Farmland extends Game {
+@Command(name = "examples", version = "1.0.0", description = "Various examples.")
+public class Examples extends Game {
     @Override
     protected void initialize() {
-        sceneManager.changeScene(MainMenu.class);
+        sceneManager.changeScene(EcsExample.class);
     }
 
     @Override
