@@ -20,6 +20,14 @@ public class SceneManager {
         currentSceneIndex = 0;
     }
 
+    public <T extends Scene> void initialize(Class<T> classType, Object... args) {
+        if (args.length == 0) {
+            changeScene(classType);
+        } else {
+            changeScene(classType, args);
+        }
+    }
+
     /**
      * Creates a scene of the given type.
      *
@@ -63,6 +71,12 @@ public class SceneManager {
     public void render() {
         if (scenes.size() > currentSceneIndex) {
             getScene().render();
+        }
+    }
+
+    public void renderImGui() {
+        if (scenes.size() > currentSceneIndex) {
+            getScene().renderImGui();
         }
     }
 
