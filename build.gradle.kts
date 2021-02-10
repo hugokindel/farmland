@@ -21,6 +21,9 @@ if (os.isLinux) {
     lwjglNatives = "natives-macos"
 }
 
+// ImGui variables.
+var imGuiVersion = "1.80-1.5.0"
+
 // Set minimal JDK version.
 java.sourceCompatibility = JavaVersion.VERSION_11
 
@@ -30,6 +33,7 @@ application.mainClass.set("com.ustudents.farmland.Main")
 repositories {
     // Maven repository.
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -45,6 +49,11 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-openal::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-opengl::$lwjglNatives")
     runtimeOnly("org.lwjgl:lwjgl-stb::$lwjglNatives")
+
+    // ImGui
+    implementation("io.imgui.java:imgui-java-binding:$imGuiVersion")
+    implementation("io.imgui.java:imgui-java-lwjgl3:$imGuiVersion")
+    implementation("io.imgui.java:imgui-java-natives-windows:$imGuiVersion")
 
     // JOML library (math computations).
     implementation("org.joml:joml:1.10.0")
