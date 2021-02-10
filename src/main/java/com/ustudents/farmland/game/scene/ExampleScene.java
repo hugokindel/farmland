@@ -60,8 +60,8 @@ public class ExampleScene extends Scene {
         player1.getComponents();
 
         shader = Resources.loadShader("spritebatch");
-        texture = Resources.loadTexture("forx.png");
-        texture2 = Resources.loadTexture("lwjgl.jpg");
+        texture = Resources.loadTexture("lwjgl3.jpg");
+        texture2 = Resources.loadTexture("lwjgl3.jpg");
         spriteBatch = new SpriteBatch();
     }
 
