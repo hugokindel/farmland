@@ -21,7 +21,7 @@ public class Window {
     private long windowHandle;
     private String glslVersion;
 
-    public void initialize(String name, Vector2i size) {
+    public void initialize(String name, Vector2i size, boolean vsync) {
         this.name = name;
         this.size = size;
         this.glslVersion = "";
@@ -72,7 +72,7 @@ public class Window {
         }
 
         glfwMakeContextCurrent(windowHandle);
-        glfwSwapInterval(1);
+        setVsync(vsync);
 
         GL.createCapabilities();
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
@@ -147,5 +147,9 @@ public class Window {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         }
+    }
+
+    public void setVsync(boolean enabled) {
+        glfwSwapInterval(enabled ? 1 : 0);
     }
 }
