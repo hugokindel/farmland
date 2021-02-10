@@ -2,6 +2,8 @@
 
 Farmaland is a management game where you need to take care of your farm while being careful about the economy to stay in business while your competitors will try to put you out of business!
 
+![Farmland logo](https://hk-backup.s3.eu-west-3.amazonaws.com/images/farmland-hr.png)
+
 ## Features
 
 TODO
@@ -14,7 +16,7 @@ TODO
 
 ### From sources
 
-First of all, you need to clone the repository by using git clone `git@gaufre.informatique.univ-paris-diderot.fr:hugokindel/farmland.git` or git clone `https://gaufre.informatique.univ-paris-diderot.fr/hugokindel/farmland.git`
+First of all, you need to clone the repository by using `git clone git@gaufre.informatique.univ-paris-diderot.fr:hugokindel/farmland.git` or `git clone https://gaufre.informatique.univ-paris-diderot.fr/hugokindel/farmland.git`
 
 #### Compile with an IDE (if it supports Gradle):
 
@@ -33,11 +35,23 @@ If you got a binary release (containing all the libs, assets and the bin directo
 
 ## Third party libraries
 
-TODO
+- [LWJGL](https://www.glfw.org/)  
+  Gives access to other low level libraries (GLFW, OpenGL, OpenAL).
+- [GLFW](https://www.lwjgl.org/)  
+  Handles the window and the input.
+- [OpenGL](https://www.opengl.org/)  
+  Creates the rendering context and a way to communicate with the GPU.
+- [OpenAL](https://www.openal.org/)  
+  Handles the audio system.
+- [ImGui](https://github.com/ocornut/imgui) (with [imgui-java](https://github.com/SpaiR/imgui-java) as a binding)  
+  Permits to rapidly develop GUI to use within development for tools.
 
 ## Contributors
 
-TODO
+- [LE CORRE Léo](https://gaufre.informatique.univ-paris-diderot.fr/lecorre)
+- [KINDEL Hugo](https://gaufre.informatique.univ-paris-diderot.fr/hugokindel)
+- [PAULAS VICTOR Francis](https://gaufre.informatique.univ-paris-diderot.fr/paulasvi)
+- [JAUROYON Maxime](https://gaufre.informatique.univ-paris-diderot.fr/jauroyon)
 
 ## License
 
