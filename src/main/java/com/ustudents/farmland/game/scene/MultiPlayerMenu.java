@@ -11,6 +11,11 @@ public class MultiPlayerMenu extends Scene {
     }
 
     @Override
+    public void processInput() {
+
+    }
+
+    @Override
     public void update(double dt) {
 
     }
