@@ -27,11 +27,6 @@ public class MainMenu extends Scene {
     }
 
     @Override
-    public void processInput() {
-
-    }
-
-    @Override
     public void update(double dt) {
         if (vsyncCurrentState != useVsync.get()) {
             vsyncCurrentState = useVsync.get();
