@@ -105,7 +105,7 @@ public class TestEcs {
         player1.setParent(playerContainer);
 
         Entity player2 = registry.createEntity();
-        player2.addComponent(TransformComponent.class, new Vector2f(12, 67), new Vector2f(1, 1), 21.0);
+        player2.addComponent(TransformComponent.class, new Vector2f(12, 67), new Vector2f(1, 1));
         player2.addComponent(SpriteComponent.class, "player2.png");
         player2.addComponent(BoxColliderComponent.class, 50, 50);
         player2.addTag("players");
@@ -113,7 +113,7 @@ public class TestEcs {
         player2.setParent(playerContainer);
 
         Entity player3 = registry.createEntity();
-        player3.addComponent(TransformComponent.class, new Vector2f(876, 20), new Vector2f(1, 1), 57.0);
+        player3.addComponent(TransformComponent.class, new Vector2f(876, 20), new Vector2f(1, 1));
         player3.addComponent(SpriteComponent.class, "player3.png");
         player3.addComponent(BoxColliderComponent.class, 75, 75);
         player3.addTag("players");

@@ -1,5 +1,6 @@
 package com.ustudents.farmland.ecs;
 
+import java.util.List;
 import java.util.Set;
 
 /** Defines an entity object from an ECS point of view. */
@@ -38,6 +39,10 @@ public class Entity {
     /** @return its name. */
     public String getName() {
         return registry.getNameOfEntity(this);
+    }
+
+    public String getNameOrIdentifier() {
+        return hasName() ? getName() : getClass().getSimpleName() + getId();
     }
 
     /** @return if it has a name. */
@@ -114,7 +119,7 @@ public class Entity {
     }
 
     /** @return a set of its children. */
-    public Set<Entity> getChildren() {
+    public List<Entity> getChildren() {
         return registry.getChildrenOfEntity(this);
     }
 

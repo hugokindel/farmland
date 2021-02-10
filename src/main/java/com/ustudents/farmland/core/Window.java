@@ -1,7 +1,9 @@
 package com.ustudents.farmland.core;
 
+import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.cli.print.Out;
 import org.joml.Vector2i;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -9,10 +11,11 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL32.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -36,11 +39,11 @@ public class Window {
             throw new IllegalStateException(errorMessage);
         }
 
-        findGlslVersion();
-
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
+        findGlslVersion();
 
         input = new Input();
         windowHandle = glfwCreateWindow(size.x, size.y, name, NULL, NULL);
@@ -75,11 +78,18 @@ public class Window {
         setVsync(vsync);
 
         GL.createCapabilities();
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.1725f, 0.1882f, 0.2117f, 1.0f);
+
+        if (Farmland.isDebugging()) {
+            Out.printlnDebug("OpenGL version: " + glGetString(GL_VERSION));
+            Out.printlnDebug("OpenGL vendor: " + glGetString(GL_VENDOR));
+            Out.printlnDebug("OpenGL renderer: " + glGetString(GL_RENDERER));
+            Out.printlnDebug("OpenGL shading language version: " + glGetString(GL_SHADING_LANGUAGE_VERSION));
+        }
     }
 
     public void clear() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
 
     public void swap() {
@@ -90,7 +100,7 @@ public class Window {
         glfwFreeCallbacks(windowHandle);
         glfwDestroyWindow(windowHandle);
         glfwTerminate();
-        glfwSetErrorCallback(null).free();
+        Objects.requireNonNull(glfwSetErrorCallback(null)).free();
     }
 
     public void show(boolean show) {
@@ -133,20 +143,23 @@ public class Window {
         return glslVersion;
     }
 
+    public Vector2i getPosition() {
+        IntBuffer x = BufferUtils.createIntBuffer(1);
+        IntBuffer y = BufferUtils.createIntBuffer(1);
+
+        glfwGetWindowPos(windowHandle, x, y);
+
+        return new Vector2i(x.get(0), y.get(0));
+    }
+
     private void findGlslVersion() {
         final boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
 
-        if (isMac) {
-            glslVersion = "#version 150";
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);          // Required on Mac
-        } else {
-            glslVersion = "#version 130";
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-        }
+        glslVersion = "#version 150";
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     }
 
     public void setVsync(boolean enabled) {

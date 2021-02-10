@@ -23,9 +23,6 @@ public abstract class Scene {
     /** Initialize the scene (called when created). */
     public abstract void initialize();
 
-    /** Processes the input every frame. */
-    public abstract void processInput();
-
     /** Updates the logic every frame. */
     public abstract void update(double dt);
 

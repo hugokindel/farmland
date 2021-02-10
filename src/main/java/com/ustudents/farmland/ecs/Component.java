@@ -26,4 +26,8 @@ public class Component {
                 "id=" + id +
                 '}';
     }
+
+    public void renderImGui() {
+
+    }
 }

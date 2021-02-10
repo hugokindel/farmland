@@ -11,11 +11,6 @@ public class SinglePlayerMenu extends Scene{
     }
 
     @Override
-    public void processInput() {
-
-    }
-
-    @Override
     public void update(double dt) {
 
     }

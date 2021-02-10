@@ -11,10 +11,12 @@ import com.ustudents.farmland.core.SceneManager;
 import com.ustudents.farmland.core.Timer;
 import com.ustudents.farmland.core.Window;
 import com.ustudents.farmland.game.scene.ExampleScene;
+import com.ustudents.farmland.graphics.Texture;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
 
 /** The main class of the project. */
 @Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
@@ -40,12 +42,18 @@ public class Farmland extends Runnable {
 
     private final Timer timer;
 
+    private boolean shouldClose;
+
+    private boolean imGuiVisible;
+
     /** Class constructor. */
     public Farmland() {
         // Default values for options.
         noAnsiCodes = false;
         isDebugging = false;
         noImGui = false;
+        shouldClose = false;
+        imGuiVisible = true;
 
         // Game managers.
         window = new Window();
@@ -81,6 +89,10 @@ public class Farmland extends Runnable {
 
     /** Initialize everything. */
     private void initialize() {
+        if (isDebugging()) {
+            Out.printlnDebug("Initializing...");
+        }
+
         Resources.load();
 
         window.initialize("Farmland", new Vector2i(1280, 720), vsync);
@@ -90,31 +102,34 @@ public class Farmland extends Runnable {
         sceneManager.initialize(ExampleScene.class);
 
         window.show(true);
+
+        if (isDebugging()) {
+            Out.printlnDebug("Initialized.");
+        }
     }
 
     /** Starts the game loop. */
     private void loop() {
-        while (!window.shouldClose()) {
+        window.pollEvents();
+
+        while (!window.shouldClose() && !shouldClose) {
             if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
                 break;
             }
-            processInput();
+
             update();
             render();
-            sceneManager.updateRegistry();
+            sceneManager.endFrame();
             window.pollEvents();
         }
-    }
-
-    /** Processes the input. */
-    private void processInput() {
-        sceneManager.processInput();
     }
 
     /** Updates the game logic. */
     private void update() {
         timer.update();
-        Out.println(timer.getDeltaTime());
+        if (Input.isKeyPressed(GLFW.GLFW_KEY_F1)) {
+            imGuiVisible = !imGuiVisible;
+        }
         sceneManager.update(timer.getDeltaTime());
     }
 
@@ -122,11 +137,11 @@ public class Farmland extends Runnable {
     private void render() {
         timer.render();
         window.clear();
-        if (!noImGui) {
+        if (!noImGui && imGuiVisible) {
             imGuiManager.startFrame();
         }
         sceneManager.render();
-        if (!noImGui) {
+        if (!noImGui && imGuiVisible) {
             sceneManager.renderImGui();
             imGuiManager.endFrame();
         }
@@ -135,14 +150,22 @@ public class Farmland extends Runnable {
 
     /** Destroy everything. */
     private void destroy() {
+        if (isDebugging()) {
+            Out.printlnDebug("Destroying...");
+        }
+
         window.show(false);
         sceneManager.destroy();
-        if (!noImGui) {
+        if (!noImGui && imGuiVisible) {
             imGuiManager.destroy();
         }
         window.destroy();
 
-        Resources.save();
+        Resources.saveAndUnload();
+
+        if (isDebugging()) {
+            Out.printlnDebug("Destroyed.");
+        }
     }
 
     /** @return the scene manager. */
@@ -173,5 +196,9 @@ public class Farmland extends Runnable {
     public void setVsync(boolean vsync) {
         this.vsync = vsync;
         window.setVsync(vsync);
+    }
+
+    public void close() {
+        shouldClose = true;
     }
 }

@@ -1,6 +1,7 @@
 package com.ustudents.farmland.core;
 
 import com.ustudents.farmland.common.TypeUtil;
+import com.ustudents.farmland.graphics.tools.Debugger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +15,21 @@ public class SceneManager {
     /** The current scene ID. */
     int currentSceneIndex;
 
+    boolean transitioningScene;
+
+    Debugger debugTools;
+
     /** Class constructor. */
     public SceneManager() {
         scenes = new ArrayList<>();
         currentSceneIndex = 0;
+        transitioningScene = false;
+        debugTools = new Debugger();
     }
 
     public <T extends Scene> void initialize(Class<T> classType, Object... args) {
+        debugTools.initialize(this);
+
         if (args.length == 0) {
             changeScene(classType);
         } else {
@@ -46,22 +55,17 @@ public class SceneManager {
 
         int index = scenes.size() - 1;
 
-        currentSceneIndex = index;
+        transitioningScene = true;
         scenes.get(index).create(this);
         scenes.get(index).initialize();
 
         return (T)scenes.get(index);
     }
 
-    /** Processes input of the scene. */
-    public void processInput() {
-        if (scenes.size() > currentSceneIndex) {
-            getScene().processInput();
-        }
-    }
-
     /** Updates the scene. */
     public void update(double dt) {
+        debugTools.update(dt);
+
         if (scenes.size() > currentSceneIndex) {
             getScene().update(dt);
         }
@@ -75,6 +79,8 @@ public class SceneManager {
     }
 
     public void renderImGui() {
+        debugTools.renderImGui();
+
         if (scenes.size() > currentSceneIndex) {
             getScene().renderImGui();
         }
@@ -88,9 +94,13 @@ public class SceneManager {
     }
 
     /** Updates the registry of the scene. */
-    public void updateRegistry() {
+    public void endFrame() {
         if (scenes.size() > currentSceneIndex) {
             getScene().getRegistry().update();
+        }
+
+        if (transitioningScene) {
+            currentSceneIndex = scenes.size() - 1;
         }
     }
 

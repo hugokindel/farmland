@@ -41,10 +41,10 @@ public class Registry {
     private final Map<Integer, Entity> parentPerEntity;
 
     /** Map to keep track of children per entity. */
-    private final Map<Integer, Set<Entity>> childrenPerEntity;
+    private final Map<Integer, List<Entity>> childrenPerEntity;
 
     /** Set to keep track of entities at root (with no parent). */
-    private final Set<Entity> entitiesAtRoot;
+    private final List<Entity> entitiesAtRoot;
 
     /**
      * Set to keep track of entities that needs to be added to the systems (after being created),
@@ -81,7 +81,7 @@ public class Registry {
         tagsPerEntity = new HashMap<>();
         parentPerEntity = new HashMap<>();
         childrenPerEntity = new HashMap<>();
-        entitiesAtRoot = new HashSet<>();
+        entitiesAtRoot = new ArrayList<>();
         entitiesToBeAdded = new HashSet<>();
         entitiesToBeDeleted = new HashSet<>();
         componentPools = new ArrayList<>();
@@ -245,7 +245,7 @@ public class Registry {
      *
      * @return a set of entity.
      */
-    public Set<Entity> getEntitiesAtRoot() {
+    public List<Entity> getEntitiesAtRoot() {
         return entitiesAtRoot;
     }
 
@@ -436,7 +436,7 @@ public class Registry {
         parentPerEntity.put(entityId, parentEntity);
 
         if (!childrenPerEntity.containsKey(parentId)) {
-            childrenPerEntity.put(parentId, new HashSet<>());
+            childrenPerEntity.put(parentId, new ArrayList<>());
         }
 
         childrenPerEntity.get(parentId).add(entity);
@@ -496,11 +496,11 @@ public class Registry {
      * @param entity The entity.
      * @return a set of children.
      */
-    public Set<Entity> getChildrenOfEntity(Entity entity) {
+    public List<Entity> getChildrenOfEntity(Entity entity) {
         int entityId = entity.getId();
 
         if (!childrenPerEntity.containsKey(entityId)) {
-            return new HashSet<>();
+            return new ArrayList<>();
         }
 
         return childrenPerEntity.get(entityId);
