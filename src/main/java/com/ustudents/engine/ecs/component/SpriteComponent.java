@@ -24,6 +24,10 @@ public class SpriteComponent extends Component {
         this(texture, new Vector4i(0, 0, texture.getWidth(), texture.getHeight()), 0);
     }
 
+    public SpriteComponent(Texture texture, Vector4i textureRegion) {
+        this(texture, textureRegion, 0);
+    }
+
     public SpriteComponent(Texture texture, Vector4i textureRegion, int zIndex) {
         this.texture = texture;
         this.textureRegion = textureRegion;
