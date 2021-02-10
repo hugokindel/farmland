@@ -232,7 +232,7 @@ public class Spritebatch {
         this.destroyed = false;
         this.projection = new Matrix4f();
 
-        if (Game.get().isDebugging()) {
+        if (Game.isDebugging()) {
             Out.printlnDebug("Spritebatch created.");
         }
     }
@@ -242,7 +242,7 @@ public class Spritebatch {
             renderer.destroy();
             destroyed = true;
 
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Spritebatch destroyed.");
             }
         }

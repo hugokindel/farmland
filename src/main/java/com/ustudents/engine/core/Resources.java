@@ -160,7 +160,7 @@ public class Resources {
 
     public static Shader loadShader(String fileName) {
         if (!shaders.containsKey(fileName)) {
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Shader loaded: " + getShadersDirectory() + "/" + fileName + ".(vert|frag)");
             }
 
@@ -196,7 +196,7 @@ public class Resources {
 
     static void unloadShader(String fileName, boolean removeFromList) {
         if (shaders.containsKey(fileName)) {
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Shader unloaded: " + getShadersDirectory() + "/" + fileName + ".(vert|frag)");
             }
 
@@ -210,7 +210,7 @@ public class Resources {
 
     public static Texture loadTexture(String filePath) {
         if (!textures.containsKey(filePath)) {
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Texture loaded: " + getTexturesDirectory() + "/" + filePath + "");
             }
 
@@ -237,7 +237,7 @@ public class Resources {
 
     static void unloadTexture(String filePath, boolean removeFromList) {
         if (textures.containsKey(filePath)) {
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Texture unloaded: " + getTexturesDirectory() + "/" + filePath + "");
             }
 
