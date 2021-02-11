@@ -50,13 +50,22 @@ public class Registry {
      * Set to keep track of entities that needs to be added to the systems (after being created),
      * to make sure it does not perturb any game loop.
      */
-    private final Set<Entity> entitiesToBeAdded;
+    private final Set<Entity> entitiesToBeAddedToSystems;
 
     /**
      * Set to keep track of entities that needs to be deleted from the systems and memory (after being killed),
      * to make sure it does not perturb any game loop.
      */
-    private final Set<Entity> entitiesToBeDeleted;
+    private final Set<Entity> entitiesToBeRemovedFromEverything;
+
+    /** Set to keep track of entities that needs to be removed from the systems (generally only disabled entities). */
+    private final Set<Entity> entitiesToBeRemovedFromSystems;
+
+    /** Set to keep track of enabled entities. */
+    private final Set<Entity> enabledEntities;
+
+    /** Set to keep track of deleted entities. */
+    private final Set<Entity> disabledEntities;
 
     /** List to keep track of all component pools (list of components per type). */
     private final List<Pool> componentPools;
@@ -82,8 +91,11 @@ public class Registry {
         parentPerEntity = new HashMap<>();
         childrenPerEntity = new HashMap<>();
         entitiesAtRoot = new ArrayList<>();
-        entitiesToBeAdded = new HashSet<>();
-        entitiesToBeDeleted = new HashSet<>();
+        entitiesToBeAddedToSystems = new HashSet<>();
+        entitiesToBeRemovedFromEverything = new HashSet<>();
+        entitiesToBeRemovedFromSystems = new HashSet<>();
+        enabledEntities = new HashSet<>();
+        disabledEntities = new HashSet<>();
         componentPools = new ArrayList<>();
         freeIds = new ArrayDeque<>();
         componentTypeRegistry = new ComponentTypeRegistry();
@@ -173,8 +185,9 @@ public class Registry {
 
         entityPerIndex.put(entityId, entity);
         entitiesAtRoot.add(entity);
+        enabledEntities.add(entity);
         signaturePerEntity.put(entityId, new BitSet());
-        entitiesToBeAdded.add(entity);
+        entitiesToBeAddedToSystems.add(entity);
         totalNumberOfEntities++;
 
         if (Game.get().isDebugging()) {
@@ -199,12 +212,35 @@ public class Registry {
      * @param entity The entity.
      */
     public void killEntity(Entity entity) {
-        entitiesToBeDeleted.add(entity);
+        entitiesToBeRemovedFromEverything.add(entity);
         totalNumberOfEntities--;
 
         if (Game.get().isDebugging()) {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": killed");
         }
+    }
+
+    /**
+     * Enables or disables an entity (it will not be acting within the systems if it is disabled).
+     *
+     * @param entity The entity.
+     * @param enable If we should enable it or not.
+     */
+    public void setEnabledEntity(Entity entity, boolean enable) {
+        if (enable) {
+            enabledEntities.add(entity);
+            disabledEntities.remove(entity);
+            entitiesToBeAddedToSystems.add(entity);
+        } else {
+            enabledEntities.remove(entity);
+            disabledEntities.add(entity);
+            entitiesToBeRemovedFromSystems.add(entity);
+        }
+    }
+
+    /** @return if the entity is enabled. */
+    public boolean isEntityEnabled(Entity entity) {
+        return enabledEntities.contains(entity);
     }
 
     /**
@@ -531,7 +567,8 @@ public class Registry {
         signaturePerEntity.get(entityId).set(componentId);
 
         if (Game.get().isDebugging()) {
-            Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " + Style.Bold + component.getId() + Style.Reset + ": added");
+            Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " +
+                    Style.Bold + component.getId() + Style.Reset + ": added");
         }
     }
 
@@ -617,7 +654,8 @@ public class Registry {
         signaturePerEntity.get(entityId).clear(componentId);
 
         if (Game.get().isDebugging()) {
-            Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " + Style.Bold + componentId + Style.Reset + ": removed");
+            Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " +
+                    Style.Bold + componentId + Style.Reset + ": removed");
         }
     }
 
@@ -653,8 +691,27 @@ public class Registry {
 
     /** Updates the registry (takes care of all recently created entities and all recently killed entities). */
     public void updateEntities() {
-        addCreatedEntities();
-        removeKilledEntities();
+        addEntitiesToSystems();
+        removeEntitiesFromEverything();
+        removeEntitiesFromSystems();
+    }
+
+    /**
+     * Calls update on every systems.
+     *
+     * @param dt The delta time.
+     */
+    public void update(double dt) {
+        for (Map.Entry<Integer, System> system : systems.entrySet()) {
+            system.getValue().update(dt);
+        }
+    }
+
+    /** Calls render on every systems. */
+    public void render() {
+        for (Map.Entry<Integer, System> system : systems.entrySet()) {
+            system.getValue().render();
+        }
     }
 
     /** @return the total number of entities currently living. */
@@ -667,41 +724,50 @@ public class Registry {
         return lastEntityNumber;
     }
 
+    /** @return a set of enabled entities. */
+    public Set<Entity> getEnabledEntities() {
+        return enabledEntities;
+    }
+
+    /** @return a set of disabled entities. */
+    public Set<Entity> getDisabledEntities() {
+        return disabledEntities;
+    }
+
     /** @return the component type registry. */
     public ComponentTypeRegistry getComponentTypeRegistry() {
         return componentTypeRegistry;
     }
 
-    public void update(double dt) {
-        for (Map.Entry<Integer, System> system : systems.entrySet()) {
-            system.getValue().update(dt);
-        }
-    }
-
-    public void render() {
-        for (Map.Entry<Integer, System> system : systems.entrySet()) {
-            system.getValue().render();
-        }
-    }
-
-    /** Add recently created entities to all systems. */
-    private void addCreatedEntities() {
-        for (Entity entity : entitiesToBeAdded) {
+    /** Add recently created or enabled entities to all systems. */
+    private void addEntitiesToSystems() {
+        for (Entity entity : entitiesToBeAddedToSystems) {
             addEntityToSystems(entity);
         }
 
-        entitiesToBeAdded.clear();
+        entitiesToBeAddedToSystems.clear();
     }
 
-    /** Removes recently killed entities from all systems. */
-    private void removeKilledEntities() {
-        for (Entity entity : entitiesToBeDeleted) {
+    /** Remove all entities that are disabled from systems. */
+    private void removeEntitiesFromSystems() {
+        for (Entity entity : entitiesToBeRemovedFromSystems) {
+            removeEntityFromSystems(entity);
+        }
+
+        entitiesToBeRemovedFromSystems.clear();
+    }
+
+    /** Removes recently killed entities from everything. */
+    private void removeEntitiesFromEverything() {
+        for (Entity entity : entitiesToBeRemovedFromEverything) {
             removeEntityFromSystems(entity);
 
             int entityId = entity.getId();
 
             signaturePerEntity.remove(entityId);
             entityPerIndex.remove(entityId);
+            enabledEntities.remove(entity);
+            disabledEntities.remove(entity);
 
             for (Pool pool : componentPools) {
                 if (pool != null) {
@@ -714,6 +780,6 @@ public class Registry {
             removeAllTagsFromEntity(entity);
         }
 
-        entitiesToBeDeleted.clear();
+        entitiesToBeRemovedFromEverything.clear();
     }
 }

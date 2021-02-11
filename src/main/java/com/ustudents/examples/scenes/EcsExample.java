@@ -6,8 +6,6 @@ import com.ustudents.engine.ecs.component.SpriteComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.scene.Scene;
-import com.ustudents.farmland.component.BoxColliderComponent;
-import com.ustudents.farmland.component.CameraFollowComponent;
 import org.joml.Vector2f;
 
 public class EcsExample extends Scene {
@@ -16,7 +14,7 @@ public class EcsExample extends Scene {
     @Override
     public void initialize() {
         // Charge une texture.
-        texture = Resources.loadTexture("lwjgl3.jpg");
+        texture = Resources.loadTexture("forx.png");
 
         // Crée une nouvelle entité.
         Entity player1 = registry.createEntity();
