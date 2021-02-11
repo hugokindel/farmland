@@ -197,7 +197,7 @@ public class Camera {
     }
 
     public void setZoom(float value){
-        zoom = value;
+        reload(value);
     }
 
     public float getMinimalZoom() {

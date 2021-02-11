@@ -10,6 +10,12 @@ uniform float alpha;
 
 void main(void)
 {
-    color = vec4(colorTint.x, colorTint.y, colorTint.z, alpha * colorTint.w) *
+    vec4 extColor = vec4(colorTint.x, colorTint.y, colorTint.z, alpha * colorTint.w) *
     	texture(textureSampler, textureRegion);
+
+    	if (extColor.w == 1.0) {
+    		extColor.w = 0.0;
+    	}
+
+    	color = extColor;
 };

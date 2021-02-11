@@ -9,12 +9,14 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL32.*;
+import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -25,7 +27,7 @@ public class Window {
     private String glslVersion;
     public Input input;
 
-    public void initialize(String name, Vector2i size, boolean vsync) {
+    public void initialize(String name, Vector2i size, boolean vsync, String iconFilePath) {
         this.name = name;
         this.size = size;
         this.glslVersion = "";
@@ -85,6 +87,8 @@ public class Window {
             Out.printlnDebug("OpenGL renderer: " + glGetString(GL_RENDERER));
             Out.printlnDebug("OpenGL shading language version: " + glGetString(GL_SHADING_LANGUAGE_VERSION));
         }
+
+        setIcon(iconFilePath);
     }
 
     public void clear() {
@@ -151,6 +155,10 @@ public class Window {
         return new Vector2i(x.get(0), y.get(0));
     }
 
+    public void setVsync(boolean enabled) {
+        glfwSwapInterval(enabled ? 1 : 0);
+    }
+
     private void findGlslVersion() {
         glslVersion = "#version 330 core";
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -159,7 +167,24 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     }
 
-    public void setVsync(boolean enabled) {
-        glfwSwapInterval(enabled ? 1 : 0);
+    private void setIcon(String filePath) {
+        ByteBuffer imageBuffer;
+        int width, heigh;
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer comp = stack.mallocInt(1);
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+
+            imageBuffer = stbi_load(Resources.getTexturesDirectory() + "/" + filePath, w, h, comp, 4);
+            if (imageBuffer == null) {
+                throw new IllegalStateException("Failed to load window icon.");
+            }
+            width = w.get();
+            heigh = h.get();
+        }
+        GLFWImage image = GLFWImage.malloc(); GLFWImage.Buffer imagebf = GLFWImage.malloc(1);
+        image.set(width, heigh, imageBuffer);
+        imagebf.put(0, image);
+        glfwSetWindowIcon(windowHandle, imagebf);
     }
 }

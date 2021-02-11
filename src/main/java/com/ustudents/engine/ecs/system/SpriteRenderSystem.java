@@ -21,7 +21,7 @@ public class SpriteRenderSystem extends System {
             return;
         }
 
-        Spritebatch spriteBatch = getScene().getSpriteBatch();
+        Spritebatch spriteBatch = getScene().getSpritebatch();
 
         spriteBatch.begin();
 

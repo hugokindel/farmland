@@ -1,6 +1,9 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.graphic.TruetypeFont;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import imgui.ImGui;
@@ -15,9 +18,12 @@ public class MainMenu extends Scene {
     private static ImBoolean showDemo;
     private static boolean vsyncCurrentState;
     private static ImBoolean useVsync;
+    private TruetypeFont truetypeFont;
 
     @Override
     public void initialize() {
+        camera.setZoom(50);
+
         str = new ImString(5);
         flt = new float[1];
         showDemo = new ImBoolean(false);
@@ -25,6 +31,13 @@ public class MainMenu extends Scene {
         useVsync = new ImBoolean(Game.get().getVsync());
 
         //Shader shader = Resources.loadShader("spritebatch");
+
+        truetypeFont = Resources.loadFont("EquipmentPro.ttf");
+        Out.printlnDebug(truetypeFont.isDestroyed());
+
+        //Entity entity = registry.createEntity();
+        //entity.addComponent(TransformComponent.class);
+        //entity.addComponent(SpriteComponent.class, truetypeFont.getTexture());
     }
 
     @Override
@@ -37,7 +50,10 @@ public class MainMenu extends Scene {
 
     @Override
     public void render() {
-
+        //spritebatch.begin();
+        //spritebatch.draw(truetypeFont.getTexture());
+        //spritebatch.end();
+        truetypeFont.render("Forx", spritebatch);
     }
 
     @Override

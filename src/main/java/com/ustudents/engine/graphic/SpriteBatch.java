@@ -8,6 +8,7 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.joml.Vector4i;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.stb.STBTTAlignedQuad;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -16,6 +17,11 @@ import java.util.*;
 import static org.lwjgl.opengl.GL33.*;
 
 public class Spritebatch {
+    public enum ElementType {
+        Sprite,
+        TruetypeFont
+    }
+
     public static class Element
     {
         Texture texture;
@@ -27,6 +33,8 @@ public class Spritebatch {
         Color color;
         float rotation;
         int zIndex;
+        ElementType type;
+        TruetypeFont.AlignedQuad q;
 
         public int getzIndex() {
             return zIndex;
@@ -100,37 +108,71 @@ public class Spritebatch {
         }
 
         public void putElement(Spritebatch.Element element) {
-            // Top left (0).
-            putVertex(new Vector4f(
-                    element.scale.x * element.position.x,
-                    element.scale.y * element.position.y,
-                    element.region.x,
-                    element.region.y
-            ), element.color);
+            if (element.type == ElementType.Sprite) {
+                // Top left (0).
+                putVertex(new Vector4f(
+                        element.scale.x * element.position.x,
+                        element.scale.y * element.position.y,
+                        element.region.x,
+                        element.region.y
+                ), element.color);
 
-            // Top right (1).
-            putVertex(new Vector4f(
-                    element.scale.x * (element.position.x + element.dimensions.x),
-                    element.scale.y * element.position.y,
-                    element.region.z,
-                    element.region.y
-            ), element.color);
+                // Top right (1).
+                putVertex(new Vector4f(
+                        element.scale.x * (element.position.x + element.dimensions.x),
+                        element.scale.y * element.position.y,
+                        element.region.z,
+                        element.region.y
+                ), element.color);
 
-            // Bottom left (2).
-            putVertex(new Vector4f(
-                    element.scale.x * element.position.x,
-                    element.scale.y * (element.position.y  + element.dimensions.y),
-                    element.region.x,
-                    element.region.w
-            ), element.color);
+                // Bottom left (2).
+                putVertex(new Vector4f(
+                        element.scale.x * element.position.x,
+                        element.scale.y * (element.position.y  + element.dimensions.y),
+                        element.region.x,
+                        element.region.w
+                ), element.color);
 
-            // Bottom right (3).
-            putVertex(new Vector4f(
-                    element.scale.x * (element.position.x + element.dimensions.x),
-                    element.scale.y * (element.position.y + element.dimensions.y),
-                    element.region.z,
-                    element.region.w
-            ), element.color);
+                // Bottom right (3).
+                putVertex(new Vector4f(
+                        element.scale.x * (element.position.x + element.dimensions.x),
+                        element.scale.y * (element.position.y + element.dimensions.y),
+                        element.region.z,
+                        element.region.w
+                ), element.color);
+            } else {
+                // Top left (0).
+                putVertex(new Vector4f(
+                        element.q.x0,
+                        element.q.y0,
+                        element.q.s0,
+                        element.q.t0
+                ), element.color);
+
+                // Top right (1).
+                putVertex(new Vector4f(
+                        element.q.x1,
+                        element.q.y0,
+                        element.q.s1,
+                        element.q.t0
+                ), element.color);
+
+                // Bottom left (2).
+                putVertex(new Vector4f(
+                        element.q.x0,
+                        element.q.y1,
+                        element.q.s0,
+                        element.q.t1
+                ), element.color);
+
+                // Bottom right (3).
+                putVertex(new Vector4f(
+                        element.q.x1,
+                        element.q.y1,
+                        element.q.s1,
+                        element.q.t1
+                ), element.color);
+            }
         }
 
         public void putVertex(Vector4f position, Color colorTint) {
@@ -266,6 +308,10 @@ public class Spritebatch {
         }
     }
 
+    public void draw(Texture texture) {
+        draw(texture, new Vector4i(0, 0, texture.getWidth(), texture.getHeight()), new Vector2f(0.0f, 0.0f), 0);
+    }
+
     public void draw(Texture texture, Vector4i region, Vector2f position, int zIndex) {
         Element element = new Element();
 
@@ -281,6 +327,26 @@ public class Spritebatch {
         element.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         element.rotation = 0.0f;
         element.zIndex = zIndex;
+        element.type = ElementType.Sprite;
+
+        elements.add(element);
+        size++;
+    }
+
+    public void drawFont(String text, TruetypeFont font, TruetypeFont.AlignedQuad q) {
+        Element element = new Element();
+
+        element.texture = font.getTexture();
+        element.position = new Vector2f(0, 0);
+        element.dimensions = new Vector2f();
+        element.scale = new Vector2f(1.0f, 1.0f);
+        element.origin = new Vector2f(0.0f, 0.0f);
+        element.region = new Vector4f();
+        element.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        element.rotation = 0.0f;
+        element.zIndex = 0;
+        element.type = ElementType.TruetypeFont;
+        element.q = q;
 
         elements.add(element);
         size++;

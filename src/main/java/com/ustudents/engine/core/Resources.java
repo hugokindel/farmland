@@ -2,6 +2,7 @@ package com.ustudents.engine.core;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.graphic.TruetypeFont;
 import com.ustudents.engine.graphic.Shader;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.core.json.JsonReader;
@@ -22,6 +23,7 @@ public class Resources {
     private static final String logsDirectoryName = "logs";
     private static final String shadersDirectoryName = "shaders";
     private static final String texturesDirectoryName = "textures";
+    private static final String fontsDirectoryName = "fonts";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
@@ -29,6 +31,7 @@ public class Resources {
     private static Map<String, Object> settings;
     private static Map<String, Shader> shaders;
     private static Map<String, Texture> textures;
+    private static Map<String, TruetypeFont> fonts;
 
     /**
      * Gets the data directory's path.
@@ -54,6 +57,10 @@ public class Resources {
 
     public static String getTexturesDirectory() {
         return createPathIfNeeded(getDataDirectory() + "/" + texturesDirectoryName);
+    }
+
+    public static String getFontsDirectory() {
+        return createPathIfNeeded(getDataDirectory() + "/" + fontsDirectoryName);
     }
 
     /**
@@ -111,6 +118,7 @@ public class Resources {
 
         shaders = new HashMap<>();
         textures = new HashMap<>();
+        fonts = new HashMap<>();
     }
 
     /** Saves everything. */
@@ -126,6 +134,12 @@ public class Resources {
         }
 
         textures.clear();
+
+        for (Map.Entry<String, TruetypeFont> fontSet : fonts.entrySet()) {
+            unloadFont(fontSet.getKey(), false);
+        }
+
+        fonts.clear();
 
         saveSettings();
     }
@@ -183,7 +197,7 @@ public class Resources {
             return loadShader(fileName);
         }
 
-        return shaders.get(fileName);
+        return shader;
     }
 
     public static Shader getShader(String fileName) {
@@ -224,7 +238,7 @@ public class Resources {
             return loadTexture(filePath);
         }
 
-        return textures.get(filePath);
+        return texture;
     }
 
     public static Texture getTexture(String filePath) {
@@ -245,6 +259,47 @@ public class Resources {
 
             if (removeFromList) {
                 textures.remove(filePath);
+            }
+        }
+    }
+
+    public static TruetypeFont loadFont(String filePath) {
+        if (!fonts.containsKey(filePath)) {
+            if (Game.isDebugging()) {
+                Out.printlnDebug("Font loaded: " + getFontsDirectory() + "/" + filePath + "");
+            }
+
+            fonts.put(filePath, new TruetypeFont(getFontsDirectory() + "/" + filePath));
+        }
+
+        TruetypeFont font = fonts.get(filePath);
+
+        if (font.isDestroyed()) {
+            fonts.remove(filePath);
+            return loadFont(filePath);
+        }
+
+        return font;
+    }
+
+    public static TruetypeFont getFont(String filePath) {
+        return fonts.get(filePath);
+    }
+
+    public static void unloadFont(String filePath) {
+        unloadFont(filePath, true);
+    }
+
+    static void unloadFont(String filePath, boolean removeFromList) {
+        if (fonts.containsKey(filePath)) {
+            if (Game.isDebugging()) {
+                Out.printlnDebug("Font unloaded: " + getFontsDirectory() + "/" + filePath + "");
+            }
+
+            fonts.get(filePath).destroy();
+
+            if (removeFromList) {
+                fonts.remove(filePath);
             }
         }
     }

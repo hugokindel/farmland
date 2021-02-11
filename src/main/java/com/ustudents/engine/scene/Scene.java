@@ -15,7 +15,7 @@ public abstract class Scene {
 
     protected Camera camera;
 
-    protected Spritebatch spriteBatch;
+    protected Spritebatch spritebatch;
 
     /**
      * Initialize the variables of the scene.
@@ -27,7 +27,7 @@ public abstract class Scene {
         this.sceneManager = sceneManager;
         this.camera = new Camera(1000, 50, 2000);
         this.camera.setSize(1280, 720);
-        this.spriteBatch = new Spritebatch(this.camera);
+        this.spritebatch = new Spritebatch(this.camera);
     }
 
     /** Initialize the scene (called when created). */
@@ -65,7 +65,7 @@ public abstract class Scene {
         return camera;
     }
 
-    public Spritebatch getSpriteBatch() {
-        return spriteBatch;
+    public Spritebatch getSpritebatch() {
+        return spritebatch;
     }
 }

@@ -2,6 +2,7 @@ package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.utility.FileUtil;
 
+import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.*;
 
 import java.nio.*;
@@ -9,6 +10,7 @@ import java.nio.*;
 import static java.lang.Math.*;
 import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.stb.STBImage.*;
+import static org.lwjgl.stb.STBImageWrite.stbi_write_png;
 import static org.lwjgl.system.MemoryStack.*;
 
 public class Texture {
@@ -21,6 +23,12 @@ public class Texture {
 
     public Texture(String filePath) {
         loadTexture(filePath);
+        handle = createTexture();
+        destroyed = false;
+    }
+
+    public Texture(ByteBuffer data, int width, int height, int numberOfComponents) {
+        loadTexture(data, width, height, numberOfComponents);
         handle = createTexture();
         destroyed = false;
     }
@@ -56,6 +64,14 @@ public class Texture {
         return destroyed;
     }
 
+    public ByteBuffer getData() {
+        return data;
+    }
+
+    public void saveToPng(String filePath) {
+        stbi_write_png(filePath, width, handle, numberOfComponents, data, 0);
+    }
+
     private void loadTexture(String filePath) {
         ByteBuffer imageBuffer = FileUtil.readFile(filePath);
         assert imageBuffer != null;
@@ -76,6 +92,13 @@ public class Texture {
         }
     }
 
+    private void loadTexture(ByteBuffer data, int width, int height, int numberOfComponents) {
+        this.data = data;
+        this.width = width;
+        this.height = height;
+        this.numberOfComponents = numberOfComponents;
+    }
+
     private int createTexture() {
         int id = glGenTextures();
 
@@ -83,7 +106,7 @@ public class Texture {
 
         // TODO: Make customizable (for pixel textures and others).
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -93,11 +116,15 @@ public class Texture {
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (width & 1));
             }
             format = GL_RGB;
-        } else {
+        } else if (numberOfComponents == 4) {
             premultiplyAlpha();
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             format = GL_RGBA;
+        } else {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            format = GL_RED;
         }
 
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
