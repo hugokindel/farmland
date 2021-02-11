@@ -82,7 +82,7 @@ public class SceneManager {
             getScene().getSpriteBatch().destroy();
             getScene().destroy();
 
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Scene destroyed.");
             }
         }
@@ -96,7 +96,7 @@ public class SceneManager {
                 scenes.get(currentSceneIndex - 1).getSpriteBatch().destroy();
                 scenes.get(currentSceneIndex - 1).destroy();
 
-                if (Game.get().isDebugging()) {
+                if (Game.isDebugging()) {
                     Out.printlnDebug("Previous scene destroyed.");
                 }
             }
@@ -106,7 +106,7 @@ public class SceneManager {
 
             transitioningScene = false;
 
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("New scene created.");
             }
         }
