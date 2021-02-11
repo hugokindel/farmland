@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 /** Defines an entity object from an ECS point of view. */
+@SuppressWarnings({"unused"})
 public class Entity {
     /** The unique ID. */
     private final Integer id;
@@ -176,6 +177,20 @@ public class Entity {
      */
     public <T extends Component> void removeComponent(Class<T> classType) {
         registry.removeComponentFromEntity(this, classType);
+    }
+
+    /**
+     * Enables or disables an entity (a disabled entity cannot interact with the systems).
+     *
+     * @param enabled If it should be enabled or not.
+     */
+    public void setEnabled(boolean enabled) {
+        registry.setEnabledEntity(this, enabled);
+    }
+
+    /** @return if the entity is enabled. */
+    public boolean isEnabled() {
+        return registry.isEntityEnabled(this);
     }
 
     /** @return its ID. */
