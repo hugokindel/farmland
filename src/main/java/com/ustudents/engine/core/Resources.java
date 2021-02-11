@@ -116,12 +116,16 @@ public class Resources {
     /** Saves everything. */
     public static void saveAndUnload() {
         for (Map.Entry<String, Shader> shaderSet : shaders.entrySet()) {
-            unloadShader(shaderSet.getKey());
+            unloadShader(shaderSet.getKey(), false);
         }
 
+        shaders.clear();
+
         for (Map.Entry<String, Texture> texuresSet : textures.entrySet()) {
-            unloadTexture(texuresSet.getKey());
+            unloadTexture(texuresSet.getKey(), false);
         }
+
+        textures.clear();
 
         saveSettings();
     }
@@ -156,7 +160,7 @@ public class Resources {
 
     public static Shader loadShader(String fileName) {
         if (!shaders.containsKey(fileName)) {
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Shader loaded: " + getShadersDirectory() + "/" + fileName + ".(vert|frag)");
             }
 
@@ -172,6 +176,13 @@ public class Resources {
             }
         }
 
+        Shader shader = shaders.get(fileName);
+
+        if (shader.isDestroyed()) {
+            shaders.remove(fileName);
+            return loadShader(fileName);
+        }
+
         return shaders.get(fileName);
     }
 
@@ -180,23 +191,37 @@ public class Resources {
     }
 
     public static void unloadShader(String fileName) {
+        unloadShader(fileName, true);
+    }
+
+    static void unloadShader(String fileName, boolean removeFromList) {
         if (shaders.containsKey(fileName)) {
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Shader unloaded: " + getShadersDirectory() + "/" + fileName + ".(vert|frag)");
             }
 
             shaders.get(fileName).destroy();
-            shaders.remove(fileName);
+
+            if (removeFromList) {
+                shaders.remove(fileName);
+            }
         }
     }
 
     public static Texture loadTexture(String filePath) {
         if (!textures.containsKey(filePath)) {
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Texture loaded: " + getTexturesDirectory() + "/" + filePath + "");
             }
 
             textures.put(filePath, new Texture(getTexturesDirectory() + "/" + filePath));
+        }
+
+        Texture texture = textures.get(filePath);
+
+        if (texture.isDestroyed()) {
+            textures.remove(filePath);
+            return loadTexture(filePath);
         }
 
         return textures.get(filePath);
@@ -207,13 +232,20 @@ public class Resources {
     }
 
     public static void unloadTexture(String filePath) {
+        unloadTexture(filePath, true);
+    }
+
+    static void unloadTexture(String filePath, boolean removeFromList) {
         if (textures.containsKey(filePath)) {
-            if (Game.get().isDebugging()) {
+            if (Game.isDebugging()) {
                 Out.printlnDebug("Texture unloaded: " + getTexturesDirectory() + "/" + filePath + "");
             }
 
             textures.get(filePath).destroy();
-            textures.remove(filePath);
+
+            if (removeFromList) {
+                textures.remove(filePath);
+            }
         }
     }
 }

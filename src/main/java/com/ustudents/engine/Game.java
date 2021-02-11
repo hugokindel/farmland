@@ -201,8 +201,8 @@ public abstract class Game extends Runnable {
         return timer;
     }
 
-    public boolean isDebugging() {
-        return isDebugging;
+    public static boolean isDebugging() {
+        return get() != null && get().isDebugging;
     }
 
     public boolean getVsync() {

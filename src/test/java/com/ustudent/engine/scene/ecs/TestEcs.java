@@ -97,33 +97,24 @@ public class TestEcs {
 
         Entity player1 = registry.createEntity();
         player1.addComponent(TransformComponent.class, new Vector2f(57, 52), new Vector2f(1, 1));
-        player1.addComponent(SpriteComponent.class, "player1.png");
-        player1.addComponent(CameraFollowComponent.class);
-        player1.addComponent(BoxColliderComponent.class, 50, 50);
         player1.addTag("players");
         player1.setName("player1");
         player1.setParent(playerContainer);
 
         Entity player2 = registry.createEntity();
-        player2.addComponent(TransformComponent.class, new Vector2f(12, 67), new Vector2f(1, 1), 21.0);
-        player2.addComponent(SpriteComponent.class, "player2.png");
-        player2.addComponent(BoxColliderComponent.class, 50, 50);
+        player2.addComponent(TransformComponent.class, new Vector2f(12, 67), new Vector2f(1, 1));
         player2.addTag("players");
         player2.setName("player2");
         player2.setParent(playerContainer);
 
         Entity player3 = registry.createEntity();
-        player3.addComponent(TransformComponent.class, new Vector2f(876, 20), new Vector2f(1, 1), 57.0);
-        player3.addComponent(SpriteComponent.class, "player3.png");
-        player3.addComponent(BoxColliderComponent.class, 75, 75);
+        player3.addComponent(TransformComponent.class, new Vector2f(876, 20), new Vector2f(1, 1));
         player3.addTag("players");
         player3.setName("player3");
         player3.setParent(playerContainer);
 
         Entity player4 = registry.createEntity();
         player4.addComponent(TransformComponent.class, new Vector2f(78, 1), new Vector2f(1, 1));
-        player4.addComponent(SpriteComponent.class, "player4.png");
-        player4.addComponent(BoxColliderComponent.class, 80, 80);
         player4.addTag("players");
         player4.setName("player4");
         player4.setParent(playerContainer);

@@ -79,7 +79,7 @@ public class Window {
         GL.createCapabilities();
         glClearColor(0.1725f, 0.1882f, 0.2117f, 1.0f);
 
-        if (Game.get().isDebugging()) {
+        if (Game.isDebugging()) {
             Out.printlnDebug("OpenGL version: " + glGetString(GL_VERSION));
             Out.printlnDebug("OpenGL vendor: " + glGetString(GL_VENDOR));
             Out.printlnDebug("OpenGL renderer: " + glGetString(GL_RENDERER));
@@ -152,9 +152,7 @@ public class Window {
     }
 
     private void findGlslVersion() {
-        final boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
-
-        glslVersion = "#version 150";
+        glslVersion = "#version 330 core";
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

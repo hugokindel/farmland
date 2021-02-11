@@ -308,6 +308,10 @@ public class Shader {
         glVertexAttrib4f(findAttributeLocation(name), value1, value2, value3, value4);
     }
 
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
     public int findAttributeLocation(String name) {
         for (VertexVariable attribute : vertexAttributes) {
             if (attribute.name.equals(name)) {

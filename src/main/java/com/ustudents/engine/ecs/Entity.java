@@ -42,8 +42,9 @@ public class Entity {
         return registry.getNameOfEntity(this);
     }
 
+    /** @return its name if it has one or a default identifier with its ID. */
     public String getNameOrIdentifier() {
-        return hasName() ? getName() : getClass().getSimpleName() + getId();
+        return hasName() ? getName() : getClass().getSimpleName() + "-" + getId();
     }
 
     /** @return if it has a name. */
