@@ -2,7 +2,7 @@ package com.ustudents.engine.core;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.graphic.TruetypeFont;
+import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Shader;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.core.json.JsonReader;
@@ -31,7 +31,7 @@ public class Resources {
     private static Map<String, Object> settings;
     private static Map<String, Shader> shaders;
     private static Map<String, Texture> textures;
-    private static Map<String, TruetypeFont> fonts;
+    private static Map<String, Map<Integer, Font>> fonts;
 
     /**
      * Gets the data directory's path.
@@ -135,8 +135,10 @@ public class Resources {
 
         textures.clear();
 
-        for (Map.Entry<String, TruetypeFont> fontSet : fonts.entrySet()) {
-            unloadFont(fontSet.getKey(), false);
+        for (Map.Entry<String, Map<Integer, Font>> fontMapSet : fonts.entrySet()) {
+            for (Map.Entry<Integer, Font> fontSet : fontMapSet.getValue().entrySet()) {
+                unloadFont(fontMapSet.getKey(), fontSet.getKey(), false);
+            }
         }
 
         fonts.clear();
@@ -263,43 +265,51 @@ public class Resources {
         }
     }
 
-    public static TruetypeFont loadFont(String filePath) {
+    public static Font loadFont(String filePath, int fontSize) {
         if (!fonts.containsKey(filePath)) {
+            fonts.put(filePath, new HashMap<>());
+        }
+
+        if (!fonts.get(filePath).containsKey(fontSize)) {
             if (Game.isDebugging()) {
                 Out.printlnDebug("Font loaded: " + getFontsDirectory() + "/" + filePath + "");
             }
 
-            fonts.put(filePath, new TruetypeFont(getFontsDirectory() + "/" + filePath));
+            fonts.get(filePath).put(fontSize, new Font(getFontsDirectory() + "/" + filePath, fontSize));
         }
 
-        TruetypeFont font = fonts.get(filePath);
+        Font font = fonts.get(filePath).get(fontSize);
 
         if (font.isDestroyed()) {
             fonts.remove(filePath);
-            return loadFont(filePath);
+            return loadFont(filePath, fontSize);
         }
 
         return font;
     }
 
-    public static TruetypeFont getFont(String filePath) {
-        return fonts.get(filePath);
+    public static Font getFont(String filePath, int fontSize) {
+        return fonts.get(filePath).get(fontSize);
     }
 
-    public static void unloadFont(String filePath) {
-        unloadFont(filePath, true);
+    public static void unloadFont(String filePath, int fontSize) {
+        unloadFont(filePath, fontSize, true);
     }
 
-    static void unloadFont(String filePath, boolean removeFromList) {
-        if (fonts.containsKey(filePath)) {
+    static void unloadFont(String filePath, int fontSize, boolean removeFromList) {
+        if (fonts.containsKey(filePath) && fonts.get(filePath).containsKey(fontSize)) {
             if (Game.isDebugging()) {
                 Out.printlnDebug("Font unloaded: " + getFontsDirectory() + "/" + filePath + "");
             }
 
-            fonts.get(filePath).destroy();
+            fonts.get(filePath).get(fontSize).destroy();
 
             if (removeFromList) {
-                fonts.remove(filePath);
+                fonts.get(filePath).remove(fontSize);
+
+                if (fonts.get(filePath).isEmpty()) {
+                    fonts.remove(filePath);
+                }
             }
         }
     }

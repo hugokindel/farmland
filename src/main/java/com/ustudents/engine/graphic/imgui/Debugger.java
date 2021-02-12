@@ -1,6 +1,8 @@
 package com.ustudents.engine.graphic.imgui;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.graphic.Font;
+import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.scene.SceneManager;
@@ -14,6 +16,7 @@ import imgui.type.*;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector4i;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -150,8 +153,8 @@ public class Debugger {
     }
 
     private void drawInspector() {
-        ImGui.setNextWindowSize(350, 600, ImGuiCond.Appearing);
-        ImGuiUtils.setNextWindowPosFromEnd(-350, 0, ImGuiCond.Appearing);
+        ImGui.setNextWindowSize(375, 600, ImGuiCond.Appearing);
+        ImGuiUtils.setNextWindowPosFromEnd(-375, 0, ImGuiCond.Appearing);
 
         ImGui.begin("Inspector", showInspectorWindow);
 
@@ -162,7 +165,7 @@ public class Debugger {
             Camera camera = sceneManager.getScene().getCamera();
             Vector2f position = camera.getPosition();
 
-            if (ImGui.treeNode("Transform")) {
+            if (ImGui.treeNode("transform")) {
                 ImGuiUtils.setEnabled(false);
                 drawField("position", Vector2f.class, new float[] {position.x, position.y});
                 drawField("rotation", Float.class, new ImFloat(camera.getRotation()));
@@ -172,7 +175,7 @@ public class Debugger {
                 ImGui.treePop();
             }
 
-            if (ImGui.treeNode("Limits")) {
+            if (ImGui.treeNode("limits")) {
                 ImGuiUtils.setEnabled(false);
                 drawField("minimalZoom", Float.class, new ImFloat(camera.getMinimalZoom()));
                 drawField("maximalZoom", Float.class, new ImFloat(camera.getMaximalZoom()));
@@ -181,7 +184,7 @@ public class Debugger {
                 ImGui.treePop();
             }
 
-            if (ImGui.treeNode("Advanced")) {
+            if (ImGui.treeNode("advanced")) {
                 ImGuiUtils.setEnabled(false);
                 drawField("view", Matrix3x2f.class, camera.getViewAsArray());
                 drawField("viewProjection", Matrix4f.class, camera.getViewProjectionAsArray());
@@ -264,7 +267,6 @@ public class Debugger {
 
         try {
             for (Field field : fields) {
-                ImGuiUtils.setEnabled(false);
 
                 String name = field.getName();
                 Class<?> type = field.getType();
@@ -282,10 +284,13 @@ public class Debugger {
                 } else if (type == String.class) {
                     String originalValue = (String)field.get(component);
                     value = new ImString(originalValue);
+                } else if (type == Vector4i.class) {
+                    Vector4i originalValue = (Vector4i)field.get(component);
+                    value = new int[]{originalValue.x, originalValue.y, originalValue.z, originalValue.w};
+                } else if (type == Font.class || type == Texture.class) {
+                    value = field.get(component);
                 }
                 drawField(name, type, value);
-
-                ImGuiUtils.setEnabled(true);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -326,24 +331,64 @@ public class Debugger {
 
     private void drawField(String name, Class<?> type, Object value) {
         if (type == Vector2f.class) {
+            ImGuiUtils.setEnabled(false);
             ImGui.inputFloat2(name, (float[])value);
+            ImGuiUtils.setEnabled(true);
+        } else if (type == Vector4i.class) {
+            ImGuiUtils.setEnabled(false);
+            ImGui.inputInt4(name, (int[])value);
+            ImGuiUtils.setEnabled(true);
         } else if (type == Float.class) {
+            ImGuiUtils.setEnabled(false);
             ImGui.inputFloat(name, (ImFloat)value);
+            ImGuiUtils.setEnabled(true);
         } else if (type == Integer.class) {
+            ImGuiUtils.setEnabled(false);
             ImGui.inputInt(name, (ImInt)value);
+            ImGuiUtils.setEnabled(true);
         } else if (type == String.class) {
+            ImGuiUtils.setEnabled(false);
             ImGui.inputText(name, (ImString)value);
+            ImGuiUtils.setEnabled(true);
         } else if (type == Matrix4f.class) {
+            ImGuiUtils.setEnabled(false);
             ImGui.text(name);
             ImGui.inputFloat4("m0", ((float[][])value)[0]);
             ImGui.inputFloat4("m1", ((float[][])value)[1]);
             ImGui.inputFloat4("m2", ((float[][])value)[2]);
             ImGui.inputFloat4("m3", ((float[][])value)[3]);
+            ImGuiUtils.setEnabled(true);
         } else if (type == Matrix3x2f.class) {
+            ImGuiUtils.setEnabled(false);
             ImGui.text(name);
             ImGui.inputFloat2("m0", ((float[][])value)[0]);
             ImGui.inputFloat2("m1", ((float[][])value)[1]);
             ImGui.inputFloat2("m2", ((float[][])value)[2]);
+            ImGuiUtils.setEnabled(true);
+        } else if (type == Texture.class) {
+            if (ImGui.treeNode(name)) {
+                ImGuiUtils.setEnabled(false);
+                ImGui.inputText("path", new ImString(((Texture)value).getPath()));
+                ImGui.inputInt("handle", new ImInt(((Texture)value).getHandle()));
+                ImGui.inputInt("width", new ImInt(((Texture)value).getWidth()));
+                ImGui.inputInt("height", new ImInt(((Texture)value).getHeight()));
+                ImGui.inputInt("numComps", new ImInt(((Texture)value).getNumberOfComponents()));
+                ImGuiUtils.setEnabled(true);
+                ImGui.treePop();
+            }
+        } else if (type == Font.class) {
+            if (ImGui.treeNode(name)) {
+                drawField("texture", Texture.class, ((Font)value).getTexture());
+                ImGuiUtils.setEnabled(false);
+                ImGui.inputText("path", new ImString(((Font)value).getPath()));
+                ImGui.inputInt("fontSize", new ImInt(((Font)value).getSize()));
+                ImGui.inputInt("kerning", new ImInt(((Font)value).getKerning()));
+                ImGui.inputInt("ascent", new ImInt(((Font)value).getAscent()));
+                ImGui.inputInt("descent", new ImInt(((Font)value).getDescent()));
+                ImGui.inputInt("lineGap", new ImInt(((Font)value).getLineGap()));
+                ImGuiUtils.setEnabled(true);
+                ImGui.treePop();
+            }
         }
     }
 }

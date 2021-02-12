@@ -6,11 +6,12 @@ import com.ustudents.engine.scene.Scene;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.Map;
 
 /** Defines a system from an ECS point of view (a processing unit for every entities that have a matching signature). */
 public class System {
     /** Defines a signature to keep track of which components are needed to be an entity in this system. */
-    protected BitSet signature;
+    protected List<BitSet> signatures;
 
     /** The list of entity within this system. */
     protected List<Entity> entities;
@@ -20,7 +21,7 @@ public class System {
 
     /** Class constructor. */
     public System(Registry registry) {
-        signature = new BitSet();
+        signatures = new ArrayList<>();
         entities = new ArrayList<>();
         this.registry = registry;
     }
@@ -64,7 +65,22 @@ public class System {
      * @param <T> The component type.
      */
     protected  <T extends Component> void requireComponent(Class<T> classType) {
-        signature.set(registry.getComponentTypeRegistry().getIdForType(classType));
+        requireComponent(classType, 0);
+    }
+
+    /**
+     * Defines that we need a specific component type to be included within this system.
+     * It will change the signature to keep track of which components are needed.
+     *
+     * @param classType The component type class.
+     * @param <T> The component type.
+     */
+    protected  <T extends Component> void requireComponent(Class<T> classType, int signatureId) {
+        while (signatures.size() <= signatureId) {
+            signatures.add(new BitSet());
+        }
+
+        signatures.get(signatureId).set(registry.getComponentTypeRegistry().getIdForType(classType));
     }
 
     protected Scene getScene() {

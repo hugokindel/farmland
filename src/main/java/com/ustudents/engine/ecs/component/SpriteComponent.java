@@ -15,10 +15,12 @@ public class SpriteComponent extends Component {
      * - x,y contains the position to show within the texture.
      * - z,w contains the length to show after this position.
      */
+    @Editable
     public Vector4i textureRegion;
 
     /** The Z index permits to sort the layer by priority when rendering. */
-    public int zIndex;
+    @Editable
+    public Integer zIndex;
 
     public SpriteComponent(Texture texture) {
         this(texture, new Vector4i(0, 0, texture.getWidth(), texture.getHeight()), 0);

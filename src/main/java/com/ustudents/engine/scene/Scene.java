@@ -1,6 +1,6 @@
 package com.ustudents.engine.scene;
 
-import com.ustudents.engine.ecs.system.SpriteRenderSystem;
+import com.ustudents.engine.ecs.system.RenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
@@ -34,7 +34,7 @@ public abstract class Scene {
     public abstract void initialize();
 
     void _initialize() {
-        registry.addSystem(SpriteRenderSystem.class);
+        registry.addSystem(RenderSystem.class);
         initialize();
     }
 

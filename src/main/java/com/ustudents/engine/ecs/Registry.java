@@ -554,7 +554,7 @@ public class Registry {
         int entityId = entity.getId();
         int componentId = componentTypeRegistry.getIdForType(classType);
 
-        if (componentPools.size() <= componentId) {
+        while (componentPools.size() <= componentId) {
             componentPools.add(new ComponentPool<T>(baseComponentPoolCapacity));
         }
 
@@ -666,14 +666,16 @@ public class Registry {
      */
     public void addEntityToSystems(Entity entity) {
         int entityId = entity.getId();
-        BitSet entitySignature = (BitSet) signaturePerEntity.get(entityId).clone();
 
         for (Map.Entry<Integer, System> system : systems.entrySet()) {
-            BitSet systemSignature = system.getValue().signature;
-            entitySignature.and(systemSignature);
+            for (BitSet systemSignature : system.getValue().signatures) {
+                BitSet entitySignature = (BitSet) signaturePerEntity.get(entityId).clone();
+                entitySignature.and(systemSignature);
 
-            if (entitySignature.equals(systemSignature)) {
-                system.getValue().addEntity(entity);
+                if (entitySignature.equals(systemSignature)) {
+                    system.getValue().addEntity(entity);
+                    break;
+                }
             }
         }
     }

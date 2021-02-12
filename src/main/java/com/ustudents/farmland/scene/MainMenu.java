@@ -2,14 +2,14 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.graphic.TruetypeFont;
+import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
+import org.joml.Vector2f;
 
 public class MainMenu extends Scene {
     private ImString str = new ImString(5);
@@ -18,7 +18,7 @@ public class MainMenu extends Scene {
     private static ImBoolean showDemo;
     private static boolean vsyncCurrentState;
     private static ImBoolean useVsync;
-    private TruetypeFont truetypeFont;
+    private Font font;
 
     @Override
     public void initialize() {
@@ -32,8 +32,7 @@ public class MainMenu extends Scene {
 
         //Shader shader = Resources.loadShader("spritebatch");
 
-        truetypeFont = Resources.loadFont("EquipmentPro.ttf");
-        Out.printlnDebug(truetypeFont.isDestroyed());
+        font = Resources.loadFont("EquipmentPro.ttf", 24);
 
         //Entity entity = registry.createEntity();
         //entity.addComponent(TransformComponent.class);
@@ -53,7 +52,11 @@ public class MainMenu extends Scene {
         //spritebatch.begin();
         //spritebatch.draw(truetypeFont.getTexture());
         //spritebatch.end();
-        truetypeFont.render("Forx", spritebatch);
+        //truetypeFont.render("Forx", spritebatch);
+
+        spritebatch.begin();
+        spritebatch.drawText("forx 50€\ntest\n\ttest", new Vector2f(0, 0), font);
+        spritebatch.end();
     }
 
     @Override

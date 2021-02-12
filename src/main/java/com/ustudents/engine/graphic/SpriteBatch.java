@@ -8,7 +8,6 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.joml.Vector4i;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.stb.STBTTAlignedQuad;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -34,10 +33,20 @@ public class Spritebatch {
         float rotation;
         int zIndex;
         ElementType type;
-        TruetypeFont.AlignedQuad q;
 
         public int getzIndex() {
             return zIndex;
+        }
+
+        public int getType() {
+            switch (type) {
+                case Sprite:
+                    return 0;
+                case TruetypeFont:
+                    return 1;
+                default:
+                    return -1;
+            }
         }
     }
 
@@ -143,34 +152,34 @@ public class Spritebatch {
             } else {
                 // Top left (0).
                 putVertex(new Vector4f(
-                        element.q.x0,
-                        element.q.y0,
-                        element.q.s0,
-                        element.q.t0
+                        element.position.x,
+                        element.position.y,
+                        element.region.x,
+                        element.region.y
                 ), element.color);
 
                 // Top right (1).
                 putVertex(new Vector4f(
-                        element.q.x1,
-                        element.q.y0,
-                        element.q.s1,
-                        element.q.t0
+                        element.dimensions.x,
+                        element.position.y,
+                        element.region.z,
+                        element.region.y
                 ), element.color);
 
                 // Bottom left (2).
                 putVertex(new Vector4f(
-                        element.q.x0,
-                        element.q.y1,
-                        element.q.s0,
-                        element.q.t1
+                        element.position.x,
+                        element.dimensions.y,
+                        element.region.x,
+                        element.region.w
                 ), element.color);
 
                 // Bottom right (3).
                 putVertex(new Vector4f(
-                        element.q.x1,
-                        element.q.y1,
-                        element.q.s1,
-                        element.q.t1
+                        element.dimensions.x,
+                        element.dimensions.y,
+                        element.region.z,
+                        element.region.w
                 ), element.color);
             }
         }
@@ -201,6 +210,8 @@ public class Spritebatch {
                     shouldUpdateMatrixUniform = false;
                 }
 
+                shader.setUniform1i("type",  elements.get(0).getType());
+
                 glBindVertexArray(vao);
 
                 // This happens within the VAO context.
@@ -214,24 +225,27 @@ public class Spritebatch {
 
                     glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.flip());
 
-                    Texture last_texture = elements.get(0).texture;
+                    Texture lastTexture = elements.get(0).texture;
+                    int lastType = elements.get(0).getType();
                     int offset = 0;
 
-                    for (int i = 0; i < size; i++)
-                    {
+                    for (int i = 0; i < size; i++) {
                         Element sprite = elements.get(i);
 
-                        if (sprite.texture != last_texture)
-                        {
-                            glBindTexture(GL_TEXTURE_2D, last_texture.getHandle());
+                        if (sprite.texture != lastTexture) {
+                            shader.setUniform1i("type", lastType);
+                            glBindTexture(GL_TEXTURE_2D, lastTexture.getHandle());
                             glDrawElements(GL_TRIANGLES, (i - offset) * 6, GL_UNSIGNED_INT,
                                     (long)offset * 6 * 4);
+
                             offset = i;
-                            last_texture = sprite.texture;
+                            lastTexture = sprite.texture;
+                            lastType = sprite.getType();
                         }
                     }
 
-                    glBindTexture(GL_TEXTURE_2D, last_texture.getHandle());
+                    shader.setUniform1i("type", lastType);
+                    glBindTexture(GL_TEXTURE_2D, lastTexture.getHandle());
                     glDrawElements(GL_TRIANGLES, (size - offset) * 6, GL_UNSIGNED_INT,
                             (long)offset * 6 * 4);
 
@@ -333,20 +347,43 @@ public class Spritebatch {
         size++;
     }
 
-    public void drawFont(String text, TruetypeFont font, TruetypeFont.AlignedQuad q) {
+    public void drawText(String text, Vector2f position, Font font) {
+        Vector2f realPosition = new Vector2f(position.x, position.y);
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == ' ') {
+                realPosition.add(new Vector2f(font.getTextWidth(" "), 0));
+            } else if (c == '\n') {
+                realPosition = new Vector2f(position.x, realPosition.y + font.getSize());
+            } else if (c == '\t') {
+                realPosition.add(new Vector2f(font.getTextWidth(" ") * 4, 0));
+            } else {
+                Font.GlyphInfo glyphInfo = font.getGlyphInfo(c);
+                drawGlyph(realPosition, glyphInfo.position, glyphInfo.region, font);
+                realPosition.add(new Vector2f(glyphInfo.position.z + font.getKerning(), 0));
+            }
+        }
+    }
+
+    void drawGlyph(Vector2f position, Vector4f characterPositions, Vector4f characterRegion, Font font) {
         Element element = new Element();
 
         element.texture = font.getTexture();
-        element.position = new Vector2f(0, 0);
-        element.dimensions = new Vector2f();
+        // When drawing a glyph, position serve as a positionStart
+        element.position = new Vector2f(characterPositions.x, characterPositions.y);
+        element.position.add(position);
+        // When drawing a glyph, dimensions serve as a positionEnd
+        element.dimensions = new Vector2f(characterPositions.z, characterPositions.w);
+        element.dimensions.add(position);
         element.scale = new Vector2f(1.0f, 1.0f);
         element.origin = new Vector2f(0.0f, 0.0f);
-        element.region = new Vector4f();
+        element.region = characterRegion;
         element.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         element.rotation = 0.0f;
         element.zIndex = 0;
         element.type = ElementType.TruetypeFont;
-        element.q = q;
 
         elements.add(element);
         size++;

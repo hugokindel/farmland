@@ -2,16 +2,15 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.ecs.component.TextComponent;
+import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.ecs.Entity;
-import com.ustudents.farmland.component.BoxColliderComponent;
-import com.ustudents.farmland.component.CameraFollowComponent;
 import com.ustudents.engine.ecs.component.SpriteComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
-import com.ustudents.engine.ecs.system.SpriteRenderSystem;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
@@ -20,20 +19,20 @@ public class ExampleScene extends Scene {
     Entity player3;
     Texture texture;
     Texture texture2;
+    Font font;
 
     @Override
     public void initialize() {
         Entity playerContainer = registry.createEntity();
         playerContainer.setName("playerContainer");
 
-        texture = Resources.loadTexture("examples/lwjgl3.jpg");
+        texture = Resources.loadTexture("examples/grass.png");
         texture2 = Resources.loadTexture("examples/lwjgl3.jpg");
+        font = Resources.loadFont("default.ttf", 24);
 
         Entity player1 = registry.createEntity();
         player1.addComponent(TransformComponent.class, new Vector2f(0, 0), new Vector2f(1, 1));
         player1.addComponent(SpriteComponent.class, texture);
-        player1.addComponent(CameraFollowComponent.class);
-        player1.addComponent(BoxColliderComponent.class, 50, 50);
         player1.addTag("players");
         player1.setName("player1");
         player1.setParent(playerContainer);
@@ -41,7 +40,6 @@ public class ExampleScene extends Scene {
         Entity player2 = registry.createEntity();
         player2.addComponent(TransformComponent.class, new Vector2f(400, 400), new Vector2f(1, 1), 21.0f);
         player2.addComponent(SpriteComponent.class, texture);
-        player2.addComponent(BoxColliderComponent.class, 50, 50);
         player2.addTag("players");
         player2.setName("player2");
         player2.setParent(playerContainer);
@@ -49,19 +47,21 @@ public class ExampleScene extends Scene {
         player3 = registry.createEntity();
         player3.addComponent(TransformComponent.class, new Vector2f(-400, -400), new Vector2f(1, 1), 57.0f);
         player3.addComponent(SpriteComponent.class, texture2);
-        player3.addComponent(BoxColliderComponent.class, 75, 75);
         player3.addTag("players");
         player3.setName("player3");
         player3.setParent(playerContainer);
 
         Entity player4 = registry.createEntity();
-        player4.addComponent(TransformComponent.class, new Vector2f(0, 0), new Vector2f(1, 1));
+        player4.addComponent(TransformComponent.class, new Vector2f(400, 0), new Vector2f(1, 1));
         player4.addComponent(SpriteComponent.class, texture2);
-        player4.addComponent(BoxColliderComponent.class, 80, 80);
         player4.addTag("players");
         player4.setName("player4");
         player4.setParent(playerContainer);
         player1.getComponents();
+
+        Entity playerName = registry.createEntity();
+        playerName.addComponent(TransformComponent.class);
+        playerName.addComponent(TextComponent.class, "forx", font);
     }
 
     @Override
@@ -97,7 +97,6 @@ public class ExampleScene extends Scene {
     @Override
     public void destroy()
     {
-        Resources.unloadTexture("forx.png");
-        Resources.unloadTexture("lwjgl.jpg");
+
     }
 }

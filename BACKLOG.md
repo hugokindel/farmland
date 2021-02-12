@@ -1,4 +1,4 @@
-#Backlog de Farmland
+# Backlog de Farmland
 
 ### Description du projet
 
@@ -26,7 +26,9 @@ Permet d'utiliser des classes mathématiques (vecteurs, matrices, ...) pour faci
 - [imgui](https://github.com/SpaiR/imgui-java)
 Interface graphique utile pour les outils de développement qui pourront potientiellement être développé et utilisé durant le développement du jeu.
 
-## Réunion de la semaine 1 (du 5 février au 19 février)
+## Réunion de la semaine 1 (du 5 février)
+
+- Réunion initiale en groupe pour discuter avec le professeur des questions spécifique au projet.
 
 ### Travail effectué
 

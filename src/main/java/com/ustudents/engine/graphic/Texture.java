@@ -2,7 +2,6 @@ package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.utility.FileUtil;
 
-import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.*;
 
 import java.nio.*;
@@ -20,14 +19,17 @@ public class Texture {
     private int numberOfComponents;
     private final int handle;
     private boolean destroyed;
+    private String path;
 
     public Texture(String filePath) {
+        this.path = filePath;
         loadTexture(filePath);
         handle = createTexture();
         destroyed = false;
     }
 
     public Texture(ByteBuffer data, int width, int height, int numberOfComponents) {
+        this.path = "from memory";
         loadTexture(data, width, height, numberOfComponents);
         handle = createTexture();
         destroyed = false;
@@ -106,7 +108,7 @@ public class Texture {
 
         // TODO: Make customizable (for pixel textures and others).
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -116,18 +118,20 @@ public class Texture {
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (width & 1));
             }
             format = GL_RGB;
+            glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         } else if (numberOfComponents == 4) {
             premultiplyAlpha();
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             format = GL_RGBA;
+            glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         } else {
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             format = GL_RED;
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         }
-
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
         stbi_image_free(data);
 
@@ -146,5 +150,13 @@ public class Texture {
                 data.put(i + 2, (byte)round(((data.get(i + 2) & 0xFF) * alpha)));
             }
         }
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public int getNumberOfComponents() {
+        return numberOfComponents;
     }
 }

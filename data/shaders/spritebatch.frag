@@ -7,15 +7,16 @@ out vec4 color;
 
 uniform sampler2D textureSampler;
 uniform float alpha;
+uniform int type;
 
 void main(void)
 {
-    vec4 extColor = vec4(colorTint.x, colorTint.y, colorTint.z, alpha * colorTint.w) *
-    	texture(textureSampler, textureRegion);
+	vec4 tint = vec4(colorTint.x, colorTint.y, colorTint.z, alpha * colorTint.w);
+	vec4 textureColor = texture(textureSampler, textureRegion);
 
-    	if (extColor.w == 1.0) {
-    		extColor.w = 0.0;
-    	}
-
-    	color = extColor;
+	if (type == 0) {
+		color = tint * textureColor;
+	} else {
+		color = tint * textureColor.rrrr;
+	}
 };
