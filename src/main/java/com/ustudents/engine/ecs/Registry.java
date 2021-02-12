@@ -570,6 +570,8 @@ public class Registry {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " +
                     Style.Bold + component.getId() + Style.Reset + ": added");
         }
+
+        entitiesToBeAddedToSystems.add(entity);
     }
 
     /**
@@ -672,7 +674,7 @@ public class Registry {
                 BitSet entitySignature = (BitSet) signaturePerEntity.get(entityId).clone();
                 entitySignature.and(systemSignature);
 
-                if (entitySignature.equals(systemSignature)) {
+                if (entitySignature.equals(systemSignature) && !system.getValue().entities.contains(entity)) {
                     system.getValue().addEntity(entity);
                     break;
                 }

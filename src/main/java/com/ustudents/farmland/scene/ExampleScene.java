@@ -53,6 +53,7 @@ public class ExampleScene extends Scene {
 
         Entity player4 = registry.createEntity();
         player4.addComponent(TransformComponent.class, new Vector2f(400, 0), new Vector2f(1, 1));
+        registry.updateEntities();
         player4.addComponent(SpriteComponent.class, texture2);
         player4.addTag("players");
         player4.setName("player4");
