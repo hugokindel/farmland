@@ -1,5 +1,6 @@
 package com.ustudents.engine.ecs;
 
+import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 
@@ -202,6 +203,10 @@ public class Entity {
     /** @return its registry. */
     public Registry getRegistry() {
         return registry;
+    }
+
+    public BitSet getSignature() {
+        return registry.getSignatureOfEntity(this);
     }
 
     /**

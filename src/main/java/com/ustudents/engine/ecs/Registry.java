@@ -58,6 +58,8 @@ public class Registry {
      */
     private final Set<Entity> entitiesToBeRemovedFromEverything;
 
+    private final Set<Entity> entitiesToCheckStateForSystems;
+
     /** Set to keep track of entities that needs to be removed from the systems (generally only disabled entities). */
     private final Set<Entity> entitiesToBeRemovedFromSystems;
 
@@ -93,6 +95,7 @@ public class Registry {
         entitiesAtRoot = new ArrayList<>();
         entitiesToBeAddedToSystems = new HashSet<>();
         entitiesToBeRemovedFromEverything = new HashSet<>();
+        entitiesToCheckStateForSystems = new HashSet<>();
         entitiesToBeRemovedFromSystems = new HashSet<>();
         enabledEntities = new HashSet<>();
         disabledEntities = new HashSet<>();
@@ -659,6 +662,8 @@ public class Registry {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " +
                     Style.Bold + componentId + Style.Reset + ": removed");
         }
+
+        entitiesToCheckStateForSystems.add(entity);
     }
 
     /**
@@ -698,6 +703,7 @@ public class Registry {
         addEntitiesToSystems();
         removeEntitiesFromEverything();
         removeEntitiesFromSystems();
+        checkIfEntityShouldBeRemovedFromSystem();
     }
 
     /**
@@ -736,6 +742,10 @@ public class Registry {
     /** @return a set of disabled entities. */
     public Set<Entity> getDisabledEntities() {
         return disabledEntities;
+    }
+
+    public BitSet getSignatureOfEntity(Entity entity) {
+        return signaturePerEntity.get(entity.getId());
     }
 
     /** @return the component type registry. */
@@ -785,5 +795,31 @@ public class Registry {
         }
 
         entitiesToBeRemovedFromEverything.clear();
+    }
+
+    private void checkIfEntityShouldBeRemovedFromSystem() {
+        for (Entity entity : entitiesToCheckStateForSystems) {
+            for (Map.Entry<Integer, System> system : systems.entrySet()) {
+                if (system.getValue().entities.contains(entity)) {
+                    boolean signatureFound = false;
+
+                    for (BitSet systemSignature : system.getValue().signatures) {
+                        BitSet entitySignature = (BitSet)entity.getSignature().clone();
+                        entitySignature.and(systemSignature);
+
+                        if (entitySignature.equals(systemSignature)) {
+                            signatureFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!signatureFound) {
+                        system.getValue().entities.remove(entity);
+                    }
+                }
+            }
+        }
+
+        entitiesToCheckStateForSystems.clear();
     }
 }
