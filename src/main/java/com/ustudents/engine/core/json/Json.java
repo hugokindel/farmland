@@ -45,8 +45,12 @@ public class Json {
             checkSerializable(classType);
 
             T object = classType.getConstructor().newInstance();
-            ArrayList<Field> fields = new ArrayList<>(Arrays.asList(Runnable.class.getDeclaredFields()));
-            fields.addAll(Arrays.asList(classType.getDeclaredFields()));
+            ArrayList<Field> fields = new ArrayList<>(Arrays.asList(classType.getDeclaredFields()));
+            Class<?> parent = classType.getSuperclass();
+            while (parent != null && parent.isAnnotationPresent(JsonSerializable.class)) {
+                fields.addAll(Arrays.asList(parent.getDeclaredFields()));
+                parent = parent.getSuperclass();
+            }
             fields.removeIf(field -> !field.isAnnotationPresent(JsonSerializable.class));
 
             for (Field field : fields) {
@@ -134,8 +138,12 @@ public class Json {
             checkSerializable(classType);
 
             Map<String, Object> json = new LinkedHashMap<>();
-            ArrayList<Field> fields = new ArrayList<>(Arrays.asList(Runnable.class.getDeclaredFields()));
-            fields.addAll(Arrays.asList(classType.getDeclaredFields()));
+            ArrayList<Field> fields = new ArrayList<>(Arrays.asList(classType.getDeclaredFields()));
+            Class<?> parent = classType.getSuperclass();
+            while (parent != null && parent.isAnnotationPresent(JsonSerializable.class)) {
+                fields.addAll(Arrays.asList(parent.getDeclaredFields()));
+                parent = parent.getSuperclass();
+            }
             fields.removeIf(field -> !field.isAnnotationPresent(JsonSerializable.class));
 
             for (Field field : fields) {
