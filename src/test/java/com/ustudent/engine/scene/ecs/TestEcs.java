@@ -2,9 +2,6 @@ package com.ustudent.engine.scene.ecs;
 
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.Registry;
-import com.ustudents.farmland.component.BoxColliderComponent;
-import com.ustudents.farmland.component.CameraFollowComponent;
-import com.ustudents.engine.ecs.component.SpriteComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
 import org.joml.Vector2f;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,13 +61,12 @@ public class TestEcs {
     public void testComponentCreation() {
         Entity entity = registry.createEntity();
         entity.addComponent(TransformComponent.class);
-        entity.addComponent(CameraFollowComponent.class);
 
         registry.updateEntities();
 
         assertEquals(registry.getTotalNumberOfEntities(), 1);
         assertEquals(registry.getLastEntityNumber(), 1);
-        assertEquals(entity.getNumberOfComponents(), 2);
+        assertEquals(entity.getNumberOfComponents(), 1);
         assertNotNull(registry.getEntityById(0));
     }
 
@@ -78,15 +74,14 @@ public class TestEcs {
     public void testComponentDestruction() {
         Entity entity = registry.createEntity();
         entity.addComponent(TransformComponent.class);
-        entity.addComponent(CameraFollowComponent.class);
 
         registry.updateEntities();
 
-        entity.removeComponent(CameraFollowComponent.class);
+        entity.removeComponent(TransformComponent.class);
 
         assertEquals(registry.getTotalNumberOfEntities(), 1);
         assertEquals(registry.getLastEntityNumber(), 1);
-        assertEquals(entity.getNumberOfComponents(), 1);
+        assertEquals(entity.getNumberOfComponents(), 0);
         assertNotNull(registry.getEntityById(0));
     }
 
