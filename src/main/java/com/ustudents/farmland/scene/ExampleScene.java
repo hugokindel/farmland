@@ -26,8 +26,8 @@ public class ExampleScene extends Scene {
         Entity playerContainer = registry.createEntity();
         playerContainer.setName("playerContainer");
 
-        texture = Resources.loadTexture("forx.png");
-        texture2 = Resources.loadTexture("lwjgl.jpg");
+        texture = Resources.loadTexture("examples/lwjgl3.jpg");
+        texture2 = Resources.loadTexture("examples/lwjgl3.jpg");
 
         Entity player1 = registry.createEntity();
         player1.addComponent(TransformComponent.class, new Vector2f(0, 0), new Vector2f(1, 1));
