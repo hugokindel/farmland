@@ -8,7 +8,6 @@ import com.ustudents.engine.ecs.component.TransformComponent;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
-import com.ustudents.farmland.scene.MainMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
@@ -50,6 +49,9 @@ public class EcsExample1 extends Scene {
         ImGui.begin("Ecs Example 1");
         if (ImGui.button("Ecs Example 2")) {
             Game.get().getSceneManager().changeScene(EcsExample2.class);
+        }
+        if (ImGui.button("Ecs Example 3")) {
+            Game.get().getSceneManager().changeScene(EcsExample3.class);
         }
         ImGui.end();
     }
