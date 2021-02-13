@@ -4,7 +4,7 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
-import org.joml.Vector4i;
+import org.joml.Vector4f;
 
 public class SpriteComponent extends Component {
     /** The texture. */
@@ -17,7 +17,7 @@ public class SpriteComponent extends Component {
      * - z,w contains the length to show after this position.
      */
     @Editable
-    public Vector4i region;
+    public Vector4f region;
 
     /** The Z index permits to sort the layer by priority when rendering. */
     @Editable
@@ -27,18 +27,18 @@ public class SpriteComponent extends Component {
     public Color tint;
 
     public SpriteComponent(Texture texture) {
-        this(texture, new Vector4i(0, 0, texture.getWidth(), texture.getHeight()), 0, Color.WHITE);
+        this(texture, new Vector4f(0, 0, texture.getWidth(), texture.getHeight()), 0, Color.WHITE);
     }
 
-    public SpriteComponent(Texture texture, Vector4i region) {
+    public SpriteComponent(Texture texture, Vector4f region) {
         this(texture, region, 0, Color.WHITE);
     }
 
-    public SpriteComponent(Texture texture, Vector4i region, Integer zIndex) {
+    public SpriteComponent(Texture texture, Vector4f region, Integer zIndex) {
         this(texture, region, zIndex, Color.WHITE);
     }
 
-    public SpriteComponent(Texture texture, Vector4i region, Integer zIndex, Color tint) {
+    public SpriteComponent(Texture texture, Vector4f region, Integer zIndex, Color tint) {
         this.texture = texture;
         this.region = region;
         this.zIndex = zIndex;

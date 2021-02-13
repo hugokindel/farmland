@@ -14,10 +14,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.*;
-import org.joml.Matrix3x2f;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector4i;
+import org.joml.*;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -276,6 +273,9 @@ public class Debugger {
                 if (type == Vector2f.class) {
                     Vector2f originalValue = (Vector2f)field.get(component);
                     value = new float[]{originalValue.x, originalValue.y};
+                } else if (type == Vector4f.class) {
+                    Vector4f originalValue = (Vector4f)field.get(component);
+                    value = new float[]{originalValue.x, originalValue.y, originalValue.z, originalValue.w};
                 } else if (type == Float.class) {
                     Float originalValue = (Float)field.get(component);
                     value = new ImFloat(originalValue);
@@ -338,6 +338,10 @@ public class Debugger {
         } else if (type == Vector4i.class) {
             ImGuiUtils.setEnabled(false);
             ImGui.inputInt4(name, (int[])value);
+            ImGuiUtils.setEnabled(true);
+        } else if (type == Vector4f.class) {
+            ImGuiUtils.setEnabled(false);
+            ImGui.inputFloat4(name, (float[])value);
             ImGuiUtils.setEnabled(true);
         } else if (type == Float.class) {
             ImGuiUtils.setEnabled(false);

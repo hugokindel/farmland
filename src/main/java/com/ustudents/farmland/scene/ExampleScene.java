@@ -69,7 +69,7 @@ public class ExampleScene extends Scene {
 
     @Override
     public void update(double dt) {
-
+        player3.getComponent(TransformComponent.class).position.x += 30 * dt;
     }
 
     @Override
