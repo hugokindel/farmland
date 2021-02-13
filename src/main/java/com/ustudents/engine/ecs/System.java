@@ -3,10 +3,7 @@ package com.ustudents.engine.ecs;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.scene.Scene;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /** Defines a system from an ECS point of view (a processing unit for every entities that have a matching signature). */
 public class System {
@@ -14,7 +11,7 @@ public class System {
     protected List<BitSet> signatures;
 
     /** The list of entity within this system. */
-    protected List<Entity> entities;
+    protected Set<Entity> entities;
 
     /** The registry. */
     protected Registry registry;
@@ -22,7 +19,7 @@ public class System {
     /** Class constructor. */
     public System(Registry registry) {
         signatures = new ArrayList<>();
-        entities = new ArrayList<>();
+        entities = new HashSet<>();
         this.registry = registry;
     }
 
@@ -53,7 +50,7 @@ public class System {
     }
 
     /** @return all entities of this system. */
-    public List<Entity> getEntities() {
+    public Set<Entity> getEntities() {
         return entities;
     }
 

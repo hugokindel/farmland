@@ -41,7 +41,9 @@ public class RenderSystem extends System {
                         spriteComponent.region,
                         spriteComponent.zIndex
                 );
-            } else if (entity.hasComponent(TextComponent.class)) {
+            }
+
+            if (entity.hasComponent(TextComponent.class)) {
                 TextComponent textComponent = entity.getComponent(TextComponent.class);
 
                 spriteBatch.drawText(
