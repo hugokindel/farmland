@@ -113,7 +113,8 @@ public abstract class Game extends Runnable {
         window.initialize(
                 commandName.substring(0, 1).toUpperCase() + commandName.substring(1),
                 new Vector2i(1280, 720),
-                vsync
+                vsync,
+                "logo.png"
         );
         if (!noImGui) {
             imGuiManager.initialize(window.getHandle(), window.getGlslVersion());

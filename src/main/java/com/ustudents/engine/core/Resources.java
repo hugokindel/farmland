@@ -22,6 +22,7 @@ public class Resources {
     private static final String logsDirectoryName = "logs";
     private static final String shadersDirectoryName = "shaders";
     private static final String texturesDirectoryName = "textures";
+    private static final String playersDirectoryName = "players";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
@@ -54,6 +55,14 @@ public class Resources {
 
     public static String getTexturesDirectory() {
         return createPathIfNeeded(getDataDirectory() + "/" + texturesDirectoryName);
+    }
+
+    public static String getPlayersDirectoryName(){
+        return createPathIfNeeded(getDataDirectory() + "/" + playersDirectoryName);
+    }
+
+    public static String getKindPlayerDirectoryName(String type){
+        return createPathIfNeeded(getPlayersDirectoryName() + "/" + type);
     }
 
     /**

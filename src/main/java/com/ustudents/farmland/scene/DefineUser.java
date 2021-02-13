@@ -6,6 +6,7 @@ import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
+import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.player.Human;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -68,7 +69,7 @@ public class DefineUser extends Scene {
             }
             currentPlayer = (Human) Human.deserializePlayer(Resources.getKindPlayerDirectoryName("human"),userName.get());
         }
-        Game.setPlayers(currentPlayer);
+        Farmland.setPlayers(currentPlayer);
     }
 
     private void applyNewUserName(File rename,int index){
@@ -122,7 +123,7 @@ public class DefineUser extends Scene {
 
         }
         ImGui.text("\n");
-        if(ImGui.button("rename")){
+        if(list.length>0 && ImGui.button("rename")){
             File rename = null;
             int index = 0;
             for(int i = 0;i< list.length;i++){
@@ -177,7 +178,7 @@ public class DefineUser extends Scene {
         ImGui.text("\n");
         if(ImGui.button("Create player")){
             establishPlayer();
-            if (Game.getKindOfGame().equals("MultiPlayer")){
+            if (Farmland.getKindOfGame().equals("MultiPlayer")){
                 Game.get().getSceneManager().changeScene(WaitingRoom.class);
             }else{
                 Game.get().getSceneManager().changeScene(WaitingRoom.class);
