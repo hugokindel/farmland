@@ -27,7 +27,6 @@ public class ImGuiManager {
         //io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
         io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
         io.setConfigViewportsNoTaskBarIcon(true);
-
         imGuiGlfw.init(windowHandle, true);
         imGuiGl3.init(glslVersion);
     }

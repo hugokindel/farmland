@@ -12,51 +12,19 @@ import imgui.type.ImString;
 import org.joml.Vector2f;
 
 public class MainMenu extends Scene {
-    private ImString str = new ImString(5);
-    private float[] flt = new float[1];
-    private int count = 0;
-    private static ImBoolean showDemo;
-    private static boolean vsyncCurrentState;
-    private static ImBoolean useVsync;
-    private Font font;
-
     @Override
     public void initialize() {
-        camera.setZoom(50);
 
-        str = new ImString(5);
-        flt = new float[1];
-        showDemo = new ImBoolean(false);
-        vsyncCurrentState = Game.get().getVsync();
-        useVsync = new ImBoolean(Game.get().getVsync());
-
-        //Shader shader = Resources.loadShader("spritebatch");
-
-        font = Resources.loadFont("EquipmentPro.ttf", 24);
-
-        //Entity entity = registry.createEntity();
-        //entity.addComponent(TransformComponent.class);
-        //entity.addComponent(SpriteComponent.class, truetypeFont.getTexture());
     }
 
     @Override
     public void update(double dt) {
-        if (vsyncCurrentState != useVsync.get()) {
-            vsyncCurrentState = useVsync.get();
-            Game.get().setVsync(vsyncCurrentState);
-        }
+
     }
 
     @Override
     public void render() {
-        //spritebatch.begin();
-        //spritebatch.draw(truetypeFont.getTexture());
-        //spritebatch.end();
-        //truetypeFont.render("Forx", spritebatch);
 
-        spritebatch.begin();
-        spritebatch.drawText("forx 50€\ntest\n\ttest", new Vector2f(0, 0), font);
-        spritebatch.end();
     }
 
     @Override

@@ -29,7 +29,7 @@ public class Spritebatch {
         Vector2f origin;
         Vector2f scale;
         Vector4f region;
-        Color color;
+        Color tint;
         float rotation;
         int zIndex;
         ElementType type;
@@ -124,7 +124,7 @@ public class Spritebatch {
                         element.scale.y * element.position.y,
                         element.region.x,
                         element.region.y
-                ), element.color);
+                ), element.tint);
 
                 // Top right (1).
                 putVertex(new Vector4f(
@@ -132,7 +132,7 @@ public class Spritebatch {
                         element.scale.y * element.position.y,
                         element.region.z,
                         element.region.y
-                ), element.color);
+                ), element.tint);
 
                 // Bottom left (2).
                 putVertex(new Vector4f(
@@ -140,7 +140,7 @@ public class Spritebatch {
                         element.scale.y * (element.position.y  + element.dimensions.y),
                         element.region.x,
                         element.region.w
-                ), element.color);
+                ), element.tint);
 
                 // Bottom right (3).
                 putVertex(new Vector4f(
@@ -148,7 +148,7 @@ public class Spritebatch {
                         element.scale.y * (element.position.y + element.dimensions.y),
                         element.region.z,
                         element.region.w
-                ), element.color);
+                ), element.tint);
             } else {
                 // Top left (0).
                 putVertex(new Vector4f(
@@ -156,7 +156,7 @@ public class Spritebatch {
                         element.position.y,
                         element.region.x,
                         element.region.y
-                ), element.color);
+                ), element.tint);
 
                 // Top right (1).
                 putVertex(new Vector4f(
@@ -164,7 +164,7 @@ public class Spritebatch {
                         element.position.y,
                         element.region.z,
                         element.region.y
-                ), element.color);
+                ), element.tint);
 
                 // Bottom left (2).
                 putVertex(new Vector4f(
@@ -172,7 +172,7 @@ public class Spritebatch {
                         element.dimensions.y,
                         element.region.x,
                         element.region.w
-                ), element.color);
+                ), element.tint);
 
                 // Bottom right (3).
                 putVertex(new Vector4f(
@@ -180,7 +180,7 @@ public class Spritebatch {
                         element.dimensions.y,
                         element.region.z,
                         element.region.w
-                ), element.color);
+                ), element.tint);
             }
         }
 
@@ -271,6 +271,7 @@ public class Spritebatch {
     private boolean shouldUpdateMatrixUniform;
     private boolean shouldSortByLayer;
     private boolean destroyed;
+    public Texture whiteTexture;
 
     public Spritebatch() {
         this(Game.get().getSceneManager().getScene().getCamera());
@@ -287,6 +288,7 @@ public class Spritebatch {
         this.renderer = new Renderer(2048, shader.getVertexAttributes());
         this.destroyed = false;
         this.projection = new Matrix4f();
+        this.whiteTexture = new Texture(new byte[] {(byte)255, (byte)255, (byte)255, (byte)255}, 1, 1, 4);
 
         if (Game.isDebugging()) {
             Out.printlnDebug("Spritebatch created.");
@@ -296,6 +298,7 @@ public class Spritebatch {
     public void destroy() {
         if (!destroyed) {
             renderer.destroy();
+            whiteTexture.destroy();
             destroyed = true;
 
             if (Game.isDebugging()) {
@@ -310,10 +313,10 @@ public class Spritebatch {
         size = 0;
         shouldSortByLayer = true;
 
-        if (!projection.equals(camera.viewproj())) {
+        if (!projection.equals(camera.getViewProjectionMatrix())) {
             shouldUpdateMatrixUniform = true;
             projection = new Matrix4f();
-            camera.viewproj().get(projection);
+            camera.getViewProjectionMatrix().get(projection);
         }
 
         if (globalAlpha != 1.0f) {
@@ -323,24 +326,111 @@ public class Spritebatch {
     }
 
     public void draw(Texture texture) {
-        draw(texture, new Vector4i(0, 0, texture.getWidth(), texture.getHeight()), new Vector2f(0.0f, 0.0f), 0);
+        draw(
+                texture,
+                new Vector2f(0.0f, 0.0f),
+                new Vector4i(0, 0, texture.getWidth(), texture.getHeight()),
+                0,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
     }
 
-    public void draw(Texture texture, Vector4i region, Vector2f position, int zIndex) {
+    public void draw(Texture texture, Vector2f position) {
+        draw(
+                texture,
+                position,
+                new Vector4i(0, 0, texture.getWidth(), texture.getHeight()),
+                0,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void draw(Texture texture, Vector2f position, Vector4i region) {
+        draw(
+                texture,
+                position,
+                region,
+                0,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void draw(Texture texture, Vector2f position, Vector4i region, int zIndex) {
+        draw(
+                texture,
+                position,
+                region,
+                zIndex,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void draw(Texture texture, Vector2f position, Vector4i region, int zIndex, Color tint) {
+        draw(
+                texture,
+                position,
+                region,
+                zIndex,
+                tint,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void draw(Texture texture, Vector2f position, Vector4i region, int zIndex, Color tint, float rotation) {
+        draw(
+                texture,
+                position,
+                region,
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void draw(Texture texture, Vector2f position, Vector4i region, int zIndex, Color tint, float rotation, Vector2f scale) {
+        draw(
+                texture,
+                position,
+                region,
+                zIndex,
+                tint,
+                rotation,
+                scale,
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void draw(Texture texture, Vector2f position, Vector4i region, int zIndex, Color tint, float rotation, Vector2f scale, Vector2f origin) {
         Element element = new Element();
 
         element.texture = texture;
         element.position = new Vector2f(position.x, position.y);
         element.dimensions = new Vector2f(region.z, region.w);
-        element.scale = new Vector2f(1.0f, 1.0f);
-        element.origin = new Vector2f(0.0f, 0.0f);
         element.region = new Vector4f(
                 (float)region.x / texture.getWidth(), (float)region.y / texture.getHeight(),
                 (float)(region.x + region.z) / texture.getWidth(), (float)(region.y + region.w) / texture.getHeight()
         );
-        element.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        element.rotation = 0.0f;
         element.zIndex = zIndex;
+        element.tint = tint.clone();
+        element.rotation = rotation;
+        element.scale = new Vector2f(scale.x, scale.y);
+        element.origin = new Vector2f(origin.x, origin.y);
         element.type = ElementType.Sprite;
 
         elements.add(element);
@@ -380,7 +470,7 @@ public class Spritebatch {
         element.scale = new Vector2f(1.0f, 1.0f);
         element.origin = new Vector2f(0.0f, 0.0f);
         element.region = characterRegion;
-        element.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        element.tint = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         element.rotation = 0.0f;
         element.zIndex = 0;
         element.type = ElementType.TruetypeFont;

@@ -37,8 +37,8 @@ public class RenderSystem extends System {
 
                 spriteBatch.draw(
                         spriteComponent.texture,
-                        spriteComponent.textureRegion,
                         transformComponent.position,
+                        spriteComponent.region,
                         spriteComponent.zIndex
                 );
             } else if (entity.hasComponent(TextComponent.class)) {

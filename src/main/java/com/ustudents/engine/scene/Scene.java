@@ -25,7 +25,7 @@ public abstract class Scene {
      void create(SceneManager sceneManager) {
         this.registry = new Registry();
         this.sceneManager = sceneManager;
-        this.camera = new Camera(1000, 50, 2000);
+        this.camera = new Camera(100, 0.005f, 0.01f);
         this.camera.setSize(1280, 720);
         this.spritebatch = new Spritebatch(this.camera);
     }

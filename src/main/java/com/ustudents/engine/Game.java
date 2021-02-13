@@ -226,4 +226,8 @@ public abstract class Game extends Runnable {
     public static String getInstanceName() {
         return instanceName;
     }
+
+    public boolean isImGuiActive() {
+        return !noImGui && imGuiVisible;
+    }
 }

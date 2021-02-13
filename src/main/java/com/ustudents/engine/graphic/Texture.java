@@ -1,5 +1,6 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.utility.FileUtil;
 
 import org.lwjgl.system.*;
@@ -29,10 +30,14 @@ public class Texture {
     }
 
     public Texture(ByteBuffer data, int width, int height, int numberOfComponents) {
-        this.path = "from memory";
+        this.path = "from memory (bytebuffer)";
         loadTexture(data, width, height, numberOfComponents);
         handle = createTexture();
         destroyed = false;
+    }
+
+    public Texture(byte[] data, int width, int height, int numberOfComponents) {
+        this(byteArrayToBuffer(data), width, height, numberOfComponents);
     }
 
     public void destroy() {
@@ -62,6 +67,14 @@ public class Texture {
         return handle;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public int getNumberOfComponents() {
+        return numberOfComponents;
+    }
+
     public boolean isDestroyed() {
         return destroyed;
     }
@@ -82,12 +95,10 @@ public class Texture {
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);
             IntBuffer numberOfComponents = stack.mallocInt(1);
-
             data = stbi_load_from_memory(imageBuffer, width, height, numberOfComponents, 0);
             if (data == null) {
                 throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
             }
-
             this.width = width.get(0);
             this.height = height.get(0);
             this.numberOfComponents = numberOfComponents.get(0);
@@ -152,11 +163,7 @@ public class Texture {
         }
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public int getNumberOfComponents() {
-        return numberOfComponents;
+    public static ByteBuffer byteArrayToBuffer(byte[] array) {
+        return ByteBuffer.allocateDirect(array.length).order(ByteOrder.nativeOrder()).put(array).flip();
     }
 }

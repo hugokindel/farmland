@@ -1,6 +1,7 @@
 package com.ustudents.engine.graphic.imgui;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
@@ -287,7 +288,7 @@ public class Debugger {
                 } else if (type == Vector4i.class) {
                     Vector4i originalValue = (Vector4i)field.get(component);
                     value = new int[]{originalValue.x, originalValue.y, originalValue.z, originalValue.w};
-                } else if (type == Font.class || type == Texture.class) {
+                } else if (type == Font.class || type == Texture.class || type == Color.class) {
                     value = field.get(component);
                 }
                 drawField(name, type, value);
@@ -386,6 +387,14 @@ public class Debugger {
                 ImGui.inputInt("ascent", new ImInt(((Font)value).getAscent()));
                 ImGui.inputInt("descent", new ImInt(((Font)value).getDescent()));
                 ImGui.inputInt("lineGap", new ImInt(((Font)value).getLineGap()));
+                ImGuiUtils.setEnabled(true);
+                ImGui.treePop();
+            }
+        } else if (type == Color.class) {
+            Color color = (Color)value;
+            if (ImGui.treeNode(name)) {
+                ImGuiUtils.setEnabled(false);
+                ImGui.colorPicker4(name, new float[] {color.r, color.g, color.b, color.a});
                 ImGuiUtils.setEnabled(true);
                 ImGui.treePop();
             }

@@ -2,6 +2,7 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.ecs.component.TextComponent;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.input.Input;
@@ -14,6 +15,7 @@ import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public class ExampleScene extends Scene {
     Entity player3;
@@ -67,13 +69,7 @@ public class ExampleScene extends Scene {
 
     @Override
     public void update(double dt) {
-        player3.getComponent(TransformComponent.class).position.x += 30 * dt;
 
-        int scroll = Input.scroll();
-        if(scroll != 0 && getCamera().getZoom() <= 2000 && getCamera().getZoom() >= 50) {
-            camera.reload(camera.getZoom() - 50 * scroll);
-            camera.setSize(1280, 720);
-        }
     }
 
     @Override
