@@ -16,6 +16,9 @@ public abstract class Resource extends Entity {
         super(id, registry);
     }
 
-    /** initialize the entity with component */
+    /**
+     * initialize the entity with component
+     * with a priority of 11
+     */
     public abstract void init();
 }

@@ -16,6 +16,9 @@ public abstract class MapElement extends Entity {
         super(id, registry);
     }
 
-    /** initialize the entity with component */
+    /**
+     * initialize the entity with component
+     * with a priority of 0 to 9
+     */
     public abstract void init();
 }

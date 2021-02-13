@@ -10,10 +10,13 @@ import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.entities.mapElements.*;
+import com.ustudents.farmland.entities.properties.*;
+import com.ustudents.farmland.entities.resources.*;
 import com.ustudents.farmland.scene.MainMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 import org.joml.Vector4i;
 
 public class EcsExample3 extends Scene {
@@ -35,6 +38,40 @@ public class EcsExample3 extends Scene {
                 Plain grass = registry.createEntity(Plain.class);
                 grass.init(random);
                 grass.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1, 1));
+                if(y == 0 && x%2 == 0){
+                    Field field = registry.createEntity(Field.class);
+                    field.init(random);
+                    field.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
+                }
+                if(y == 3 && x%3 == 0){
+                    Fence fence = registry.createEntity(Fence.class);
+                    fence.init();
+                    fence.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
+                }
+                if(y == 0 && x%2 == 0){
+                    Corn corn = registry.createEntity(Corn.class);
+                    corn.init();
+                    corn.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24 - 6), new Vector2f(1,1));
+                }
+                if(y == -3 && x%2 == 0){
+                    Pumpkin pumpkin = registry.createEntity(Pumpkin.class);
+                    pumpkin.init();
+                    pumpkin.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
+                }
+                if(y == -6 && x%2 == 0){
+                    WaterMelon waterMelon = registry.createEntity(WaterMelon.class);
+                    waterMelon.init();
+                    waterMelon.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
+                }if(y == 6 && x%2 == 0){
+                    Pepper pepper = registry.createEntity(Pepper.class);
+                    pepper.init();
+                    pepper.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
+                }
+                if(y == 4 && x%2 == 0){
+                    Carrots carrots = registry.createEntity(Carrots.class);
+                    carrots.init();
+                    carrots.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
+                }
 
             }
         }
