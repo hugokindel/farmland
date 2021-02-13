@@ -10,8 +10,11 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.Window;
+import com.ustudents.farmland.player.Player;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
@@ -52,6 +55,7 @@ public abstract class Game extends Runnable {
         noImGui = false;
         shouldClose = false;
         imGuiVisible = true;
+
 
         // Game managers.
         window = new Window();
@@ -109,8 +113,7 @@ public abstract class Game extends Runnable {
         window.initialize(
                 commandName.substring(0, 1).toUpperCase() + commandName.substring(1),
                 new Vector2i(1280, 720),
-                vsync,
-                "logo.png"
+                vsync
         );
         if (!noImGui) {
             imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
@@ -225,9 +228,5 @@ public abstract class Game extends Runnable {
 
     public static String getInstanceName() {
         return instanceName;
-    }
-
-    public boolean isImGuiActive() {
-        return !noImGui && imGuiVisible;
     }
 }

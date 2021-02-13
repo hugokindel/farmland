@@ -1,34 +1,43 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
-import org.joml.Vector2f;
-import org.joml.Vector4f;
+import imgui.type.ImBoolean;
+import imgui.type.ImString;
 
 public class MainMenu extends Scene {
-    Texture texture;
+    private ImString str = new ImString(5);
+    private float[] flt = new float[1];
+    private int count = 0;
+    private static ImBoolean showDemo;
+    private static boolean vsyncCurrentState;
+    private static ImBoolean useVsync;
 
     @Override
     public void initialize() {
-        texture = Resources.loadTexture("examples/grass.png");
+        str = new ImString(5);
+        flt = new float[1];
+        showDemo = new ImBoolean(false);
+        vsyncCurrentState = Game.get().getVsync();
+        useVsync = new ImBoolean(Game.get().getVsync());
+
+        //Shader shader = Resources.loadShader("spritebatch");
     }
 
     @Override
     public void update(double dt) {
-
+        if (vsyncCurrentState != useVsync.get()) {
+            vsyncCurrentState = useVsync.get();
+            Game.get().setVsync(vsyncCurrentState);
+        }
     }
 
     @Override
     public void render() {
-        spritebatch.begin();
-        //spritebatch.drawCircle(new Vector2f(0, 0), 10, 25, 0, Color.WHITE, 1);
-        spritebatch.end();
+
     }
 
     @Override

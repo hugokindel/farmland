@@ -2,7 +2,6 @@ package com.ustudents.engine.core;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Shader;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.core.json.JsonReader;
@@ -23,7 +22,6 @@ public class Resources {
     private static final String logsDirectoryName = "logs";
     private static final String shadersDirectoryName = "shaders";
     private static final String texturesDirectoryName = "textures";
-    private static final String fontsDirectoryName = "fonts";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
@@ -31,7 +29,6 @@ public class Resources {
     private static Map<String, Object> settings;
     private static Map<String, Shader> shaders;
     private static Map<String, Texture> textures;
-    private static Map<String, Map<Integer, Font>> fonts;
 
     /**
      * Gets the data directory's path.
@@ -57,10 +54,6 @@ public class Resources {
 
     public static String getTexturesDirectory() {
         return createPathIfNeeded(getDataDirectory() + "/" + texturesDirectoryName);
-    }
-
-    public static String getFontsDirectory() {
-        return createPathIfNeeded(getDataDirectory() + "/" + fontsDirectoryName);
     }
 
     /**
@@ -118,7 +111,6 @@ public class Resources {
 
         shaders = new HashMap<>();
         textures = new HashMap<>();
-        fonts = new HashMap<>();
     }
 
     /** Saves everything. */
@@ -134,14 +126,6 @@ public class Resources {
         }
 
         textures.clear();
-
-        for (Map.Entry<String, Map<Integer, Font>> fontMapSet : fonts.entrySet()) {
-            for (Map.Entry<Integer, Font> fontSet : fontMapSet.getValue().entrySet()) {
-                unloadFont(fontMapSet.getKey(), fontSet.getKey(), false);
-            }
-        }
-
-        fonts.clear();
 
         saveSettings();
     }
@@ -199,7 +183,7 @@ public class Resources {
             return loadShader(fileName);
         }
 
-        return shader;
+        return shaders.get(fileName);
     }
 
     public static Shader getShader(String fileName) {
@@ -240,7 +224,7 @@ public class Resources {
             return loadTexture(filePath);
         }
 
-        return texture;
+        return textures.get(filePath);
     }
 
     public static Texture getTexture(String filePath) {
@@ -261,55 +245,6 @@ public class Resources {
 
             if (removeFromList) {
                 textures.remove(filePath);
-            }
-        }
-    }
-
-    public static Font loadFont(String filePath, int fontSize) {
-        if (!fonts.containsKey(filePath)) {
-            fonts.put(filePath, new HashMap<>());
-        }
-
-        if (!fonts.get(filePath).containsKey(fontSize)) {
-            if (Game.isDebugging()) {
-                Out.printlnDebug("Font loaded: " + getFontsDirectory() + "/" + filePath + "");
-            }
-
-            fonts.get(filePath).put(fontSize, new Font(getFontsDirectory() + "/" + filePath, fontSize));
-        }
-
-        Font font = fonts.get(filePath).get(fontSize);
-
-        if (font.isDestroyed()) {
-            fonts.remove(filePath);
-            return loadFont(filePath, fontSize);
-        }
-
-        return font;
-    }
-
-    public static Font getFont(String filePath, int fontSize) {
-        return fonts.get(filePath).get(fontSize);
-    }
-
-    public static void unloadFont(String filePath, int fontSize) {
-        unloadFont(filePath, fontSize, true);
-    }
-
-    static void unloadFont(String filePath, int fontSize, boolean removeFromList) {
-        if (fonts.containsKey(filePath) && fonts.get(filePath).containsKey(fontSize)) {
-            if (Game.isDebugging()) {
-                Out.printlnDebug("Font unloaded: " + getFontsDirectory() + "/" + filePath + "");
-            }
-
-            fonts.get(filePath).get(fontSize).destroy();
-
-            if (removeFromList) {
-                fonts.get(filePath).remove(fontSize);
-
-                if (fonts.get(filePath).isEmpty()) {
-                    fonts.remove(filePath);
-                }
             }
         }
     }
