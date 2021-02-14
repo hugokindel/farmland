@@ -17,7 +17,7 @@ public class GameMenu extends Scene {
 
     @Override
     public void initialize() {
-        currentTime =  90*10000-10000;
+        currentTime =  0;
         isTurnOf = new boolean[Farmland.numberOfPlayer()];
         isTurnOf[0] = true;
         currentPlayerTurn = Farmland.getPlayers().get(0);
