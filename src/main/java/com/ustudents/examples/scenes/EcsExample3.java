@@ -23,16 +23,22 @@ public class EcsExample3 extends Scene {
 
     @Override
     public void initialize() {
+        // Permet de définir le zoom de la caméra
         camera.reload(100);
 
+        // Crée un générateur de nombre aléatoire
         SeedRandom random = new SeedRandom();
 
+        // On crée des entités.
         for (int x = -10; x < 10; x++) {
             for (int y = -10; y < 10; y++) {
                 int rd = random.generateInRange(0, 20);
                 if(rd < 4){
+                    // Crée une nouvelle entité.
                     Mountain mountain = registry.createEntity(Mountain.class);
+                    // J'initialise l'entité (son SpriteComponent) avec le générateur de nombre aléatoire ( certaines entités ne peuvent pas etre initialisé avec )
                     mountain.init(random);
+                    // Je rajoute un TransformComponent
                     mountain.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1, 1));
                 }
                 Plain grass = registry.createEntity(Plain.class);
@@ -75,6 +81,21 @@ public class EcsExample3 extends Scene {
 
             }
         }
+        Cow cow = registry.createEntity(Cow.class);
+        cow.init(random);
+        cow.addComponent(TransformComponent.class, new Vector2f(-128, 200), new Vector2f(1,1));
+        Goat goat = registry.createEntity(Goat.class);
+        goat.init(random);
+        goat.addComponent(TransformComponent.class, new Vector2f(0, 200), new Vector2f(1,1));
+        Pig pig = registry.createEntity(Pig.class);
+        pig.init(random);
+        pig.addComponent(TransformComponent.class, new Vector2f(128, 200), new Vector2f(1,1));
+        Sheep sheep = registry.createEntity(Sheep.class);
+        sheep.init(random);
+        sheep.addComponent(TransformComponent.class, new Vector2f(-256, 200), new Vector2f(1,1));
+        Chicken chicken = registry.createEntity(Chicken.class);
+        chicken.init(random);
+        chicken.addComponent(TransformComponent.class, new Vector2f(-384, 200), new Vector2f(1,1));
     }
 
     @Override
