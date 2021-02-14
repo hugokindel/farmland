@@ -33,6 +33,11 @@ public class EcsExample3 extends Scene {
         for (int x = -10; x < 10; x++) {
             for (int y = -10; y < 10; y++) {
                 int rd = random.generateInRange(0, 20);
+                if(rd < 1){
+                    Citie citie = registry.createEntity(Citie.class);
+                    citie.init();
+                    citie.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1, 1));
+                }
                 if(rd < 4){
                     // Crée une nouvelle entité.
                     Mountain mountain = registry.createEntity(Mountain.class);
