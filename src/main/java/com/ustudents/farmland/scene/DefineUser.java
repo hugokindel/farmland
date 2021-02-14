@@ -2,6 +2,7 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -63,7 +64,7 @@ public class DefineUser extends Scene {
             currentPlayer.serializePlayer(currentPlayer);
         }else{
             Map<String, Object> json = JsonReader.readMap(getClass().getClassLoader().getResourceAsStream("players/human/" + userName.get() + ".json"));
-            if(villageName != json.get("villageName")){
+            if(json != null && villageName != null && villageName != json.get("villageName")){
                 json.put("villageName",villageName);
                 JsonWriter.writeToFile(humanFolder + "/"+userName.get() +".json",json);
             }
@@ -110,6 +111,9 @@ public class DefineUser extends Scene {
     private void renameButton(){
         for(int i=0;i<list.length;i++){
             if(ImGui.button(list[i].getName())){
+                userName.set(list[i].getName());
+                userName.set(userName.get().substring(0,userName.get().length()-5));
+                establishPlayer();
                 Game.get().getSceneManager().changeScene(WaitingRoom.class);
             }
             ImGui.sameLine();
