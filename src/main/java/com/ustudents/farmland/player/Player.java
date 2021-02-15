@@ -17,12 +17,15 @@ public abstract class Player{
     @JsonSerializable
     private static int totalId;
 
+    private int currentMoney;
+
     public Player(){}
 
-    public Player(String name,String villageName){
+    public Player(String name, String villageName){
         userName = name;
         this.villageName = villageName;
         totalId = id++;
+        currentMoney = 0;
     }
 
     public static int getTotalId() {
@@ -62,7 +65,14 @@ public abstract class Player{
         Player.totalId -= 1;
     }
 
-    abstract void serializePlayer(Player current);
+    public int getCurrentMoney() {
+        return currentMoney;
+    }
 
+    public void setCurrentMoney(int currentMoney) {
+        this.currentMoney = currentMoney;
+    }
+
+    abstract void serializePlayer(Player current);
 
 }

@@ -8,6 +8,8 @@ import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 
 public class PlayerInventory extends Scene {
+    private final static int freeSlot = 15;
+
     @Override
     public void initialize() {
 
