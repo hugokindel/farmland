@@ -11,7 +11,7 @@ public class Timer {
     private static int currentTime;
     private final static int timerPerPlayer = 90*10000;
 
-    private final static int timeBeforeRename = 2*10000;
+    private final static int timeBeforeRename = 3*10000;
 
     public Timer() {
         deltaTime = 0.0;
