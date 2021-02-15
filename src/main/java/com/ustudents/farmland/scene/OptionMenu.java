@@ -21,6 +21,7 @@ public class OptionMenu extends Scene {
     public void render() {
         ImGuiUtils.setNextWindowWithSizeCentered(300, 300, ImGuiCond.Appearing);
         ImGui.begin("Options Menu");
+        //
 
         if (ImGui.button("Main Menu")) {
             Game.get().getSceneManager().changeScene(MainMenu.class);
