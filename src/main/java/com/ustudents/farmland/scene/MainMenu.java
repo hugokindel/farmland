@@ -2,7 +2,10 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.component.*;
 import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -12,11 +15,9 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 public class MainMenu extends Scene {
-    Texture texture;
-
     @Override
     public void initialize() {
-        texture = Resources.loadTexture("examples/grass.png");
+
     }
 
     @Override
@@ -26,9 +27,6 @@ public class MainMenu extends Scene {
 
     @Override
     public void render() {
-        spritebatch.begin();
-        //spritebatch.drawCircle(new Vector2f(0, 0), 10, 25, 0, Color.WHITE, 1);
-        spritebatch.end();
     }
 
     @Override
