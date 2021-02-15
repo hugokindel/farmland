@@ -3,7 +3,6 @@ package com.ustudents.farmland.scene;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.Timer;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
@@ -49,8 +48,7 @@ public class GameMenu extends Scene {
             isTurnOf[randomNum] = true;
             currentPlayerTurn = Farmland.getPlayers().get(randomNum);
         }
-
-        if(checkIfPlayerHasMoney()){
+        if(!checkIfPlayerHasMoney()){
             giveMoney(500);
         }
     }
@@ -105,12 +103,11 @@ public class GameMenu extends Scene {
     @Override
     public void render() {
         Timer.increaseCurrentTime();
-
     }
 
     public static void timerAction(){
         int printTime = (Timer.getTimerPerPlayer()-Timer.getCurrentTime())/10000;
-        ImGui.text("Timer : " + printTime/60 + "min" + printTime%60 + "s");
+        ImGui.text(makeSpace(13) + "Timer : " + printTime/60 + "min" + printTime%60 + "s");
     }
 
     private static boolean getYourPlayer(){
@@ -125,13 +122,22 @@ public class GameMenu extends Scene {
         return false;
     }
 
+    private static String makeSpace(int n){
+        return " ".repeat(Math.max(0, n));
+    }
+
     public static void printThePlayerTurn(){
         ImGui.text("\n");
         if (getYourPlayer()){
-            ImGui.text("is Playing: You");
+            ImGui.text("Is Playing: You");
         }else{
-            ImGui.text("is Playing: " + currentPlayerTurn.getUserName());
+            ImGui.text("Is Playing: " + currentPlayerTurn.getUserName());
         }
+        ImGui.text("Village Name : " + currentPlayerTurn.getVillageName());
+        ImGui.text("\n");
+        ImGui.text("Number of Players : " + isTurnOf.length);
+        ImGui.text("\n");
+        ImGui.text("Available money : " + currentPlayerTurn.getCurrentMoney());
         ImGui.text("\n");
     }
 
@@ -139,6 +145,10 @@ public class GameMenu extends Scene {
         ImGui.text("Player options : \n");
         if (ImGui.button("Inventory")){
             Game.get().getSceneManager().changeScene(PlayerInventory.class);
+        }
+        ImGui.sameLine();
+        if (ImGui.button("Market")){
+            Game.get().getSceneManager().changeScene(MarketMenu.class);
         }
         ImGui.text("\n");
         if(isTurnOf[0]){
