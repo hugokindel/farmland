@@ -19,6 +19,8 @@ public abstract class Player{
 
     private int currentMoney;
 
+    private int currentActionPlayed;
+
     public Player(){}
 
     public Player(String name, String villageName){
@@ -71,6 +73,18 @@ public abstract class Player{
 
     public void setCurrentMoney(int currentMoney) {
         this.currentMoney = currentMoney;
+    }
+
+    public int getCurrentActionPlayed() {
+        return currentActionPlayed;
+    }
+
+    public void setCurrentActionPlayed(int currentActionPlayed) {
+        this.currentActionPlayed = currentActionPlayed;
+    }
+
+    public void increaseCurrentActionPlayed() {
+        this.currentActionPlayed += 1;
     }
 
     abstract void serializePlayer(Player current);

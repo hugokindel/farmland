@@ -1,16 +1,16 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.farmland.scene.GameMenu;
+import com.ustudents.farmland.scene.InGameScene;
 
 public class Goal {
 
     public Goal(){}
 
     public boolean checkIfPlayerWin(){
-        return GameMenu.getCurrentPlayerTurn().getCurrentMoney()>=10000;
+        return InGameScene.getCurrentPlayerTurn().getCurrentMoney()>=10000;
     }
 
     public boolean checkIfPlayerLoose(){
-        return GameMenu.getCurrentPlayerTurn().getCurrentMoney()<0;
+        return InGameScene.getCurrentPlayerTurn().getCurrentMoney()<0;
     }
 }

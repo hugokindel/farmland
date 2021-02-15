@@ -17,7 +17,7 @@ public class MarketMenu extends Scene {
     @Override
     public void update(double dt) {
         if(Timer.getCurrentTime() >= Timer.getTimerPerPlayer()){
-            Game.get().getSceneManager().changeScene(GameMenu.class);
+            Game.get().getSceneManager().changeScene(InGameScene.class);
         }
     }
 
@@ -30,12 +30,12 @@ public class MarketMenu extends Scene {
     public void renderImGui(){
         ImGuiUtils.setNextWindowWithSizeCentered(300, 300, ImGuiCond.Appearing);
         ImGui.begin("Market Menu");
-        GameMenu.timerAction();
-        GameMenu.printThePlayerTurn();
+        InGameScene.timerAction();
+        InGameScene.printThePlayerTurn();
         ImGui.separator();
         ImGui.text("Player options : \n");
         if (ImGui.button("Leave Market")) {
-            Game.get().getSceneManager().changeScene(GameMenu.class);
+            Game.get().getSceneManager().changeScene(InGameScene.class);
         }
         ImGui.text("\n");
         ImGui.separator();

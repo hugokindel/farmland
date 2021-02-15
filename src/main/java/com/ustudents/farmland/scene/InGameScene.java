@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class GameMenu extends Scene {
+public class InGameScene extends Scene {
     private static boolean[] isTurnOf;
     private static Player currentPlayerTurn;
 
@@ -36,6 +36,17 @@ public class GameMenu extends Scene {
         return false;
     }
 
+    private void initializeIsTurn(){
+        ArrayList<Player> tmp = Farmland.getPlayers();
+        int i = 0;
+        for(Player p : tmp){
+            if(currentPlayerTurn == p){
+                isTurnOf[i] = true;
+            }
+            i++;
+        }
+    }
+
     @Override
     public void initialize() {
         if(!Farmland.isInGame()){
@@ -43,11 +54,15 @@ public class GameMenu extends Scene {
             Farmland.setInGame(true);
         }
         isTurnOf = new boolean[Farmland.numberOfPlayer()];
-        if(Farmland.getKindOfGame().equals("SinglePlayer")){
-            int randomNum = (int) (Math.random() * isTurnOf.length);
-            isTurnOf[randomNum] = true;
-            currentPlayerTurn = Farmland.getPlayers().get(randomNum);
+        if(currentPlayerTurn == null){
+            if(Farmland.getKindOfGame().equals("SinglePlayer")){
+                int randomNum = (int) (Math.random() * isTurnOf.length);
+                currentPlayerTurn = Farmland.getPlayers().get(randomNum);
+                currentPlayerTurn.setCurrentActionPlayed(0);
+            }
         }
+        initializeIsTurn();
+
         if(!checkIfPlayerHasMoney()){
             giveMoney(500);
         }
@@ -144,16 +159,28 @@ public class GameMenu extends Scene {
     public void printForPlayerTurn(){
         ImGui.text("Player options : \n");
         if (ImGui.button("Inventory")){
+            if (currentPlayerTurn.getCurrentActionPlayed() == -1){
+                currentPlayerTurn.setCurrentActionPlayed(0);
+            }
+            currentPlayerTurn.increaseCurrentActionPlayed();
             Game.get().getSceneManager().changeScene(PlayerInventory.class);
         }
         ImGui.sameLine();
         if (ImGui.button("Market")){
+            if (currentPlayerTurn.getCurrentActionPlayed() == -1){
+                currentPlayerTurn.setCurrentActionPlayed(0);
+            }
+            currentPlayerTurn.increaseCurrentActionPlayed();
             Game.get().getSceneManager().changeScene(MarketMenu.class);
         }
         ImGui.text("\n");
         if(isTurnOf[0]){
             if (ImGui.button("Finish your turn")){
-                Timer.setCurrentTime(Timer.getTimerPerPlayer());
+                if (currentPlayerTurn.getCurrentActionPlayed() > 0 || currentPlayerTurn.getCurrentActionPlayed() == -1){
+                    Timer.setCurrentTime(Timer.getTimerPerPlayer());
+                }else{
+                    currentPlayerTurn.setCurrentActionPlayed(-1);
+                }
             }
             ImGui.sameLine();
         }
@@ -174,7 +201,11 @@ public class GameMenu extends Scene {
             }
             Timer.setCurrentTime(0);
             Farmland.setInGame(false);
+            currentPlayerTurn = null;
             Game.get().getSceneManager().changeScene(SinglePlayerMenu.class);
+        }
+        if(currentPlayerTurn != null && currentPlayerTurn.getCurrentActionPlayed() == -1){
+            ImGui.text("Are you sure to end your turn ?");
         }
         ImGui.end();
     }
