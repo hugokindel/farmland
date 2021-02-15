@@ -12,7 +12,10 @@ import imgui.flag.ImGuiCond;
 public class WaitingRoom extends Scene {
     @Override
     public void initialize() {
-
+        if (Farmland.getPlayers().size()>1){
+            Farmland.setPlayersIsInit(false);
+            Farmland.throwPlayer();
+        }
     }
 
     @Override
@@ -32,7 +35,7 @@ public class WaitingRoom extends Scene {
     }
 
     private void fillTheGameWithBot(int number){
-        for(int i = 0; i < number; i++){
+        for(int i = 1; i <= number; i++){
             Farmland.setPlayers(new Robot("Bot " + i,"Village " + i));
         }
     }

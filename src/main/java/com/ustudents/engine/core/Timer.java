@@ -8,6 +8,8 @@ public class Timer {
     private int framesCounter;
     private int fps;
     private double previousFrameCounterTime;
+    private static int currentTime;
+    private final static int timerPerPlayer = 90*10000;
 
     public Timer() {
         deltaTime = 0.0;
@@ -40,5 +42,21 @@ public class Timer {
 
     public double getFrameDuration() {
         return 1000.0 / (double)fps;
+    }
+
+    public static int getCurrentTime(){
+        return currentTime;
+    }
+
+    public static void increaseCurrentTime(){
+        currentTime++;
+    }
+
+    public static void setCurrentTime(int time){
+        currentTime = time;
+    }
+
+    public static int getTimerPerPlayer() {
+        return timerPerPlayer;
     }
 }

@@ -13,6 +13,7 @@ public class Farmland extends Game {
     private static ArrayList<Player> players;
     private static boolean playersIsInit;
     private static String kindOfGame;
+    private static boolean isInGame;
 
     @Override
     protected void initialize() {
@@ -69,5 +70,13 @@ public class Farmland extends Game {
 
     public static void setPlayersIsInit(boolean bool) {
         playersIsInit = bool;
+    }
+
+    public static boolean isInGame() {
+        return isInGame;
+    }
+
+    public static void setInGame(boolean inGame) {
+        isInGame = inGame;
     }
 }
