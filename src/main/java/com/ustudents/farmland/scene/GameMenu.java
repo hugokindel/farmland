@@ -23,7 +23,6 @@ public class GameMenu extends Scene {
         isTurnOf = new boolean[Farmland.numberOfPlayer()];
         if(Farmland.getKindOfGame().equals("SinglePlayer")){
             int randomNum = (int) (Math.random() * isTurnOf.length);
-            Out.println(randomNum);
             isTurnOf[randomNum] = true;
             currentPlayerTurn = Farmland.getPlayers().get(randomNum);
         }

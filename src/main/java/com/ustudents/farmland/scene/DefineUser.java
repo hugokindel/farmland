@@ -74,7 +74,10 @@ public class DefineUser extends Scene {
     }
 
     private void applyNewUserName(File rename,int index){
-        File renameFile = new File(System.getProperty("user.dir") + "/" + humanFolder + "/" + newUserName.get(index) + ".json");
+        File renameFile = new File(System.getProperty("user.dir") + "/" + humanFolder + "/" + newUserName.get(index));
+        if(rename!=null){
+            Out.println(rename.getName());
+        }
         if(rename != null && !renameFile.exists()){
             Path source = Paths.get(rename.getPath());
             Path destination = Paths.get(renameFile + ".json");
@@ -139,7 +142,7 @@ public class DefineUser extends Scene {
 
             }
             applyNewUserName(rename,index);
-            Game.get().getSceneManager().changeScene(WaitingRoom.class);
+            Game.get().getSceneManager().changeScene(DefineUser.class);
         }
 
     }
