@@ -1,4 +1,4 @@
-package com.ustudents.farmland.gameconponent;
+package com.ustudents.farmland.gamecomponent;
 
 import com.ustudents.farmland.scene.GameMenu;
 

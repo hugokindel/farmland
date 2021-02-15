@@ -2,7 +2,7 @@ package com.ustudents.farmland;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.option.annotation.Command;
-import com.ustudents.farmland.gameconponent.Goal;
+import com.ustudents.farmland.gamecomponent.Goal;
 import com.ustudents.farmland.player.Player;
 import com.ustudents.farmland.scene.MainMenu;
 
