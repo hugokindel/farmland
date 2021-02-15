@@ -11,6 +11,8 @@ public class Timer {
     private static int currentTime;
     private final static int timerPerPlayer = 90*10000;
 
+    private final static int timeBeforeRename = 2*10000;
+
     public Timer() {
         deltaTime = 0.0;
         previousFrameDuration = 0.0;
@@ -58,5 +60,9 @@ public class Timer {
 
     public static int getTimerPerPlayer() {
         return timerPerPlayer;
+    }
+
+    public static int getTimeBeforeRename() {
+        return timeBeforeRename;
     }
 }

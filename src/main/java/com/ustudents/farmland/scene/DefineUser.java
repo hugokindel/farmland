@@ -2,6 +2,7 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
@@ -28,23 +29,35 @@ public class DefineUser extends Scene {
     private final ArrayList<ImString> newUserName = new ArrayList<ImString>();
     private File humanFolder;
     private File[] list;
+    private boolean disableRename;
+
 
 
 
     @Override
     public void initialize() {
+        if (Timer.getCurrentTime() != 0){
+            disableRename = true;
+        }else{
+            Timer.setCurrentTime(0);
+        }
         humanFolder = new File(Resources.getKindPlayerDirectoryName("human"));
         list = humanFolder.listFiles();
     }
 
     @Override
     public void update(double dt) {
-
+        if(Timer.getCurrentTime() >= Timer.getTimeBeforeRename()){
+            Timer.setCurrentTime(0);
+            disableRename = false;
+        }
     }
 
     @Override
     public void render() {
-
+        if (disableRename){
+            Timer.increaseCurrentTime();
+        }
     }
 
     private boolean checkIfFileExist(){
@@ -130,25 +143,28 @@ public class DefineUser extends Scene {
 
         }
         ImGui.text("\n");
-        if(list.length>0 && ImGui.button("rename")){
-            File rename = null;
-            int index = 0;
-            for(int i = 0;i< list.length;i++){
-                if(newUserName.get(i).get().length() > 0){
-                    rename = new File(System.getProperty("user.dir") + "/" + list[i]);
-                    index=i;
-                    break;
+        if(!disableRename){
+            if(list.length>0 && ImGui.button("rename")){
+                File rename = null;
+                int index = 0;
+                for(int i = 0;i< list.length;i++){
+                    if(newUserName.get(i).get().length() > 0){
+                        rename = new File(System.getProperty("user.dir") + "/" + list[i]);
+                        index=i;
+                        break;
+                    }
+
                 }
-
+                disableRename = true;
+                applyNewUserName(rename,index);
+                Timer.setCurrentTime(1);
+                Game.get().getSceneManager().changeScene(DefineUser.class);
             }
-            applyNewUserName(rename,index);
-            Game.get().getSceneManager().changeScene(DefineUser.class);
+            ImGui.sameLine();
         }
-
     }
 
     public void clearAllButton(){
-        ImGui.sameLine();
         if(list.length> 0 && ImGui.button("Clear All")){
             for (File file : list) {
                 file.delete();
