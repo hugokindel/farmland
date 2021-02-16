@@ -208,7 +208,7 @@ public class Resources {
             return loadShader(fileName);
         }
 
-        return shaders.get(fileName);
+        return shader;
     }
 
     public static Shader getShader(String fileName) {
@@ -249,7 +249,7 @@ public class Resources {
             return loadTexture(filePath);
         }
 
-        return textures.get(filePath);
+        return texture;
     }
 
     public static Texture getTexture(String filePath) {
