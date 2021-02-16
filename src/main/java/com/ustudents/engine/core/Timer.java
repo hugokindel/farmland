@@ -51,7 +51,7 @@ public class Timer {
     }
 
     public static void increaseCurrentTime(){
-        currentTime++;
+        currentTime+=5;
     }
 
     public static void setCurrentTime(int time){
