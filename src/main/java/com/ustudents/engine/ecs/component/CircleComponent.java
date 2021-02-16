@@ -1,25 +1,35 @@
 package com.ustudents.engine.ecs.component;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 
+@JsonSerializable
 public class CircleComponent extends Component {
     /** The radius. */
+    @JsonSerializable
     @Editable
     public Float radius;
 
     /** The number of sides to render. */
+    @JsonSerializable
     @Editable
     public Integer sides;
 
     /** The color. */
+    @JsonSerializable
     @Editable
     public Color color;
 
     /** The thickness of the lines. */
+    @JsonSerializable
     @Editable
     public Integer thickness;
+
+    public CircleComponent() {
+        this(null, null, null, null);
+    }
 
     /**
      * Class constructor.

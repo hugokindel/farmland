@@ -1,5 +1,6 @@
 package com.ustudents.engine.ecs.component;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.ecs.Component;
@@ -7,8 +8,10 @@ import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+@JsonSerializable
 public class SpriteComponent extends Component {
     /** The texture. */
+    @JsonSerializable
     @Editable
     public Texture texture;
 
@@ -17,16 +20,23 @@ public class SpriteComponent extends Component {
      * - x,y contains the position to show within the texture.
      * - z,w contains the length to show after this position.
      */
+    @JsonSerializable
     @Editable
     public Vector4f region;
 
     /** The color tint to apply on the texture. */
+    @JsonSerializable
     @Editable
     public Color tint;
 
     /** The origin. */
+    @JsonSerializable
     @Editable
     public Vector2f origin;
+
+    public SpriteComponent() {
+        this(null, null, null, null);
+    }
 
     /**
      * Class constructor.

@@ -1,22 +1,31 @@
 package com.ustudents.engine.ecs.component;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 
+@JsonSerializable
 public class TextComponent extends Component {
     /** The text. */
+    @JsonSerializable
     @Editable
     public String text;
 
     /** The font. */
+    @JsonSerializable
     @Editable
     public Font font;
 
     /** The color. */
+    @JsonSerializable
     @Editable
     public Color color;
+
+    public TextComponent() {
+        this(null, null);
+    }
 
     /**
      * Class constructor.

@@ -1,10 +1,15 @@
 package com.ustudents.engine.ecs.component;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
+import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 
+import static com.ustudents.engine.core.Resources.getTexturesDirectory;
+
+@JsonSerializable
 public class LineComponent extends Component {
     /**
      * The type to use:
@@ -17,24 +22,33 @@ public class LineComponent extends Component {
     }
 
     /** The length. */
+    @JsonSerializable
     @Editable
     public Float length;
 
     /** The color. */
+    @JsonSerializable
     @Editable
     public Color color;
 
     /** The thickness. */
+    @JsonSerializable
     @Editable
     public Integer thickness;
 
     /** The point. */
+    @JsonSerializable
     @Editable
     public Vector2f point2;
 
     /** The type to use. */
+
     @Editable
     public Type type;
+
+    public LineComponent() {
+        this(null, null, null);
+    }
 
     /**
      * Class constructor.
@@ -74,7 +88,7 @@ public class LineComponent extends Component {
         this.length = length;
         this.color = color;
         this.thickness = thickness;
-        this.point2 = new Vector2f(0.0f, 0.0f);
+        this.point2 = null;
         this.type = Type.FromLength;
     }
 
@@ -108,7 +122,16 @@ public class LineComponent extends Component {
         this.point2 = point2;
         this.color = color;
         this.thickness = thickness;
-        this.length = 0.0f;
+        this.length = null;
         this.type = Type.FromPoint;
+    }
+
+    @JsonSerializableConstructor
+    private void fromJson() {
+        if (point2 != null) {
+            this.type = Type.FromPoint;
+        } else {
+            this.type = Type.FromLength;
+        }
     }
 }

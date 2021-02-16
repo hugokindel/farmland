@@ -1,26 +1,36 @@
 package com.ustudents.engine.ecs.component;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 
+@JsonSerializable
 public class RectangleComponent extends Component {
     /** The size. */
+    @JsonSerializable
     @Editable
     public Vector2f size;
 
     /** The color. */
+    @JsonSerializable
     @Editable
     public Color color;
 
     /** The thickness of the lines. */
+    @JsonSerializable
     @Editable
     public Integer thickness;
 
     /** The origin. */
+    @JsonSerializable
     @Editable
     public Vector2f origin;
+
+    public RectangleComponent() {
+        this(null, null, null,null);
+    }
 
     /**
      * Class constructor.

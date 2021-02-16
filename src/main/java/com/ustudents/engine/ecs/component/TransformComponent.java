@@ -1,20 +1,24 @@
 package com.ustudents.engine.ecs.component;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 
-
+@JsonSerializable
 public class TransformComponent extends Component {
     /** The position in the world (in world coordinates). */
+    @JsonSerializable
     @Editable
     public Vector2f position;
 
     /** The scale to use (default is x1,x1). */
+    @JsonSerializable
     @Editable
     public Vector2f scale;
 
-     /** The rotation. */
+    /** The rotation. */
+    @JsonSerializable
     @Editable
     public Float rotation;
 

@@ -5,13 +5,22 @@ import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.json.Json;
+import com.ustudents.engine.core.json.JsonReader;
+import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.engine.ecs.component.TransformComponent;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.Window;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
@@ -80,6 +89,8 @@ public abstract class Game extends Runnable {
         Out.canUseAnsiCode(!noAnsiCodes);
 
         if (!showHelp && !showVersion) {
+            Map<String, Object> test = new HashMap<>();
+
             _initialize();
             loop();
             _destroy();
@@ -170,6 +181,8 @@ public abstract class Game extends Runnable {
 
     /** Destroy everything. */
     private void _destroy() {
+        Json.serialize("scene.json", sceneManager.getScene());
+
         destroy();
         if (isDebugging()) {
             Out.printlnDebug("Destroying...");
