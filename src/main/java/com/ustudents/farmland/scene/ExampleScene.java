@@ -10,13 +10,15 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.component.SpriteComponent;
+import com.ustudents.engine.ecs.component.TextComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
+import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.scene.Scene;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 
 public class ExampleScene extends Scene {
     Entity player3;

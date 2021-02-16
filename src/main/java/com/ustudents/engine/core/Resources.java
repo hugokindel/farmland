@@ -23,6 +23,7 @@ public class Resources {
     private static final String logsDirectoryName = "logs";
     private static final String shadersDirectoryName = "shaders";
     private static final String texturesDirectoryName = "textures";
+    private static final String playersDirectoryName = "players";
     private static final String fontsDirectoryName = "fonts";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
@@ -61,6 +62,14 @@ public class Resources {
 
     public static String getFontsDirectory() {
         return createPathIfNeeded(getDataDirectory() + "/" + fontsDirectoryName);
+    }
+
+    public static String getPlayersDirectoryName(){
+        return createPathIfNeeded(getDataDirectory() + "/" + playersDirectoryName);
+    }
+
+    public static String getKindPlayerDirectoryName(String type){
+        return createPathIfNeeded(getPlayersDirectoryName() + "/" + type);
     }
 
     /**
@@ -134,7 +143,7 @@ public class Resources {
         }
 
         textures.clear();
-
+        
         for (Map.Entry<String, Map<Integer, Font>> fontMapSet : fonts.entrySet()) {
             for (Map.Entry<Integer, Font> fontSet : fontMapSet.getValue().entrySet()) {
                 unloadFont(fontMapSet.getKey(), fontSet.getKey(), false);

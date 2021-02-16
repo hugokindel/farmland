@@ -14,11 +14,13 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.Window;
+import com.ustudents.farmland.player.Player;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +63,7 @@ public abstract class Game extends Runnable {
         noImGui = false;
         shouldClose = false;
         imGuiVisible = true;
+
 
         // Game managers.
         window = new Window();
