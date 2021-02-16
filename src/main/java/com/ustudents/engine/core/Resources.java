@@ -143,6 +143,14 @@ public class Resources {
         }
 
         textures.clear();
+        
+        for (Map.Entry<String, Map<Integer, Font>> fontMapSet : fonts.entrySet()) {
+            for (Map.Entry<Integer, Font> fontSet : fontMapSet.getValue().entrySet()) {
+                unloadFont(fontMapSet.getKey(), fontSet.getKey(), false);
+            }
+        }
+
+        fonts.clear();
 
         saveSettings();
     }
