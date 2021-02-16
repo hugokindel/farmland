@@ -89,8 +89,6 @@ public abstract class Game extends Runnable {
         Out.canUseAnsiCode(!noAnsiCodes);
 
         if (!showHelp && !showVersion) {
-            Map<String, Object> test = new HashMap<>();
-
             _initialize();
             loop();
             _destroy();
@@ -181,8 +179,6 @@ public abstract class Game extends Runnable {
 
     /** Destroy everything. */
     private void _destroy() {
-        Json.serialize("scene.json", sceneManager.getScene());
-
         destroy();
         if (isDebugging()) {
             Out.printlnDebug("Destroying...");
