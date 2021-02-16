@@ -127,6 +127,7 @@ public class Resources {
 
         shaders = new HashMap<>();
         textures = new HashMap<>();
+        fonts = new HashMap<>();
     }
 
     /** Saves everything. */
