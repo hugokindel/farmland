@@ -21,9 +21,9 @@ jobs:
         java-version: 11
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
+    - name: Build and test with Gradle
       run: ./gradlew build
-    - name: Publish Unit Test Results
+    - name: Publish test results
       uses: EnricoMi/publish-unit-test-result-action@v1.9
       if: always()
       with:
