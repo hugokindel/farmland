@@ -3,7 +3,6 @@ package com.ustudents.farmland.scene;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.Timer;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -26,13 +25,10 @@ import java.util.Objects;
 public class DefineUser extends Scene {
     private final ImString userName = new ImString();
     private final ImString villageName = new ImString();
-    private final ArrayList<ImString> newUserName = new ArrayList<ImString>();
+    private final ArrayList<ImString> newUserName = new ArrayList<>();
     private File humanFolder;
     private File[] list;
     private boolean disableRename;
-
-
-
 
     @Override
     public void initialize() {
@@ -60,9 +56,9 @@ public class DefineUser extends Scene {
         }
     }
 
-    private boolean checkIfFileExist(){
+    private boolean checkIfFileExist(String name){
         for(int i = 0; i < Objects.requireNonNull(list).length ; i++){
-            if(list[i].getName().contains(userName.get())){
+            if(list[i].getName().contains(name)){
                 return true;
             }
         }
@@ -77,15 +73,14 @@ public class DefineUser extends Scene {
 
     private void establishPlayer(){
         Human currentPlayer;
-        boolean hasFile = checkIfFileExist();
+        boolean hasFile = checkIfFileExist(userName.get());
         if(list.length<=5 && !hasFile){
             currentPlayer = new Human(userName.get(), villageName.get());
             currentPlayer.serializePlayer(currentPlayer);
         }else{
             Map<String, Object> json = JsonReader.readMap(humanFolder + "/" + userName + ".json");
-            if(json != null && villageName != null && villageName.get().length() > 0 && villageName != json.get("villageName")){
-                Out.println("Ici");
-                json.put("villageName",villageName);
+            if(json != null && villageName.get().length() > 0 && !villageName.get().equals(json.get("villageName"))){
+                json.put("villageName",villageName.get());
                 JsonWriter.writeToFile(humanFolder + "/"+userName.get() +".json",json);
             }
             currentPlayer = (Human) Human.deserializePlayer(Resources.getKindPlayerDirectoryName("human"),userName.get());
@@ -96,21 +91,18 @@ public class DefineUser extends Scene {
     private void changeNameOfFile(File rename,File renameFile){
         Path source = Paths.get(rename.getPath());
         Path destination = Paths.get(renameFile + ".json");
-        Runnable run = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Files.move(source, destination);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        Runnable run = () -> {
+            try {
+                Files.move(source, destination);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         };
         run.run();
     }
 
     private void applyNewUserName(File rename,int index){
-        File renameFile = new File(System.getProperty("user.dir") + "/" + humanFolder + "/" + newUserName.get(index));
+        File renameFile = new File(Resources.getKindPlayerDirectoryName("human") + "/" + newUserName.get(index));
         if(rename != null && !renameFile.exists()){
             changeNameOfFile(rename, renameFile);
             Map<String, Object> json = null;
@@ -141,23 +133,24 @@ public class DefineUser extends Scene {
                 Game.get().getSceneManager().changeScene(WaitingRoom.class);
             }
             ImGui.sameLine();
-            if(ImGui.button("clear " + (i+1))){
+            if(!disableRename && ImGui.button("Clear " + (i+1))){
                 list[i].delete();
                 Game.get().getSceneManager().changeScene(DefineUser.class);
             }
             newUserName.add(new ImString());
             ImGui.sameLine();
-            ImGui.inputText(i + "", newUserName.get(i));
+            String tmp = String.valueOf(i+1);
+            ImGui.inputText(tmp.trim(), newUserName.get(i));
 
         }
         ImGui.text("\n");
         if(!disableRename){
-            if(list.length>0 && ImGui.button("rename")){
-                File rename = null;
-                int index = 0;
+            if(list.length>0 && ImGui.button("Rename")){
+                File rename;
+                int index;
                 for(int i = 0;i< list.length;i++){
-                    if(checkArg(newUserName.get(i).get())){
-                        rename = new File(System.getProperty("user.dir") + "/" + list[i]);
+                    if(!checkIfFileExist(newUserName.get(i).get()) && checkArg(newUserName.get(i).get())){
+                        rename = new File(list[i].getPath());
                         index=i;
                         disableRename = true;
                         applyNewUserName(rename,index);
