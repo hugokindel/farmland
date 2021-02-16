@@ -96,6 +96,18 @@ public class Json {
                             field.set(object, 0.0);
                         } else if (field.getType().equals(Float.class)) {
                             field.set(object, 0.0f);
+                        } else if (field.getType().equals(Vector2f.class)) {
+                            field.set(object, new Vector2f());
+                        } else if (field.getType().equals(Vector3f.class)) {
+                            field.set(object, new Vector3f());
+                        } else if (field.getType().equals(Vector4f.class)) {
+                            field.set(object, new Vector4f());
+                        } else if (field.getType().equals(Vector2i.class)) {
+                            field.set(object, new Vector2i());
+                        } else if (field.getType().equals(Vector3i.class)) {
+                            field.set(object, new Vector3i());
+                        } else if (field.getType().equals(Vector4i.class)) {
+                            field.set(object, new Vector4i());
                         } else {
                             field.set(object, null);
                         }
