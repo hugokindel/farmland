@@ -1,6 +1,7 @@
 package com.ustudents.engine.graphic;
 
-import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
+import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.utility.FileUtil;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -14,9 +15,12 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.ustudents.engine.core.Resources.getFontsDirectory;
+import static com.ustudents.engine.core.Resources.getTexturesDirectory;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
+@JsonSerializable
 public class Font {
     public static class GlyphInfo {
         Vector4f position;
@@ -32,9 +36,7 @@ public class Font {
 
     private STBTTPackedchar.Buffer characterData;
 
-    private final Map<Character, GlyphInfo> glyphInfoPerCharacter;
-
-    private final int fontSize;
+    private Map<Character, GlyphInfo> glyphInfoPerCharacter;
 
     private boolean destroyed;
 
@@ -48,13 +50,23 @@ public class Font {
 
     private int lineGap;
 
+    @JsonSerializable
+    private Integer fontSize;
+
+    @JsonSerializable
     String path;
 
     public Font(String filePath, int fontSize) {
-        this.path = filePath;
+        this.path = filePath.replace(getFontsDirectory() + "/", "");
         this.fontSize = fontSize;
         glyphInfoPerCharacter = new HashMap<>();
         loadFont(filePath);
+    }
+
+    @JsonSerializableConstructor
+    private void fromJson() {
+        glyphInfoPerCharacter = new HashMap<>();
+        loadFont(getFontsDirectory() + "/" + path);
     }
 
     public void destroy() {

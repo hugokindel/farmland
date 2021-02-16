@@ -246,6 +246,10 @@ public class Registry {
         return enabledEntities.contains(entity);
     }
 
+    public Map<Integer, Entity> getEntities() {
+        return entityPerIndex;
+    }
+
     /**
      * Returns an entity by ID.
      *

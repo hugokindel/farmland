@@ -12,12 +12,12 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+// Implementation in part from: https://github.com/JOML-CI/joml-camera/blob/master/src/org/joml/camera/OrthoCameraControl.java
 public class Camera {
     private Matrix3x2f viewMatrix;
     private Matrix4f viewProjectionMatrix;
     private Vector4i viewportSize;
     private float mouseX, mouseY;
-    private float mouseDownX, mouseDownY;
     private boolean[] mouseDown = new boolean[3];
     private Vector2f normalizedDeviceCoordinates;
     private float minimalZoom;
@@ -63,8 +63,6 @@ public class Camera {
     }
 
     public void onMouseDown(int button) {
-        mouseDownX = mouseX;
-        mouseDownY = mouseY;
         mouseDown[button] = true;
     }
 

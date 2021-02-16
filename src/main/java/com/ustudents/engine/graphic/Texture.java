@@ -1,29 +1,40 @@
 package com.ustudents.engine.graphic;
 
-import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
+import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.utility.FileUtil;
 
 import org.lwjgl.system.*;
 
 import java.nio.*;
 
+import static com.ustudents.engine.core.Resources.getTexturesDirectory;
 import static java.lang.Math.*;
 import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.stb.STBImageWrite.stbi_write_png;
 import static org.lwjgl.system.MemoryStack.*;
 
+@JsonSerializable
+@SuppressWarnings({"unused"})
 public class Texture {
     private ByteBuffer data;
+
     private int width;
+
     private int height;
+
     private int numberOfComponents;
-    private final int handle;
+
+    private int handle;
+
     private boolean destroyed;
+
+    @JsonSerializable
     private String path;
 
     public Texture(String filePath) {
-        this.path = filePath;
+        this.path = filePath.replace(getTexturesDirectory() + "/", "");
         loadTexture(filePath);
         handle = createTexture();
         destroyed = false;
@@ -38,6 +49,13 @@ public class Texture {
 
     public Texture(byte[] data, int width, int height, int numberOfComponents) {
         this(byteArrayToBuffer(data), width, height, numberOfComponents);
+    }
+
+    @JsonSerializableConstructor
+    private void fromJson() {
+        loadTexture(getTexturesDirectory() + "/" + path);
+        handle = createTexture();
+        destroyed = false;
     }
 
     public void destroy() {

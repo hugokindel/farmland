@@ -1,17 +1,21 @@
 package com.ustudents.engine.ecs;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
+
 import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 
 /** Defines an entity object from an ECS point of view. */
 @SuppressWarnings({"unused"})
+@JsonSerializable
 public class Entity {
     /** The unique ID. */
-    private final Integer id;
+    @JsonSerializable
+    private Integer id;
 
     /** The registry used to interact with this entity. */
-    private final Registry registry;
+    private Registry registry;
 
     /**
      * Class constructor.
