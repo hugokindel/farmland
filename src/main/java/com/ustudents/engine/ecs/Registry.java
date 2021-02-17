@@ -273,6 +273,21 @@ public class Registry {
     }
 
     /**
+     * Returns an entity by name.
+     *
+     * @param name The name.
+     *
+     * @return the entity.
+     */
+    public Entity getEntityByName(String name) {
+        for (Entity entity : entitiesPerName.get(name)) {
+            return entity;
+        }
+
+        return null;
+    }
+
+    /**
      * Gets all entity by name.
      *
      * @param name The name.

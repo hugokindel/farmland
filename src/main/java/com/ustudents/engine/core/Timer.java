@@ -14,6 +14,7 @@ public class Timer {
     private final static int timeBeforeRename = 3*10000;
 
     public Timer() {
+        fps = 0;
         deltaTime = 0.0;
         previousFrameDuration = 0.0;
     }
@@ -43,7 +44,9 @@ public class Timer {
     }
 
     public double getFrameDuration() {
-        return 1000.0 / (double)fps;
+        double value = 1000.0 / (double)fps;
+
+        return value != Double.POSITIVE_INFINITY && value != Double.NEGATIVE_INFINITY ? value : 0;
     }
 
     public static int getCurrentTime(){

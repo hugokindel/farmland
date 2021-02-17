@@ -15,21 +15,30 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class MainMenu extends Scene {
     Texture grassTexture;
     Texture titleTexture;
     Font font;
+    Font fontSmaller;
 
     @Override
     public void initialize() {
         camera.enableInput(false);
 
-        SeedRandom random = new SeedRandom();
-        Vector2i windowSize = Farmland.get().getWindow().getSize();
-
         grassTexture = Resources.loadTexture("examples/grass.png");
         titleTexture = Resources.loadTexture("title.png");
         font = Resources.loadFont("default.ttf", 36);
+        fontSmaller = Resources.loadFont("default.ttf", 24);
+
+        initializeBackground();
+        initializeUi();
+    }
+
+    public void initializeBackground() {
+        SeedRandom random = new SeedRandom();
 
         Entity grassContainer = registry.createEntity();
         grassContainer.setName("grassContainer");
@@ -49,6 +58,10 @@ public class MainMenu extends Scene {
                 grass.addComponent(RenderableComponent.class);
             }
         }
+    }
+
+    public void initializeUi() {
+        Vector2i windowSize = Farmland.get().getWindow().getSize();
 
         Entity uiContainer = registry.createEntity();
         uiContainer.setName("uiContainer");
@@ -56,7 +69,6 @@ public class MainMenu extends Scene {
         Entity title = registry.createEntity();
         title.setName("titleLabel");
         title.setParent(uiContainer);
-
         title.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f, 20), new Vector2f(1.5f, 1.5f));
         title.addComponent(SpriteComponent.class, titleTexture);
         title.getComponent(SpriteComponent.class).origin = new Vector2f(256.0f, 0.0f);
@@ -68,40 +80,36 @@ public class MainMenu extends Scene {
 
         for (int i = 0; i < buttons.length; i++) {
             Entity button = registry.createEntity();
-            button.setName(buttonsName[i]);
+            button.setName(buttonsName[i] + "Label");
             button.setParent(uiContainer);
-
             button.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f - font.getTextWidth(buttons[i]) / 2, 300 + 50 * i), new Vector2f(1.5f, 1.5f));
             button.addComponent(TextComponent.class, buttons[i], font);
             button.addComponent(RenderableComponent.class);
             button.addComponent(UiComponent.class);
         }
+
+        Entity stats = registry.createEntity();
+        stats.setName("statsLabel");
+        stats.setParent(uiContainer);
+        stats.addComponent(TransformComponent.class, new Vector2f(10, 25), new Vector2f(1, 1));
+        stats.addComponent(TextComponent.class, "", fontSmaller);
+        stats.addComponent(RenderableComponent.class);
+        stats.addComponent(UiComponent.class);
     }
 
     @Override
     public void update(double dt) {
+        int fps = Game.get().getTimer().getFPS();
+        double ms = BigDecimal.valueOf(Game.get().getTimer().getFrameDuration())
+                .setScale(3, RoundingMode.HALF_UP).doubleValue();
+        int numEntities = registry.getTotalNumberOfEntities();
 
+        registry.getEntityByName("statsLabel").getComponent(TextComponent.class).text = "FPS: " + fps + "\nFramerate: " + ms + "\nNumber of entities: " + numEntities;
     }
 
     @Override
     public void render() {
-        /*spritebatch.begin(getCamera());
-        spritebatch.drawRectangle(new Vector2f(0, 0), new Vector2f(10, 10));
-        spritebatch.end();
 
-        uiSpritebatch.begin(getUiCamera());
-        Vector2i size = Farmland.get().getWindow().getSize();
-        uiSpritebatch.drawRectangle(new Vector2f(0, 0), new Vector2f(120, 120), 0, Color.RED, 45, 10, new Vector2f(2, 2), new Vector2f(0, 0));
-        uiSpritebatch.drawRectangle(new Vector2f(size.x, 0), new Vector2f(120, 120), 0, Color.RED, 45, 10, new Vector2f(22, 2), new Vector2f(120, 0));
-        uiSpritebatch.drawRectangle(new Vector2f(size.x, size.y), new Vector2f(120, 120), 0, Color.RED, 45, 10, new Vector2f(2, 2), new Vector2f(120, 120));
-        uiSpritebatch.drawRectangle(new Vector2f(0, size.y), new Vector2f(120, 120), 0, Color.RED, 45, 10, new Vector2f(2, 2), new Vector2f(0, 120));
-        uiSpritebatch.drawRectangle(new Vector2f((float)size.x / 2, (float)size.y / 2), new Vector2f(120, 120), 0, Color.RED, 45, 10, new Vector2f(2, 2), new Vector2f(60, 60));
-        /*uiSpritebatch.draw(texutre, new Vector2f(0, 0), new Vector4f(0, 0, 120, 120), 0, Color.WHITE, 45, new Vector2f(2, 2), new Vector2f(0, 0));
-        uiSpritebatch.draw(texutre, new Vector2f(size.x, 0), new Vector4f(0, 0, 120, 120), 0, Color.WHITE, 45, new Vector2f(2, 2), new Vector2f(120, 0));
-        uiSpritebatch.draw(texutre, new Vector2f(size.x, size.y), new Vector4f(0, 0, 120, 120), 0, Color.WHITE, 45, new Vector2f(2, 2), new Vector2f(120, 120));
-        uiSpritebatch.draw(texutre, new Vector2f(0, size.y), new Vector4f(0, 0, 120, 120), 0, Color.WHITE, 45, new Vector2f(2, 2), new Vector2f(0, 120));
-        uiSpritebatch.draw(texutre, new Vector2f((float)size.x / 2, (float)size.y / 2), new Vector4f(0, 0, 120, 120), 0, Color.WHITE, 45, new Vector2f(2, 2), new Vector2f(60, 60));
-        uiSpritebatch.end();*/
     }
 
     @Override
