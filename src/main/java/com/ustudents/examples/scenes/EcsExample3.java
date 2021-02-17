@@ -104,7 +104,7 @@ public class EcsExample3 extends Scene {
     }
 
     @Override
-    public void update(double dt) {
+    public void update(float dt) {
 
     }
 
