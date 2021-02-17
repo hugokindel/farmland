@@ -20,6 +20,6 @@ public class Fence extends Property {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("Property/fence.png"),new Vector4f(0, 0, 96, 32),10);
+        addComponent(SpriteComponent.class, Resources.loadTexture("Property/fence.png"),new Vector4f(0, 0, 96, 32));
     }
 }

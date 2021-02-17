@@ -20,11 +20,11 @@ public class Pig extends Resource {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/pig.png"),new Vector4f(3 * 128, 128, 128, 128),11);
+        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/pig.png"),new Vector4f(3 * 128, 128, 128, 128));
     }
 
     public void init(SeedRandom random){
         int textureRegionX = 128 * random.generateInRange(0, 3);
-        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/pig.png"),new Vector4f(textureRegionX, (random.generateInRange(0, 1) == 0)? 128 : 3 * 128, 128, 128),11);
+        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/pig.png"),new Vector4f(textureRegionX, (random.generateInRange(0, 1) == 0)? 128 : 3 * 128, 128, 128));
     }
 }

@@ -19,6 +19,6 @@ public class Citie extends MapElement {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("MapElement/cities.png"),new Vector4f(0, 0, 28, 38),2);
+        addComponent(SpriteComponent.class, Resources.loadTexture("MapElement/cities.png"),new Vector4f(0, 0, 28, 38));
     }
 }

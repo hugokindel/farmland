@@ -19,6 +19,6 @@ public class Pepper extends Resource {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/crops.png"),new Vector4f(22 * 32, 6 * 32, 32, 64),11);
+        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/crops.png"),new Vector4f(22 * 32, 6 * 32, 32, 64));
     }
 }

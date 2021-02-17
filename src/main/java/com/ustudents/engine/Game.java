@@ -179,7 +179,7 @@ public abstract class Game extends Runnable {
 
             if (isImGuiActive()) {
                 glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            } else if (!forceNoCustomCursor) {
+            } else if (!forceNoCustomCursor && cursorTexture != null) {
                 glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
             }
         }

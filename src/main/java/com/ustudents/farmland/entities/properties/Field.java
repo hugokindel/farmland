@@ -20,11 +20,11 @@ public class Field extends Property {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("Property/crops.png"),new Vector4f(0, 8 * 32, 32, 64),10);
+        addComponent(SpriteComponent.class, Resources.loadTexture("Property/crops.png"),new Vector4f(0, 8 * 32, 32, 64));
     }
 
     public void init(SeedRandom random) {
         int textureRegionX = 32 * random.generateInRange(0, 16);
-        addComponent(SpriteComponent.class, Resources.loadTexture("Property/crops.png"),new Vector4f(textureRegionX, 8 * 32, 32, 64),10);
+        addComponent(SpriteComponent.class, Resources.loadTexture("Property/crops.png"),new Vector4f(textureRegionX, 8 * 32, 32, 64));
     }
 }

@@ -19,6 +19,6 @@ public class Corn extends Resource {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/crops.png"),new Vector4f(31 * 32, 6 * 32, 32, 64),11);
+        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/crops.png"),new Vector4f(31 * 32, 6 * 32, 32, 64));
     }
 }

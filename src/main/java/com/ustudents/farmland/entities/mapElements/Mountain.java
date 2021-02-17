@@ -21,11 +21,11 @@ public class Mountain extends MapElement {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("MapElement/mountain.png"),new Vector4f(0, 0, 24, 24),1);
+        addComponent(SpriteComponent.class, Resources.loadTexture("MapElement/mountain.png"),new Vector4f(0, 0, 24, 24));
     }
 
     public void init(SeedRandom random) {
         int textureRegionX = 24 * random.generateInRange(0, 1);
-        addComponent(SpriteComponent.class, Resources.loadTexture("MapElement/mountain.png"),new Vector4f(textureRegionX, 0, 24, 24),1);
+        addComponent(SpriteComponent.class, Resources.loadTexture("MapElement/mountain.png"),new Vector4f(textureRegionX, 0, 24, 24));
     }
 }
