@@ -858,6 +858,12 @@ public class Registry {
         entitiesToCheckStateForSystems.clear();
     }
 
+    /**
+     * Checks if the entity has at least one BehaviourComponent.
+     *
+     * @param entity The entity.
+     * @return if it has a BehaviourComponent.
+     */
     private boolean entityHasBehaviourComponent(Entity entity) {
         for (Component component : entity.getComponents()) {
             if (component instanceof BehaviourComponent) {
