@@ -701,7 +701,7 @@ public class Registry {
 
         for (Map.Entry<Integer, System> system : systems.entrySet()) {
             for (BitSet systemSignature : system.getValue().signatures) {
-                if (systemSignature.get(componentTypeRegistry.getIdForType(BehaviourComponent.class)) && entityHasBehaviourComponent(entity)) {
+                if (systemSignature.get(componentTypeRegistry.getIdForType(BehaviourComponent.class)) && entityHasBehaviourComponent(entity) && !system.getValue().entities.contains(entity)) {
                     system.getValue().addEntity(entity);
                     break;
                 }
