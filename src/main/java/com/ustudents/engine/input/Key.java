@@ -2,8 +2,8 @@ package com.ustudents.engine.input;
 
 import org.lwjgl.glfw.*;
 
+@SuppressWarnings({"unused"})
 public class Key {
-
 	public static final int Space = GLFW.GLFW_KEY_SPACE;
 	public static final int Apostrophe = GLFW.GLFW_KEY_APOSTROPHE;
 	public static final int Comma = GLFW.GLFW_KEY_COMMA;
@@ -122,5 +122,4 @@ public class Key {
 	public static final int RightAlt = GLFW.GLFW_KEY_RIGHT_ALT;
 	public static final int RightSuper = GLFW.GLFW_KEY_RIGHT_SUPER;
 	public static final int Menu = GLFW.GLFW_KEY_MENU;
-	
 }
