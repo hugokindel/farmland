@@ -1,6 +1,10 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.audio.SoundBuffer;
+import com.ustudents.engine.audio.SoundListener;
+import com.ustudents.engine.audio.SoundManager;
+import com.ustudents.engine.audio.SoundSource;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.ecs.component.RenderableComponent;
@@ -22,6 +26,11 @@ import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALCapabilities;
+import static org.lwjgl.openal.AL.getCapabilities;
+
+import static org.lwjgl.openal.AL10.*;
 
 public class ExampleScene extends Scene {
     Texture texture;
@@ -77,6 +86,18 @@ public class ExampleScene extends Scene {
         playerName.addComponent(TransformComponent.class);
         playerName.addComponent(RenderableComponent.class);
         playerName.addComponent(TextComponent.class, "forx", font);
+
+        try {
+            SoundManager sm = new SoundManager();
+            sm.init();
+            SoundBuffer sb = new SoundBuffer(Resources.getFontsDirectory() + "/background.ogg");
+            SoundSource ss = new SoundSource(true,false);
+            ss.setBuffer(sb.getBufferId());
+            ss.play();
+            SoundListener sl = new SoundListener();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
