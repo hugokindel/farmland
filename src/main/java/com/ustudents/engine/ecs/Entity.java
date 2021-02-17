@@ -1,9 +1,6 @@
 package com.ustudents.engine.ecs;
 
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
-import com.ustudents.engine.ecs.component.BehaviourComponent;
 
 import java.util.BitSet;
 import java.util.List;
@@ -141,10 +138,6 @@ public class Entity {
      * @param <T> The component type.
      */
     public <T extends Component> void addComponent(Class<T> classType, Object... args) {
-        if (classType == BehaviourComponent.class) {
-            Out.printError("You can't add a " + Style.Bold + "BehaviourComponent" + Style.Reset + " to an entity, you need to use a subclass of BehaviourComponent!");
-        }
-
         registry.addComponentToEntity(this, classType, args);
     }
 

@@ -574,6 +574,10 @@ public class Registry {
      * @param <T> The component type.
      */
     public <T extends Component> void addComponentToEntity(Entity entity, Class<T> classType, Object... args) {
+        if (classType == BehaviourComponent.class) {
+            Out.printError("You can't add a " + Style.Bold + "BehaviourComponent" + Style.Reset + " to an entity, you need to use a subclass of BehaviourComponent!");
+        }
+
         int entityId = entity.getId();
         int componentId = componentTypeRegistry.getIdForType(classType);
 
