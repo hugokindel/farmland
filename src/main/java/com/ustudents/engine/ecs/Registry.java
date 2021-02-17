@@ -3,6 +3,7 @@ package com.ustudents.engine.ecs;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.cli.print.style.Style;
+import com.ustudents.engine.ecs.component.BehaviourComponent;
 import com.ustudents.engine.utility.TypeUtil;
 
 import java.util.*;
@@ -585,6 +586,7 @@ public class Registry {
         assert component != null;
 
         component.setId(componentTypeRegistry.getIdForType(classType));
+        component.setEntity(entity);
         ((ComponentPool<T>)componentPools.get(componentId)).set(entityId, component);
         signaturePerEntity.get(entityId).set(componentId);
 
@@ -695,6 +697,11 @@ public class Registry {
 
         for (Map.Entry<Integer, System> system : systems.entrySet()) {
             for (BitSet systemSignature : system.getValue().signatures) {
+                if (systemSignature.get(componentTypeRegistry.getIdForType(BehaviourComponent.class)) && entityHasBehaviourComponent(entity)) {
+                    system.getValue().addEntity(entity);
+                    break;
+                }
+
                 BitSet entitySignature = (BitSet) signaturePerEntity.get(entityId).clone();
                 entitySignature.and(systemSignature);
 
@@ -730,7 +737,7 @@ public class Registry {
      *
      * @param dt The delta time.
      */
-    public void update(double dt) {
+    public void update(float dt) {
         for (Map.Entry<Integer, System> system : systems.entrySet()) {
             system.getValue().update(dt);
         }
@@ -823,6 +830,11 @@ public class Registry {
                     boolean signatureFound = false;
 
                     for (BitSet systemSignature : system.getValue().signatures) {
+                        if (systemSignature.get(componentTypeRegistry.getIdForType(BehaviourComponent.class)) && entityHasBehaviourComponent(entity)) {
+                            signatureFound = true;
+                            break;
+                        }
+
                         BitSet entitySignature = (BitSet)entity.getSignature().clone();
                         entitySignature.and(systemSignature);
 
@@ -840,5 +852,15 @@ public class Registry {
         }
 
         entitiesToCheckStateForSystems.clear();
+    }
+
+    private boolean entityHasBehaviourComponent(Entity entity) {
+        for (Component component : entity.getComponents()) {
+            if (component instanceof BehaviourComponent) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -16,12 +16,14 @@ import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
+import com.ustudents.farmland.component.MoveBlockComponent;
+import com.ustudents.farmland.component.RotateBlockComponent;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
+import org.lwjgl.glfw.GLFW;
 
 public class ExampleScene extends Scene {
-    Entity player3;
     Texture texture;
     Texture texture2;
     Font font;
@@ -51,10 +53,12 @@ public class ExampleScene extends Scene {
         player2.setName("player2");
         player2.setParent(playerContainer);
 
-        player3 = registry.createEntity();
+        Entity player3 = registry.createEntity();
         player3.addComponent(TransformComponent.class, new Vector2f(-400, -400), new Vector2f(1, 1), 57.0f);
         player3.addComponent(RenderableComponent.class);
         player3.addComponent(SpriteComponent.class, texture2);
+        player3.addComponent(MoveBlockComponent.class);
+        player3.addComponent(RotateBlockComponent.class);
         player3.addTag("players");
         player3.setName("player3");
         player3.setParent(playerContainer);
@@ -76,8 +80,8 @@ public class ExampleScene extends Scene {
     }
 
     @Override
-    public void update(double dt) {
-        player3.getComponent(TransformComponent.class).position.x += 30 * dt;
+    public void update(float dt) {
+
     }
 
     @Override

@@ -91,7 +91,7 @@ public class InGameScene extends Scene {
     }
 
     @Override
-    public void update(double dt) {
+    public void update(float dt) {
         if(Timer.getCurrentTime() >= Timer.getTimerPerPlayer()){
             Timer.setCurrentTime(0);
             for(int i = 0; i < isTurnOf.length; i++){

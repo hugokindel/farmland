@@ -23,7 +23,7 @@ public class System {
         this.registry = registry;
     }
 
-    public void update(double dt) {
+    public void update(float dt) {
 
     }
 

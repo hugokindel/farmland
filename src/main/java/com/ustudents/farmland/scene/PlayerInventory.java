@@ -16,7 +16,7 @@ public class PlayerInventory extends Scene {
     }
 
     @Override
-    public void update(double dt) {
+    public void update(float dt) {
         if(Timer.getCurrentTime() >= Timer.getTimerPerPlayer()){
             Game.get().getSceneManager().changeScene(InGameScene.class);
         }

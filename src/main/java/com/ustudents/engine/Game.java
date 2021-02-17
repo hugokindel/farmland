@@ -184,7 +184,7 @@ public abstract class Game extends Runnable {
             }
         }
 
-        float dt = (float)timer.getDeltaTime();
+        float dt = timer.getDeltaTime();
 
         sceneManager.update(dt);
         update(dt);

@@ -35,8 +35,8 @@ public class Timer {
         }
     }
 
-    public double getDeltaTime() {
-        return deltaTime;
+    public float getDeltaTime() {
+        return (float)deltaTime;
     }
 
     public int getFPS() {

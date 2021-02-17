@@ -98,7 +98,7 @@ public class MainMenu extends Scene {
     }
 
     @Override
-    public void update(double dt) {
+    public void update(float dt) {
         int fps = Game.get().getTimer().getFPS();
         double ms = BigDecimal.valueOf(Game.get().getTimer().getFrameDuration())
                 .setScale(3, RoundingMode.HALF_UP).doubleValue();

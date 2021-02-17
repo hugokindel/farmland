@@ -42,7 +42,7 @@ public class DefineUser extends Scene {
     }
 
     @Override
-    public void update(double dt) {
+    public void update(float dt) {
         if(Timer.getCurrentTime() >= Timer.getTimeBeforeRename()){
             Timer.setCurrentTime(0);
             disableRename = false;

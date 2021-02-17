@@ -39,7 +39,7 @@ public class Debugger {
         useVsync = new ImBoolean(Game.get().getVsync());
     }
 
-    public void update(double dt) {
+    public void update(float dt) {
         if (useVsync != null && vsyncCurrentState != useVsync.get()) {
             vsyncCurrentState = useVsync.get();
             Game.get().setVsync(vsyncCurrentState);

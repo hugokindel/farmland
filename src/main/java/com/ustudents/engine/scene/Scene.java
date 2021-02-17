@@ -1,5 +1,6 @@
 package com.ustudents.engine.scene;
 
+import com.ustudents.engine.ecs.system.BehaviourSystem;
 import com.ustudents.engine.ecs.system.GameRenderSystem;
 import com.ustudents.engine.ecs.system.RenderSystem;
 import com.ustudents.engine.ecs.system.UiRenderSystem;
@@ -48,13 +49,15 @@ public abstract class Scene {
     public abstract void initialize();
 
     void _initialize() {
+        registry.addSystem(BehaviourSystem.class);
         registry.addSystem(GameRenderSystem.class);
         registry.addSystem(UiRenderSystem.class);
+
         initialize();
     }
 
     /** Updates the logic every frame. */
-    public abstract void update(double dt);
+    public abstract void update(float dt);
 
     /** Renders the scene every frame. */
     public abstract void render();
