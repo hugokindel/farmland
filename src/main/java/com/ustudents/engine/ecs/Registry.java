@@ -3,6 +3,7 @@ package com.ustudents.engine.ecs;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.cli.print.style.Style;
+import com.ustudents.engine.ecs.component.BehaviourComponent;
 import com.ustudents.engine.utility.TypeUtil;
 
 import java.util.*;
@@ -83,7 +84,7 @@ public class Registry {
 
     /** Class constructor. */
     public Registry() {
-        systems = new HashMap<>();
+        systems = new LinkedHashMap<>();
         entityPerIndex = new HashMap<>();
         signaturePerEntity = new HashMap<>();
         entitiesPerName = new HashMap<>();
@@ -246,6 +247,10 @@ public class Registry {
         return enabledEntities.contains(entity);
     }
 
+    public Map<Integer, Entity> getEntities() {
+        return entityPerIndex;
+    }
+
     /**
      * Returns an entity by ID.
      *
@@ -266,6 +271,21 @@ public class Registry {
      */
     public Set<Entity> getEntitiesByTag(String tag) {
         return entitiesPerTag.get(tag);
+    }
+
+    /**
+     * Returns an entity by name.
+     *
+     * @param name The name.
+     *
+     * @return the entity.
+     */
+    public Entity getEntityByName(String name) {
+        for (Entity entity : entitiesPerName.get(name)) {
+            return entity;
+        }
+
+        return null;
     }
 
     /**
@@ -554,6 +574,10 @@ public class Registry {
      * @param <T> The component type.
      */
     public <T extends Component> void addComponentToEntity(Entity entity, Class<T> classType, Object... args) {
+        if (classType == BehaviourComponent.class) {
+            Out.printError("You can't add a " + Style.Bold + "BehaviourComponent" + Style.Reset + " to an entity, you need to use a subclass of BehaviourComponent!");
+        }
+
         int entityId = entity.getId();
         int componentId = componentTypeRegistry.getIdForType(classType);
 
@@ -566,6 +590,7 @@ public class Registry {
         assert component != null;
 
         component.setId(componentTypeRegistry.getIdForType(classType));
+        component.setEntity(entity);
         ((ComponentPool<T>)componentPools.get(componentId)).set(entityId, component);
         signaturePerEntity.get(entityId).set(componentId);
 
@@ -676,6 +701,11 @@ public class Registry {
 
         for (Map.Entry<Integer, System> system : systems.entrySet()) {
             for (BitSet systemSignature : system.getValue().signatures) {
+                if (systemSignature.get(componentTypeRegistry.getIdForType(BehaviourComponent.class)) && entityHasBehaviourComponent(entity) && !system.getValue().entities.contains(entity)) {
+                    system.getValue().addEntity(entity);
+                    break;
+                }
+
                 BitSet entitySignature = (BitSet) signaturePerEntity.get(entityId).clone();
                 entitySignature.and(systemSignature);
 
@@ -711,7 +741,7 @@ public class Registry {
      *
      * @param dt The delta time.
      */
-    public void update(double dt) {
+    public void update(float dt) {
         for (Map.Entry<Integer, System> system : systems.entrySet()) {
             system.getValue().update(dt);
         }
@@ -804,6 +834,11 @@ public class Registry {
                     boolean signatureFound = false;
 
                     for (BitSet systemSignature : system.getValue().signatures) {
+                        if (systemSignature.get(componentTypeRegistry.getIdForType(BehaviourComponent.class)) && entityHasBehaviourComponent(entity)) {
+                            signatureFound = true;
+                            break;
+                        }
+
                         BitSet entitySignature = (BitSet)entity.getSignature().clone();
                         entitySignature.and(systemSignature);
 
@@ -821,5 +856,21 @@ public class Registry {
         }
 
         entitiesToCheckStateForSystems.clear();
+    }
+
+    /**
+     * Checks if the entity has at least one BehaviourComponent.
+     *
+     * @param entity The entity.
+     * @return if it has a BehaviourComponent.
+     */
+    private boolean entityHasBehaviourComponent(Entity entity) {
+        for (Component component : entity.getComponents()) {
+            if (component instanceof BehaviourComponent) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

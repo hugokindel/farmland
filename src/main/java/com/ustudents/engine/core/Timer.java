@@ -8,8 +8,13 @@ public class Timer {
     private int framesCounter;
     private int fps;
     private double previousFrameCounterTime;
+    private static int currentTime;
+    private final static int timerPerPlayer = 90*10000;
+
+    private final static int timeBeforeRename = 3*10000;
 
     public Timer() {
+        fps = 0;
         deltaTime = 0.0;
         previousFrameDuration = 0.0;
     }
@@ -30,8 +35,8 @@ public class Timer {
         }
     }
 
-    public double getDeltaTime() {
-        return deltaTime;
+    public float getDeltaTime() {
+        return (float)deltaTime;
     }
 
     public int getFPS() {
@@ -39,6 +44,28 @@ public class Timer {
     }
 
     public double getFrameDuration() {
-        return 1000.0 / (double)fps;
+        double value = 1000.0 / (double)fps;
+
+        return value != Double.POSITIVE_INFINITY && value != Double.NEGATIVE_INFINITY ? value : 0;
+    }
+
+    public static int getCurrentTime(){
+        return currentTime;
+    }
+
+    public static void increaseCurrentTime(){
+        currentTime+=5;
+    }
+
+    public static void setCurrentTime(int time){
+        currentTime = time;
+    }
+
+    public static int getTimerPerPlayer() {
+        return timerPerPlayer;
+    }
+
+    public static int getTimeBeforeRename() {
+        return timeBeforeRename;
     }
 }

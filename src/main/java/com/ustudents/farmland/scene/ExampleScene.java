@@ -3,22 +3,27 @@ package com.ustudents.farmland.scene;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.ecs.component.RenderableComponent;
 import com.ustudents.engine.ecs.component.TextComponent;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.component.SpriteComponent;
+import com.ustudents.engine.ecs.component.TextComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
+import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.scene.Scene;
+import com.ustudents.farmland.component.MoveBlockComponent;
+import com.ustudents.farmland.component.RotateBlockComponent;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 public class ExampleScene extends Scene {
-    Entity player3;
     Texture texture;
     Texture texture2;
     Font font;
@@ -34,6 +39,7 @@ public class ExampleScene extends Scene {
 
         Entity player1 = registry.createEntity();
         player1.addComponent(TransformComponent.class, new Vector2f(0, 0), new Vector2f(1, 1));
+        player1.addComponent(RenderableComponent.class);
         player1.addComponent(SpriteComponent.class, texture);
         player1.addTag("players");
         player1.setName("player1");
@@ -41,20 +47,25 @@ public class ExampleScene extends Scene {
 
         Entity player2 = registry.createEntity();
         player2.addComponent(TransformComponent.class, new Vector2f(400, 400), new Vector2f(1, 1), 21.0f);
+        player2.addComponent(RenderableComponent.class);
         player2.addComponent(SpriteComponent.class, texture);
         player2.addTag("players");
         player2.setName("player2");
         player2.setParent(playerContainer);
 
-        player3 = registry.createEntity();
+        Entity player3 = registry.createEntity();
         player3.addComponent(TransformComponent.class, new Vector2f(-400, -400), new Vector2f(1, 1), 57.0f);
+        player3.addComponent(RenderableComponent.class);
         player3.addComponent(SpriteComponent.class, texture2);
+        player3.addComponent(MoveBlockComponent.class);
+        player3.addComponent(RotateBlockComponent.class);
         player3.addTag("players");
         player3.setName("player3");
         player3.setParent(playerContainer);
 
         Entity player4 = registry.createEntity();
         player4.addComponent(TransformComponent.class, new Vector2f(400, 0), new Vector2f(1, 1));
+        player4.addComponent(RenderableComponent.class);
         registry.updateEntities();
         player4.addComponent(SpriteComponent.class, texture2);
         player4.addTag("players");
@@ -64,12 +75,13 @@ public class ExampleScene extends Scene {
 
         Entity playerName = registry.createEntity();
         playerName.addComponent(TransformComponent.class);
+        playerName.addComponent(RenderableComponent.class);
         playerName.addComponent(TextComponent.class, "forx", font);
     }
 
     @Override
-    public void update(double dt) {
-        player3.getComponent(TransformComponent.class).position.x += 30 * dt;
+    public void update(float dt) {
+
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import org.joml.Vector4f;
 
+@JsonSerializable
 public class Color {
     public static final Color CLEAR = new Color(0x00000000);
     public static final Color WHITE = new Color(0xFFFFFFFF);
@@ -16,10 +18,17 @@ public class Color {
     public static final Color YELLOW = new Color(0xFFFF00FF);
     public static final Color MAGENTA = new Color(0xFF00FFFF);
 
-    public float r;
-    public float g;
-    public float b;
-    public float a;
+    @JsonSerializable
+    public Float r;
+
+    @JsonSerializable
+    public Float g;
+
+    @JsonSerializable
+    public Float b;
+
+    @JsonSerializable
+    public Float a;
 
     public Color() {
         this(0.0f, 0.0f, 0.0f, 1.0f);

@@ -53,7 +53,7 @@ public class SceneManager {
     }
 
     /** Updates the scene. */
-    public void update(double dt) {
+    public void update(float dt) {
         if (scenes.size() > currentSceneIndex) {
             getScene().update(dt);
             getScene().getRegistry().update(dt);

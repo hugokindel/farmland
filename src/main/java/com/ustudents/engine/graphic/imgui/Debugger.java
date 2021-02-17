@@ -39,7 +39,7 @@ public class Debugger {
         useVsync = new ImBoolean(Game.get().getVsync());
     }
 
-    public void update(double dt) {
+    public void update(float dt) {
         if (useVsync != null && vsyncCurrentState != useVsync.get()) {
             vsyncCurrentState = useVsync.get();
             Game.get().setVsync(vsyncCurrentState);
@@ -193,30 +193,36 @@ public class Debugger {
 
         } else if (selectedInspectorEntity != -1) {
             Entity entity = sceneManager.getScene().getRegistry().getEntityById(selectedInspectorEntity);
-            int entityId = entity.getId();
-            List<Component> components = new ArrayList<>(entity.getComponents());
-            components.sort(Comparator.comparingInt(Component::getId));
 
-            ImGui.text(entity.getNameOrIdentifier());
+            if (entity != null) {
+                int entityId = entity.getId();
+                List<Component> components = new ArrayList<>(entity.getComponents());
+                components.sort(Comparator.comparingInt(Component::getId));
 
-            ImGui.separator();
+                ImGui.text(entity.getNameOrIdentifier());
 
-            if (components.size() > 0) {
+                ImGui.separator();
+
+                if (components.size() > 0) {
                 /*if (!values.containsKey(entityId)) {
                     values.put(entityId, new HashMap<>());
                 }*/
 
-                for (Component component : components) {
-                    if (ImGui.treeNode(component.getClass().getSimpleName())) {
-                        drawEditableFields(entityId, component);
-                        ImGui.treePop();
-                    }
+                    for (Component component : components) {
+                        if (ImGui.treeNode(component.getClass().getSimpleName())) {
+                            drawEditableFields(entityId, component);
+                            ImGui.treePop();
+                        }
 
-                    ImGui.separator();
+                        ImGui.separator();
+                    }
+                } else {
+                    ImGui.text("This entity has no components");
                 }
             } else {
-                ImGui.text("This entity has no components");
+                selectedInspectorEntity = -1;
             }
+
         } else {
             ImGui.text("No entity selected");
         }
@@ -292,6 +298,10 @@ public class Debugger {
                     value = field.get(component);
                 }
                 drawField(name, type, value);
+            }
+
+            if (fields.isEmpty()) {
+                ImGui.text("no values to debug");
             }
         } catch (Exception e) {
             e.printStackTrace();

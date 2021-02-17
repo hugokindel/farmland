@@ -1,5 +1,7 @@
 package com.ustudents.engine.ecs;
 
+import com.ustudents.engine.core.cli.print.Out;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +69,7 @@ public class ComponentPool<T extends Component> implements Pool {
      */
     public void set(int entityId, T componentData) {
         if (entityIdToIndex.containsKey(entityId)) {
+            Out.printlnWarning("You are trying to add a component from an entity, but this component already exists for this entity (you are overwriting it).");
             data.set(entityIdToIndex.get(entityId), componentData);
             return;
         }
@@ -90,6 +93,11 @@ public class ComponentPool<T extends Component> implements Pool {
      * @param entityId The entity ID.
      */
     public void remove(int entityId) {
+        if (!containsEntity(entityId)) {
+            Out.printlnWarning("You are trying to remove a component from an entity, but the component couldn't be found");
+            return;
+        }
+
         int indexOfRemoved = entityIdToIndex.get(entityId);
         int indexOfLast = size - 1;
         data.set(indexOfRemoved, data.get(indexOfLast));

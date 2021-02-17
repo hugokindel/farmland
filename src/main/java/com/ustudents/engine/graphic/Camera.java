@@ -1,49 +1,68 @@
 package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.input.Input;
+import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import org.joml.*;
 import org.joml.Math;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import org.lwjgl.glfw.GLFWScrollCallback;
+import org.lwjgl.glfw.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+// Implementation in part from: https://github.com/JOML-CI/joml-camera/blob/master/src/org/joml/camera/OrthoCameraControl.java
 public class Camera {
+    public enum Type {
+        World,
+        UI,
+        Cursor
+    }
+
     private Matrix3x2f viewMatrix;
     private Matrix4f viewProjectionMatrix;
     private Vector4i viewportSize;
     private float mouseX, mouseY;
-    private float mouseDownX, mouseDownY;
     private boolean[] mouseDown = new boolean[3];
     private Vector2f normalizedDeviceCoordinates;
     private float minimalZoom;
     private float maximalZoom;
+    private Type type;
+    private boolean inputEnabled;
 
-    public Camera(float extents, float minZoom, float maxZoom) {
+    public Camera(float extents, float minZoom, float maxZoom, Type type) {
         viewMatrix = new Matrix3x2f();
         viewProjectionMatrix = new Matrix4f();
         viewportSize = new Vector4i();
         maximalZoom = maxZoom;
         minimalZoom = minZoom;
+        inputEnabled = true;
+        this.type = type;
 
         reload(extents);
-        setupCallbacks();
+
+        if (inputEnabled && type == Type.World) {
+            setupCallbacks();
+        }
     }
 
     public void reload(float extents) {
         viewMatrix = new Matrix3x2f();
         viewProjectionMatrix = new Matrix4f();
         normalizedDeviceCoordinates = new Vector2f();
-        viewMatrix.view(-extents, extents, -extents, extents);
+
+        if (type == Type.World) {
+            viewMatrix.identity().view(-extents, extents, -extents, extents);
+        }
+
         update();
     }
 
     public void setSize(int width, int height) {
         viewportSize = new Vector4i(0, 0, width, height);
+
         update();
     }
 
@@ -53,7 +72,14 @@ public class Camera {
 
     private void update() {
         float aspect = (float)viewportSize.z / viewportSize.w;
-        viewProjectionMatrix.setOrtho2D(-aspect, +aspect, -1, +1).mul(viewMatrix);
+
+        if (type == Type.World) {
+            viewProjectionMatrix.setOrtho2D(-aspect, aspect, -1, 1).mul(viewMatrix);
+        } else {
+            Vector2i size = Farmland.get().getWindow().getSize();
+            viewProjectionMatrix.identity().setOrtho2D(0, size.x, -size.y, 0);
+        }
+
         viewProjectionMatrix.m11(-viewProjectionMatrix.m11());
     }
 
@@ -63,8 +89,6 @@ public class Camera {
     }
 
     public void onMouseDown(int button) {
-        mouseDownX = mouseX;
-        mouseDownY = mouseY;
         mouseDown[button] = true;
     }
 
@@ -143,10 +167,6 @@ public class Camera {
         return currentScale.y;
     }
 
-    public void setZoom(float value){
-        reload(value);
-    }
-
     public float getMinimalZoom() {
         return minimalZoom;
     }
@@ -160,44 +180,57 @@ public class Camera {
 
         glfwSetMouseButtonCallback(windowHandle, new GLFWMouseButtonCallback() {
             public void invoke(long window, int button, int action, int mods) {
-                if (Game.get().isImGuiActive()) {
-                    final ImGuiIO io = ImGui.getIO();
+                Farmland.get().getImGuiManager().getImGuiGlfw().mouseButtonCallback(window, button, action, mods);
 
-                    if (io.getWantCaptureMouse()) {
-                        return;
+                if (inputEnabled) {
+                    if (Game.get().isImGuiActive()) {
+                        final ImGuiIO io = ImGui.getIO();
+
+                        if (io.getWantCaptureMouse()) {
+                            return;
+                        }
                     }
-                }
 
-                if (action == GLFW_PRESS) {
-                    onMouseDown(button);
-                } else {
-                    onMouseUp(button);
+                    if (action == GLFW_PRESS) {
+                        onMouseDown(button);
+                    } else {
+                        onMouseUp(button);
+                    }
                 }
             }
         });
 
-        glfwSetCursorPosCallback(windowHandle, new GLFWCursorPosCallback() {
-            public void invoke(long window, double xpos, double ypos) {
-                onMouseMove((int) xpos, 720 - (int) ypos);
+        Input.mouseMoved.add(() -> {
+            if (inputEnabled) {
+                Vector2f mousePos = Input.getMousePos();
+                onMouseMove((int) mousePos.x, Farmland.get().getWindow().getSize().y - (int) mousePos.y);
             }
         });
 
         glfwSetScrollCallback(windowHandle, new GLFWScrollCallback() {
             public void invoke(long window, double xoffset, double yoffset) {
-                if (Game.get().isImGuiActive()) {
-                    final ImGuiIO io = ImGui.getIO();
+                Farmland.get().getImGuiManager().getImGuiGlfw().scrollCallback(window, xoffset, yoffset);
 
-                    if (io.getWantCaptureMouse()) {
-                        return;
+                if (inputEnabled) {
+                    if (Game.get().isImGuiActive()) {
+                        final ImGuiIO io = ImGui.getIO();
+
+                        if (io.getWantCaptureMouse()) {
+                            return;
+                        }
                     }
-                }
 
-                if (yoffset > 0) {
-                    zoom(1.1f);
-                } else {
-                    zoom(1.0f / 1.1f);
+                    if (yoffset > 0) {
+                        zoom(1.1f);
+                    } else {
+                        zoom(1.0f / 1.1f);
+                    }
                 }
             }
         });
+    }
+
+    public void enableInput(boolean enabled) {
+        inputEnabled = enabled;
     }
 }

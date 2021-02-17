@@ -1,9 +1,14 @@
 package com.ustudents.engine.scene;
 
+import com.ustudents.engine.ecs.system.BehaviourSystem;
+import com.ustudents.engine.ecs.system.GameRenderSystem;
 import com.ustudents.engine.ecs.system.RenderSystem;
+import com.ustudents.engine.ecs.system.UiRenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
+import com.ustudents.farmland.Farmland;
+import org.joml.Vector2i;
 
 /** Defines a scene element. */
 public abstract class Scene {
@@ -15,6 +20,10 @@ public abstract class Scene {
 
     protected Camera camera;
 
+    protected Camera uiCamera;
+
+    protected Camera cursorCamera;
+
     protected Spritebatch spritebatch;
 
     /**
@@ -23,23 +32,32 @@ public abstract class Scene {
      * @param sceneManager The scene manager.
      */
      void create(SceneManager sceneManager) {
-        this.registry = new Registry();
-        this.sceneManager = sceneManager;
-        this.camera = new Camera(100, 0.005f, 0.01f);
-        this.camera.setSize(1280, 720);
-        this.spritebatch = new Spritebatch(this.camera);
+         Vector2i size = Farmland.get().getWindow().getSize();
+
+         this.registry = new Registry();
+         this.sceneManager = sceneManager;
+         this.camera = new Camera(100, 0.005f, 0.01f, Camera.Type.World);
+         this.camera.setSize(size.x, size.y);
+         this.uiCamera = new Camera(100, 0.005f, 0.01f, Camera.Type.UI);
+         this.uiCamera.setSize(size.x, size.y);
+         this.cursorCamera = new Camera(100, 0.005f, 0.01f, Camera.Type.Cursor);
+         this.cursorCamera.setSize(size.x, size.y);
+         this.spritebatch = new Spritebatch(this.camera);
     }
 
     /** Initialize the scene (called when created). */
     public abstract void initialize();
 
     void _initialize() {
-        registry.addSystem(RenderSystem.class);
+        registry.addSystem(BehaviourSystem.class);
+        registry.addSystem(GameRenderSystem.class);
+        registry.addSystem(UiRenderSystem.class);
+
         initialize();
     }
 
     /** Updates the logic every frame. */
-    public abstract void update(double dt);
+    public abstract void update(float dt);
 
     /** Renders the scene every frame. */
     public abstract void render();
@@ -63,6 +81,14 @@ public abstract class Scene {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public Camera getUiCamera() {
+        return uiCamera;
+    }
+
+    public Camera getCursorCamera() {
+        return uiCamera;
     }
 
     public Spritebatch getSpritebatch() {

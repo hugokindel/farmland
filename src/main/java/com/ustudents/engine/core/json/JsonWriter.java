@@ -1,6 +1,7 @@
 package com.ustudents.engine.core.json;
 
 import com.ustudents.engine.utility.StringUtil;
+import org.joml.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -212,7 +213,7 @@ public class JsonWriter {
      * @param value The value to write.
      */
     private void writeValue(Object value) {
-        if (value instanceof Integer || value instanceof Double) {
+        if (value instanceof Integer || value instanceof Double || value instanceof Float) {
             writeNumber(value);
         } else if (value instanceof String) {
             writeString(value);
@@ -224,6 +225,20 @@ public class JsonWriter {
             writeMap((Map<String, Object>)value);
         } else if (value instanceof Boolean) {
             writeBoolean(value);
+        } else if (value instanceof Vector2f) {
+            writeVector2f(value);
+        } else if (value instanceof Vector3f) {
+            writeVector3f(value);
+        } else if (value instanceof Vector4f) {
+            writeVector4f(value);
+        } else if (value instanceof Vector2i) {
+            writeVector2i(value);
+        } else if (value instanceof Vector3i) {
+            writeVector3i(value);
+        } else if (value instanceof Vector4i) {
+            writeVector4i(value);
+        } else if (value instanceof Matrix4f) {
+            writeVector4i(value);
         } else if (value == null) {
             writeNull();
         }
@@ -254,6 +269,131 @@ public class JsonWriter {
      */
     private void writeCharacter(Object value) {
         write("'" + StringUtil.getUnescaped(value.toString()) + "'", false);
+    }
+
+    /**
+     * Writes a 2D vector of float values.
+     *
+     * @param value The vector to write.
+     */
+    private void writeVector2f(Object value) {
+        write("{\n", false);
+        String oldPrefix = prefix;
+        prefix += "\t";
+        write("\"x\": " + ((Vector2f)value).x + ",\n");
+        write("\"y\": " + ((Vector2f)value).y + "\n");
+        prefix = oldPrefix;
+        write("}");
+    }
+
+    /**
+     * Writes a 3D vector of float values.
+     *
+     * @param value The vector to write.
+     */
+    private void writeVector3f(Object value) {
+        write("{\n", false);
+        String oldPrefix = prefix;
+        prefix += "\t";
+        write("\"x\": " + ((Vector3f)value).x + ",\n");
+        write("\"y\": " + ((Vector3f)value).y + ",\n");
+        write("\"z\": " + ((Vector3f)value).z + "\n");
+        prefix = oldPrefix;
+        write("}");
+    }
+
+    /**
+     * Writes a 4D vector of float values.
+     *
+     * @param value The vector to write.
+     */
+    private void writeVector4f(Object value) {
+        write("{\n", false);
+        String oldPrefix = prefix;
+        prefix += "\t";
+        write("\"x\": " + ((Vector4f)value).x + ",\n");
+        write("\"y\": " + ((Vector4f)value).y + ",\n");
+        write("\"z\": " + ((Vector4f)value).z + ",\n");
+        write("\"w\": " + ((Vector4f)value).w + "\n");
+        prefix = oldPrefix;
+        write("}");
+    }
+
+    /**
+     * Writes a 2D vector of integer values.
+     *
+     * @param value The vector to write.
+     */
+    private void writeVector2i(Object value) {
+        write("{\n", false);
+        String oldPrefix = prefix;
+        prefix += "\t";
+        write("\"x\": " + ((Vector2i)value).x + ",\n");
+        write("\"y\": " + ((Vector2i)value).y + "\n");
+        prefix = oldPrefix;
+        write("}");
+    }
+
+    /**
+     * Writes a 3D vector of integer values.
+     *
+     * @param value The vector to write.
+     */
+    private void writeVector3i(Object value) {
+        write("{\n", false);
+        String oldPrefix = prefix;
+        prefix += "\t";
+        write("\"x\": " + ((Vector3i)value).x + ",\n");
+        write("\"y\": " + ((Vector3i)value).y + ",\n");
+        write("\"z\": " + ((Vector3i)value).z + "\n");
+        prefix = oldPrefix;
+        write("}");
+    }
+
+    /**
+     * Writes a 4D vector of integer values.
+     *
+     * @param value The vector to write.
+     */
+    private void writeVector4i(Object value) {
+        write("{\n", false);
+        String oldPrefix = prefix;
+        prefix += "\t";
+        write("\"x\": " + ((Vector4i)value).x + ",\n");
+        write("\"y\": " + ((Vector4i)value).y + ",\n");
+        write("\"z\": " + ((Vector4i)value).z + ",\n");
+        write("\"w\": " + ((Vector4i)value).w + "\n");
+        prefix = oldPrefix;
+        write("}");
+    }
+
+    /**
+     * Writes a 4x4 matrix of float values.
+     *
+     * @param value The matrix to write.
+     */
+    private void writeMatrix4f(Object value) {
+        write("{\n", false);
+        String oldPrefix = prefix;
+        prefix += "\t";
+        write("\"m00\": " + ((Matrix4f)value).m00() + ",\n");
+        write("\"m01\": " + ((Matrix4f)value).m01() + ",\n");
+        write("\"m02\": " + ((Matrix4f)value).m02() + ",\n");
+        write("\"m03\": " + ((Matrix4f)value).m03() + ",\n");
+        write("\"m10\": " + ((Matrix4f)value).m10() + ",\n");
+        write("\"m11\": " + ((Matrix4f)value).m11() + ",\n");
+        write("\"m12\": " + ((Matrix4f)value).m12() + ",\n");
+        write("\"m13\": " + ((Matrix4f)value).m13() + ",\n");
+        write("\"m20\": " + ((Matrix4f)value).m20() + ",\n");
+        write("\"m21\": " + ((Matrix4f)value).m21() + ",\n");
+        write("\"m22\": " + ((Matrix4f)value).m22() + ",\n");
+        write("\"m23\": " + ((Matrix4f)value).m23() + ",\n");
+        write("\"m30\": " + ((Matrix4f)value).m30() + ",\n");
+        write("\"m31\": " + ((Matrix4f)value).m31() + ",\n");
+        write("\"m32\": " + ((Matrix4f)value).m32() + ",\n");
+        write("\"m33\": " + ((Matrix4f)value).m33() + "\n");
+        prefix = oldPrefix;
+        write("}");
     }
 
     /** Writes a null value. */

@@ -9,6 +9,7 @@ import imgui.glfw.ImGuiImplGlfw;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 
+// FIXME: Bug where an ImGui window becomes unresponsive when closing imgui with F1 when an ImGui window is outside the game window.
 public class ImGuiManager {
     private ImGuiImplGlfw imGuiGlfw;
     private ImGuiImplGl3 imGuiGl3;
@@ -53,5 +54,13 @@ public class ImGuiManager {
         imGuiGlfw.dispose();
 
         ImGui.destroyContext();
+    }
+
+    public ImGuiImplGlfw getImGuiGlfw() {
+        return imGuiGlfw;
+    }
+
+    public ImGuiImplGl3 getImGuiGl3() {
+        return imGuiGl3;
     }
 }
