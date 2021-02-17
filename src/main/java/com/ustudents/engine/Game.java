@@ -5,24 +5,23 @@ import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.json.Json;
-import com.ustudents.engine.core.json.JsonReader;
-import com.ustudents.engine.core.json.JsonWriter;
-import com.ustudents.engine.ecs.component.TransformComponent;
+import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;
 import com.ustudents.engine.input.Input;
+import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.Window;
-import com.ustudents.farmland.player.Player;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL33;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
@@ -37,6 +36,12 @@ public abstract class Game extends Runnable {
 
     @Option(names = "--vsync", description = "Enable vertical synchronisation.")
     protected boolean vsync;
+
+    @Option(names = "--force-no-custom-cursor", description = "Force to use the default operating system cursor.")
+    protected boolean forceNoCustomCursor;
+
+    @Option(names = "--force-no-custom-icon", description = "Force to use the default operating system window icon.")
+    protected boolean forceNoCustomIcon;
 
     /** The scene manager (handling every scene). */
     protected final SceneManager sceneManager;
@@ -55,6 +60,10 @@ public abstract class Game extends Runnable {
 
     private static String instanceName;
 
+    private boolean shouldResize;
+
+    protected Texture cursorTexture;
+
     /** Class constructor. */
     public Game() {
         // Default values for options.
@@ -63,7 +72,7 @@ public abstract class Game extends Runnable {
         noImGui = false;
         shouldClose = false;
         imGuiVisible = true;
-
+        shouldResize = true;
 
         // Game managers.
         window = new Window();
@@ -92,7 +101,7 @@ public abstract class Game extends Runnable {
         Out.canUseAnsiCode(!noAnsiCodes);
 
         if (!showHelp && !showVersion) {
-            _initialize();
+            _initialize(args);
             loop();
             _destroy();
         }
@@ -111,25 +120,33 @@ public abstract class Game extends Runnable {
     protected abstract void destroy();
 
     /** Initialize everything. */
-    private void _initialize() {
+    private void _initialize(String[] args) {
         if (isDebugging()) {
             Out.printlnDebug("Initializing...");
         }
-
         Resources.load();
         String commandName = getClass().getAnnotation(Command.class).name();
+        if (!Arrays.asList(args).contains("--vsync")) {
+            vsync = (Boolean)Resources.getSetting("vsync");
+        }
         window.initialize(
                 commandName.substring(0, 1).toUpperCase() + commandName.substring(1),
                 new Vector2i(1280, 720),
-                vsync,
-                "logo.png"
+                vsync
         );
         if (!noImGui) {
             imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
         }
+
         sceneManager.initialize();
         initialize();
         window.show(true);
+
+        if (isImGuiActive()) {
+            glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
 
         if (isDebugging()) {
             Out.printlnDebug("Initialized.");
@@ -156,42 +173,89 @@ public abstract class Game extends Runnable {
     /** Updates the game logic. */
     private void _update() {
         timer.update();
+
         if (Input.isKeyPressed(GLFW.GLFW_KEY_F1)) {
             imGuiVisible = !imGuiVisible;
+
+            if (isImGuiActive()) {
+                glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            } else if (!forceNoCustomCursor) {
+                glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+            }
         }
+
         float dt = (float)timer.getDeltaTime();
+
         sceneManager.update(dt);
         update(dt);
+    }
+
+    private void resizeViewport() {
+        Vector2i size = window.getSize();
+
+        GL33.glViewport(0, 0, size.x, size.y);
+
+        if (getSceneManager() != null && getSceneManager().getScene() != null) {
+            Scene scene = getSceneManager().getScene();
+            scene.getCamera().setSize(size.x, size.y);
+            scene.getUiCamera().setSize(size.x, size.y);
+            shouldResize = false;
+        }
     }
 
     /** Renders the game. */
     private void _render() {
         timer.render();
         window.clear();
+
+        if (shouldResize) {
+            resizeViewport();
+        }
+
         if (!noImGui && imGuiVisible) {
             imGuiManager.startFrame();
         }
+
         sceneManager.render();
         render();
+
         if (!noImGui && imGuiVisible) {
             sceneManager.renderImGui();
             imGuiManager.endFrame();
         }
+
+        if (!isImGuiActive() && sceneManager.getScene() != null &&
+                cursorTexture != null && Input.getMousePos() != null) {
+            sceneManager.getScene().getSpritebatch().begin(sceneManager.getScene().getCursorCamera());
+            sceneManager.getScene().getSpritebatch().draw(
+                    cursorTexture, Input.getMousePos(),
+                    new Vector4f(0, 0, 11, 14),
+                    0,
+                    Color.WHITE,
+                    0,
+                    new Vector2f(2, 2)
+            );
+            sceneManager.getScene().getSpritebatch().end();
+        }
+
         window.swap();
     }
 
     /** Destroy everything. */
     private void _destroy() {
         destroy();
+
         if (isDebugging()) {
             Out.printlnDebug("Destroying...");
         }
 
         window.show(false);
         sceneManager.destroy();
+
         if (!noImGui && imGuiVisible) {
             imGuiManager.destroy();
         }
+
         window.destroy();
 
         Resources.saveAndUnload();
@@ -224,6 +288,7 @@ public abstract class Game extends Runnable {
 
     public void setVsync(boolean vsync) {
         this.vsync = vsync;
+        Resources.setSetting("vsync", vsync);
         window.setVsync(vsync);
     }
 
@@ -241,5 +306,25 @@ public abstract class Game extends Runnable {
 
     public boolean isImGuiActive() {
         return !noImGui && imGuiVisible;
+    }
+
+    public void forceResize() {
+        shouldResize = true;
+    }
+
+    public void changeCursor(String filePath) {
+        if (!forceNoCustomCursor) {
+            cursorTexture = Resources.loadTexture(filePath);
+        }
+    }
+
+    public void changeIcon(String filepath) {
+        if (!forceNoCustomIcon) {
+            window.changeIcon(filepath);
+        }
+    }
+
+    public ImGuiManager getImGuiManager() {
+        return imGuiManager;
     }
 }

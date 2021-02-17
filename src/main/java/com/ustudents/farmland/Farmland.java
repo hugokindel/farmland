@@ -1,6 +1,7 @@
 package com.ustudents.farmland;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.farmland.component.Goal;
 import com.ustudents.farmland.player.Player;
@@ -19,9 +20,13 @@ public class Farmland extends Game {
 
     @Override
     protected void initialize() {
-        sceneManager.changeScene(MainMenu.class);
+        changeIcon("logo.png");
+        changeCursor("cursor.png");
+
         players = new ArrayList<>();
         goal = new Goal();
+
+        sceneManager.changeScene(MainMenu.class);
     }
 
     @Override

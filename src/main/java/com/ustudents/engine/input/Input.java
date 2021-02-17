@@ -1,8 +1,15 @@
 package com.ustudents.engine.input;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.farmland.Farmland;
+import jdk.jfr.Event;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.*;
 
+import java.util.Arrays;
+
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
 public class Input {
@@ -10,14 +17,16 @@ public class Input {
     private static final boolean[] keys = new boolean[GLFW.GLFW_KEY_LAST];
     private static final int[] mouseStates = new int[GLFW.GLFW_MOUSE_BUTTON_LAST];
     private static final boolean[] mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
-    private double mouseX,mouseY;
+    private static Vector2f mousePos;
     private static double scrollX,scrollY;
     private final GLFWKeyCallback keyBoard;
-    private final GLFWCursorPosCallback mouseMove;
     private final GLFWMouseButtonCallback mouseButton;
     private static GLFWScrollCallback scrollCallback;
+    public static EventDispatcher mouseMoved;
 
     public Input() {
+        mouseMoved = new EventDispatcher();
+
         init();
         keyBoard = new GLFWKeyCallback() {
             @Override
@@ -27,13 +36,12 @@ public class Input {
             }
         };
 
-        mouseMove = new GLFWCursorPosCallback() {
-            @Override
-            public void invoke(long window,double posX,double posY) {
-                mouseX = posX;
-                mouseY = posY;
+        glfwSetCursorPosCallback(Farmland.get().getWindow().getHandle(), new GLFWCursorPosCallback() {
+            public void invoke(long window, double xpos, double ypos) {
+                mousePos = new Vector2f((float)xpos, (float)ypos);
+                mouseMoved.dispatch();
             }
-        };
+        });
 
         mouseButton = new GLFWMouseButtonCallback() {
             @Override
@@ -54,14 +62,8 @@ public class Input {
     }
 
     private static void resetKeyAndButton(){
-        for (int i = 0; i < keyStates.length; i++)
-        {
-            keyStates[i] = -1;
-        }
-        for (int i = 0; i < mouseStates.length; i++)
-        {
-            mouseStates[i] = -1;
-        }
+        Arrays.fill(keyStates, -1);
+        Arrays.fill(mouseStates, -1);
     }
 
     public static boolean isKeyDown(int key){
@@ -140,20 +142,12 @@ public class Input {
         return 0;
     }
 
-    public double getMouseX() {
-        return mouseX;
-    }
-
-    public double getMouseY() {
-        return mouseY;
+    public static Vector2f getMousePos() {
+        return mousePos;
     }
 
     public GLFWKeyCallback getKeyBoard() {
         return keyBoard;
-    }
-
-    public GLFWCursorPosCallback getMouseMove() {
-        return mouseMove;
     }
 
     public GLFWMouseButtonCallback getMouseButton() {
@@ -162,7 +156,6 @@ public class Input {
 
     public void destroy(){
         keyBoard.free();
-        mouseMove.free();
         mouseButton.free();
     }
 }

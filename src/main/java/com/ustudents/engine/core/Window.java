@@ -27,7 +27,7 @@ public class Window {
     private String glslVersion;
     public Input input;
 
-    public void initialize(String name, Vector2i size, boolean vsync, String iconFilePath) {
+    public void initialize(String name, Vector2i size, boolean vsync) {
         this.name = name;
         this.size = size;
         this.glslVersion = "";
@@ -42,12 +42,12 @@ public class Window {
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, 0);
-        glfwWindowHint(GLFW_RESIZABLE, 0);
+        glfwWindowHint(GLFW_RESIZABLE, 1);
 
         findGlslVersion();
 
-        input = new Input();
         windowHandle = glfwCreateWindow(size.x, size.y, name, NULL, NULL);
+        input = new Input();
 
         if (windowHandle == NULL) {
             String errorMessage = "Failed to create the glfw window!";
@@ -72,7 +72,6 @@ public class Window {
             );
         }
         glfwSetKeyCallback(windowHandle, input.getKeyBoard());
-        glfwSetCursorPosCallback(windowHandle, input.getMouseMove());
         glfwSetMouseButtonCallback(windowHandle, input.getMouseButton());
 
         glfwMakeContextCurrent(windowHandle);
@@ -88,7 +87,12 @@ public class Window {
             Out.printlnDebug("OpenGL shading language version: " + glGetString(GL_SHADING_LANGUAGE_VERSION));
         }
 
-        setIcon(iconFilePath);
+        glfwSetWindowSizeCallback(windowHandle, new GLFWWindowSizeCallback() {
+            @Override
+            public void invoke(long window, int width, int height) {
+                needsResize(new Vector2i(width, height));
+            }
+        });
     }
 
     public void clear() {
@@ -167,7 +171,7 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     }
 
-    private void setIcon(String filePath) {
+    public void changeIcon(String filePath) {
         ByteBuffer imageBuffer;
         int width, heigh;
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -186,5 +190,10 @@ public class Window {
         image.set(width, heigh, imageBuffer);
         imagebf.put(0, image);
         glfwSetWindowIcon(windowHandle, imagebf);
+    }
+
+    private void needsResize(Vector2i size) {
+        this.size = size;
+        Game.get().forceResize();
     }
 }

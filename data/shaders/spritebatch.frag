@@ -19,4 +19,4 @@ void main(void)
 	} else {
 		color = tint * textureColor.rrrr;
 	}
-};
+}

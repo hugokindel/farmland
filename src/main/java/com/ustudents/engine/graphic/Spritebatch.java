@@ -118,17 +118,15 @@ public class Spritebatch {
 
         public void putElement(Spritebatch.Element element) {
             if (element.type == ElementType.Sprite) {
-                element.position = new Vector2f(element.position.x - element.origin.x, element.position.y - element.origin.y);
+                element.position = new Vector2f(element.position.x - (element.origin.x * element.scale.x), element.position.y - (element.origin.y * element.scale.y));
 
-                Vector2f position1 = new Vector2f(element.scale.x * (element.position.x),
-                        element.scale.y * element.position.y);
-                Vector2f position2 = new Vector2f(element.scale.x * (element.position.x + element.dimensions.x),
-                        element.scale.y * element.position.y);
-                Vector2f position3 = new Vector2f(element.scale.x * element.position.x,
-                        element.scale.y * (element.position.y  + element.dimensions.y));
-                Vector2f position4 = new Vector2f(element.scale.x * (element.position.x + element.dimensions.x),
-                        element.scale.y * (element.position.y + element.dimensions.y));
-
+                Vector2f position1 = new Vector2f(element.position.x, element.position.y);
+                Vector2f position2 = new Vector2f(element.position.x + element.scale.x * element.dimensions.x,
+                        element.position.y);
+                Vector2f position3 = new Vector2f(element.position.x,
+                        element.position.y  + element.scale.y * element.dimensions.y);
+                Vector2f position4 = new Vector2f(element.position.x + element.scale.x * element.dimensions.x,
+                        element.position.y + element.scale.y * element.dimensions.y);
 
                 if (element.rotation != 0.0f) {
                     Vector2f rotationOrigin = new Vector2f(position1.x + (element.origin.x * element.scale.x), position1.y + (element.origin.y * element.scale.y));
@@ -221,15 +219,15 @@ public class Spritebatch {
 
             // This happens within the shader context.
             {
-                if (shouldUpdateAlphaUniform) {
+                //if (shouldUpdateAlphaUniform) {
                     shader.setUniform1f("alpha", globalAlpha);
                     shouldUpdateAlphaUniform = false;
-                }
+                //}
 
-                if (shouldUpdateMatrixUniform) {
+                //if (shouldUpdateMatrixUniform) {
                     shader.setUniformMatrix4fv("projection", projection);
                     shouldUpdateMatrixUniform = false;
-                }
+                //}
 
                 shader.setUniform1i("type",  elements.get(0).getType());
 
@@ -285,7 +283,7 @@ public class Spritebatch {
     private final Shader shader;
     private final Renderer renderer;
     private final List<Element> elements;
-    private final Camera camera;
+    private Camera camera;
     private int size;
     private Matrix4f projection;
     private float globalAlpha;
@@ -347,17 +345,9 @@ public class Spritebatch {
         }
     }
 
-    public void draw(Texture texture) {
-        draw(
-                texture,
-                new Vector2f(0.0f, 0.0f),
-                new Vector4f(0, 0, texture.getWidth(), texture.getHeight()),
-                0,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
+    public void begin(Camera camera) {
+        this.camera = camera;
+        begin();
     }
 
     public void draw(Texture texture, Vector2f position) {
@@ -532,10 +522,88 @@ public class Spritebatch {
         );
     }
 
+    public void drawRectangle(Vector2f position, Vector2f size) {
+        drawRectangle(
+                position,
+                size,
+                0,
+                Color.WHITE,
+                0.0f,
+                1,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawRectangle(Vector2f position, Vector2f size, int zIndex) {
+        drawRectangle(
+                position,
+                size,
+                zIndex,
+                Color.WHITE,
+                0.0f,
+                1,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color) {
+        drawRectangle(
+                position,
+                size,
+                zIndex,
+                color,
+                0.0f,
+                1,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation) {
+        drawRectangle(
+                position,
+                size,
+                zIndex,
+                color,
+                rotation,
+                1,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, float thickness) {
+        drawRectangle(
+                position,
+                size,
+                zIndex,
+                color,
+                rotation,
+                thickness,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, float thickness, Vector2f scale) {
+        drawRectangle(
+                position,
+                size,
+                zIndex,
+                color,
+                rotation,
+                thickness,
+                scale,
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
     public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, float thickness, Vector2f scale, Vector2f origin) {
         Vector2f realSize = new Vector2f(size.x * scale.x, size.y * scale.y);
-        Vector2f realPosition = new Vector2f(scale.x * (position.x - origin.x), scale.y * (position.y - origin.y));
-        Vector2f rotationOrigin = new Vector2f(realPosition.x + (origin.x * scale.x), realPosition.y + (origin.y * scale.y));
+        Vector2f realPosition = new Vector2f(position.x - scale.x * origin.x, position.y - scale.y * origin.y);
+        Vector2f rotationOrigin = new Vector2f(realPosition.x + origin.x * scale.x, realPosition.y + origin.y * scale.y);
 
         //Vector2f position11 = position42;
         Vector2f position12 = rotatePosition(new Vector2f(realPosition.x + realSize.x, realPosition.y), rotationOrigin, rotation);

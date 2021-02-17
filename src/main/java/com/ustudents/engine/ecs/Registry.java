@@ -83,7 +83,7 @@ public class Registry {
 
     /** Class constructor. */
     public Registry() {
-        systems = new HashMap<>();
+        systems = new LinkedHashMap<>();
         entityPerIndex = new HashMap<>();
         signaturePerEntity = new HashMap<>();
         entitiesPerName = new HashMap<>();

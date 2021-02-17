@@ -3,6 +3,7 @@ package com.ustudents.examples.scenes;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.component.RenderableComponent;
 import com.ustudents.engine.ecs.component.SpriteComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
 import com.ustudents.engine.graphic.Texture;
@@ -13,6 +14,7 @@ import com.ustudents.farmland.scene.MainMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 import org.joml.Vector4i;
 
 public class EcsExample2 extends Scene {
@@ -46,7 +48,10 @@ public class EcsExample2 extends Scene {
                 int textureRegionX = 24 * random.generateInRange(1, 5);
                 int textureRegionY = 24 * random.generateInRange(1, 5);
                 grass.addComponent(SpriteComponent.class, texture,
-                        new Vector4i(textureRegionX, textureRegionY, 24, 24));
+                        new Vector4f(textureRegionX, textureRegionY, 24, 24));
+
+                // Je rajoute un RenderableComponent pour rendre l'entité affichable à l'écran.
+                grass.addComponent(RenderableComponent.class);
             }
         }
     }

@@ -8,6 +8,8 @@ import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.utility.FileUtil;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -165,6 +167,8 @@ public class Resources {
                     settings = JsonReader.readMap(getDataDirectory() + "/" + settingsFilename);
                 } else {
                     settings = new HashMap<>();
+                    settings.put("vsync", true);
+                    settings.put("windowSize", new Vector2i(1280, 720));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
