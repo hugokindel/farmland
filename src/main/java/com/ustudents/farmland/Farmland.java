@@ -1,9 +1,9 @@
 package com.ustudents.farmland;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.audio.SoundManager;
 import com.ustudents.engine.core.cli.option.annotation.Command;
-import com.ustudents.farmland.component.Goal;
+import com.ustudents.farmland.component.GoalComponent;
 import com.ustudents.farmland.player.Player;
 import com.ustudents.farmland.scene.MainMenu;
 
@@ -16,7 +16,8 @@ public class Farmland extends Game {
     private static boolean playersIsInit;
     private static String kindOfGame;
     private static boolean isInGame;
-    private static Goal goal;
+    private static GoalComponent goal;
+    private static SoundManager soundManager;
 
     @Override
     protected void initialize() {
@@ -24,7 +25,9 @@ public class Farmland extends Game {
         changeCursor("cursor.png");
 
         players = new ArrayList<>();
-        goal = new Goal();
+        goal = new GoalComponent();
+        soundManager = new SoundManager();
+        soundManager.init();
 
         sceneManager.changeScene(MainMenu.class);
     }
@@ -92,11 +95,15 @@ public class Farmland extends Game {
         isInGame = inGame;
     }
 
-    public static Goal getGoal() {
+    public static GoalComponent getGoal() {
         return goal;
     }
 
-    public static void setGoal(Goal goal) {
+    public static void setGoal(GoalComponent goal) {
         Farmland.goal = goal;
+    }
+
+    public static SoundManager getSoundManager() {
+        return soundManager;
     }
 }

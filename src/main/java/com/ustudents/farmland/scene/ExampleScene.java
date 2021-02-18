@@ -20,6 +20,7 @@ import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
+import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.MoveBlockComponent;
 import com.ustudents.farmland.component.RotateBlockComponent;
 import imgui.ImGui;
@@ -86,18 +87,8 @@ public class ExampleScene extends Scene {
         playerName.addComponent(TransformComponent.class);
         playerName.addComponent(RenderableComponent.class);
         playerName.addComponent(TextComponent.class, "forx", font);
-
-        try {
-            SoundManager sm = new SoundManager();
-            sm.init();
-            SoundBuffer sb = new SoundBuffer(Resources.getFontsDirectory() + "/background.ogg");
-            SoundSource ss = new SoundSource(true,false);
-            ss.setBuffer(sb.getBufferId());
-            ss.play();
-            SoundListener sl = new SoundListener();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        
+        Farmland.getSoundManager().playMusic("background.ogg");
     }
 
     @Override
@@ -127,6 +118,6 @@ public class ExampleScene extends Scene {
     @Override
     public void destroy()
     {
-
+        Farmland.getSoundManager().stopMusic();
     }
 }

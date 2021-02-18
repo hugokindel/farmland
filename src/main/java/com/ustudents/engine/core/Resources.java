@@ -27,6 +27,7 @@ public class Resources {
     private static final String texturesDirectoryName = "textures";
     private static final String playersDirectoryName = "players";
     private static final String fontsDirectoryName = "fonts";
+    private static final String soundsDirectoryName = "sounds";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
@@ -34,6 +35,7 @@ public class Resources {
     private static Map<String, Object> settings;
     private static Map<String, Shader> shaders;
     private static Map<String, Texture> textures;
+    private static Map<String, String> sounds;
     private static Map<String, Map<Integer, Font>> fonts;
 
     /**
@@ -72,6 +74,14 @@ public class Resources {
 
     public static String getKindPlayerDirectoryName(String type){
         return createPathIfNeeded(getPlayersDirectoryName() + "/" + type);
+    }
+
+    public static String getSoundsDirectoryName(){
+        return createPathIfNeeded(getDataDirectory() + "/sounds");
+    }
+
+    public static String getSounds(String name){
+        return getSoundsDirectoryName() + "/" + name;
     }
 
     /**
