@@ -33,6 +33,8 @@ public class MainMenu extends Scene {
         font = Resources.loadFont("default.ttf", 36);
         fontSmaller = Resources.loadFont("default.ttf", 24);
 
+        Farmland.getSoundManager().playMusic("backgroundMenu1.ogg");
+
         initializeBackground();
         initializeUi();
     }
@@ -141,6 +143,6 @@ public class MainMenu extends Scene {
 
     @Override
     public void destroy() {
-
+        Farmland.getSoundManager().stopMusic();
     }
 }

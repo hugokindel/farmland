@@ -69,7 +69,7 @@ public class SoundManager {
                     if(file.getName().contains("background")){
                         loop = true;
                     }
-                    SoundSource temp = new SoundSource(loop,false);
+                    SoundSource temp = new SoundSource(true,true);
                     temp.setBuffer(tmp.getBufferId());
                     soundBufferList.add(tmp);
                     soundSourceMap.put(file.getName(),temp);
