@@ -1,6 +1,7 @@
 package com.ustudents.engine.core;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Shader;
@@ -8,7 +9,6 @@ import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.utility.FileUtil;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 import java.io.File;
@@ -27,6 +27,7 @@ public class Resources {
     private static final String texturesDirectoryName = "textures";
     private static final String playersDirectoryName = "players";
     private static final String fontsDirectoryName = "fonts";
+    private static final String soundsDirectoryName = "sounds";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
@@ -34,6 +35,7 @@ public class Resources {
     private static Map<String, Object> settings;
     private static Map<String, Shader> shaders;
     private static Map<String, Texture> textures;
+    private static Map<String, Sound> sounds;
     private static Map<String, Map<Integer, Font>> fonts;
 
     /**
@@ -64,6 +66,10 @@ public class Resources {
 
     public static String getFontsDirectory() {
         return createPathIfNeeded(getDataDirectory() + "/" + fontsDirectoryName);
+    }
+
+    public static String getSoundsDirectoryName(){
+        return createPathIfNeeded(getDataDirectory() + "/" + soundsDirectoryName);
     }
 
     public static String getPlayersDirectoryName(){
@@ -130,6 +136,7 @@ public class Resources {
         shaders = new HashMap<>();
         textures = new HashMap<>();
         fonts = new HashMap<>();
+        sounds = new HashMap<>();
     }
 
     /** Saves everything. */
@@ -140,8 +147,8 @@ public class Resources {
 
         shaders.clear();
 
-        for (Map.Entry<String, Texture> texuresSet : textures.entrySet()) {
-            unloadTexture(texuresSet.getKey(), false);
+        for (Map.Entry<String, Texture> texturesSet : textures.entrySet()) {
+            unloadTexture(texturesSet.getKey(), false);
         }
 
         textures.clear();
@@ -153,6 +160,12 @@ public class Resources {
         }
 
         fonts.clear();
+
+        for (Map.Entry<String, Sound> soundSet : sounds.entrySet()) {
+            unloadSound(soundSet.getKey(), false);
+        }
+
+        sounds.clear();
 
         saveSettings();
     }
@@ -323,6 +336,47 @@ public class Resources {
                 if (fonts.get(filePath).isEmpty()) {
                     fonts.remove(filePath);
                 }
+            }
+        }
+    }
+
+    public static Sound loadSound(String filePath) {
+        if (!sounds.containsKey(filePath)) {
+            if (Game.isDebugging()) {
+                Out.printlnDebug("Sound loaded: " + getSoundsDirectoryName() + "/" + filePath + "");
+            }
+
+            sounds.put(filePath, new Sound(getSoundsDirectoryName() + "/" + filePath));
+        }
+
+        Sound sound = sounds.get(filePath);
+
+        if (sound.isDestroyed()) {
+            sounds.remove(filePath);
+            return loadSound(filePath);
+        }
+
+        return sound;
+    }
+
+    public static Sound getSound(String filePath) {
+        return sounds.get(filePath);
+    }
+
+    public static void unloadSound(String filePath) {
+        unloadSound(filePath, true);
+    }
+
+    static void unloadSound(String filePath, boolean removeFromList) {
+        if (sounds.containsKey(filePath)) {
+            if (Game.isDebugging()) {
+                Out.printlnDebug("Sound unloaded: " + getSoundsDirectoryName() + "/" + filePath + "");
+            }
+
+            sounds.get(filePath).destroy();
+
+            if (removeFromList) {
+                sounds.remove(filePath);
             }
         }
     }

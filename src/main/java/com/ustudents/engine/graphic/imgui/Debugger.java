@@ -1,6 +1,8 @@
 package com.ustudents.engine.graphic.imgui;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.audio.Sound;
+import com.ustudents.engine.audio.SoundSource;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
@@ -271,7 +273,9 @@ public class Debugger {
 
         try {
             for (Field field : fields) {
-
+                if (!field.canAccess(component)) {
+                    field.setAccessible(true);
+                }
                 String name = field.getName();
                 Class<?> type = field.getType();
                 //Object value = values.get(entityId).get(componentId).get(field.getName());
@@ -294,7 +298,7 @@ public class Debugger {
                 } else if (type == Vector4i.class) {
                     Vector4i originalValue = (Vector4i)field.get(component);
                     value = new int[]{originalValue.x, originalValue.y, originalValue.z, originalValue.w};
-                } else if (type == Font.class || type == Texture.class || type == Color.class) {
+                } else if (type == Font.class || type == Texture.class || type == Color.class || type == SoundSource.class) {
                     value = field.get(component);
                 }
                 drawField(name, type, value);
@@ -410,6 +414,20 @@ public class Debugger {
                 ImGuiUtils.setEnabled(false);
                 ImGui.colorPicker4(name, new float[] {color.r, color.g, color.b, color.a});
                 ImGuiUtils.setEnabled(true);
+                ImGui.treePop();
+            }
+        } else if (type == SoundSource.class) {
+            SoundSource soundSource = (SoundSource)value;
+            if (ImGui.treeNode(name)) {
+                ImGuiUtils.setEnabled(false);
+                ImGui.inputInt("handle", new ImInt(soundSource.getHandle()));
+                ImGuiUtils.setEnabled(true);
+                if (ImGui.treeNode("sound")) {
+                    ImGuiUtils.setEnabled(false);
+                    ImGui.inputText("path", new ImString(soundSource.getSound().getPath()));
+                    ImGuiUtils.setEnabled(true);
+                    ImGui.treePop();
+                }
                 ImGui.treePop();
             }
         }

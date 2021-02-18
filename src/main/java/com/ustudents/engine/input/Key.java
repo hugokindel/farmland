@@ -81,7 +81,7 @@ public class Key {
 	public static final int F6 = GLFW.GLFW_KEY_F6;
 	public static final int F7 = GLFW.GLFW_KEY_F7;
 	public static final int F8 = GLFW.GLFW_KEY_F8;
- 	public static final int F9 = GLFW.GLFW_KEY_F9;
+	public static final int F9 = GLFW.GLFW_KEY_F9;
 	public static final int F10 = GLFW.GLFW_KEY_F10;
 	public static final int F11 = GLFW.GLFW_KEY_F11;
 	public static final int F12 = GLFW.GLFW_KEY_F12;

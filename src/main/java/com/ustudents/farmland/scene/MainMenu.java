@@ -1,6 +1,7 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.component.*;
@@ -23,6 +24,7 @@ public class MainMenu extends Scene {
     Texture titleTexture;
     Font font;
     Font fontSmaller;
+    Sound musicSound;
 
     @Override
     public void initialize() {
@@ -32,9 +34,11 @@ public class MainMenu extends Scene {
         titleTexture = Resources.loadTexture("title.png");
         font = Resources.loadFont("default.ttf", 36);
         fontSmaller = Resources.loadFont("default.ttf", 24);
+        musicSound = Resources.loadSound("backgroundMenu1.ogg");
 
         initializeBackground();
         initializeUi();
+        initializeMusic();
     }
 
     public void initializeBackground() {
@@ -95,6 +99,12 @@ public class MainMenu extends Scene {
         stats.addComponent(TextComponent.class, "", fontSmaller);
         stats.addComponent(RenderableComponent.class);
         stats.addComponent(UiComponent.class);
+    }
+
+    public void initializeMusic() {
+        Entity music = registry.createEntity();
+        music.setName("music");
+        music.addComponent(SoundComponent.class, musicSound, true);
     }
 
     @Override
