@@ -90,6 +90,8 @@ public class SceneManager {
 
     public void startFrame() {
         if (transitioningScene) {
+            Game.get().getSoundManager().removeAll();
+
             currentSceneIndex = scenes.size() - 1;
 
             if (currentSceneIndex > 0) {

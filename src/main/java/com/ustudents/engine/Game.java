@@ -1,5 +1,6 @@
 package com.ustudents.engine;
 
+import com.ustudents.engine.audio.SoundManager;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
@@ -50,6 +51,8 @@ public abstract class Game extends Runnable {
 
     protected final ImGuiManager imGuiManager;
 
+    private final SoundManager soundManager;
+
     protected final Timer timer;
 
     protected boolean shouldClose;
@@ -78,6 +81,7 @@ public abstract class Game extends Runnable {
         window = new Window();
         sceneManager = new SceneManager();
         imGuiManager = new ImGuiManager();
+        soundManager = new SoundManager();
         timer = new Timer();
         game = this;
         instanceName = "game";
@@ -139,6 +143,7 @@ public abstract class Game extends Runnable {
         }
 
         sceneManager.initialize();
+        soundManager.initialize();
         initialize();
         window.show(true);
 
@@ -250,6 +255,7 @@ public abstract class Game extends Runnable {
         }
 
         window.show(false);
+        soundManager.destroy();
         sceneManager.destroy();
 
         if (!noImGui && imGuiVisible) {
@@ -326,5 +332,9 @@ public abstract class Game extends Runnable {
 
     public ImGuiManager getImGuiManager() {
         return imGuiManager;
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 }

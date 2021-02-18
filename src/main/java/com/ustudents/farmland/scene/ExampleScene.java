@@ -1,42 +1,26 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.audio.SoundBuffer;
-import com.ustudents.engine.audio.SoundListener;
-import com.ustudents.engine.audio.SoundManager;
-import com.ustudents.engine.audio.SoundSource;
+import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.ecs.component.RenderableComponent;
-import com.ustudents.engine.ecs.component.TextComponent;
+import com.ustudents.engine.ecs.component.*;
 import com.ustudents.engine.graphic.Font;
-import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.ecs.Entity;
-import com.ustudents.engine.ecs.component.SpriteComponent;
-import com.ustudents.engine.ecs.component.TextComponent;
-import com.ustudents.engine.ecs.component.TransformComponent;
-import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
-import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.MoveBlockComponent;
 import com.ustudents.farmland.component.RotateBlockComponent;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.ALCapabilities;
-import static org.lwjgl.openal.AL.getCapabilities;
-
-import static org.lwjgl.openal.AL10.*;
 
 public class ExampleScene extends Scene {
     Texture texture;
     Texture texture2;
     Font font;
+    Sound sound;
 
     @Override
     public void initialize() {
@@ -46,6 +30,7 @@ public class ExampleScene extends Scene {
         texture = Resources.loadTexture("examples/grass.png");
         texture2 = Resources.loadTexture("examples/lwjgl3.jpg");
         font = Resources.loadFont("default.ttf", 24);
+        sound = Resources.loadSound("background.ogg");
 
         Entity player1 = registry.createEntity();
         player1.addComponent(TransformComponent.class, new Vector2f(0, 0), new Vector2f(1, 1));
@@ -88,7 +73,9 @@ public class ExampleScene extends Scene {
         playerName.addComponent(RenderableComponent.class);
         playerName.addComponent(TextComponent.class, "forx", font);
 
-        Farmland.getSoundManager().playMusic("background.ogg");
+        Entity music = registry.createEntity();
+        music.setName("music");
+        music.addComponent(SoundComponent.class, sound, true);
     }
 
     @Override
@@ -118,6 +105,6 @@ public class ExampleScene extends Scene {
     @Override
     public void destroy()
     {
-        Farmland.getSoundManager().stopMusic();
+
     }
 }

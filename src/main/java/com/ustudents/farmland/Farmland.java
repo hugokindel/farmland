@@ -17,7 +17,6 @@ public class Farmland extends Game {
     private static String kindOfGame;
     private static boolean isInGame;
     private static GoalComponent goal;
-    private static SoundManager soundManager;
 
     @Override
     protected void initialize() {
@@ -26,8 +25,6 @@ public class Farmland extends Game {
 
         players = new ArrayList<>();
         goal = new GoalComponent();
-        soundManager = new SoundManager();
-        soundManager.init();
 
         sceneManager.changeScene(MainMenu.class);
     }
@@ -101,9 +98,5 @@ public class Farmland extends Game {
 
     public static void setGoal(GoalComponent goal) {
         Farmland.goal = goal;
-    }
-
-    public static SoundManager getSoundManager() {
-        return soundManager;
     }
 }
