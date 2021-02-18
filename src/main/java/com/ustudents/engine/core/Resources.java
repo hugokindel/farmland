@@ -3,8 +3,10 @@ package com.ustudents.engine.core;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Shader;
+import com.ustudents.engine.graphic.Spritesheet;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
@@ -37,6 +39,7 @@ public class Resources {
     private static Map<String, Texture> textures;
     private static Map<String, Sound> sounds;
     private static Map<String, Map<Integer, Font>> fonts;
+    private static Map<String, Spritesheet> spritesheets;
 
     /**
      * Gets the data directory's path.
@@ -137,6 +140,7 @@ public class Resources {
         textures = new HashMap<>();
         fonts = new HashMap<>();
         sounds = new HashMap<>();
+        spritesheets = new HashMap<>();
     }
 
     /** Saves everything. */
@@ -166,6 +170,8 @@ public class Resources {
         }
 
         sounds.clear();
+
+        spritesheets.clear();
 
         saveSettings();
     }
@@ -379,5 +385,28 @@ public class Resources {
                 sounds.remove(filePath);
             }
         }
+    }
+    
+    public Spritesheet loadSpritesheet(String filePath) {
+        if (!spritesheets.containsKey(filePath)) {
+            if (Game.isDebugging()) {
+                Out.printlnDebug("Spritesheet loaded: " + getTexturesDirectory() + "/" + filePath + "");
+            }
+
+            spritesheets.put(filePath, Json.deserialize(getTexturesDirectory() + "/" + filePath, Spritesheet.class));
+        }
+
+        Spritesheet spritesheet = spritesheets.get(filePath);
+
+        if (spritesheet == null) {
+            spritesheets.remove(filePath);
+            return loadSpritesheet(filePath);
+        }
+
+        return spritesheet;
+    }
+    
+    public Spritesheet getSpritesheet(String filePath) {
+        return spritesheets.get(filePath);
     }
 }

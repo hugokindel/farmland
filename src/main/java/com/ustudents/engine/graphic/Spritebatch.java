@@ -350,8 +350,8 @@ public class Spritebatch {
         begin();
     }
 
-    public void draw(Texture texture, Vector2f position) {
-        draw(
+    public void drawTexture(Texture texture, Vector2f position) {
+        drawTexture(
                 texture,
                 position,
                 new Vector4f(0, 0, texture.getWidth(), texture.getHeight()),
@@ -363,8 +363,8 @@ public class Spritebatch {
         );
     }
 
-    public void draw(Texture texture, Vector2f position, Vector4f region) {
-        draw(
+    public void drawTexture(Texture texture, Vector2f position, Vector4f region) {
+        drawTexture(
                 texture,
                 position,
                 region,
@@ -376,8 +376,8 @@ public class Spritebatch {
         );
     }
 
-    public void draw(Texture texture, Vector2f position, Vector4f region, int zIndex) {
-        draw(
+    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex) {
+        drawTexture(
                 texture,
                 position,
                 region,
@@ -389,8 +389,8 @@ public class Spritebatch {
         );
     }
 
-    public void draw(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint) {
-        draw(
+    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint) {
+        drawTexture(
                 texture,
                 position,
                 region,
@@ -402,8 +402,8 @@ public class Spritebatch {
         );
     }
 
-    public void draw(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation) {
-        draw(
+    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation) {
+        drawTexture(
                 texture,
                 position,
                 region,
@@ -415,8 +415,8 @@ public class Spritebatch {
         );
     }
 
-    public void draw(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation, Vector2f scale) {
-        draw(
+    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation, Vector2f scale) {
+        drawTexture(
                 texture,
                 position,
                 region,
@@ -428,7 +428,7 @@ public class Spritebatch {
         );
     }
 
-    public void draw(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation, Vector2f scale, Vector2f origin) {
+    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation, Vector2f scale, Vector2f origin) {
         Element element = new Element();
 
         element.texture = texture;
@@ -447,6 +447,84 @@ public class Spritebatch {
 
         elements.add(element);
         size++;
+    }
+
+    public void drawSprite(Sprite sprite, Vector2f position) {
+        drawTexture(
+                sprite.getTexture(),
+                position,
+                sprite.getRegion(),
+                0,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawSprite(Sprite sprite, Vector2f position, int zIndex) {
+        drawTexture(
+                sprite.getTexture(),
+                position,
+                sprite.getRegion(),
+                zIndex,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawSprite(Sprite sprite, Vector2f position, int zIndex, Color tint) {
+        drawTexture(
+                sprite.getTexture(),
+                position,
+                sprite.getRegion(),
+                zIndex,
+                tint,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawSprite(Sprite sprite, Vector2f position, int zIndex, Color tint, float rotation) {
+        drawTexture(
+                sprite.getTexture(),
+                position,
+                sprite.getRegion(),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawSprite(Sprite sprite, Vector2f position, int zIndex, Color tint, float rotation, Vector2f scale) {
+        drawTexture(
+                sprite.getTexture(),
+                position,
+                sprite.getRegion(),
+                zIndex,
+                tint,
+                rotation,
+                scale,
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawSprite(Sprite sprite, Vector2f position, int zIndex, Color tint, float rotation, Vector2f scale, Vector2f origin) {
+        drawTexture(
+                sprite.getTexture(),
+                position,
+                sprite.getRegion(),
+                zIndex,
+                tint,
+                rotation,
+                scale,
+                origin
+        );
     }
 
     public void drawFilledRectangle(Vector2f position, Vector2f size) {
@@ -510,7 +588,7 @@ public class Spritebatch {
     }
 
     public void drawFilledRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, Vector2f scale, Vector2f origin) {
-        draw(
+        drawTexture(
                 whiteTexture,
                 position,
                 new Vector4f(0.0f, 0.0f, size.x, size.y),
@@ -637,7 +715,7 @@ public class Spritebatch {
     }
 
     public void drawPoint(Vector2f position, int zIndex, Color color) {
-        draw(
+        drawTexture(
                 whiteTexture,
                 position,
                 new Vector4f(0.0f, 0.0f, 1.0f, 1.0f),
@@ -786,7 +864,7 @@ public class Spritebatch {
     }
 
     public void drawLine(Vector2f position, float length, float rotation, int zIndex, Color color, float thickness) {
-        draw(
+        drawTexture(
                 whiteTexture,
                 position,
                 new Vector4f(0.0f, 0.0f, length, thickness),

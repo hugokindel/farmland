@@ -56,7 +56,7 @@ public class MainMenu extends Scene {
 
                 int textureRegionX = 24 * random.generateInRange(1, 5);
                 int textureRegionY = 24 * random.generateInRange(1, 5);
-                grass.addComponent(SpriteComponent.class, grassTexture,
+                grass.addComponent(TextureComponent.class, grassTexture,
                         new Vector4f(textureRegionX, textureRegionY, 24, 24));
 
                 grass.addComponent(RenderableComponent.class);
@@ -74,8 +74,8 @@ public class MainMenu extends Scene {
         title.setName("titleLabel");
         title.setParent(uiContainer);
         title.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f, 20), new Vector2f(1.5f, 1.5f));
-        title.addComponent(SpriteComponent.class, titleTexture);
-        title.getComponent(SpriteComponent.class).origin = new Vector2f(256.0f, 0.0f);
+        title.addComponent(TextureComponent.class, titleTexture);
+        title.getComponent(TextureComponent.class).origin = new Vector2f(256.0f, 0.0f);
         title.addComponent(RenderableComponent.class);
         title.addComponent(UiComponent.class);
 

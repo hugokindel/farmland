@@ -232,7 +232,7 @@ public abstract class Game extends Runnable {
         if (!isImGuiActive() && sceneManager.getScene() != null &&
                 cursorTexture != null && Input.getMousePos() != null) {
             sceneManager.getScene().getSpritebatch().begin(sceneManager.getScene().getCursorCamera());
-            sceneManager.getScene().getSpritebatch().draw(
+            sceneManager.getScene().getSpritebatch().drawTexture(
                     cursorTexture, Input.getMousePos(),
                     new Vector4f(0, 0, 11, 14),
                     0,

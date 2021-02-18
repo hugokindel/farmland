@@ -96,10 +96,10 @@ public abstract class RenderSystem extends System {
         if (entity.hasComponent(SpriteComponent.class)) {
             SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
 
-            spritebatch.draw(
-                    spriteComponent.texture,
+            spritebatch.drawTexture(
+                    spriteComponent.sprite.getTexture(),
                     transformComponent.position,
-                    spriteComponent.region,
+                    spriteComponent.sprite.getRegion(),
                     renderableComponent.zIndex,
                     spriteComponent.tint,
                     transformComponent.rotation,
@@ -117,6 +117,21 @@ public abstract class RenderSystem extends System {
                     transformComponent.position,
                     renderableComponent.zIndex,
                     textComponent.color
+            );
+        }
+
+        if (entity.hasComponent(TextureComponent.class)) {
+            TextureComponent textureComponent = entity.getComponent(TextureComponent.class);
+
+            spritebatch.drawTexture(
+                    textureComponent.texture,
+                    transformComponent.position,
+                    textureComponent.region,
+                    renderableComponent.zIndex,
+                    textureComponent.tint,
+                    transformComponent.rotation,
+                    transformComponent.scale,
+                    textureComponent.origin
             );
         }
     }

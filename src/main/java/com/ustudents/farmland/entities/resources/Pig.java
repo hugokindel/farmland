@@ -2,7 +2,7 @@ package com.ustudents.farmland.entities.resources;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.SpriteComponent;
+import com.ustudents.engine.ecs.component.TextureComponent;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.entities.Resource;
 import org.joml.Vector4f;
@@ -20,11 +20,11 @@ public class Pig extends Resource {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/pig.png"),new Vector4f(3 * 128, 128, 128, 128));
+        addComponent(TextureComponent.class, Resources.loadTexture("Resource/pig.png"),new Vector4f(3 * 128, 128, 128, 128));
     }
 
     public void init(SeedRandom random){
         int textureRegionX = 128 * random.generateInRange(0, 3);
-        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/pig.png"),new Vector4f(textureRegionX, (random.generateInRange(0, 1) == 0)? 128 : 3 * 128, 128, 128));
+        addComponent(TextureComponent.class, Resources.loadTexture("Resource/pig.png"),new Vector4f(textureRegionX, (random.generateInRange(0, 1) == 0)? 128 : 3 * 128, 128, 128));
     }
 }

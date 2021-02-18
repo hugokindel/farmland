@@ -140,6 +140,12 @@ public class Json {
                 convertAndAdd(field, mapToSearch.get(path[path.length - 1]), object);
             }
 
+            for (Method method : classType.getMethods()) {
+                if (method.isAnnotationPresent(JsonSerializableConstructor.class)) {
+                    method.invoke(object);
+                }
+            }
+
             return object;
         } catch (Exception e) {
             e.printStackTrace();
@@ -384,12 +390,6 @@ public class Json {
                 );
             } else {
                 field.set(instance, value);
-            }
-
-            for (Method method : field.getType().getMethods()) {
-                if (method.isAnnotationPresent(JsonSerializableConstructor.class)) {
-                    method.invoke(instance);
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();

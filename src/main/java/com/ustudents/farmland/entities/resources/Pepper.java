@@ -2,7 +2,7 @@ package com.ustudents.farmland.entities.resources;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.SpriteComponent;
+import com.ustudents.engine.ecs.component.TextureComponent;
 import com.ustudents.farmland.entities.Resource;
 import org.joml.Vector4f;
 
@@ -19,6 +19,6 @@ public class Pepper extends Resource {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("Resource/crops.png"),new Vector4f(22 * 32, 6 * 32, 32, 64));
+        addComponent(TextureComponent.class, Resources.loadTexture("Resource/crops.png"),new Vector4f(22 * 32, 6 * 32, 32, 64));
     }
 }

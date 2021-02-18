@@ -242,7 +242,7 @@ public class Camera {
             }
         });
 
-        Input.mouseMoved.add(() -> {
+        Input.mouseMoved.add((dataType, data) -> {
             if (inputEnabled) {
                 Vector2f mousePos = Input.getMousePos();
                 onMouseMove((int) mousePos.x, Farmland.get().getWindow().getSize().y - (int) mousePos.y);

@@ -5,14 +5,24 @@ import java.util.List;
 
 public class EventDispatcher {
     List<EventListener> listeners;
+    Class<?> dataType;
 
     public EventDispatcher() {
-        listeners = new ArrayList<>();
+        this(EventData.class);
+    }
+
+    public EventDispatcher(Class<?> eventType) {
+        this.listeners = new ArrayList<>();
+        this.dataType = eventType;
     }
 
     public void dispatch() {
+        dispatch(new EventData());
+    }
+
+    public void dispatch(Object data) {
         for (EventListener listener : listeners) {
-            listener.onReceived();
+            listener.onReceived(dataType, data);
         }
     }
 

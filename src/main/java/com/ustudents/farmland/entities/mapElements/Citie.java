@@ -2,7 +2,7 @@ package com.ustudents.farmland.entities.mapElements;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.SpriteComponent;
+import com.ustudents.engine.ecs.component.TextureComponent;
 import com.ustudents.farmland.entities.MapElement;
 import org.joml.Vector4f;
 
@@ -19,6 +19,6 @@ public class Citie extends MapElement {
 
     @Override
     public void init() {
-        addComponent(SpriteComponent.class, Resources.loadTexture("MapElement/cities.png"),new Vector4f(0, 0, 28, 38));
+        addComponent(TextureComponent.class, Resources.loadTexture("MapElement/cities.png"),new Vector4f(0, 0, 28, 38));
     }
 }

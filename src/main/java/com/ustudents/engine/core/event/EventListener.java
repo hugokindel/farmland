@@ -1,5 +1,5 @@
 package com.ustudents.engine.core.event;
 
 public interface EventListener {
-    public void onReceived();
+    public void onReceived(Class<?> dataType, Object data);
 }

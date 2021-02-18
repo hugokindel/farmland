@@ -1,0 +1,59 @@
+{
+    "texturePath": "ui/button_focused.png",
+    "spriteRegions": {
+        "top_left": {
+            "x": 0,
+            "y": 0,
+            "z": 5,
+            "w": 5
+        },
+        "top_middle": {
+            "x": 6,
+            "y": 0,
+            "z": 1,
+            "w": 5
+        },
+        "top_right": {
+            "x": 8,
+            "y": 0,
+            "z": 5,
+            "w": 5
+        },
+        "middle_left": {
+            "x": 0,
+            "y": 6,
+            "z": 5,
+            "w": 1
+        },
+        "middle_middle": {
+            "x": 6,
+            "y": 6,
+            "z": 1,
+            "w": 1
+        },
+        "middle_right": {
+            "x": 8,
+            "y": 6,
+            "z": 5,
+            "w": 1
+        },
+        "bottom_left": {
+            "x": 0,
+            "y": 8,
+            "z": 5,
+            "w": 5
+        },
+        "bottom_middle": {
+            "x": 6,
+            "y": 8,
+            "z": 1,
+            "w": 5
+        },
+        "bottom_right": {
+            "x": 8,
+            "y": 8,
+            "z": 5,
+            "w": 5
+        }
+    }
+}
