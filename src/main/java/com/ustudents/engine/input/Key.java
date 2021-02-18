@@ -64,8 +64,8 @@ public class Key {
 	public static final int Left = GLFW.GLFW_KEY_LEFT;
 	public static final int Down = GLFW.GLFW_KEY_DOWN;
 	public static final int Up = GLFW.GLFW_KEY_UP;
-	public static final int Page_Up = GLFW.GLFW_KEY_PAGE_UP;
-	public static final int Page_Down = GLFW.GLFW_KEY_PAGE_DOWN;
+	public static final int PageUp = GLFW.GLFW_KEY_PAGE_UP;
+	public static final int PageDown = GLFW.GLFW_KEY_PAGE_DOWN;
 	public static final int Home = GLFW.GLFW_KEY_HOME;
 	public static final int End = GLFW.GLFW_KEY_END;
 	public static final int CapsLock = GLFW.GLFW_KEY_CAPS_LOCK;
