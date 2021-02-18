@@ -125,6 +125,42 @@ public class Entity {
         registry.removeParentFromEntity(this);
     }
 
+    /**
+     * Creates a new entity of specific type as a child of this entity.
+     *
+     * @param classType The entity type class.
+     * @param args The entity type constructor arguments.
+     * @param <T> The entity type.
+     *
+     * @return the entity.
+     */
+    public <T extends Entity> T createChild(Class<T> classType, Object... args) {
+        T entity;
+
+        if (args.length == 0) {
+            entity = registry.createEntity(classType);
+        } else {
+            entity = registry.createEntity(classType, args);
+        }
+
+        entity.setParent(this);
+
+        return entity;
+    }
+
+    /**
+     * Creates a new entity as a child of this entity.
+     *
+     * @return the entity.
+     */
+    public Entity createChild() {
+        Entity entity = registry.createEntity();
+
+        entity.setParent(this);
+
+        return entity;
+    }
+
     /** @return a set of its children. */
     public List<Entity> getChildren() {
         return registry.getChildrenOfEntity(this);
@@ -209,6 +245,7 @@ public class Entity {
         return registry;
     }
 
+    /** @return its signature. */
     public BitSet getSignature() {
         return registry.getSignatureOfEntity(this);
     }
