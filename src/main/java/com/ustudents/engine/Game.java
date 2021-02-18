@@ -197,8 +197,8 @@ public abstract class Game extends Runnable {
 
         if (getSceneManager() != null && getSceneManager().getScene() != null) {
             Scene scene = getSceneManager().getScene();
-            scene.getCamera().setSize(size.x, size.y);
-            scene.getUiCamera().setSize(size.x, size.y);
+            scene.getCamera().resize(size.x, size.y);
+            scene.getUiCamera().resize(size.x, size.y);
             shouldResize = false;
         }
     }

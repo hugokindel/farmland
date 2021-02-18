@@ -113,6 +113,7 @@ public class Window {
     public void show(boolean show) {
         if (show) {
             glfwShowWindow(windowHandle);
+            glfwFocusWindow(windowHandle);
         } else {
             glfwHideWindow(windowHandle);
         }

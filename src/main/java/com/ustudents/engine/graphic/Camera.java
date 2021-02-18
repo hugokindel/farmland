@@ -23,6 +23,7 @@ public class Camera {
 
     private Matrix3x2f viewMatrix;
     private Matrix4f viewProjectionMatrix;
+    private Matrix4f invertViewProjectionMatrix = new Matrix4f();
     private Vector4i viewportSize;
     private float mouseX, mouseY;
     private boolean[] mouseDown = new boolean[3];
@@ -60,14 +61,10 @@ public class Camera {
         update();
     }
 
-    public void setSize(int width, int height) {
+    public void resize(int width, int height) {
         viewportSize = new Vector4i(0, 0, width, height);
 
         update();
-    }
-
-    public Matrix4f getViewProjectionMatrix() {
-        return viewProjectionMatrix;
     }
 
     private void update() {
@@ -80,11 +77,24 @@ public class Camera {
             viewProjectionMatrix.identity().setOrtho2D(0, size.x, -size.y, 0);
         }
 
-        viewProjectionMatrix.m11(-viewProjectionMatrix.m11());
+        viewProjectionMatrix.m11(-viewProjectionMatrix.m11()).invertAffine(invertViewProjectionMatrix);
     }
 
     public void centerOnPosition(float x, float y) {
         viewMatrix.setTranslation(0, 0).translate(-x, -y);
+        update();
+    }
+
+    public void zoom(float scale) {
+        Vector3f currentScale = new Vector3f();
+        viewProjectionMatrix.getScale(currentScale);
+
+        if ((currentScale.y > maximalZoom && scale == 1.1f) || (currentScale.y < minimalZoom && scale == 1.0f / 1.1f)) {
+            return;
+        }
+
+        Vector2f ndc = getNormalizedDeviceCoordinates(new Vector2f(mouseX, mouseY));
+        viewMatrix.translateLocal(-ndc.x, -ndc.y).scaleLocal(scale, scale).translateLocal(ndc.x, ndc.y);
         update();
     }
 
@@ -99,10 +109,10 @@ public class Camera {
     public void onMouseMove(int winX, int winY) {
         Vector2f ndc;
         if (mouseDown[GLFW_MOUSE_BUTTON_LEFT]) {
-            ndc = getNormalizedDeviceCoordinates(winX, winY);
+            ndc = getNormalizedDeviceCoordinates(new Vector2f(winX, winY));
             float x0 = ndc.x;
             float y0 = ndc.y;
-            ndc = getNormalizedDeviceCoordinates(mouseX, mouseY);
+            ndc = getNormalizedDeviceCoordinates(new Vector2f(mouseX, mouseY));
             float x1 = ndc.x;
             float y1 = ndc.y;
             viewMatrix.translateLocal(x0 - x1, y0 - y1);
@@ -112,36 +122,22 @@ public class Camera {
         mouseY = winY;
     }
 
-    private Vector2f getNormalizedDeviceCoordinates(float winX, float winY) {
+    private Vector2f getNormalizedDeviceCoordinates(Vector2f value) {
         float aspect = (float)viewportSize.z / viewportSize.w;
-        float x = (winX / viewportSize.z * 2.0f - 1.0f) * aspect;
-        float y = winY / viewportSize.w * 2.0f - 1.0f;
+        float x = (value.x / viewportSize.z * 2.0f - 1.0f) * aspect;
+        float y = value.y / viewportSize.w * 2.0f - 1.0f;
         return normalizedDeviceCoordinates.set(x, y);
     }
 
-    public void zoom(float scale) {
-        Vector3f currentScale = new Vector3f();
-        viewProjectionMatrix.getScale(currentScale);
-
-        if ((currentScale.y > maximalZoom && scale == 1.1f) || (currentScale.y < minimalZoom && scale == 1.0f / 1.1f)) {
-            return;
-        }
-
-        Vector2f ndc = getNormalizedDeviceCoordinates(mouseX, mouseY);
-        viewMatrix.translateLocal(-ndc.x, -ndc.y).scaleLocal(scale, scale).translateLocal(ndc.x, ndc.y);
-        update();
-    }
-
     public Vector2f getPosition() {
-        Vector3f position = new Vector3f(1.0f, 1.0f, 1.0f);
-        viewProjectionMatrix.transformPosition(position);
-        return new Vector2f(position.x, position.y);
+        Vector2i windowSize = Farmland.get().getWindow().getSize();
+        return screenCoordToWorldCoord(new Vector2f((float)windowSize.x / 2, (float)windowSize.y / 2));
     }
 
     public float getRotation() {
         AxisAngle4f rotation = new AxisAngle4f();
         viewProjectionMatrix.getRotation(rotation);
-        return rotation.x;
+        return rotation.z;
     }
 
     public float[][] getViewAsArray() {
@@ -152,6 +148,10 @@ public class Camera {
         };
     }
 
+    public Matrix4f getViewProjectionMatrix() {
+        return viewProjectionMatrix;
+    }
+
     public float[][] getViewProjectionAsArray() {
         return new float[][] {
                 new float[] { viewProjectionMatrix.m00(), viewProjectionMatrix.m01(), viewProjectionMatrix.m02(), viewProjectionMatrix.m03() },
@@ -159,6 +159,48 @@ public class Camera {
                 new float[] { viewProjectionMatrix.m20(), viewProjectionMatrix.m21(), viewProjectionMatrix.m22(), viewProjectionMatrix.m23() },
                 new float[] { viewProjectionMatrix.m30(), viewProjectionMatrix.m31(), viewProjectionMatrix.m32(), viewProjectionMatrix.m33() }
         };
+    }
+
+    public Matrix4f getInvertViewProjectionMatrix() {
+        return invertViewProjectionMatrix;
+    }
+
+    public Vector4f getViewFrustum() {
+        Vector3f vector = new Vector3f();
+        float minX = Float.POSITIVE_INFINITY;
+        float minY = Float.POSITIVE_INFINITY;
+        float maxX = Float.NEGATIVE_INFINITY;
+        float maxY = Float.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < 4; i++) {
+            float x = ((i & 1) << 1) - 1.0f;
+            float y = (((i >>> 1) & 1) << 1) - 1.0f;
+
+            invertViewProjectionMatrix.transformPosition(vector.set(x, y, 0));
+
+            minX = java.lang.Math.min(minX, vector.x);
+            minY = java.lang.Math.min(minY, vector.y);
+            maxX = java.lang.Math.max(maxX, vector.x);
+            maxY = java.lang.Math.max(maxY, vector.y);
+        }
+
+        return new Vector4f(minX, minY, maxX, maxY);
+    }
+
+    public Vector2f screenCoordToWorldCoord(Vector2f screenCoord) {
+        Vector3f value = new Vector3f();
+        Vector2i windowSize = Farmland.get().getWindow().getSize();
+        viewProjectionMatrix.unproject(new Vector3f(screenCoord.x, windowSize.y - screenCoord.y, 0),
+                new int[] {0, 0, windowSize.x, windowSize.y}, value);
+        return new Vector2f(value.x, value.y);
+    }
+
+    public Vector2f worldCoordToScreenCoord(Vector2f worldCoord) {
+        Vector3f value = new Vector3f();
+        Vector2i windowSize = Farmland.get().getWindow().getSize();
+        viewProjectionMatrix.project(new Vector3f(worldCoord.x, worldCoord.y, 0),
+                new int[] {0, 0, windowSize.x, windowSize.y}, value);
+        return new Vector2f((float)windowSize.x / 2 + value.x, value.y - (float)windowSize.y / 2);
     }
 
     public float getZoom() {

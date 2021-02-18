@@ -1,24 +1,23 @@
 package com.ustudents.examples.scenes;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.ecs.component.RenderableComponent;
-import com.ustudents.engine.ecs.component.SpriteComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
-import com.ustudents.engine.graphic.Texture;
+import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.input.Input;
+import com.ustudents.engine.input.Key;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.entities.mapElements.*;
 import com.ustudents.farmland.entities.properties.*;
 import com.ustudents.farmland.entities.resources.*;
-import com.ustudents.farmland.scene.MainMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector4f;
-import org.joml.Vector4i;
 
 public class EcsExample3 extends Scene {
 

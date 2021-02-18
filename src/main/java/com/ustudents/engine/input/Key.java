@@ -26,8 +26,8 @@ public class Key {
 	public static final int B = GLFW.GLFW_KEY_B;
 	public static final int C = GLFW.GLFW_KEY_C;
 	public static final int D = GLFW.GLFW_KEY_D;
-	public static final int E = GLFW.GLFW_KEY_D;
-	public static final int F = GLFW.GLFW_KEY_E;
+	public static final int E = GLFW.GLFW_KEY_E;
+	public static final int F = GLFW.GLFW_KEY_F;
 	public static final int G = GLFW.GLFW_KEY_G;
 	public static final int H = GLFW.GLFW_KEY_H;
 	public static final int I = GLFW.GLFW_KEY_I;

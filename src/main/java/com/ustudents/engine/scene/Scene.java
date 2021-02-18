@@ -2,7 +2,6 @@ package com.ustudents.engine.scene;
 
 import com.ustudents.engine.ecs.system.BehaviourSystem;
 import com.ustudents.engine.ecs.system.GameRenderSystem;
-import com.ustudents.engine.ecs.system.RenderSystem;
 import com.ustudents.engine.ecs.system.UiRenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.ecs.Registry;
@@ -37,11 +36,11 @@ public abstract class Scene {
          this.registry = new Registry();
          this.sceneManager = sceneManager;
          this.camera = new Camera(100, 0.005f, 0.01f, Camera.Type.World);
-         this.camera.setSize(size.x, size.y);
+         this.camera.resize(size.x, size.y);
          this.uiCamera = new Camera(100, 0.005f, 0.01f, Camera.Type.UI);
-         this.uiCamera.setSize(size.x, size.y);
+         this.uiCamera.resize(size.x, size.y);
          this.cursorCamera = new Camera(100, 0.005f, 0.01f, Camera.Type.Cursor);
-         this.cursorCamera.setSize(size.x, size.y);
+         this.cursorCamera.resize(size.x, size.y);
          this.spritebatch = new Spritebatch(this.camera);
     }
 
