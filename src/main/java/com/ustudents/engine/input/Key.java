@@ -2,32 +2,32 @@ package com.ustudents.engine.input;
 
 import org.lwjgl.glfw.*;
 
+@SuppressWarnings({"unused"})
 public class Key {
-
 	public static final int Space = GLFW.GLFW_KEY_SPACE;
 	public static final int Apostrophe = GLFW.GLFW_KEY_APOSTROPHE;
 	public static final int Comma = GLFW.GLFW_KEY_COMMA;
 	public static final int Minus = GLFW.GLFW_KEY_MINUS;
 	public static final int Period = GLFW.GLFW_KEY_PERIOD;
 	public static final int Slash = GLFW.GLFW_KEY_SLASH;
-	public static final int Zero = GLFW.GLFW_KEY_0;
-	public static final int One = GLFW.GLFW_KEY_1;
-	public static final int Two = GLFW.GLFW_KEY_2;
-	public static final int Three = GLFW.GLFW_KEY_3;
-	public static final int Four = GLFW.GLFW_KEY_4;
-	public static final int Five = GLFW.GLFW_KEY_5;
-	public static final int Six = GLFW.GLFW_KEY_6;
-	public static final int Seven = GLFW.GLFW_KEY_7;
-	public static final int Eight = GLFW.GLFW_KEY_8;
-	public static final int Nine = GLFW.GLFW_KEY_9;
+	public static final int Num0 = GLFW.GLFW_KEY_0;
+	public static final int Num1 = GLFW.GLFW_KEY_1;
+	public static final int Num2 = GLFW.GLFW_KEY_2;
+	public static final int Num3 = GLFW.GLFW_KEY_3;
+	public static final int Num4 = GLFW.GLFW_KEY_4;
+	public static final int Num5 = GLFW.GLFW_KEY_5;
+	public static final int Num6 = GLFW.GLFW_KEY_6;
+	public static final int Num7 = GLFW.GLFW_KEY_7;
+	public static final int Num8 = GLFW.GLFW_KEY_8;
+	public static final int Num9 = GLFW.GLFW_KEY_9;
 	public static final int Semicolon = GLFW.GLFW_KEY_SEMICOLON;
 	public static final int Equal = GLFW.GLFW_KEY_EQUAL;
 	public static final int A = GLFW.GLFW_KEY_A;
 	public static final int B = GLFW.GLFW_KEY_B;
 	public static final int C = GLFW.GLFW_KEY_C;
 	public static final int D = GLFW.GLFW_KEY_D;
-	public static final int E = GLFW.GLFW_KEY_D;
-	public static final int F = GLFW.GLFW_KEY_E;
+	public static final int E = GLFW.GLFW_KEY_E;
+	public static final int F = GLFW.GLFW_KEY_F;
 	public static final int G = GLFW.GLFW_KEY_G;
 	public static final int H = GLFW.GLFW_KEY_H;
 	public static final int I = GLFW.GLFW_KEY_I;
@@ -81,7 +81,7 @@ public class Key {
 	public static final int F6 = GLFW.GLFW_KEY_F6;
 	public static final int F7 = GLFW.GLFW_KEY_F7;
 	public static final int F8 = GLFW.GLFW_KEY_F8;
- 	public static final int F9 = GLFW.GLFW_KEY_F9;
+	public static final int F9 = GLFW.GLFW_KEY_F9;
 	public static final int F10 = GLFW.GLFW_KEY_F10;
 	public static final int F11 = GLFW.GLFW_KEY_F11;
 	public static final int F12 = GLFW.GLFW_KEY_F12;
@@ -96,23 +96,23 @@ public class Key {
 	public static final int F21 = GLFW.GLFW_KEY_F21;
 	public static final int F22 = GLFW.GLFW_KEY_F22;
 	public static final int F23 = GLFW.GLFW_KEY_F23;
-	public static final int KP0 = GLFW.GLFW_KEY_KP_0;
-	public static final int KP1 = GLFW.GLFW_KEY_KP_1;
-	public static final int KP2 = GLFW.GLFW_KEY_KP_2;
-	public static final int KP3 = GLFW.GLFW_KEY_KP_3;
-	public static final int KP4 = GLFW.GLFW_KEY_KP_4;
-	public static final int KP5 = GLFW.GLFW_KEY_KP_5;
-	public static final int KP6 = GLFW.GLFW_KEY_KP_6;
-	public static final int KP7 = GLFW.GLFW_KEY_KP_7;
-	public static final int KP8 = GLFW.GLFW_KEY_KP_8;
-	public static final int KP9 = GLFW.GLFW_KEY_KP_9;
-	public static final int KPDecimal = GLFW.GLFW_KEY_KP_DECIMAL;
-	public static final int KPDivide = GLFW.GLFW_KEY_KP_DIVIDE;
-	public static final int KPMultiply = GLFW.GLFW_KEY_KP_MULTIPLY;
-	public static final int KPSubstract = GLFW.GLFW_KEY_KP_SUBTRACT;
-	public static final int KPAdd = GLFW.GLFW_KEY_KP_ADD;
-	public static final int KPEnter = GLFW.GLFW_KEY_KP_ENTER;
-	public static final int KPEqual = GLFW.GLFW_KEY_KP_EQUAL;
+	public static final int KeypadNum0 = GLFW.GLFW_KEY_KP_0;
+	public static final int KeypadNum1 = GLFW.GLFW_KEY_KP_1;
+	public static final int KeypadNum2 = GLFW.GLFW_KEY_KP_2;
+	public static final int KeypadNum3 = GLFW.GLFW_KEY_KP_3;
+	public static final int KeypadNum4 = GLFW.GLFW_KEY_KP_4;
+	public static final int KeypadNum5 = GLFW.GLFW_KEY_KP_5;
+	public static final int KeypadNum6 = GLFW.GLFW_KEY_KP_6;
+	public static final int KeypadNum7 = GLFW.GLFW_KEY_KP_7;
+	public static final int KeypadNum8 = GLFW.GLFW_KEY_KP_8;
+	public static final int KeypadNum9 = GLFW.GLFW_KEY_KP_9;
+	public static final int KeypadDecimal = GLFW.GLFW_KEY_KP_DECIMAL;
+	public static final int KeypadDivide = GLFW.GLFW_KEY_KP_DIVIDE;
+	public static final int KeypadMultiply = GLFW.GLFW_KEY_KP_MULTIPLY;
+	public static final int KeypadSubstract = GLFW.GLFW_KEY_KP_SUBTRACT;
+	public static final int KeypadAdd = GLFW.GLFW_KEY_KP_ADD;
+	public static final int KeypadEnter = GLFW.GLFW_KEY_KP_ENTER;
+	public static final int KeypadEqual = GLFW.GLFW_KEY_KP_EQUAL;
 	public static final int LeftShift = GLFW.GLFW_KEY_LEFT_SHIFT;
 	public static final int LeftControl = GLFW.GLFW_KEY_LEFT_CONTROL;
 	public static final int LeftAlt = GLFW.GLFW_KEY_LEFT_ALT;
@@ -122,6 +122,4 @@ public class Key {
 	public static final int RightAlt = GLFW.GLFW_KEY_RIGHT_ALT;
 	public static final int RightSuper = GLFW.GLFW_KEY_RIGHT_SUPER;
 	public static final int Menu = GLFW.GLFW_KEY_MENU;
-	public static final int Last = GLFW.GLFW_KEY_LAST;
-	
 }

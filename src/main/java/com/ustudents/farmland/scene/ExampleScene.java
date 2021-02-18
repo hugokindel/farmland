@@ -87,7 +87,7 @@ public class ExampleScene extends Scene {
         playerName.addComponent(TransformComponent.class);
         playerName.addComponent(RenderableComponent.class);
         playerName.addComponent(TextComponent.class, "forx", font);
-        
+
         Farmland.getSoundManager().playMusic("background.ogg");
     }
 
