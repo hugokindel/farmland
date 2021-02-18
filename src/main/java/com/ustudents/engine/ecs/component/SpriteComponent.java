@@ -15,6 +15,11 @@ public class SpriteComponent extends Component {
     @Editable
     public Texture texture;
 
+    /** The color tint to apply on the texture. */
+    @JsonSerializable
+    @Editable
+    public Color tint;
+
     /**
      * The texture region.
      * - x,y contains the position to show within the texture.
@@ -23,11 +28,6 @@ public class SpriteComponent extends Component {
     @JsonSerializable
     @Editable
     public Vector4f region;
-
-    /** The color tint to apply on the texture. */
-    @JsonSerializable
-    @Editable
-    public Color tint;
 
     /** The origin. */
     @JsonSerializable
