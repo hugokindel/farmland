@@ -1,8 +1,11 @@
 package com.ustudents.engine.core;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.event.EventData;
+import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.core.cli.print.Out;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
@@ -21,11 +24,16 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
+    public class SizeChangedEventData extends EventData {
+        public Vector2i newSize;
+    }
+
     private String name;
     private Vector2i size;
     private long windowHandle;
     private String glslVersion;
     public Input input;
+    public EventDispatcher sizeChanged;
 
     public void initialize(String name, Vector2i size, boolean vsync) {
         this.name = name;
@@ -48,6 +56,7 @@ public class Window {
 
         windowHandle = glfwCreateWindow(size.x, size.y, name, NULL, NULL);
         input = new Input();
+        sizeChanged = new EventDispatcher();
 
         if (windowHandle == NULL) {
             String errorMessage = "Failed to create the glfw window!";
@@ -91,6 +100,9 @@ public class Window {
             @Override
             public void invoke(long window, int width, int height) {
                 needsResize(new Vector2i(width, height));
+                SizeChangedEventData event = new SizeChangedEventData();
+                event.newSize = new Vector2i(width, height);
+                sizeChanged.dispatch(event);
             }
         });
     }
