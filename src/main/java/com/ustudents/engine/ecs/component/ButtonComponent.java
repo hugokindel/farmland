@@ -148,6 +148,7 @@ public class ButtonComponent extends BehaviourComponent {
             }  else {
                 sprite.parts = new NineSlicedSprite(Resources.getSpritesheet("ui/button_default.json"));
             }
+            changeState = false;
         }
     }
 

@@ -97,7 +97,12 @@ public class MainMenu extends Scene {
             button.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f, 300 + 80 * i), new Vector2f(3.1f, 3.1f));
             button.addComponent(ButtonComponent.class, buttons[i]);
             int finalI = i;
-            button.getComponent(ButtonComponent.class).addListener((dataType, data) -> Out.println("Button called " + buttonsName[finalI] + "Button" + " pressed"));
+            button.getComponent(ButtonComponent.class).addListener((dataType, data) -> {
+                Out.println("Button called " + buttonsName[finalI] + "Button" + " pressed");
+                if (buttonsName[finalI].equals("quit")) {
+                    Game.get().close();
+                }
+            });
             button.addComponent(RenderableComponent.class, 100);
             button.addComponent(UiComponent.class);
         }
