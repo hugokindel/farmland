@@ -131,10 +131,10 @@ public class ButtonComponent extends BehaviourComponent {
 
         if (focused) {
             if (!down && Input.isMouseDown(MouseButton.Left)) {
-                event.dispatch();
                 down = true;
                 changeState = true;
             } else if (down && !Input.isMouseDown(MouseButton.Left)) {
+                event.dispatch();
                 down = false;
                 changeState = true;
             }
