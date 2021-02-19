@@ -5,6 +5,7 @@ import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 
+@Editable
 @JsonSerializable
 public class TransformComponent extends Component {
     /** The position in the world (in world coordinates). */

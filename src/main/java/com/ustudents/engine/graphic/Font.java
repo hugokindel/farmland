@@ -3,6 +3,7 @@ package com.ustudents.engine.graphic;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
+import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import com.ustudents.engine.utility.FileUtil;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;

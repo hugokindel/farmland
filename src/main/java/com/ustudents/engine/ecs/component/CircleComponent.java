@@ -5,6 +5,7 @@ import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 
+@Editable
 @JsonSerializable
 public class CircleComponent extends Component {
     /** The radius. */

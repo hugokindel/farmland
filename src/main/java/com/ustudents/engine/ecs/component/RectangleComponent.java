@@ -6,6 +6,7 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 
+@Editable
 @JsonSerializable
 public class RectangleComponent extends Component {
     /** The size. */

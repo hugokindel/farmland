@@ -3,6 +3,8 @@ package com.ustudents.farmland.scene;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.component.*;
 import com.ustudents.engine.graphic.*;
@@ -90,10 +92,12 @@ public class MainMenu extends Scene {
 
         for (int i = 0; i < buttons.length; i++) {
             Entity button = registry.createEntity();
-            button.setName(buttonsName[i] + "Label");
+            button.setName(buttonsName[i] + "Button");
             button.setParent(uiContainer);
             button.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f, 300 + 80 * i), new Vector2f(3.1f, 3.1f));
             button.addComponent(ButtonComponent.class, buttons[i]);
+            int finalI = i;
+            button.getComponent(ButtonComponent.class).addListener((dataType, data) -> Out.println("Button called " + buttonsName[finalI] + "Button" + " pressed"));
             button.addComponent(RenderableComponent.class, 100);
             button.addComponent(UiComponent.class);
         }
@@ -102,7 +106,7 @@ public class MainMenu extends Scene {
         stats.setName("statsLabel");
         stats.setParent(uiContainer);
         stats.addComponent(TransformComponent.class, new Vector2f(10, 10), new Vector2f(1, 1));
-        stats.addComponent(TextComponent.class, "", fontSmaller);
+        stats.addComponent(LabelComponent.class, "", fontSmaller);
         stats.addComponent(RenderableComponent.class);
         stats.addComponent(UiComponent.class);
     }
@@ -120,7 +124,7 @@ public class MainMenu extends Scene {
                 .setScale(3, RoundingMode.HALF_UP).doubleValue();
         int numEntities = registry.getTotalNumberOfEntities();
 
-        registry.getEntityByName("statsLabel").getComponent(TextComponent.class).text = "FPS: " + fps + "\nFramerate: " + ms + "\nNumber of entities: " + numEntities;
+        registry.getEntityByName("statsLabel").getComponent(LabelComponent.class).text = "FPS: " + fps + "\nFramerate: " + ms + "\nNumber of entities: " + numEntities;
     }
 
     @Override

@@ -1,5 +1,5 @@
 {
-    "texturePath": "ui/button_clicked.png",
+    "texturePath": "ui/button_down.png",
     "spriteRegions": {
         "topLeft": {
             "x": 0,

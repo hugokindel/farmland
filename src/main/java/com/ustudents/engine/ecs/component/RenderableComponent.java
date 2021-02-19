@@ -4,6 +4,7 @@ import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 
+@Editable
 @JsonSerializable
 public class RenderableComponent extends Component {
     /** The Z index (sorting position of rendering). */

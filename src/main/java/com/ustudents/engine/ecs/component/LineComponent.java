@@ -9,6 +9,7 @@ import org.joml.Vector2f;
 
 import static com.ustudents.engine.core.Resources.getTexturesDirectory;
 
+@Editable
 @JsonSerializable
 public class LineComponent extends Component {
     /**

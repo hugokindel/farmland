@@ -7,8 +7,9 @@ import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 
+@Editable
 @JsonSerializable
-public class TextComponent extends Component {
+public class LabelComponent extends Component {
     /** The text. */
     @JsonSerializable
     @Editable
@@ -24,7 +25,9 @@ public class TextComponent extends Component {
     @Editable
     public Color color;
 
-    public TextComponent() {
+    private Vector2f textSize;
+
+    public LabelComponent() {
         this(null, null);
     }
 
@@ -34,7 +37,7 @@ public class TextComponent extends Component {
      * @param text The text.
      * @param font The font.
      */
-    public TextComponent(String text, Font font) {
+    public LabelComponent(String text, Font font) {
         this(text, font, Color.WHITE);
     }
 
@@ -45,9 +48,18 @@ public class TextComponent extends Component {
      * @param font The font.
      * @param color The color.
      */
-    public TextComponent(String text, Font font, Color color) {
+    public LabelComponent(String text, Font font, Color color) {
         this.text = text;
         this.font = font;
         this.color = color;
+
+        textSize = new Vector2f(
+                font.getTextWidth(text),
+                font.getTextHeight(text)
+        );
+    }
+
+    public Vector2f getTextSize() {
+        return textSize;
     }
 }

@@ -2,12 +2,16 @@ package com.ustudents.engine.ecs.component;
 
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.audio.SoundSource;
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import imgui.ImGui;
 
+@Editable
+@JsonSerializable
 public class SoundComponent extends Component {
     @Editable
+    @JsonSerializable
     public SoundSource source;
 
     public SoundComponent() {

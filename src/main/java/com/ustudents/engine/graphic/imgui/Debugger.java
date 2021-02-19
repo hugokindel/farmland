@@ -3,6 +3,9 @@ package com.ustudents.engine.graphic.imgui;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.audio.SoundSource;
+import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.ecs.component.ButtonComponent;
+import com.ustudents.engine.ecs.component.SpriteComponent;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
@@ -232,8 +235,7 @@ public class Debugger {
         ImGui.end();
     }
 
-    private void drawEditableFields(int entityId, Component component) {
-        int componentId = component.getId();
+    private void drawEditableFields(int entityId, Object component) {
         ArrayList<Field> fields = new ArrayList<>(Arrays.asList(Runnable.class.getDeclaredFields()));
         fields.addAll(Arrays.asList(component.getClass().getDeclaredFields()));
         fields.removeIf(field -> !field.isAnnotationPresent(Editable.class));
@@ -276,10 +278,12 @@ public class Debugger {
                 if (!field.canAccess(component)) {
                     field.setAccessible(true);
                 }
+
                 String name = field.getName();
                 Class<?> type = field.getType();
                 //Object value = values.get(entityId).get(componentId).get(field.getName());
                 Object value = null;
+
                 if (type == Vector2f.class) {
                     Vector2f originalValue = (Vector2f)field.get(component);
                     value = new float[]{originalValue.x, originalValue.y};
@@ -300,7 +304,13 @@ public class Debugger {
                     value = new int[]{originalValue.x, originalValue.y, originalValue.z, originalValue.w};
                 } else if (type == Font.class || type == Texture.class || type == Color.class || type == SoundSource.class) {
                     value = field.get(component);
+                } else if (type.isAnnotationPresent(Editable.class)) {
+                    if (ImGui.treeNode(name)) {
+                        drawEditableFields(entityId, (Object)field.get(component));
+                        ImGui.treePop();
+                    }
                 }
+
                 drawField(name, type, value);
             }
 
@@ -311,7 +321,9 @@ public class Debugger {
             e.printStackTrace();
         }
 
-        component.renderImGui();
+        if (component instanceof Component) {
+            ((Component)component).renderImGui();
+        }
     }
 
     private void drawSettings() {

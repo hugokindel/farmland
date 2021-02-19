@@ -8,6 +8,7 @@ import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+@Editable
 @JsonSerializable
 public class TextureComponent extends Component {
     /** The texture. */
