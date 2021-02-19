@@ -105,7 +105,6 @@ public class MainMenu extends Scene {
         stats.addComponent(TextComponent.class, "", fontSmaller);
         stats.addComponent(RenderableComponent.class);
         stats.addComponent(UiComponent.class);
-
     }
 
     public void initializeMusic() {
