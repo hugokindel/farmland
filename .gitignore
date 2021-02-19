@@ -1,5 +1,6 @@
 # Project
 data/logs/
+data/players/
 data/settings.json
 imgui.ini
 *.log
