@@ -133,7 +133,7 @@ public class Resources {
     }
 
     /** Loads everything. */
-    public static void load() {
+    public static void loadSettingsAndInitialize() {
         loadSettings();
 
         shaders = new HashMap<>();
@@ -141,6 +141,13 @@ public class Resources {
         fonts = new HashMap<>();
         sounds = new HashMap<>();
         spritesheets = new HashMap<>();
+    }
+
+    public static void loadDefaultResources() {
+        loadFont("ui/debug.ttf", 16);
+        loadSpritesheet("ui/button_default.json");
+        loadSpritesheet("ui/button_focused.json");
+        loadSpritesheet("ui/button_down.json");
     }
 
     /** Saves everything. */

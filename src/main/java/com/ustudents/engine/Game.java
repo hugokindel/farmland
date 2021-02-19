@@ -6,10 +6,11 @@ import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.graphic.Texture;
+import com.ustudents.engine.graphic.debug.DebugTools;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;
+import com.ustudents.engine.graphic.imgui.ImGuiTools;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.scene.Scene;
@@ -18,7 +19,6 @@ import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.Window;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL33;
 
@@ -28,69 +28,75 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
+    /** Option to disable ANSI codes. */
     @Option(names = "--no-ansi", description = "Disable ANSI code usage (useful for Windows compatibility).")
-    protected boolean noAnsiCodes;
+    protected boolean noAnsiCodes = false;
 
+    /** Option to enable debugging output. */
     @Option(names = "--debug", description = "Enable debug output.")
-    protected boolean isDebugging;
+    protected boolean isDebugging = false;
 
-    @Option(names = "--no-imgui", description = "Disable ImGui completely (debug graphical interface).")
-    protected boolean noImGui;
+    /** Option to disable ImGui. */
+    @Option(names = "--force-no-imgui", description = "Disable ImGui completely (debug graphical interface).")
+    protected boolean noImGui = false;
 
-    @Option(names = "--vsync", description = "Enable vertical synchronisation.")
-    protected boolean vsync;
+    /** Option to force V-Sync at launch. */
+    @Option(names = "--force-vsync", description = "Enable vertical synchronisation.")
+    protected boolean vsync = false;
 
+    /** Option to force to disable any custom cursors. */
     @Option(names = "--force-no-custom-cursor", description = "Force to use the default operating system cursor.")
-    protected boolean forceNoCustomCursor;
+    protected boolean forceNoCustomCursor = false;
 
+    /** Option to force to disable any custom window icons. */
     @Option(names = "--force-no-custom-icon", description = "Force to use the default operating system window icon.")
-    protected boolean forceNoCustomIcon;
+    protected boolean forceNoCustomIcon = false;
+
+    /** The window. */
+    protected final Window window = new Window();
 
     /** The scene manager (handling every scene). */
-    protected final SceneManager sceneManager;
+    protected final SceneManager sceneManager = new SceneManager();
 
-    protected final Window window;
+    /** The sound manager (handle every sound sources). */
+    private final SoundManager soundManager = new SoundManager();
 
-    protected final ImGuiManager imGuiManager;
+    /** The ImGui manager (handle most debugging tools). */
+    protected final ImGuiManager imGuiManager = new ImGuiManager();
 
-    private final SoundManager soundManager;
+    /** The timer (handle delta time management). */
+    protected final Timer timer = new Timer();
 
-    protected final Timer timer;
+    /** Defines if we should quit the game. */
+    protected boolean shouldQuit = false;
 
-    protected boolean shouldClose;
+    /** Defines if we should resize at the next frame. */
+    protected boolean shouldResize = true;
 
-    protected boolean imGuiVisible;
+    /** Defines if ImGui should be enabled (can be overridden by noImGui). */
+    protected boolean imGuiToolsEnabled = false;
 
-    private static Game game;
+    /** Debugging tools using ImGui. */
+    protected final ImGuiTools imGuiTools = new ImGuiTools();
 
-    private static String instanceName;
+    /** Defines if debug tools should be enabled. */
+    protected boolean debugToolsEnabled = false;
 
-    private boolean shouldResize;
+    /** Debugging tools. */
+    protected final DebugTools debugTools = new DebugTools();
 
+    /** The name of the game instance. */
+    protected static String instanceName = "game";
+
+    /** Custom cursor texture. */
     protected Texture cursorTexture;
 
-    protected boolean showDebugInterface;
-
-    protected boolean debugTexts;
+    /** The game instance. */
+    private static Game game;
 
     /** Class constructor. */
     public Game() {
-        // Default values for options.
-        noAnsiCodes = false;
-        isDebugging = false;
-        noImGui = false;
-        shouldClose = false;
-        imGuiVisible = true;
-        shouldResize = true;
-
-        // Game managers.
-        window = new Window();
-        sceneManager = new SceneManager();
-        imGuiManager = new ImGuiManager();
-        soundManager = new SoundManager();
-        timer = new Timer();
         game = this;
-        instanceName = "game";
     }
 
     /**
@@ -104,16 +110,19 @@ public abstract class Game extends Runnable {
         if (getClass().getAnnotation(Command.class) != null) {
             instanceName = getClass().getAnnotation(Command.class).name();
         }
+
         Out.start(args, false, false);
+
         if (!readArguments(args, getClass())) {
             return 1;
         }
+
         Out.canUseAnsiCode(!noAnsiCodes);
 
         if (!showHelp && !showVersion) {
-            _initialize(args);
-            loop();
-            _destroy();
+            initializeInternals(args);
+            startGameLoop();
+            destroyInternals();
         }
 
         Out.end();
@@ -121,43 +130,49 @@ public abstract class Game extends Runnable {
         return 0;
     }
 
+    /** Initialize the game. */
     protected abstract void initialize();
 
+    /** Updates the game's logic. */
     protected abstract void update(float dt);
 
+    /** Renders the game on the screen. */
     protected abstract void render();
 
+    /** Destroys the game's data. */
     protected abstract void destroy();
 
     /** Initialize everything. */
-    private void _initialize(String[] args) {
+    private void initializeInternals(String[] args) {
         if (isDebugging()) {
             Out.printlnDebug("Initializing...");
         }
-        Resources.load();
-        String commandName = getClass().getAnnotation(Command.class).name();
+
+        Resources.loadSettingsAndInitialize();
+
         if (!Arrays.asList(args).contains("--vsync")) {
             vsync = (Boolean)Resources.getSetting("vsync");
         }
+
+        String commandName = getClass().getAnnotation(Command.class).name();
         window.initialize(
                 commandName.substring(0, 1).toUpperCase() + commandName.substring(1),
                 new Vector2i(1280, 720),
                 vsync
         );
+
+        Resources.loadDefaultResources();
+
         if (!noImGui) {
             imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
         }
 
-        sceneManager.initialize();
         soundManager.initialize();
+        imGuiTools.initialize(sceneManager);
+        debugTools.initialize();
         initialize();
-        window.show(true);
 
-        if (isImGuiActive()) {
-            glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        } else {
-            glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        }
+        window.show(true);
 
         if (isDebugging()) {
             Out.printlnDebug("Initialized.");
@@ -165,14 +180,10 @@ public abstract class Game extends Runnable {
     }
 
     /** Starts the game loop. */
-    private void loop() {
+    private void startGameLoop() {
         window.pollEvents();
 
-        while (!window.shouldClose() && !shouldClose) {
-            if (Input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)) {
-                break;
-            }
-
+        while (!window.shouldClose() && !shouldQuit) {
             sceneManager.startFrame();
             _update();
             _render();
@@ -186,9 +197,9 @@ public abstract class Game extends Runnable {
         timer.update();
 
         if (Input.isKeyPressed(Key.F1)) {
-            imGuiVisible = !imGuiVisible;
+            imGuiToolsEnabled = !imGuiToolsEnabled;
 
-            if (isImGuiActive()) {
+            if (isImGuiToolsEnabled()) {
                 glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             } else if (!forceNoCustomCursor && cursorTexture != null) {
                 glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -196,8 +207,7 @@ public abstract class Game extends Runnable {
         }
 
         if (Input.isKeyPressed(Key.F2)) {
-            showDebugInterface = !showDebugInterface;
-            debugTexts = !debugTexts;
+            debugToolsEnabled = !debugToolsEnabled;
         }
 
         float dt = timer.getDeltaTime();
@@ -230,38 +240,24 @@ public abstract class Game extends Runnable {
             resizeViewport();
         }
 
-        if (!noImGui && imGuiVisible) {
+        if (!noImGui && imGuiToolsEnabled) {
             imGuiManager.startFrame();
         }
 
         sceneManager.render();
         render();
 
-        if (showDebugInterface) {
-            Vector2i windowSize = getWindow().getSize();
-
-            spritebatch.begin(sceneManager.getScene().getUiCamera());
-            spritebatch.drawLine(new Vector2f(0, (float)windowSize.y / 2), new Vector2f(windowSize.x, (float)windowSize.y / 2));
-            spritebatch.drawLine(new Vector2f((float)windowSize.x / 2, 0), new Vector2f((float)windowSize.x / 2, windowSize.y));
-            spritebatch.end();
-        }
-
-        if (!noImGui && imGuiVisible) {
+        if (!noImGui && imGuiToolsEnabled) {
             sceneManager.renderImGui();
             imGuiManager.endFrame();
         }
 
-        if (!isImGuiActive() && sceneManager.getScene() != null &&
+        if (!isImGuiToolsEnabled() && sceneManager.getScene() != null &&
                 cursorTexture != null && Input.getMousePos() != null) {
             spritebatch.begin(sceneManager.getScene().getCursorCamera());
-            spritebatch.drawTexture(
-                    cursorTexture, Input.getMousePos(),
-                    new Vector4f(0, 0, 11, 14),
-                    0,
-                    Color.WHITE,
-                    0,
-                    new Vector2f(2, 2)
-            );
+            spritebatch.drawTexture(new Spritebatch.TextureData(cursorTexture, Input.getMousePos()) {{
+                scale = new Vector2f(2.0f, 2.0f);
+            }});
             spritebatch.end();
         }
 
@@ -269,7 +265,7 @@ public abstract class Game extends Runnable {
     }
 
     /** Destroy everything. */
-    private void _destroy() {
+    private void destroyInternals() {
         destroy();
 
         if (isDebugging()) {
@@ -280,7 +276,7 @@ public abstract class Game extends Runnable {
         soundManager.destroy();
         sceneManager.destroy();
 
-        if (!noImGui && imGuiVisible) {
+        if (!noImGui && imGuiToolsEnabled) {
             imGuiManager.destroy();
         }
 
@@ -320,8 +316,8 @@ public abstract class Game extends Runnable {
         window.setVsync(vsync);
     }
 
-    public void close() {
-        shouldClose = true;
+    public void quit() {
+        shouldQuit = true;
     }
 
     public static Game get() {
@@ -330,10 +326,6 @@ public abstract class Game extends Runnable {
 
     public static String getInstanceName() {
         return instanceName;
-    }
-
-    public boolean isImGuiActive() {
-        return !noImGui && imGuiVisible;
     }
 
     public void forceResize() {
@@ -360,11 +352,22 @@ public abstract class Game extends Runnable {
         return soundManager;
     }
 
-    public boolean isShowDebugInterface() {
-        return showDebugInterface;
+    /** @return the debug tools (using ImGui). */
+    public ImGuiTools getImGuiTools() {
+        return imGuiTools;
     }
 
-    public boolean isDebugTexts() {
-        return debugTexts;
+    /** @return if ImGui tools are enabled. */
+    public boolean isImGuiToolsEnabled() {
+        return !noImGui && imGuiToolsEnabled;
+    }
+
+    /** @return the debug tools. */
+    public DebugTools getDebugTools() {
+        return debugTools;
+    }
+
+    public boolean isDebugToolsEnabled() {
+        return debugToolsEnabled;
     }
 }

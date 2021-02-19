@@ -105,6 +105,12 @@ public class Window {
                 sizeChanged.dispatch(event);
             }
         });
+
+        if (Game.get().isImGuiToolsEnabled()) {
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
     }
 
     public void clear() {

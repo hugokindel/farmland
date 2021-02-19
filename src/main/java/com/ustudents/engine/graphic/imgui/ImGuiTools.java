@@ -1,11 +1,7 @@
 package com.ustudents.engine.graphic.imgui;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.audio.SoundSource;
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.ecs.component.ButtonComponent;
-import com.ustudents.engine.ecs.component.SpriteComponent;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
@@ -26,7 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-public class Debugger {
+public class ImGuiTools {
     private final ImBoolean showDemoWindow = new ImBoolean(false);
     private final ImBoolean showSceneHierarchyWindow = new ImBoolean(true);
     private final ImBoolean showInspectorWindow = new ImBoolean(true);
@@ -74,7 +70,7 @@ public class Debugger {
         if (ImGui.beginMainMenuBar()) {
             if (ImGui.beginMenu("File")) {
                 if (ImGui.menuItem("Quit")) {
-                    Game.get().close();
+                    Game.get().quit();
                 }
 
                 ImGui.endMenu();

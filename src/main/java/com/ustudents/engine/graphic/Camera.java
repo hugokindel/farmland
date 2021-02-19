@@ -229,7 +229,7 @@ public class Camera {
                 Farmland.get().getImGuiManager().getImGuiGlfw().mouseButtonCallback(window, button, action, mods);
 
                 if (inputEnabled) {
-                    if (Game.get().isImGuiActive()) {
+                    if (Game.get().isImGuiToolsEnabled()) {
                         final ImGuiIO io = ImGui.getIO();
 
                         if (io.getWantCaptureMouse()) {
@@ -258,7 +258,7 @@ public class Camera {
                 Farmland.get().getImGuiManager().getImGuiGlfw().scrollCallback(window, xoffset, yoffset);
 
                 if (inputEnabled) {
-                    if (Game.get().isImGuiActive()) {
+                    if (Game.get().isImGuiToolsEnabled()) {
                         final ImGuiIO io = ImGui.getIO();
 
                         if (io.getWantCaptureMouse()) {

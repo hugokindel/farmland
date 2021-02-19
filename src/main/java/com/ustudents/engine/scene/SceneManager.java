@@ -2,36 +2,23 @@ package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.graphic.debug.DebugTools;
 import com.ustudents.engine.utility.TypeUtil;
-import com.ustudents.engine.graphic.imgui.Debugger;
+import com.ustudents.engine.graphic.imgui.ImGuiTools;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /** The scene manager which handles the list of scenes and interact with them. */
-@SuppressWarnings({"unchecked"})
 public class SceneManager {
     /** The list of scenes. */
-    List<Scene> scenes;
+    private final List<Scene> scenes = new ArrayList<>();
 
     /** The current scene ID. */
-    int currentSceneIndex;
+    private int currentSceneIndex = 0;
 
-    boolean transitioningScene;
-
-    Debugger debugTools;
-
-    /** Class constructor. */
-    public SceneManager() {
-        scenes = new ArrayList<>();
-        currentSceneIndex = 0;
-        transitioningScene = false;
-        debugTools = new Debugger();
-    }
-
-    public void initialize() {
-        debugTools.initialize(this);
-    }
+    /** Defines if we need to transition before the next frame. */
+    private boolean transitioningScene = false;
 
     /**
      * Creates a scene of the given type.
@@ -57,7 +44,10 @@ public class SceneManager {
         if (scenes.size() > currentSceneIndex) {
             getScene().update(dt);
             getScene().getRegistry().update(dt);
-            debugTools.update(dt);
+
+            if (Game.get().isImGuiToolsEnabled()) {
+                Game.get().getImGuiTools().update(dt);
+            }
         }
     }
 
@@ -66,13 +56,18 @@ public class SceneManager {
         if (scenes.size() > currentSceneIndex) {
             getScene().getRegistry().render();
             getScene().render();
+
+            if (Game.get().isDebugToolsEnabled()) {
+                Game.get().getDebugTools().render();
+            }
         }
     }
 
+    /** Renders the scene (for ImGui windows). */
     public void renderImGui() {
         if (scenes.size() > currentSceneIndex) {
-            debugTools.renderImGui();
             getScene().renderImGui();
+            Game.get().getImGuiTools().renderImGui();
         }
     }
 
@@ -88,6 +83,7 @@ public class SceneManager {
         }
     }
 
+    /** Called at the beginning of the frame (to check if we need to do a scene transition). */
     public void startFrame() {
         if (transitioningScene) {
             Game.get().getSoundManager().removeAll();
@@ -121,7 +117,7 @@ public class SceneManager {
         }
     }
 
-    /** Gets the scene. */
+    /** @return the current scene. */
     public Scene getScene() {
         return scenes.get(currentSceneIndex);
     }

@@ -69,10 +69,6 @@ public class ButtonComponent extends BehaviourComponent {
             event.add(listener);
         }
 
-        Resources.loadSpritesheet("ui/button_default.json");
-        Resources.loadSpritesheet("ui/button_focused.json");
-        Resources.loadSpritesheet("ui/button_down.json");
-
         this.focused = false;
         this.changeState = false;
         this.label = label;

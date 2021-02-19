@@ -6,7 +6,7 @@ import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 
-public class OptionMenu extends Scene {
+public class SettingsMenu extends Scene {
     @Override
     public void initialize() {
 
@@ -19,9 +19,13 @@ public class OptionMenu extends Scene {
 
     @Override
     public void render() {
+
+    }
+
+    @Override
+    public void renderImGui() {
         ImGuiUtils.setNextWindowWithSizeCentered(300, 300, ImGuiCond.Appearing);
         ImGui.begin("Options Menu");
-        //
 
         if (ImGui.button("Main Menu")) {
             Game.get().getSceneManager().changeScene(MainMenu.class);

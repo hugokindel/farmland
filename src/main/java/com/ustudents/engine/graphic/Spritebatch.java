@@ -3,6 +3,7 @@ package com.ustudents.engine.graphic;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.utility.MathUtil;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 
@@ -10,8 +11,8 @@ import java.lang.Math;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
+import java.util.List;
 
-import static java.lang.Math.*;
 import static org.lwjgl.opengl.GL33.*;
 
 @SuppressWarnings({"unused"})
@@ -21,17 +22,25 @@ public class Spritebatch {
         TruetypeFont
     }
 
-    public static class Element
-    {
+    public static class Data {
         Texture texture;
+
         Vector2f position;
+
         Vector2f dimensions;
+
         Vector2f origin;
+
         Vector2f scale;
+
         Vector4f region;
+
         Color tint;
+
         float rotation;
+
         int zIndex;
+
         ElementType type;
 
         public int getzIndex() {
@@ -52,8 +61,11 @@ public class Spritebatch {
 
     public class Renderer {
         FloatBuffer vertices;
+
         private final int vao;
+
         private final int vbo;
+
         private final int ebo;
 
         public Renderer(int maxNumberOfSprites, Set<VertexVariable> attributes) {
@@ -86,16 +98,16 @@ public class Spritebatch {
                     // | / |
                     // 2---3
                     int[] indices = new int[]{0, 1, 2, 2, 3, 1};
-                    IntBuffer indiceArray = BufferUtils.createIntBuffer(maxNumberOfSprites * 6);
+                    IntBuffer indicesArray = BufferUtils.createIntBuffer(maxNumberOfSprites * 6);
 
                     for (int i = 0; i < maxNumberOfSprites; ++i) {
                         for (int j = 0; j < 6; ++j) {
-                            indiceArray.put(i * 6 + j, indices[j] + i * 4);
+                            indicesArray.put(i * 6 + j, indices[j] + i * 4);
                         }
                     }
 
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indiceArray, GL_DYNAMIC_DRAW);
+                    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesArray, GL_DYNAMIC_DRAW);
 
                     glBindBuffer(GL_ARRAY_BUFFER, 0);
                 }
@@ -116,90 +128,91 @@ public class Spritebatch {
             vertices.clear();
         }
 
-        public void putElement(Spritebatch.Element element) {
-            if (element.type == ElementType.Sprite) {
-                element.position = new Vector2f(element.position.x - (element.origin.x * element.scale.x), element.position.y - (element.origin.y * element.scale.y));
+        public void putElement(Data data) {
+            if (data.type == ElementType.Sprite) {
+                data.position = new Vector2f(
+                        data.position.x - (data.origin.x * data.scale.x),
+                        data.position.y - (data.origin.y * data.scale.y));
+                Vector2f position1 = new Vector2f(data.position.x, data.position.y);
+                Vector2f position2 = new Vector2f(data.position.x + data.scale.x * data.dimensions.x,
+                        data.position.y);
+                Vector2f position3 = new Vector2f(data.position.x,
+                        data.position.y  + data.scale.y * data.dimensions.y);
+                Vector2f position4 = new Vector2f(data.position.x + data.scale.x * data.dimensions.x,
+                        data.position.y + data.scale.y * data.dimensions.y);
 
-                Vector2f position1 = new Vector2f(element.position.x, element.position.y);
-                Vector2f position2 = new Vector2f(element.position.x + element.scale.x * element.dimensions.x,
-                        element.position.y);
-                Vector2f position3 = new Vector2f(element.position.x,
-                        element.position.y  + element.scale.y * element.dimensions.y);
-                Vector2f position4 = new Vector2f(element.position.x + element.scale.x * element.dimensions.x,
-                        element.position.y + element.scale.y * element.dimensions.y);
-
-                if (element.rotation != 0.0f) {
-                    Vector2f rotationOrigin = new Vector2f(position1.x + (element.origin.x * element.scale.x), position1.y + (element.origin.y * element.scale.y));
-
-                    position1 = rotatePosition(position1, rotationOrigin, element.rotation);
-                    position2 = rotatePosition(position2, rotationOrigin, element.rotation);
-                    position3 = rotatePosition(position3, rotationOrigin, element.rotation);
-                    position4 = rotatePosition(position4, rotationOrigin, element.rotation);
+                if (data.rotation != 0.0f) {
+                    Vector2f rotationOrigin = new Vector2f(position1.x + (data.origin.x * data.scale.x),
+                            position1.y + (data.origin.y * data.scale.y));
+                    position1 = MathUtil.rotatePosition(position1, rotationOrigin, data.rotation);
+                    position2 = MathUtil.rotatePosition(position2, rotationOrigin, data.rotation);
+                    position3 = MathUtil.rotatePosition(position3, rotationOrigin, data.rotation);
+                    position4 = MathUtil.rotatePosition(position4, rotationOrigin, data.rotation);
                 }
 
                 // Top left (0).
                 putVertex(new Vector4f(
                         position1.x,
                         position1.y,
-                        element.region.x,
-                        element.region.y
-                ), element.tint);
+                        data.region.x,
+                        data.region.y
+                ), data.tint);
 
                 // Top right (1).
                 putVertex(new Vector4f(
                         position2.x,
                         position2.y,
-                        element.region.z,
-                        element.region.y
-                ), element.tint);
+                        data.region.z,
+                        data.region.y
+                ), data.tint);
 
                 // Bottom left (2).
                 putVertex(new Vector4f(
                         position3.x,
                         position3.y,
-                        element.region.x,
-                        element.region.w
-                ), element.tint);
+                        data.region.x,
+                        data.region.w
+                ), data.tint);
 
                 // Bottom right (3).
                 putVertex(new Vector4f(
                         position4.x,
                         position4.y,
-                        element.region.z,
-                        element.region.w
-                ), element.tint);
+                        data.region.z,
+                        data.region.w
+                ), data.tint);
             } else {
                 // Top left (0).
                 putVertex(new Vector4f(
-                        element.position.x,
-                        element.position.y,
-                        element.region.x,
-                        element.region.y
-                ), element.tint);
+                        data.position.x,
+                        data.position.y,
+                        data.region.x,
+                        data.region.y
+                ), data.tint);
 
                 // Top right (1).
                 putVertex(new Vector4f(
-                        element.dimensions.x,
-                        element.position.y,
-                        element.region.z,
-                        element.region.y
-                ), element.tint);
+                        data.dimensions.x,
+                        data.position.y,
+                        data.region.z,
+                        data.region.y
+                ), data.tint);
 
                 // Bottom left (2).
                 putVertex(new Vector4f(
-                        element.position.x,
-                        element.dimensions.y,
-                        element.region.x,
-                        element.region.w
-                ), element.tint);
+                        data.position.x,
+                        data.dimensions.y,
+                        data.region.x,
+                        data.region.w
+                ), data.tint);
 
                 // Bottom right (3).
                 putVertex(new Vector4f(
-                        element.dimensions.x,
-                        element.dimensions.y,
-                        element.region.z,
-                        element.region.w
-                ), element.tint);
+                        data.dimensions.x,
+                        data.dimensions.y,
+                        data.region.z,
+                        data.region.w
+                ), data.tint);
             }
         }
 
@@ -219,17 +232,9 @@ public class Spritebatch {
 
             // This happens within the shader context.
             {
-                //if (shouldUpdateAlphaUniform) {
-                    shader.setUniform1f("alpha", globalAlpha);
-                    shouldUpdateAlphaUniform = false;
-                //}
-
-                //if (shouldUpdateMatrixUniform) {
-                    shader.setUniformMatrix4fv("projection", projection);
-                    shouldUpdateMatrixUniform = false;
-                //}
-
-                shader.setUniform1i("type",  elements.get(0).getType());
+                shader.setUniform1f("alpha", globalAlpha);
+                shader.setUniformMatrix4fv("projection", projection);
+                shader.setUniform1i("type",  data.get(0).getType());
 
                 glBindVertexArray(vao);
 
@@ -239,17 +244,17 @@ public class Spritebatch {
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 
                     for (int i = 0; i < size; i++) {
-                        putElement(elements.get(i));
+                        putElement(data.get(i));
                     }
 
                     glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.flip());
 
-                    Texture lastTexture = elements.get(0).texture;
-                    int lastType = elements.get(0).getType();
+                    Texture lastTexture = data.get(0).texture;
+                    int lastType = data.get(0).getType();
                     int offset = 0;
 
                     for (int i = 0; i < size; i++) {
-                        Element sprite = elements.get(i);
+                        Data sprite = data.get(i);
 
                         if (sprite.texture != lastTexture) {
                             shader.setUniform1i("type", lastType);
@@ -279,19 +284,245 @@ public class Spritebatch {
         }
     }
 
-    private static final Map<String, List<Vector2f>> circleCache = new HashMap<>();
+    public static class TextureData {
+        public Texture texture;
+
+        public Vector2f position;
+
+        public Vector4f region;
+
+        public int zIndex;
+
+        public Color tint;
+
+        public float rotation;
+
+        public Vector2f scale;
+
+        public Vector2f origin;
+
+        public TextureData(Texture texture, Vector2f position) {
+            this.texture = texture;
+            this.position = position;
+            this.region = new Vector4f(0.0f, 0.0f, texture.getWidth(), texture.getHeight());
+            this.zIndex = 0;
+            this.tint = Color.WHITE;
+            this.rotation = 0.0f;
+            this.scale = new Vector2f(1.0f, 1.0f);
+            this.origin = new Vector2f();
+        }
+    }
+    
+    public static class SpriteData {
+        public Sprite sprite;
+
+        public Vector2f position;
+
+        public int zIndex;
+
+        public Color tint;
+
+        public float rotation;
+
+        public Vector2f scale;
+
+        public Vector2f origin;
+
+        public SpriteData(Sprite sprite, Vector2f position) {
+            this.sprite = sprite;
+            this.position = position;
+            this.zIndex = 0;
+            this.tint = Color.WHITE;
+            this.rotation = 0.0f;
+            this.scale = new Vector2f(1.0f, 1.0f);
+            this.origin = new Vector2f();
+        }
+    }
+
+    public static class NineSlicedSpriteData {
+        public NineSlicedSprite sprite;
+
+        public Vector2f position;
+
+        public Vector2f size;
+
+        public int zIndex;
+
+        public Color tint;
+
+        public float rotation;
+
+        public Vector2f scale;
+
+        public Vector2f origin;
+
+        public NineSlicedSpriteData(NineSlicedSprite sprite, Vector2f position, Vector2f size) {
+            this.sprite = sprite;
+            this.position = position;
+            this.size = size;
+            this.zIndex = 0;
+            this.tint = Color.WHITE;
+            this.rotation = 0.0f;
+            this.scale = new Vector2f(1.0f, 1.0f);
+            this.origin = new Vector2f();
+        }
+    }
+
+    public static class RectangleData {
+        public Vector2f position;
+
+        public Vector2f size;
+
+        public int zIndex;
+
+        public Color color;
+
+        public float rotation;
+
+        public Vector2f scale;
+
+        public Vector2f origin;
+
+        public boolean filled;
+
+        public int thickness;
+
+        public RectangleData(Vector2f position, Vector2f size) {
+            this.position = position;
+            this.size = size;
+            this.zIndex = 0;
+            this.color = Color.WHITE;
+            this.rotation = 0.0f;
+            this.scale = new Vector2f(1.0f, 1.0f);
+            this.origin = new Vector2f();
+            this.filled = true;
+            this.thickness = 1;
+        }
+    }
+
+    public static class PointData {
+        public Vector2f position;
+
+        public int zIndex;
+
+        public Color color;
+
+        public PointData(Vector2f position) {
+            this.position = position;
+            this.zIndex = 0;
+            this.color = Color.WHITE;
+        }
+    }
+
+    public static class PointsData {
+        public Vector2f position;
+
+        public List<Vector2f> points;
+
+        public int zIndex;
+
+        public Color color;
+
+        public int thickness;
+
+        public PointsData(Vector2f position, List<Vector2f> points) {
+            this.position = position;
+            this.points = points;
+            this.zIndex = 0;
+            this.color = Color.WHITE;
+            this.thickness = 1;
+        }
+    }
+
+    public static class LineData {
+        public Vector2f point1;
+
+        public Vector2f point2;
+
+        public int zIndex;
+
+        public Color color;
+
+        public float thickness;
+
+        public LineData(Vector2f point1, Vector2f point2) {
+            this.point1 = point1;
+            this.point2 = point2;
+            this.zIndex = 0;
+            this.color = Color.WHITE;
+            this.thickness = 1;
+        }
+    }
+
+    public static class CircleData {
+        public Vector2f position;
+
+        public float radius;
+
+        public int sides;
+
+        public int zIndex;
+
+        public Color color;
+
+        public int thickness;
+
+        public CircleData(Vector2f position, float radius, int sides) {
+            this.position = position;
+            this.radius = radius;
+            this.sides = sides;
+            this.zIndex = 0;
+            this.color = Color.WHITE;
+            this.thickness = 0;
+        }
+    }
+
+    public static class TextData {
+        public String text;
+
+        public Font font;
+
+        public Vector2f position;
+
+        public int zIndex;
+
+        public Color color;
+
+        public float rotation;
+
+        public Vector2f scale;
+
+        public Vector2f origin;
+
+        public TextData(String text, Font font, Vector2f position) {
+            this.text = text;
+            this.font = font;
+            this.position = position;
+            this.zIndex = 0;
+            this.color = Color.WHITE;
+            this.rotation = 0.0f;
+            this.scale = new Vector2f(1.0f, 1.0f);
+            this.origin = new Vector2f();
+        }
+    }
+
     private final Shader shader;
+
     private final Renderer renderer;
-    private final List<Element> elements;
+
     private Camera camera;
+
+    private final List<Data> data;
+
     private int size;
+
     private Matrix4f projection;
+
     private float globalAlpha;
-    private boolean shouldUpdateAlphaUniform;
-    private boolean shouldUpdateMatrixUniform;
-    private boolean shouldSortByLayer;
+
+    private final Texture primitiveTexture;
+
     private boolean destroyed;
-    public Texture whiteTexture;
 
     public Spritebatch() {
         this(Game.get().getSceneManager().getScene().getCamera());
@@ -302,13 +533,15 @@ public class Spritebatch {
     }
 
     public Spritebatch(Camera camera, Shader shader) {
-        this.elements = new ArrayList<>(4096);
+        this.data = new ArrayList<>(4096);
         this.shader = shader;
         this.camera = camera;
         this.renderer = new Renderer(4096, shader.getVertexAttributes());
         this.destroyed = false;
         this.projection = new Matrix4f();
-        this.whiteTexture = new Texture(new byte[] {(byte)255, (byte)255, (byte)255, (byte)255}, 1, 1, 4);
+        this.primitiveTexture = new Texture(
+                new byte[] {(byte)255, (byte)255, (byte)255, (byte)255}, 1, 1, 4
+        );
 
         if (Game.isDebugging()) {
             Out.printlnDebug("Spritebatch created.");
@@ -318,7 +551,7 @@ public class Spritebatch {
     public void destroy() {
         if (!destroyed) {
             renderer.destroy();
-            whiteTexture.destroy();
+            primitiveTexture.destroy();
             destroyed = true;
 
             if (Game.isDebugging()) {
@@ -328,868 +561,355 @@ public class Spritebatch {
     }
 
     public void begin() {
-        renderer.clear();
-        elements.clear();
-        size = 0;
-        shouldSortByLayer = true;
+        clear();
 
         if (!projection.equals(camera.getViewProjectionMatrix())) {
-            shouldUpdateMatrixUniform = true;
-            projection = new Matrix4f();
-            camera.getViewProjectionMatrix().get(projection);
+            projection = camera.getViewProjectionMatrix().get(new Matrix4f());
         }
 
         if (globalAlpha != 1.0f) {
-            shouldUpdateAlphaUniform = true;
             globalAlpha = 1.0f;
         }
     }
 
     public void begin(Camera camera) {
         this.camera = camera;
+
         begin();
     }
 
-    public void drawTexture(Texture texture, Vector2f position) {
+    public void drawTexture(TextureData textureData) {
         drawTexture(
-                texture,
-                position,
-                new Vector4f(0, 0, texture.getWidth(), texture.getHeight()),
-                0,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
+                textureData.texture,
+                textureData.position,
+                textureData.region,
+                textureData.zIndex,
+                textureData.tint,
+                textureData.rotation,
+                textureData.scale,
+                textureData.origin);
     }
 
-    public void drawTexture(Texture texture, Vector2f position, Vector4f region) {
+    public void drawSprite(SpriteData spriteData) {
         drawTexture(
-                texture,
-                position,
-                region,
-                0,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
+                spriteData.sprite.getTexture(),
+                spriteData.position,
+                spriteData.sprite.getRegion(),
+                spriteData.zIndex,
+                spriteData.tint,
+                spriteData.rotation,
+                spriteData.scale,
+                spriteData.origin);
     }
 
-    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex) {
+    public void drawNineSlicedSprite(NineSlicedSpriteData spriteRenderer) {
+        // TODO: Add rotation support (not useful for now).
+        Vector2f realPosition = new Vector2f(
+                spriteRenderer.position.x - spriteRenderer.scale.x * spriteRenderer.origin.x,
+                spriteRenderer.position.y - spriteRenderer.scale.y * spriteRenderer.origin.y
+        );
+        Vector2f realSize = new Vector2f(
+                spriteRenderer.size.x == 0 ? 1 : spriteRenderer.size.x,
+                spriteRenderer.size.y == 0 ? 1 : spriteRenderer.size.y
+        );
+        int numWidthNeeded = (int)(realSize.x / spriteRenderer.sprite.middle.getRegion().z);
+        int numHeightNeeded = (int)(realSize.y / spriteRenderer.sprite.middle.getRegion().w);
+
+        // Top left.
+        drawSprite(new SpriteData(spriteRenderer.sprite.topLeft, realPosition) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
+        }});
+
+        // Top middle.
+        drawSprite(new SpriteData(spriteRenderer.sprite.topMiddle, new Vector2f(
+                realPosition.x + (spriteRenderer.sprite.topLeft.getRegion().z * spriteRenderer.scale.x),
+                realPosition.y
+        )) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(numWidthNeeded, 1.0f).mul(spriteRenderer.scale);
+        }});
+
+        // Top right.
+        drawSprite(new SpriteData(spriteRenderer.sprite.topRight, new Vector2f(
+                realPosition.x + (spriteRenderer.sprite.topLeft.getRegion().z * spriteRenderer.scale.x) +
+                        numWidthNeeded * (spriteRenderer.sprite.topMiddle.getRegion().z * spriteRenderer.scale.x),
+                realPosition.y
+        )) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
+        }});
+
+        // Middle left.
+        drawSprite(new SpriteData(spriteRenderer.sprite.middleLeft, new Vector2f(
+                realPosition.x,
+                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)
+        )) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(1.0f, numHeightNeeded).mul(spriteRenderer.scale);
+        }});
+
+        // Middle.
+        drawSprite(new SpriteData(spriteRenderer.sprite.middle, new Vector2f(
+                realPosition.x + (spriteRenderer.sprite.topLeft.getRegion().z * spriteRenderer.scale.x),
+                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)
+        )) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(numWidthNeeded, numHeightNeeded).mul(spriteRenderer.scale);
+        }});
+
+        // Middle right.
+        drawSprite(new SpriteData(spriteRenderer.sprite.middleRight, new Vector2f(
+                realPosition.x + (spriteRenderer.sprite.topLeft.getRegion().z * spriteRenderer.scale.x) +
+                        numWidthNeeded * (spriteRenderer.sprite.topMiddle.getRegion().z * spriteRenderer.scale.x),
+                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)
+        )) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(1.0f, numHeightNeeded).mul(spriteRenderer.scale);
+        }});
+
+        // Bottom left.
+        drawSprite(new SpriteData(spriteRenderer.sprite.bottomLeft, new Vector2f(
+                realPosition.x,
+                realPosition.y + (spriteRenderer.sprite.bottomLeft.getRegion().w * spriteRenderer.scale.y) +
+                        numHeightNeeded * (spriteRenderer.sprite.middleLeft.getRegion().w * spriteRenderer.scale.y)
+        )) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
+        }});
+
+        // Bottom middle.
+        drawSprite(new SpriteData(spriteRenderer.sprite.bottomMiddle, new Vector2f(
+                realPosition.x + (spriteRenderer.sprite.bottomLeft.getRegion().z * spriteRenderer.scale.x),
+                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y) +
+                        numHeightNeeded * (spriteRenderer.sprite.middleLeft.getRegion().w * spriteRenderer.scale.y)
+        )) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(numWidthNeeded, 1.0f).mul(spriteRenderer.scale);
+        }});
+
+        // Bottom right.
+        drawSprite(new SpriteData(spriteRenderer.sprite.bottomRight, new Vector2f(
+                realPosition.x + (spriteRenderer.sprite.bottomLeft.getRegion().z * spriteRenderer.scale.x) +
+                        numWidthNeeded * (spriteRenderer.sprite.bottomMiddle.getRegion().z * spriteRenderer.scale.x),
+                realPosition.y + (spriteRenderer.sprite.topRight.getRegion().w * spriteRenderer.scale.y) +
+                        numHeightNeeded * (spriteRenderer.sprite.middleRight.getRegion().w * spriteRenderer.scale.y)
+        )) {{
+            zIndex = spriteRenderer.zIndex;
+            tint = spriteRenderer.tint;
+            rotation = spriteRenderer.rotation;
+            scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
+        }});
+    }
+
+    public void drawRectangle(RectangleData rectangleData) {
+        if (rectangleData.filled) {
+            drawTexture(
+                    primitiveTexture,
+                    rectangleData.position,
+                    new Vector4f(0.0f, 0.0f, rectangleData.size.x, rectangleData.size.y),
+                    rectangleData.zIndex,
+                    rectangleData.color,
+                    rectangleData.rotation,
+                    rectangleData.scale,
+                    rectangleData.origin);
+        } else {
+            Vector2f realSize = new Vector2f(
+                    rectangleData.size.x * rectangleData.scale.x,
+                    rectangleData.size.y * rectangleData.scale.y
+            );
+            Vector2f realPosition = new Vector2f(
+                    rectangleData.position.x - rectangleData.scale.x * rectangleData.origin.x,
+                    rectangleData.position.y - rectangleData.scale.y * rectangleData.origin.y
+            );
+            Vector2f rotationOrigin = new Vector2f(
+                    realPosition.x + rectangleData.origin.x * rectangleData.scale.x,
+                    realPosition.y + rectangleData.origin.y * rectangleData.scale.y
+            );
+
+            Vector2f position12 = MathUtil.rotatePosition(
+                    new Vector2f(realPosition.x + realSize.x, realPosition.y),
+                    rotationOrigin,
+                    rectangleData.rotation
+            );
+            Vector2f position21 = new Vector2f(position12.x, position12.y);
+            Vector2f position22 = MathUtil.rotatePosition(
+                    new Vector2f(position12.x, position12.y + realSize.y),
+                    position21,
+                    rectangleData.rotation
+            );
+            Vector2f position31 = new Vector2f(position22.x, position22.y);
+            Vector2f position32 = MathUtil.rotatePosition(
+                    new Vector2f(position22.x + realSize.x, position22.y),
+                    position31,
+                    rectangleData.rotation + 180.0f
+            );
+            Vector2f position41 = new Vector2f(position32.x, position32.y);
+            Vector2f position42 = MathUtil.rotatePosition(
+                    new Vector2f(position32.x, position32.y + realSize.y),
+                    position41,
+                    rectangleData.rotation + 180.0f
+            );
+
+            drawLine(new LineData(position42, position12) {{
+                zIndex = rectangleData.zIndex;
+                color = rectangleData.color;
+                thickness = rectangleData.thickness;
+            }});
+
+            drawLine(new LineData(position21, position22) {{
+                zIndex = rectangleData.zIndex;
+                color = rectangleData.color;
+                thickness = rectangleData.thickness;
+            }});
+
+            drawLine(new LineData(position31, position32) {{
+                zIndex = rectangleData.zIndex;
+                color = rectangleData.color;
+                thickness = rectangleData.thickness;
+            }});
+
+            drawLine(new LineData(position41, position42) {{
+                zIndex = rectangleData.zIndex;
+                color = rectangleData.color;
+                thickness = rectangleData.thickness;
+            }});
+        }
+    }
+
+    public void drawPoint(PointData pointData) {
         drawTexture(
-                texture,
-                position,
-                region,
-                zIndex,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint) {
-        drawTexture(
-                texture,
-                position,
-                region,
-                zIndex,
-                tint,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation) {
-        drawTexture(
-                texture,
-                position,
-                region,
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation, Vector2f scale) {
-        drawTexture(
-                texture,
-                position,
-                region,
-                zIndex,
-                tint,
-                rotation,
-                scale,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float rotation, Vector2f scale, Vector2f origin) {
-        Element element = new Element();
-
-        element.texture = texture;
-        element.position = new Vector2f(position.x, position.y);
-        element.dimensions = new Vector2f(region.z, region.w);
-        element.region = new Vector4f(
-                region.x / texture.getWidth(), region.y / texture.getHeight(),
-                (region.x + region.z) / texture.getWidth(), (region.y + region.w) / texture.getHeight()
-        );
-        element.zIndex = zIndex;
-        element.tint = tint.clone();
-        element.rotation = rotation;
-        element.scale = new Vector2f(scale.x, scale.y);
-        element.origin = new Vector2f(origin.x, origin.y);
-        element.type = ElementType.Sprite;
-
-        elements.add(element);
-        size++;
-    }
-
-    public void drawSprite(Sprite sprite, Vector2f position) {
-        drawTexture(
-                sprite.getTexture(),
-                position,
-                sprite.getRegion(),
-                0,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawSprite(Sprite sprite, Vector2f position, int zIndex) {
-        drawTexture(
-                sprite.getTexture(),
-                position,
-                sprite.getRegion(),
-                zIndex,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawSprite(Sprite sprite, Vector2f position, int zIndex, Color tint) {
-        drawTexture(
-                sprite.getTexture(),
-                position,
-                sprite.getRegion(),
-                zIndex,
-                tint,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawSprite(Sprite sprite, Vector2f position, int zIndex, Color tint, float rotation) {
-        drawTexture(
-                sprite.getTexture(),
-                position,
-                sprite.getRegion(),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawSprite(Sprite sprite, Vector2f position, int zIndex, Color tint, float rotation, Vector2f scale) {
-        drawTexture(
-                sprite.getTexture(),
-                position,
-                sprite.getRegion(),
-                zIndex,
-                tint,
-                rotation,
-                scale,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawSprite(Sprite sprite, Vector2f position, int zIndex, Color tint, float rotation, Vector2f scale, Vector2f origin) {
-        drawTexture(
-                sprite.getTexture(),
-                position,
-                sprite.getRegion(),
-                zIndex,
-                tint,
-                rotation,
-                scale,
-                origin
-        );
-    }
-
-    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size) {
-        drawNineSlicedSprite(
-                sprite,
-                position,
-                size,
-                0,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex) {
-        drawNineSlicedSprite(
-                sprite,
-                position,
-                size,
-                zIndex,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex, Color tint) {
-        drawNineSlicedSprite(
-                sprite,
-                position,
-                size,
-                zIndex,
-                tint,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex, Color tint, float rotation) {
-        drawNineSlicedSprite(
-                sprite,
-                position,
-                size,
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex, Color tint, float rotation, Vector2f scale) {
-        drawNineSlicedSprite(
-                sprite,
-                position,
-                size,
-                zIndex,
-                tint,
-                rotation,
-                scale,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    // TODO: Add rotation support (not useful for now).
-    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex, Color tint, float rotation, Vector2f scale, Vector2f origin) {
-        Vector2f realPosition = new Vector2f(position.x - scale.x * origin.x, position.y - scale.y * origin.y);
-        Vector2f realSize = new Vector2f(size.x == 0 ? 1 : size.x, size.y == 0 ? 1 : size.y);
-        int numWidthNeeded = (int)(realSize.x / sprite.middle.getRegion().z);
-        int numHeightNeeded = (int)(realSize.y / sprite.middle.getRegion().w);
-
-        drawSprite(
-                sprite.topLeft,
-                realPosition,
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, 1.0f).mul(scale)
-        );
-
-        drawSprite(
-                sprite.topMiddle,
-                new Vector2f(realPosition.x + (sprite.topLeft.getRegion().z * scale.x), realPosition.y),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(numWidthNeeded, 1.0f).mul(scale)
-        );
-
-        drawSprite(
-                sprite.topRight,
-                new Vector2f(
-                        realPosition.x + (sprite.topLeft.getRegion().z * scale.x) + numWidthNeeded * (sprite.topMiddle.getRegion().z * scale.x),
-                        realPosition.y
-                ),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, 1.0f).mul(scale)
-        );
-
-        drawSprite(
-                sprite.middleLeft,
-                new Vector2f(
-                        realPosition.x,
-                        realPosition.y + (sprite.topLeft.getRegion().w * scale.y)
-                ),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, numHeightNeeded).mul(scale)
-        );
-
-        drawSprite(
-                sprite.middle,
-                new Vector2f(realPosition.x + (sprite.topLeft.getRegion().z * scale.x), realPosition.y + (sprite.topLeft.getRegion().w * scale.y)),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(numWidthNeeded, numHeightNeeded).mul(scale)
-        );
-
-        drawSprite(
-                sprite.middleRight,
-                new Vector2f(
-                        realPosition.x + (sprite.topLeft.getRegion().z * scale.x) + numWidthNeeded * (sprite.topMiddle.getRegion().z * scale.x),
-                        realPosition.y + (sprite.topLeft.getRegion().w * scale.y)
-                ),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, numHeightNeeded).mul(scale)
-        );
-
-        drawSprite(
-                sprite.bottomLeft,
-                new Vector2f(
-                        realPosition.x,
-                        realPosition.y + (sprite.bottomLeft.getRegion().w * scale.y) + numHeightNeeded * (sprite.middleLeft.getRegion().w * scale.y)
-                ),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, 1.0f).mul(scale)
-        );
-
-        drawSprite(
-                sprite.bottomMiddle,
-                new Vector2f(
-                        realPosition.x + (sprite.bottomLeft.getRegion().z * scale.x),
-                        realPosition.y + (sprite.topLeft.getRegion().w * scale.y) + numHeightNeeded * (sprite.middleLeft.getRegion().w * scale.y)
-                ),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(numWidthNeeded, 1.0f).mul(scale)
-        );
-
-        drawSprite(
-                sprite.bottomRight,
-                new Vector2f(
-                        realPosition.x + (sprite.bottomLeft.getRegion().z * scale.x) + numWidthNeeded * (sprite.bottomMiddle.getRegion().z * scale.x),
-                        realPosition.y + (sprite.topRight.getRegion().w * scale.y) + numHeightNeeded * (sprite.middleRight.getRegion().w * scale.y)
-                ),
-                zIndex,
-                tint,
-                rotation,
-                new Vector2f(1.0f, 1.0f).mul(scale)
-        );
-    }
-
-    public void drawFilledRectangle(Vector2f position, Vector2f size) {
-        drawFilledRectangle(
-                position,
-                size,
-                0,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawFilledRectangle(Vector2f position, Vector2f size, int zIndex) {
-        drawFilledRectangle(
-                position,
-                size,
-                zIndex,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawFilledRectangle(Vector2f position, Vector2f size, int zIndex, Color color) {
-        drawFilledRectangle(
-                position,
-                size,
-                zIndex,
-                color,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawFilledRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation) {
-        drawFilledRectangle(
-                position,
-                size,
-                zIndex,
-                color,
-                rotation,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawFilledRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, Vector2f scale) {
-        drawFilledRectangle(
-                position,
-                size,
-                zIndex,
-                color,
-                rotation,
-                scale,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawFilledRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, Vector2f scale, Vector2f origin) {
-        drawTexture(
-                whiteTexture,
-                position,
-                new Vector4f(0.0f, 0.0f, size.x, size.y),
-                zIndex,
-                color,
-                rotation,
-                scale,
-                origin
-        );
-    }
-
-    public void drawRectangle(Vector2f position, Vector2f size) {
-        drawRectangle(
-                position,
-                size,
-                0,
-                Color.WHITE,
-                0.0f,
-                1,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawRectangle(Vector2f position, Vector2f size, int zIndex) {
-        drawRectangle(
-                position,
-                size,
-                zIndex,
-                Color.WHITE,
-                0.0f,
-                1,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color) {
-        drawRectangle(
-                position,
-                size,
-                zIndex,
-                color,
-                0.0f,
-                1,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation) {
-        drawRectangle(
-                position,
-                size,
-                zIndex,
-                color,
-                rotation,
-                1,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, float thickness) {
-        drawRectangle(
-                position,
-                size,
-                zIndex,
-                color,
-                rotation,
-                thickness,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, float thickness, Vector2f scale) {
-        drawRectangle(
-                position,
-                size,
-                zIndex,
-                color,
-                rotation,
-                thickness,
-                scale,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawRectangle(Vector2f position, Vector2f size, int zIndex, Color color, float rotation, float thickness, Vector2f scale, Vector2f origin) {
-        Vector2f realSize = new Vector2f(size.x * scale.x, size.y * scale.y);
-        Vector2f realPosition = new Vector2f(position.x - scale.x * origin.x, position.y - scale.y * origin.y);
-        Vector2f rotationOrigin = new Vector2f(realPosition.x + origin.x * scale.x, realPosition.y + origin.y * scale.y);
-
-        //Vector2f position11 = position42;
-        Vector2f position12 = rotatePosition(new Vector2f(realPosition.x + realSize.x, realPosition.y), rotationOrigin, rotation);
-        Vector2f position21 = new Vector2f(position12.x, position12.y);
-        Vector2f position22 = rotatePosition(new Vector2f(position12.x, position12.y + realSize.y), position21, rotation);
-        Vector2f position31 = new Vector2f(position22.x, position22.y);
-        Vector2f position32 = rotatePosition(new Vector2f(position22.x + realSize.x, position22.y), position31, rotation + 180);
-        Vector2f position41 = new Vector2f(position32.x, position32.y);
-        Vector2f position42 = rotatePosition(new Vector2f(position32.x, position32.y + realSize.y), position41, rotation + 180);
-
-        drawLine(position42, position12, zIndex, color, thickness);
-        drawLine(position21, position22, zIndex, color, thickness);
-        drawLine(position31, position32, zIndex, color, thickness);
-        drawLine(position41, position42, zIndex, color, thickness);
-    }
-
-    public void drawPoint(Vector2f position) {
-        drawPoint(
-                position,
-                0,
-                Color.WHITE
-        );
-    }
-
-    public void drawPoint(Vector2f position, int zIndex) {
-        drawPoint(
-                position,
-                zIndex,
-                Color.WHITE
-        );
-    }
-
-    public void drawPoint(Vector2f position, int zIndex, Color color) {
-        drawTexture(
-                whiteTexture,
-                position,
+                primitiveTexture,
+                pointData.position,
                 new Vector4f(0.0f, 0.0f, 1.0f, 1.0f),
-                zIndex,
-                color,
+                pointData.zIndex,
+                pointData.color,
                 0.0f,
                 new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
+                new Vector2f());
     }
 
-    public void drawPoints(Vector2f position, List<Vector2f> points) {
-        drawPoints(
-                position,
-                points,
-                0,
-                Color.WHITE,
-                1
-        );
-    }
-
-    public void drawPoints(Vector2f position, List<Vector2f> points, int zIndex) {
-        drawPoints(
-                position,
-                points,
-                zIndex,
-                Color.WHITE,
-                1
-        );
-    }
-
-    public void drawPoints(Vector2f position, List<Vector2f> points, int zIndex, Color color) {
-        drawPoints(
-                position,
-                points,
-                zIndex,
-                color,
-                1
-        );
-    }
-
-    public void drawPoints(Vector2f position, List<Vector2f> points, int zIndex, Color color, float thickness) {
-        if (points.size() < 2) {
+    public void drawPoints(PointsData pointsData) {
+        if (pointsData.points.size() < 2) {
             return;
         }
 
-        for (int i = 1; i < points.size(); i++) {
-            Vector2f startPoint = points.get(i - 1);
-            Vector2f endPoint = points.get(i);
+        for (int i = 1; i < pointsData.points.size(); i++) {
+            Vector2f startPoint = pointsData.points.get(i - 1);
+            Vector2f endPoint = pointsData.points.get(i);
 
-            drawLine(
-                    new Vector2f(startPoint.x + position.x, startPoint.y + position.y),
-                    new Vector2f(endPoint.x + position.x, endPoint.y + position.y),
-                    zIndex,
-                    color,
-                    thickness);
+            drawLine(new LineData(new Vector2f(
+                    startPoint.x + pointsData.position.x, startPoint.y + pointsData.position.y),
+                    new Vector2f(
+                            endPoint.x + pointsData.position.x,
+                            endPoint.y + pointsData.position.y)
+            ) {{
+                zIndex = pointsData.zIndex;
+                color = pointsData.color;
+                thickness = pointsData.thickness;
+            }});
         }
     }
 
-    public void drawLine(Vector2f point1, Vector2f point2) {
-        drawLine(
-                point1,
-                point2,
-                0,
-                Color.WHITE,
-                1
+    public void drawLine(LineData lineData) {
+        float length = lineData.point1.distance(lineData.point2);
+        float rotation = (float)Math.atan2(
+                lineData.point2.y - lineData.point1.y,
+                lineData.point2.x - lineData.point1.x
         );
-    }
 
-    public void drawLine(Vector2f point1, Vector2f point2, int zIndex) {
-        drawLine(
-                point1,
-                point2,
-                zIndex,
-                Color.WHITE,
-                1
-        );
-    }
-
-    public void drawLine(Vector2f point1, Vector2f point2, int zIndex, Color color) {
-        drawLine(
-                point1,
-                point2,
-                zIndex,
-                color,
-                1
-        );
-    }
-
-    public void drawLine(Vector2f point1, Vector2f point2, int zIndex, Color color, float thickness) {
-        float length = point1.distance(point2);
-        float rotation = (float)Math.atan2(point2.y - point1.y, point2.x - point1.x);
-
-        drawLine(
-                point1,
-                length,
-                (float)Math.toDegrees(rotation),
-                zIndex,
-                color,
-                thickness
-        );
-    }
-
-    public void drawLine(Vector2f position, float length) {
-        drawLine(
-                position,
-                length,
-                0,
-                0,
-                Color.WHITE,
-                1
-        );
-    }
-
-    public void drawLine(Vector2f position, float length, float rotation) {
-        drawLine(
-                position,
-                length,
-                rotation,
-                0,
-                Color.WHITE,
-                1
-        );
-    }
-
-    public void drawLine(Vector2f position, float length, float rotation, int zIndex) {
-        drawLine(
-                position,
-                length,
-                rotation,
-                zIndex,
-                Color.WHITE,
-                1
-        );
-    }
-
-    public void drawLine(Vector2f position, float length, float rotation, int zIndex, Color color) {
-        drawLine(
-                position,
-                length,
-                rotation,
-                zIndex,
-                color,
-                1
-        );
-    }
-
-    public void drawLine(Vector2f position, float length, float rotation, int zIndex, Color color, float thickness) {
         drawTexture(
-                whiteTexture,
-                position,
-                new Vector4f(0.0f, 0.0f, length, thickness),
-                zIndex,
-                color,
-                rotation,
+                primitiveTexture,
+                lineData.point1,
+                new Vector4f(0.0f, 0.0f, length, lineData.thickness),
+                lineData.zIndex,
+                lineData.color,
+                (float)Math.toDegrees(rotation),
                 new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
+                new Vector2f()
         );
     }
 
-    public void drawCircle(Vector2f center, float radius, int sides) {
-        drawCircle(
-                center,
-                radius,
-                sides,
-                0,
-                Color.WHITE,
-                1
-        );
+    public void drawCircle(CircleData circleData) {
+        drawPoints(new PointsData(circleData.position,
+                MathUtil.createCircle(circleData.radius, circleData.sides))  {{
+            zIndex = circleData.zIndex;
+            color = circleData.color;
+            thickness = circleData.thickness;
+        }});
     }
 
-    public void drawCircle(Vector2f center, float radius, int sides, int zIndex) {
-        drawCircle(
-                center,
-                radius,
-                sides,
-                zIndex,
-                Color.WHITE,
-                1
-        );
-    }
+    public void drawText(TextData textRenderer) {
+        // TODO: Add rotation support (not useful for now).
+        // TODO: Better handling of scaling
+        Font realFont;
 
-    public void drawCircle(Vector2f center, float radius, int sides, int zIndex, Color color) {
-        drawCircle(
-                center,
-                radius,
-                sides,
-                zIndex,
-                color,
-                1
-        );
-    }
-
-    public void drawCircle(Vector2f center, float radius, int sides, int zIndex, Color color, int thickness) {
-        drawPoints(
-                center,
-                createCircle(radius, sides),
-                zIndex,
-                color,
-                thickness
-        );
-    }
-
-    public void drawText(String text, Font font, Vector2f position) {
-        drawText(
-                text,
-                font,
-                position,
-                0,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawText(String text, Font font, Vector2f position, int zIndex) {
-        drawText(
-                text,
-                font,
-                position,
-                zIndex,
-                Color.WHITE,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawText(String text, Font font, Vector2f position, int zIndex, Color color) {
-        drawText(
-                text,
-                font,
-                position,
-                zIndex,
-                color,
-                0.0f,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawText(String text, Font font, Vector2f position, int zIndex, Color color, float rotation) {
-        drawText(
-                text,
-                font,
-                position,
-                zIndex,
-                color,
-                rotation,
-                new Vector2f(1.0f, 1.0f),
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    public void drawText(String text, Font font, Vector2f position, int zIndex, Color color, float rotation, Vector2f scale) {
-        drawText(
-                text,
-                font,
-                position,
-                zIndex,
-                color,
-                rotation,
-                scale,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    // TODO: Add rotation support (not useful for now).
-    // TODO: Better handling of scaling
-    public void drawText(String text, Font font, Vector2f position, int zIndex, Color color, float rotation, Vector2f scale, Vector2f origin) {
-        Font realFont = null;
-
-        if (scale.x == scale.y) {
-            realFont = Resources.loadFont(font.getPath(), (int)(font.getSize() * scale.x));
+        if (textRenderer.scale.x == textRenderer.scale.y) {
+            realFont = Resources.loadFont(
+                    textRenderer.font.getPath(), (int)(textRenderer.font.getSize() * textRenderer.scale.x));
         } else {
-            realFont = font;
+            realFont = textRenderer.font;
         }
 
-        Vector2f debugPosition = new Vector2f(position.x - scale.x * origin.x, position.y - scale.y * origin.y);
+        Vector2f debugPosition = new Vector2f(
+                textRenderer.position.x - textRenderer.scale.x * textRenderer.origin.x,
+                textRenderer.position.y - textRenderer.scale.y * textRenderer.origin.y
+        );
         Vector2f realPosition = new Vector2f(debugPosition.x, debugPosition.y + realFont.getAverageTextHeight());
 
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
+        for (int i = 0; i < textRenderer.text.length(); i++) {
+            char c = textRenderer.text.charAt(i);
 
             if (c == ' ') {
                 realPosition.add(new Vector2f(realFont.getTextWidth(" "), 0));
             } else if (c == '\n') {
-                realPosition = new Vector2f(position.x, realPosition.y + realFont.getSize());
+                realPosition = new Vector2f(textRenderer.position.x, realPosition.y + realFont.getSize());
             } else if (c == '\t') {
                 realPosition.add(new Vector2f(realFont.getTextWidth(" ") * 4, 0));
             } else {
                 Font.GlyphInfo glyphInfo = realFont.getGlyphInfo(c);
 
-                drawGlyph(new Vector2f(realPosition.x, realPosition.y), realFont, glyphInfo.position, glyphInfo.region, zIndex, color, rotation, scale, origin);
+                drawGlyph(
+                        new Vector2f(realPosition.x, realPosition.y),
+                        realFont, glyphInfo.position, glyphInfo.region,
+                        textRenderer.zIndex,
+                        textRenderer.color,
+                        textRenderer.rotation,
+                        textRenderer.scale,
+                        textRenderer.origin
+                );
+
                 realPosition.add(new Vector2f(glyphInfo.position.z + realFont.getKerning(), 0));
             }
         }
 
-        if (Game.get().isDebugTexts()) {
-            drawFilledRectangle(debugPosition, new Vector2f(realFont.getTextWidth(text), realFont.getTextHeight(text)), zIndex, new Color(1.0f, 0.0f, 0.0f, 0.3f));
-        }
+        // TODO: Put back ?
+        /*if (Game.get().isDebugTexts()) {
+            drawRectangle(new RectangleData(debugPosition,
+                    new Vector2f(
+                            realFont.getTextWidth(textRenderer.text),
+                            realFont.getTextHeight(textRenderer.text))
+            ) {{
+                zIndex = textRenderer.zIndex;
+                color = new Color(1.0f, 0.0f, 0.0f, 0.3f);
+            }});
+        }*/
     }
 
     public void end() {
@@ -1197,65 +917,61 @@ public class Spritebatch {
             return;
         }
 
-        if (shouldSortByLayer) {
-            elements.sort(Comparator.comparingInt(Element::getzIndex));
-        }
-
+        data.sort(Comparator.comparingInt(Data::getzIndex));
         renderer.draw();
     }
 
-    private void drawGlyph(Vector2f position, Font font, Vector4f characterPositions, Vector4f characterRegion, int zIndex, Color color, float rotation, Vector2f scale, Vector2f origin) {
-        Element element = new Element();
+    private void drawTexture(Texture texture, Vector2f position, Vector4f region, int zIndex, Color tint, float angle,
+                             Vector2f scale, Vector2f origin) {
+        Data data = new Data();
+        data.texture = texture;
+        data.position = new Vector2f(position.x, position.y);
+        data.dimensions = new Vector2f(region.z, region.w);
+        data.region = new Vector4f(
+                region.x / texture.getWidth(),
+                region.y / texture.getHeight(),
+                (region.x + region.z) / texture.getWidth(),
+                (region.y + region.w) / texture.getHeight()
+        );
+        data.zIndex = zIndex;
+        data.tint = tint.clone();
+        data.rotation = angle;
+        data.scale = new Vector2f(scale.x, scale.y);
+        data.origin = new Vector2f(origin.x, origin.y);
+        data.type = ElementType.Sprite;
 
-        element.texture = font.getTexture();
-        // When drawing a glyph, position serve as a positionStart
-        element.position = new Vector2f(characterPositions.x, characterPositions.y);
-        element.position.add(position);
-        // When drawing a glyph, dimensions serve as a positionEnd
-        element.dimensions = new Vector2f(characterPositions.z, characterPositions.w);
-        element.dimensions.add(position);
-        element.scale = scale;
-        element.origin = origin;
-        element.region = characterRegion;
-        element.tint = new Color(color.r, color.g, color.b, color.a);
-        element.rotation = rotation;
-        element.zIndex = zIndex;
-        element.type = ElementType.TruetypeFont;
+        this.data.add(data);
 
-        elements.add(element);
         size++;
     }
 
-    private static Vector2f rotatePosition(Vector2f position, Vector2f origin, float angle) {
-        double angleInRad = toRadians(angle);
-        Vector2f translation = new Vector2f(position.x - origin.x, position.y - origin.y);
-        Vector2f rotation = new Vector2f(
-                (float)(translation.x * cos(angleInRad) - translation.y * sin(angleInRad)),
-                (float)(translation.x * sin(angleInRad) + translation.y * cos(angleInRad))
-        );
+    private void drawGlyph(Vector2f position, Font font, Vector4f characterPositions, Vector4f characterRegion,
+                           int zIndex, Color color, float rotation, Vector2f scale, Vector2f origin) {
+        Data data = new Data();
+        data.texture = font.getTexture();
+        // When drawing a glyph, position serve as a positionStart (glyph top left).
+        data.position = new Vector2f(characterPositions.x, characterPositions.y);
+        data.position.add(position);
+        // When drawing a glyph, dimensions serve as a positionEnd (glyph bottom right).
+        data.dimensions = new Vector2f(characterPositions.z, characterPositions.w);
+        data.dimensions.add(position);
+        data.scale = scale;
+        data.origin = origin;
+        data.region = characterRegion;
+        data.tint = new Color(color.r, color.g, color.b, color.a);
+        data.rotation = rotation;
+        data.zIndex = zIndex;
+        data.type = ElementType.TruetypeFont;
 
-        return new Vector2f(rotation.x + origin.x, rotation.y + origin.y);
+        this.data.add(data);
+
+        size++;
     }
 
-    private static List<Vector2f> createCircle(float radius, int sides) {
-        String circleKey = radius + "x" + sides;
+    private void clear() {
+        size = 0;
 
-        if (circleCache.containsKey(circleKey)) {
-            return circleCache.get(circleKey);
-        }
-
-        List<Vector2f> vectors = new ArrayList<>();
-        double max = 2.0 * PI;
-        double step = max / sides;
-
-        for (double theta = 0.0f; theta < max; theta += step) {
-            vectors.add(new Vector2f((float)(radius * cos(theta)), (float)(radius * sin(theta))));
-        }
-
-        vectors.add(new Vector2f((float)(radius * cos(0)), (float)(radius * sin(0))));
-
-        circleCache.put(circleKey, vectors);
-
-        return vectors;
+        renderer.clear();
+        data.clear();
     }
 }

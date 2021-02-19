@@ -1,11 +1,14 @@
 package com.ustudents.engine.scene;
 
+import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Window;
 import com.ustudents.engine.ecs.system.BehaviourSystem;
 import com.ustudents.engine.ecs.system.GameRenderSystem;
 import com.ustudents.engine.ecs.system.UiRenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
+import com.ustudents.engine.utility.TypeUtil;
 import com.ustudents.farmland.Farmland;
 import org.joml.Vector2i;
 
@@ -68,9 +71,29 @@ public abstract class Scene {
     /** Destroys the scene (called when changing scene or quitting the game). */
     public abstract void destroy();
 
+    public void quit() {
+        Game.get().quit();
+    }
+
+    public <T extends Scene> void changeScene(Class<T> classType, Object... args) {
+        if (args.length == 0) {
+            sceneManager.changeScene(classType);
+        } else {
+            sceneManager.changeScene(classType, args);
+        }
+    }
+
     /** @return the registry of the scene. */
     public Registry getRegistry() {
         return registry;
+    }
+
+    public Game getGame() {
+        return Game.get();
+    }
+
+    public Window getWindow() {
+        return Game.get().getWindow();
     }
 
     /** @return the scene manager of the scene. */

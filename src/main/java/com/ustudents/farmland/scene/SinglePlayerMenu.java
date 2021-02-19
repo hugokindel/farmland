@@ -7,7 +7,7 @@ import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 
-public class SinglePlayerMenu extends Scene{
+public class SingleplayerMenu extends Scene{
     @Override
     public void initialize() {
         Farmland.setKindOfGame("SinglePlayer");

@@ -7,7 +7,7 @@ import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 
-public class MultiPlayerMenu extends Scene {
+public class MultiplayerMenu extends Scene {
     @Override
     public void initialize() {
         Farmland.setKindOfGame("MultiPlayer");

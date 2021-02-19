@@ -6,7 +6,7 @@ import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 
-public class CreditMenu extends Scene {
+public class CreditsMenu extends Scene {
     @Override
     public void initialize() {
 
@@ -19,6 +19,11 @@ public class CreditMenu extends Scene {
 
     @Override
     public void render() {
+
+    }
+
+    @Override
+    public void renderImGui() {
         ImGuiUtils.setNextWindowWithSizeCentered(300, 300, ImGuiCond.Appearing);
         ImGui.begin("Credits Menu");
 
