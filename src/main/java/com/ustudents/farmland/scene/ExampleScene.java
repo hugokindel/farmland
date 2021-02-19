@@ -67,11 +67,6 @@ public class ExampleScene extends Scene {
         player4.setParent(playerContainer);
         player1.getComponents();
 
-        Entity playerName = registry.createEntity();
-        playerName.addComponent(TransformComponent.class);
-        playerName.addComponent(RenderableComponent.class);
-        playerName.addComponent(TextComponent.class, "forx", font);
-
         Entity music = registry.createEntity();
         music.setName("music");
         music.addComponent(SoundComponent.class, sound, true);

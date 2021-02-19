@@ -1,5 +1,6 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.utility.FileUtil;
@@ -50,6 +51,12 @@ public class Font {
 
     private int lineGap;
 
+    private Map<String, Float> widthPerText;
+
+    private Map<String, Float> heightPerText;
+
+    public float averageHeight;
+
     @JsonSerializable
     private Integer fontSize;
 
@@ -61,12 +68,16 @@ public class Font {
         this.fontSize = fontSize;
         glyphInfoPerCharacter = new HashMap<>();
         loadFont(filePath);
+        widthPerText = new HashMap<>();
+        heightPerText = new HashMap<>();
     }
 
     @JsonSerializableConstructor
     private void fromJson() {
         glyphInfoPerCharacter = new HashMap<>();
         loadFont(getFontsDirectory() + "/" + path);
+        widthPerText = new HashMap<>();
+        heightPerText = new HashMap<>();
     }
 
     public void destroy() {
@@ -118,6 +129,7 @@ public class Font {
             ascent = pAscent.get(0);
             descent = pDescent.get(0);
             lineGap = pLineGap.get(0);
+            averageHeight = (ascent - descent + lineGap) * stbtt_ScaleForPixelHeight(info, fontSize) / 2;
         }
     }
 
@@ -163,29 +175,70 @@ public class Font {
 
     // Implementation from: https://github.com/LWJGL/lwjgl3/blob/master/modules/samples/src/test/java/org/lwjgl/demo/stb/Truetype.java
     public float getTextWidth(String text) {
-        int width = 0;
+        if (widthPerText.containsKey(text)) {
+            return widthPerText.get(text);
+        }
 
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer pCodePoint = stack.mallocInt(1);
-            IntBuffer pAdvancedWidth = stack.mallocInt(1);
-            IntBuffer pLeftSideBearing = stack.mallocInt(1);
+        float maxWidth = 0;
 
-            int i = 0;
-            int to = text.length();
-            while (i < to) {
-                i += getCharacterCodepointMetrics(text, to, i, pCodePoint);
-                int cp = pCodePoint.get(0);
+        for (String line : text.split("\n")) {
+            int width = 0;
 
-                stbtt_GetCodepointHMetrics(info, cp, pAdvancedWidth, pLeftSideBearing);
-                width += pAdvancedWidth.get(0);
+            try (MemoryStack stack = stackPush()) {
+                IntBuffer pCodePoint = stack.mallocInt(1);
+                IntBuffer pAdvancedWidth = stack.mallocInt(1);
+                IntBuffer pLeftSideBearing = stack.mallocInt(1);
+
+                int i = 0;
+                int to = line.length();
+                while (i < to) {
+                    i += getCharacterCodepointMetrics(line, to, i, pCodePoint);
+                    int cp = pCodePoint.get(0);
+                    stbtt_GetCodepointHMetrics(info, cp, pAdvancedWidth, pLeftSideBearing);
+                    width += pAdvancedWidth.get(0);
+                }
+            }
+
+            float realWidth = (width * stbtt_ScaleForPixelHeight(info, fontSize)) - 1;
+
+            if (realWidth > maxWidth) {
+                maxWidth = realWidth;
             }
         }
 
-        return width * stbtt_ScaleForPixelHeight(info, fontSize);
+        widthPerText.put(text, maxWidth);
+
+        return maxWidth;
     }
 
     public float getTextHeight(String text) {
-        return fontSize * (1 + text.chars().filter(num -> num == '\n').count());
+        if (heightPerText.containsKey(text)) {
+            return heightPerText.get(text);
+        }
+        //return (ascent - descent + lineGap) * stbtt_ScaleForPixelHeight(info, fontSize);
+        long numNewLines = text.chars().filter(l -> l == '\n').count();
+        float height = averageHeight * (numNewLines + 1) + (numNewLines > 0 ? fontSize * (numNewLines - 1) : 0);
+        heightPerText.put(text, height);
+        return height;
+    }
+
+    public float getAverageTextHeight() {
+        return averageHeight;
+    }
+
+    public float getBiggestCharacterHeight(String text) {
+        String firstLine = text.split("\n")[0];
+        float max = -getGlyphInfo(firstLine.charAt(0)).position.y;
+
+        for (int i = 1; i < firstLine.length(); i++) {
+            float height = -getGlyphInfo(firstLine.charAt(i)).position.y;
+
+            if (height > max) {
+                max = height;
+            }
+        }
+
+        return max;
     }
 
     private GlyphInfo makeGlyphInfo(char c) {

@@ -302,10 +302,10 @@ public class Spritebatch {
     }
 
     public Spritebatch(Camera camera, Shader shader) {
-        this.elements = new ArrayList<>(2048);
+        this.elements = new ArrayList<>(4096);
         this.shader = shader;
         this.camera = camera;
-        this.renderer = new Renderer(2048, shader.getVertexAttributes());
+        this.renderer = new Renderer(4096, shader.getVertexAttributes());
         this.destroyed = false;
         this.projection = new Matrix4f();
         this.whiteTexture = new Texture(new byte[] {(byte)255, (byte)255, (byte)255, (byte)255}, 1, 1, 4);
@@ -524,6 +524,178 @@ public class Spritebatch {
                 rotation,
                 scale,
                 origin
+        );
+    }
+
+    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size) {
+        drawNineSlicedSprite(
+                sprite,
+                position,
+                size,
+                0,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex) {
+        drawNineSlicedSprite(
+                sprite,
+                position,
+                size,
+                zIndex,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex, Color tint) {
+        drawNineSlicedSprite(
+                sprite,
+                position,
+                size,
+                zIndex,
+                tint,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex, Color tint, float rotation) {
+        drawNineSlicedSprite(
+                sprite,
+                position,
+                size,
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex, Color tint, float rotation, Vector2f scale) {
+        drawNineSlicedSprite(
+                sprite,
+                position,
+                size,
+                zIndex,
+                tint,
+                rotation,
+                scale,
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    // TODO: Add rotation support (not useful for now).
+    public void drawNineSlicedSprite(NineSlicedSprite sprite, Vector2f position, Vector2f size, int zIndex, Color tint, float rotation, Vector2f scale, Vector2f origin) {
+        Vector2f realPosition = new Vector2f(position.x - scale.x * origin.x, position.y - scale.y * origin.y);
+        Vector2f realSize = new Vector2f(size.x == 0 ? 1 : size.x, size.y == 0 ? 1 : size.y);
+        int numWidthNeeded = (int)(realSize.x / sprite.middle.getRegion().z);
+        int numHeightNeeded = (int)(realSize.y / sprite.middle.getRegion().w);
+
+        drawSprite(
+                sprite.topLeft,
+                realPosition,
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, 1.0f).mul(scale)
+        );
+
+        drawSprite(
+                sprite.topMiddle,
+                new Vector2f(realPosition.x + (sprite.topLeft.getRegion().z * scale.x), realPosition.y),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(numWidthNeeded, 1.0f).mul(scale)
+        );
+
+        drawSprite(
+                sprite.topRight,
+                new Vector2f(
+                        realPosition.x + (sprite.topLeft.getRegion().z * scale.x) + numWidthNeeded * (sprite.topMiddle.getRegion().z * scale.x),
+                        realPosition.y
+                ),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, 1.0f).mul(scale)
+        );
+
+        drawSprite(
+                sprite.middleLeft,
+                new Vector2f(
+                        realPosition.x,
+                        realPosition.y + (sprite.topLeft.getRegion().w * scale.y)
+                ),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, numHeightNeeded).mul(scale)
+        );
+
+        drawSprite(
+                sprite.middle,
+                new Vector2f(realPosition.x + (sprite.topLeft.getRegion().z * scale.x), realPosition.y + (sprite.topLeft.getRegion().w * scale.y)),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(numWidthNeeded, numHeightNeeded).mul(scale)
+        );
+
+        drawSprite(
+                sprite.middleRight,
+                new Vector2f(
+                        realPosition.x + (sprite.topLeft.getRegion().z * scale.x) + numWidthNeeded * (sprite.topMiddle.getRegion().z * scale.x),
+                        realPosition.y + (sprite.topLeft.getRegion().w * scale.y)
+                ),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, numHeightNeeded).mul(scale)
+        );
+
+        drawSprite(
+                sprite.bottomLeft,
+                new Vector2f(
+                        realPosition.x,
+                        realPosition.y + (sprite.bottomLeft.getRegion().w * scale.y) + numHeightNeeded * (sprite.middleLeft.getRegion().w * scale.y)
+                ),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, 1.0f).mul(scale)
+        );
+
+        drawSprite(
+                sprite.bottomMiddle,
+                new Vector2f(
+                        realPosition.x + (sprite.bottomLeft.getRegion().z * scale.x),
+                        realPosition.y + (sprite.topLeft.getRegion().w * scale.y) + numHeightNeeded * (sprite.middleLeft.getRegion().w * scale.y)
+                ),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(numWidthNeeded, 1.0f).mul(scale)
+        );
+
+        drawSprite(
+                sprite.bottomRight,
+                new Vector2f(
+                        realPosition.x + (sprite.bottomLeft.getRegion().z * scale.x) + numWidthNeeded * (sprite.bottomMiddle.getRegion().z * scale.x),
+                        realPosition.y + (sprite.topRight.getRegion().w * scale.y) + numHeightNeeded * (sprite.middleRight.getRegion().w * scale.y)
+                ),
+                zIndex,
+                tint,
+                rotation,
+                new Vector2f(1.0f, 1.0f).mul(scale)
         );
     }
 
@@ -919,23 +1091,104 @@ public class Spritebatch {
         );
     }
 
+    public void drawText(String text, Font font, Vector2f position) {
+        drawText(
+                text,
+                font,
+                position,
+                0,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawText(String text, Font font, Vector2f position, int zIndex) {
+        drawText(
+                text,
+                font,
+                position,
+                zIndex,
+                Color.WHITE,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
     public void drawText(String text, Font font, Vector2f position, int zIndex, Color color) {
-        Vector2f realPosition = new Vector2f(position.x, position.y);
+        drawText(
+                text,
+                font,
+                position,
+                zIndex,
+                color,
+                0.0f,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawText(String text, Font font, Vector2f position, int zIndex, Color color, float rotation) {
+        drawText(
+                text,
+                font,
+                position,
+                zIndex,
+                color,
+                rotation,
+                new Vector2f(1.0f, 1.0f),
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    public void drawText(String text, Font font, Vector2f position, int zIndex, Color color, float rotation, Vector2f scale) {
+        drawText(
+                text,
+                font,
+                position,
+                zIndex,
+                color,
+                rotation,
+                scale,
+                new Vector2f(0.0f, 0.0f)
+        );
+    }
+
+    // TODO: Add rotation support (not useful for now).
+    // TODO: Better handling of scaling
+    public void drawText(String text, Font font, Vector2f position, int zIndex, Color color, float rotation, Vector2f scale, Vector2f origin) {
+        Font realFont = null;
+
+        if (scale.x == scale.y) {
+            realFont = Resources.loadFont(font.getPath(), (int)(font.getSize() * scale.x));
+        } else {
+            realFont = font;
+        }
+
+        Vector2f debugPosition = new Vector2f(position.x - scale.x * origin.x, position.y - scale.y * origin.y);
+        Vector2f realPosition = new Vector2f(debugPosition.x, debugPosition.y + realFont.getAverageTextHeight());
 
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
             if (c == ' ') {
-                realPosition.add(new Vector2f(font.getTextWidth(" "), 0));
+                realPosition.add(new Vector2f(realFont.getTextWidth(" "), 0));
             } else if (c == '\n') {
-                realPosition = new Vector2f(position.x, realPosition.y + font.getSize());
+                realPosition = new Vector2f(position.x, realPosition.y + realFont.getSize());
             } else if (c == '\t') {
-                realPosition.add(new Vector2f(font.getTextWidth(" ") * 4, 0));
+                realPosition.add(new Vector2f(realFont.getTextWidth(" ") * 4, 0));
             } else {
-                Font.GlyphInfo glyphInfo = font.getGlyphInfo(c);
-                drawGlyph(realPosition, font, glyphInfo.position, glyphInfo.region, zIndex, color);
-                realPosition.add(new Vector2f(glyphInfo.position.z + font.getKerning(), 0));
+                Font.GlyphInfo glyphInfo = realFont.getGlyphInfo(c);
+
+                drawGlyph(new Vector2f(realPosition.x, realPosition.y), realFont, glyphInfo.position, glyphInfo.region, zIndex, color, rotation, scale, origin);
+                realPosition.add(new Vector2f(glyphInfo.position.z + realFont.getKerning(), 0));
             }
+        }
+
+        if (Game.get().isDebugTexts()) {
+            drawFilledRectangle(debugPosition, new Vector2f(realFont.getTextWidth(text), realFont.getTextHeight(text)), zIndex, new Color(1.0f, 0.0f, 0.0f, 0.3f));
         }
     }
 
@@ -951,7 +1204,7 @@ public class Spritebatch {
         renderer.draw();
     }
 
-    private void drawGlyph(Vector2f position, Font font, Vector4f characterPositions, Vector4f characterRegion, int zIndex, Color color) {
+    private void drawGlyph(Vector2f position, Font font, Vector4f characterPositions, Vector4f characterRegion, int zIndex, Color color, float rotation, Vector2f scale, Vector2f origin) {
         Element element = new Element();
 
         element.texture = font.getTexture();
@@ -961,11 +1214,11 @@ public class Spritebatch {
         // When drawing a glyph, dimensions serve as a positionEnd
         element.dimensions = new Vector2f(characterPositions.z, characterPositions.w);
         element.dimensions.add(position);
-        element.scale = new Vector2f(1.0f, 1.0f);
-        element.origin = new Vector2f(0.0f, 0.0f);
+        element.scale = scale;
+        element.origin = origin;
         element.region = characterRegion;
         element.tint = new Color(color.r, color.g, color.b, color.a);
-        element.rotation = 0.0f;
+        element.rotation = rotation;
         element.zIndex = zIndex;
         element.type = ElementType.TruetypeFont;
 

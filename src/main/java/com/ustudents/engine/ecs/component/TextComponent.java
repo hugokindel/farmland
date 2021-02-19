@@ -5,6 +5,7 @@ import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import org.joml.Vector2f;
 
 @JsonSerializable
 public class TextComponent extends Component {

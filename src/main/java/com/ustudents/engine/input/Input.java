@@ -143,7 +143,7 @@ public class Input {
     }
 
     public static Vector2f getMousePos() {
-        return mousePos;
+        return mousePos == null ? new Vector2f(-1, -1) : mousePos;
     }
 
     public GLFWKeyCallback getKeyBoard() {

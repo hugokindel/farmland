@@ -4,7 +4,11 @@ import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.ecs.System;
 import com.ustudents.engine.ecs.component.*;
+import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.farmland.Farmland;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 public abstract class RenderSystem extends System {
     public RenderSystem(Registry registry) {
@@ -14,9 +18,62 @@ public abstract class RenderSystem extends System {
         requireComponent(RenderableComponent.class);
     }
 
+    // TOOD: Optimize
     protected void renderElement(Spritebatch spritebatch, Entity entity) {
         TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
         RenderableComponent renderableComponent = entity.getComponent(RenderableComponent.class);
+
+        if (entity.hasComponent(ButtonComponent.class)) {
+            ButtonComponent buttonComponent = entity.getComponent(ButtonComponent.class);
+
+            Vector2f textSize = new Vector2f(
+                    buttonComponent.textComponent.font.getTextWidth(buttonComponent.textComponent.text),
+                    buttonComponent.textComponent.font.getTextHeight(buttonComponent.textComponent.text)
+            );
+
+            Vector2f buttonSize = buttonComponent.nineSlicedSpriteComponent.sprite.getCompleteNeededSize(textSize);
+
+            spritebatch.drawNineSlicedSprite(
+                    buttonComponent.nineSlicedSpriteComponent.sprite,
+                    transformComponent.position,
+                    textSize,
+                    renderableComponent.zIndex,
+                    Color.WHITE,
+                    transformComponent.rotation,
+                    transformComponent.scale,
+                    new Vector2f(buttonSize.x / 2, buttonSize.y / 2)
+            );
+
+            spritebatch.drawText(
+                    buttonComponent.textComponent.text,
+                    buttonComponent.textComponent.font,
+                    transformComponent.position,
+                    renderableComponent.zIndex,
+                    Color.WHITE,
+                    transformComponent.rotation,
+                    transformComponent.scale,
+                    new Vector2f(
+                            buttonComponent.textComponent.font.getTextWidth(buttonComponent.textComponent.text) / 2,
+                            buttonComponent.textComponent.font.getTextHeight(buttonComponent.textComponent.text) / 2
+                    )
+            );
+
+            /*if (Farmland.get().isDebugTexts()) {
+                Vector4f buttonViewRect = new Vector4f(
+                        transformComponent.position.x - (buttonSize.x / 2),
+                        transformComponent.position.y - (buttonSize.y / 2),
+                        (transformComponent.position.x - (buttonSize.x / 2)) + buttonSize.x,
+                        (transformComponent.position.y - (buttonSize.y / 2)) + buttonSize.x
+                );
+
+                spritebatch.drawFilledRectangle(
+                        new Vector2f(buttonViewRect.x, buttonViewRect.y),
+                        new Vector2f(buttonSize.x, buttonSize.y),
+                        renderableComponent.zIndex,
+                        new Color(0, 1, 0, 0.3f)
+                );
+            }*/
+        }
 
         if (entity.hasComponent(CircleComponent.class)) {
             CircleComponent circleComponent = entity.getComponent(CircleComponent.class);
@@ -68,6 +125,21 @@ public abstract class RenderSystem extends System {
             }
         }
 
+        if (entity.hasComponent(NineSlicedSpriteComponent.class)) {
+            NineSlicedSpriteComponent spriteComponent = entity.getComponent(NineSlicedSpriteComponent.class);
+
+            spritebatch.drawNineSlicedSprite(
+                    spriteComponent.sprite,
+                    transformComponent.position,
+                    spriteComponent.size,
+                    renderableComponent.zIndex,
+                    spriteComponent.tint,
+                    transformComponent.rotation,
+                    transformComponent.scale,
+                    spriteComponent.origin
+            );
+        }
+
         if (entity.hasComponent(PointComponent.class)) {
             PointComponent pointComponent = entity.getComponent(PointComponent.class);
 
@@ -96,10 +168,9 @@ public abstract class RenderSystem extends System {
         if (entity.hasComponent(SpriteComponent.class)) {
             SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
 
-            spritebatch.drawTexture(
-                    spriteComponent.sprite.getTexture(),
+            spritebatch.drawSprite(
+                    spriteComponent.sprite,
                     transformComponent.position,
-                    spriteComponent.sprite.getRegion(),
                     renderableComponent.zIndex,
                     spriteComponent.tint,
                     transformComponent.rotation,

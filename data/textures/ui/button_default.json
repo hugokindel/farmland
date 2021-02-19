@@ -1,55 +1,55 @@
 {
     "texturePath": "ui/button_default.png",
     "spriteRegions": {
-        "top_left": {
+        "topLeft": {
             "x": 0,
             "y": 0,
             "z": 5,
             "w": 5
         },
-        "top_middle": {
+        "topMiddle": {
             "x": 6,
             "y": 0,
             "z": 1,
             "w": 5
         },
-        "top_right": {
+        "topRight": {
             "x": 8,
             "y": 0,
             "z": 5,
             "w": 5
         },
-        "middle_left": {
+        "middleLeft": {
             "x": 0,
             "y": 6,
             "z": 5,
             "w": 1
         },
-        "middle_middle": {
+        "middle": {
             "x": 6,
             "y": 6,
             "z": 1,
             "w": 1
         },
-        "middle_right": {
+        "middleRight": {
             "x": 8,
             "y": 6,
             "z": 5,
             "w": 1
         },
-        "bottom_left": {
+        "bottomLeft": {
             "x": 0,
             "y": 8,
             "z": 5,
             "w": 5
         },
-        "bottom_middle": {
+        "bottomMiddle": {
             "x": 6,
             "y": 8,
             "z": 1,
             "w": 5
         },
-        "bottom_right": {
+        "bottomRight": {
             "x": 8,
             "y": 8,
             "z": 5,

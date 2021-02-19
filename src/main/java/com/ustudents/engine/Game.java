@@ -7,9 +7,11 @@ import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;
 import com.ustudents.engine.input.Input;
+import com.ustudents.engine.input.Key;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
@@ -66,6 +68,10 @@ public abstract class Game extends Runnable {
     private boolean shouldResize;
 
     protected Texture cursorTexture;
+
+    protected boolean showDebugInterface;
+
+    protected boolean debugTexts;
 
     /** Class constructor. */
     public Game() {
@@ -179,7 +185,7 @@ public abstract class Game extends Runnable {
     private void _update() {
         timer.update();
 
-        if (Input.isKeyPressed(GLFW.GLFW_KEY_F1)) {
+        if (Input.isKeyPressed(Key.F1)) {
             imGuiVisible = !imGuiVisible;
 
             if (isImGuiActive()) {
@@ -187,6 +193,11 @@ public abstract class Game extends Runnable {
             } else if (!forceNoCustomCursor && cursorTexture != null) {
                 glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
             }
+        }
+
+        if (Input.isKeyPressed(Key.F2)) {
+            showDebugInterface = !showDebugInterface;
+            debugTexts = !debugTexts;
         }
 
         float dt = timer.getDeltaTime();
@@ -210,6 +221,8 @@ public abstract class Game extends Runnable {
 
     /** Renders the game. */
     private void _render() {
+        Spritebatch spritebatch = sceneManager.getScene().getSpritebatch();
+
         timer.render();
         window.clear();
 
@@ -224,6 +237,15 @@ public abstract class Game extends Runnable {
         sceneManager.render();
         render();
 
+        if (showDebugInterface) {
+            Vector2i windowSize = getWindow().getSize();
+
+            spritebatch.begin(sceneManager.getScene().getUiCamera());
+            spritebatch.drawLine(new Vector2f(0, (float)windowSize.y / 2), new Vector2f(windowSize.x, (float)windowSize.y / 2));
+            spritebatch.drawLine(new Vector2f((float)windowSize.x / 2, 0), new Vector2f((float)windowSize.x / 2, windowSize.y));
+            spritebatch.end();
+        }
+
         if (!noImGui && imGuiVisible) {
             sceneManager.renderImGui();
             imGuiManager.endFrame();
@@ -231,8 +253,8 @@ public abstract class Game extends Runnable {
 
         if (!isImGuiActive() && sceneManager.getScene() != null &&
                 cursorTexture != null && Input.getMousePos() != null) {
-            sceneManager.getScene().getSpritebatch().begin(sceneManager.getScene().getCursorCamera());
-            sceneManager.getScene().getSpritebatch().drawTexture(
+            spritebatch.begin(sceneManager.getScene().getCursorCamera());
+            spritebatch.drawTexture(
                     cursorTexture, Input.getMousePos(),
                     new Vector4f(0, 0, 11, 14),
                     0,
@@ -240,7 +262,7 @@ public abstract class Game extends Runnable {
                     0,
                     new Vector2f(2, 2)
             );
-            sceneManager.getScene().getSpritebatch().end();
+            spritebatch.end();
         }
 
         window.swap();
@@ -336,5 +358,13 @@ public abstract class Game extends Runnable {
 
     public SoundManager getSoundManager() {
         return soundManager;
+    }
+
+    public boolean isShowDebugInterface() {
+        return showDebugInterface;
+    }
+
+    public boolean isDebugTexts() {
+        return debugTexts;
     }
 }

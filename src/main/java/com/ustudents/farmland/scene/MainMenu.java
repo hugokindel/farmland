@@ -24,7 +24,10 @@ public class MainMenu extends Scene {
     Texture titleTexture;
     Font font;
     Font fontSmaller;
+    Font font2;
     Sound musicSound;
+    Spritesheet spritesheet;
+    NineSlicedSprite nineSlicedSprite;
 
     @Override
     public void initialize() {
@@ -33,8 +36,11 @@ public class MainMenu extends Scene {
         grassTexture = Resources.loadTexture("examples/grass.png");
         titleTexture = Resources.loadTexture("title.png");
         font = Resources.loadFont("default.ttf", 36);
+        font2 = Resources.loadFont("kobold.ttf", 16);
         fontSmaller = Resources.loadFont("default.ttf", 24);
         musicSound = Resources.loadSound("backgroundMenu1.ogg");
+        spritesheet = Resources.loadSpritesheet("ui/button_default.json");
+        nineSlicedSprite = new NineSlicedSprite(spritesheet);
 
         initializeBackground();
         initializeUi();
@@ -86,19 +92,20 @@ public class MainMenu extends Scene {
             Entity button = registry.createEntity();
             button.setName(buttonsName[i] + "Label");
             button.setParent(uiContainer);
-            button.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f - font.getTextWidth(buttons[i]) / 2, 300 + 50 * i), new Vector2f(1.5f, 1.5f));
-            button.addComponent(TextComponent.class, buttons[i], font);
-            button.addComponent(RenderableComponent.class);
+            button.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f, 300 + 80 * i), new Vector2f(3.1f, 3.1f));
+            button.addComponent(ButtonComponent.class, buttons[i]);
+            button.addComponent(RenderableComponent.class, 100);
             button.addComponent(UiComponent.class);
         }
 
         Entity stats = registry.createEntity();
         stats.setName("statsLabel");
         stats.setParent(uiContainer);
-        stats.addComponent(TransformComponent.class, new Vector2f(10, 25), new Vector2f(1, 1));
+        stats.addComponent(TransformComponent.class, new Vector2f(10, 10), new Vector2f(1, 1));
         stats.addComponent(TextComponent.class, "", fontSmaller);
         stats.addComponent(RenderableComponent.class);
         stats.addComponent(UiComponent.class);
+
     }
 
     public void initializeMusic() {
@@ -119,7 +126,15 @@ public class MainMenu extends Scene {
 
     @Override
     public void render() {
+        /*spritebatch.begin(camera);
+        nine(new Vector2f(10, 10), new Vector2f(font2.getTextWidth("Solo"), font2.getTextHeight("Solo") / 2), "Solo", font2);
+        spritebatch.end();*/
+    }
 
+    public void nine(Vector2f position, Vector2f size, String text, Font font) {
+        Vector2f neededSize = nineSlicedSprite.getCompleteNeededSize(size);
+        spritebatch.drawNineSlicedSprite(nineSlicedSprite, position, size, 0, Color.WHITE, 0, new Vector2f(1, 1), new Vector2f(neededSize.x / 2, neededSize.y / 2));
+        spritebatch.drawText(text, font, position, 0, Color.WHITE, 0, new Vector2f(1, 1), new Vector2f(font.getTextWidth(text) / 2, font.getTextHeight(text) / 2));
     }
 
     @Override

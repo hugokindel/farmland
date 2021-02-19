@@ -387,7 +387,7 @@ public class Resources {
         }
     }
     
-    public Spritesheet loadSpritesheet(String filePath) {
+    public static Spritesheet loadSpritesheet(String filePath) {
         if (!spritesheets.containsKey(filePath)) {
             if (Game.isDebugging()) {
                 Out.printlnDebug("Spritesheet loaded: " + getTexturesDirectory() + "/" + filePath + "");
@@ -406,7 +406,7 @@ public class Resources {
         return spritesheet;
     }
     
-    public Spritesheet getSpritesheet(String filePath) {
+    public static Spritesheet getSpritesheet(String filePath) {
         return spritesheets.get(filePath);
     }
 }

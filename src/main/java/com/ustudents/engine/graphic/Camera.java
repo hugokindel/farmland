@@ -196,11 +196,15 @@ public class Camera {
     }
 
     public Vector2f worldCoordToScreenCoord(Vector2f worldCoord) {
-        Vector3f value = new Vector3f();
-        Vector2i windowSize = Farmland.get().getWindow().getSize();
-        viewProjectionMatrix.project(new Vector3f(worldCoord.x, worldCoord.y, 0),
-                new int[] {0, 0, windowSize.x, windowSize.y}, value);
-        return new Vector2f((float)windowSize.x / 2 + value.x, value.y - (float)windowSize.y / 2);
+        if (type == Type.UI) {
+            return worldCoord;
+        } else {
+            Vector3f value = new Vector3f();
+            Vector2i windowSize = Farmland.get().getWindow().getSize();
+            viewProjectionMatrix.project(new Vector3f(worldCoord.x, worldCoord.y, 0),
+                    new int[] {0, 0, windowSize.x, windowSize.y}, value);
+            return new Vector2f((float)windowSize.x / 2 + value.x, value.y - (float)windowSize.y / 2);
+        }
     }
 
     public float getZoom() {
