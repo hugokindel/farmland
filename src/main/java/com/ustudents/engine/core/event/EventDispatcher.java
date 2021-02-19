@@ -22,11 +22,17 @@ public class EventDispatcher {
 
     public void dispatch(Object data) {
         for (EventListener listener : listeners) {
-            listener.onReceived(dataType, data);
+            if (listener != null) {
+                listener.onReceived(dataType, data);
+            }
         }
     }
 
     public void add(EventListener listener) {
         listeners.add(listener);
+    }
+
+    public void remove(EventListener listener) {
+        listeners.remove(listener);
     }
 }
