@@ -5,7 +5,6 @@ import com.ustudents.engine.core.event.EventData;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.core.cli.print.Out;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
@@ -29,10 +28,15 @@ public class Window {
     }
 
     private String name;
+
     private Vector2i size;
+
     private long windowHandle;
+
     private String glslVersion;
+
     public Input input;
+
     public EventDispatcher sizeChanged;
 
     public void initialize(String name, Vector2i size, boolean vsync) {
@@ -99,18 +103,14 @@ public class Window {
         glfwSetWindowSizeCallback(windowHandle, new GLFWWindowSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                needsResize(new Vector2i(width, height));
-                SizeChangedEventData event = new SizeChangedEventData();
-                event.newSize = new Vector2i(width, height);
-                sizeChanged.dispatch(event);
+                resize(new Vector2i(width, height));
+                sizeChanged.dispatch(new SizeChangedEventData() {{
+                    newSize = new Vector2i(width, height);
+                }});
             }
         });
 
-        if (Game.get().isImGuiToolsEnabled()) {
-            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        } else {
-            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        }
+        actualizeCursorType();
     }
 
     public void clear() {
@@ -137,12 +137,24 @@ public class Window {
         }
     }
 
-    public boolean shouldClose() {
+    public void actualizeCursorType() {
+        if (Game.get().isImGuiToolsEnabled()) {
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
+    }
+
+    public boolean shouldQuit() {
         return glfwWindowShouldClose(windowHandle);
     }
 
     public void pollEvents() {
         glfwPollEvents();
+    }
+
+    public Window get() {
+        return Game.get().getWindow();
     }
 
     public String getName() {
@@ -211,7 +223,7 @@ public class Window {
         glfwSetWindowIcon(windowHandle, imagebf);
     }
 
-    private void needsResize(Vector2i size) {
+    private void resize(Vector2i size) {
         this.size = size;
         Game.get().forceResize();
     }

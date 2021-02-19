@@ -32,7 +32,8 @@ public class NineSlicedSprite {
     @Editable
     public Sprite bottomRight;
 
-    public NineSlicedSprite(Sprite topLeft, Sprite topMiddle, Sprite topRight, Sprite middleLeft, Sprite middle, Sprite middleRight, Sprite bottomLeft, Sprite bottomMiddle, Sprite bottomRight) {
+    public NineSlicedSprite(Sprite topLeft, Sprite topMiddle, Sprite topRight, Sprite middleLeft, Sprite middle,
+                            Sprite middleRight, Sprite bottomLeft, Sprite bottomMiddle, Sprite bottomRight) {
         this.topLeft = topLeft;
         this.topMiddle = topMiddle;
         this.topRight = topRight;
@@ -56,8 +57,11 @@ public class NineSlicedSprite {
         this.bottomRight = spritesheet.getSprite("bottomRight");
     }
 
-    public Vector2f getCompleteNeededSize(Vector2f size) {
-        Vector2f realSize = new Vector2f(size.x == 0 ? 1 : size.x, size.y == 0 ? 1 : size.y);
+    public Vector2f getSizeForContent(Vector2f contentSize) {
+        Vector2f realSize = new Vector2f(
+                contentSize.x == 0 ? 1 : contentSize.x,
+                contentSize.y == 0 ? 1 : contentSize.y
+        );
 
         return new Vector2f(
                 topLeft.getRegion().z + realSize.x + topRight.getRegion().z,

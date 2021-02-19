@@ -2,7 +2,8 @@ package com.ustudents.engine.input;
 
 import org.lwjgl.glfw.*;
 
-@SuppressWarnings({"unused"})
+/** Constants for keyboard keys. */
+@SuppressWarnings("unused")
 public class Key {
 	public static final int Space = GLFW.GLFW_KEY_SPACE;
 	public static final int Apostrophe = GLFW.GLFW_KEY_APOSTROPHE;

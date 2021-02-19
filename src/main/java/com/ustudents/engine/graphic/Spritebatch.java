@@ -899,8 +899,7 @@ public class Spritebatch {
             }
         }
 
-        // TODO: Put back ?
-        /*if (Game.get().isDebugTexts()) {
+        if (Game.get().isDebugToolsEnabled() && Game.get().getDebugTools().isTextBoxEnabled()) {
             drawRectangle(new RectangleData(debugPosition,
                     new Vector2f(
                             realFont.getTextWidth(textRenderer.text),
@@ -909,7 +908,7 @@ public class Spritebatch {
                 zIndex = textRenderer.zIndex;
                 color = new Color(1.0f, 0.0f, 0.0f, 0.3f);
             }});
-        }*/
+        }
     }
 
     public void end() {

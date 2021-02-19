@@ -9,7 +9,7 @@ public abstract class BehaviourComponent extends Component {
 
     public abstract void render();
 
-    public Camera getRelatedCamera() {
+    public Camera getCamera() {
         if (entity.hasComponent(UiComponent.class)) {
             return Farmland.get().getSceneManager().getScene().getUiCamera();
         }

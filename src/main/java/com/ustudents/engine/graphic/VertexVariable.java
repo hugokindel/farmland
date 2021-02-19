@@ -4,9 +4,13 @@ import static org.lwjgl.opengl.GL33.*;
 
 public class VertexVariable {
     public final String name;
+
     public final int type;
+
     public final int typeSize;
+
     public final int size;
+
     public final int location;
 
     public VertexVariable(String name, int type, int size, int location) {

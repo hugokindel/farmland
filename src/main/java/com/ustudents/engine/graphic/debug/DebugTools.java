@@ -2,7 +2,6 @@ package com.ustudents.engine.graphic.debug;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.scene.Scene;
@@ -17,6 +16,8 @@ public class DebugTools {
     private boolean statisticsEnabled = true;
 
     private boolean gridEnabled = true;
+
+    private boolean textBoxEnabled = true;
 
     private Font debugFont;
 
@@ -79,5 +80,21 @@ public class DebugTools {
 
     public void setGridEnabled(boolean gridEnabled) {
         this.gridEnabled = gridEnabled;
+    }
+
+    public boolean isTextBoxEnabled() {
+        return textBoxEnabled;
+    }
+
+    public void setTextBoxEnabled(boolean textBoxEnabled) {
+        this.textBoxEnabled = textBoxEnabled;
+    }
+
+    public Font getDebugFont() {
+        return debugFont;
+    }
+
+    public void setDebugFont(Font debugFont) {
+        this.debugFont = debugFont;
     }
 }

@@ -2,9 +2,7 @@ package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.graphic.debug.DebugTools;
 import com.ustudents.engine.utility.TypeUtil;
-import com.ustudents.engine.graphic.imgui.ImGuiTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,22 +19,29 @@ public class SceneManager {
     private boolean transitioningScene = false;
 
     /**
-     * Creates a scene of the given type.
+     * Changes the current scene to the given scene.
+     *
+     * @param scene The new current scene.
+     */
+    public void changeScene(Scene scene) {
+        scenes.add(scene);
+        transitioningScene = true;
+    }
+
+    /**
+     * Changes the current scene to the given scene of specific type.
      *
      * @param classType The scene type class.
      * @param args The scene type constructor arguments.
      * @param <T> The scene type.
-     *
-     * @return the scene.
      */
+    @Deprecated
     public <T extends Scene> void changeScene(Class<T> classType, Object... args) {
         if (args.length == 0) {
-            scenes.add(TypeUtil.createInstance(classType));
+            changeScene(TypeUtil.createInstance(classType));
         } else {
-            scenes.add(TypeUtil.createInstance(classType, args));
+            changeScene(TypeUtil.createInstance(classType, args));
         }
-
-        transitioningScene = true;
     }
 
     /** Updates the scene. */
@@ -100,7 +105,7 @@ public class SceneManager {
             }
 
             scenes.get(currentSceneIndex).create(this);
-            scenes.get(currentSceneIndex)._initialize();
+            scenes.get(currentSceneIndex).initializeInternals();
 
             transitioningScene = false;
 

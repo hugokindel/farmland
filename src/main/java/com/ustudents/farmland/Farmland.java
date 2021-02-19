@@ -16,9 +16,13 @@ import java.util.ArrayList;
 @Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
 public class Farmland extends Game {
     private static ArrayList<Player> players;
+
     private static boolean playersIsInit;
+
     private static String kindOfGame;
+
     private static boolean isInGame;
+
     private static GoalComponent goal;
 
     @Override
@@ -29,22 +33,7 @@ public class Farmland extends Game {
         players = new ArrayList<>();
         goal = new GoalComponent();
 
-        sceneManager.changeScene(MainMenu.class);
-    }
-
-    @Override
-    protected void update(float dt) {
-
-    }
-
-    @Override
-    protected void render() {
-
-    }
-
-    @Override
-    protected void destroy() {
-
+        sceneManager.changeScene(new MainMenu());
     }
 
     public static ArrayList<Player> getPlayers() {

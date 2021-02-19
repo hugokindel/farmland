@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 
 import static org.lwjgl.BufferUtils.createByteBuffer;
 
+/** Utility functions for file handling. */
 public class FileUtil {
     /**
      * Creates directories recursively if needed (meaning one or more folder doesn't exist).

@@ -79,7 +79,7 @@ public class ButtonComponent extends BehaviourComponent {
                 label.font.getTextHeight(label.text)
         );
 
-        Vector2f buttonSize = sprite.parts.getCompleteNeededSize(textSize);
+        Vector2f buttonSize = sprite.parts.getSizeForContent(textSize);
 
         sprite.origin = new Vector2f(buttonSize.x / 2, buttonSize.y / 2);
 
@@ -97,7 +97,7 @@ public class ButtonComponent extends BehaviourComponent {
     @Override
     public void update(float dt) {
         TransformComponent comp = entity.getComponent(TransformComponent.class);
-        Camera camera = getRelatedCamera();
+        Camera camera = getCamera();
         Vector2f cursorPos = Input.getMousePos();
         Vector2f buttonPos = camera.worldCoordToScreenCoord(entity.getComponent(TransformComponent.class).position);
         Vector2f realButtonSize = new Vector2f(size.x * comp.scale.x, size.y * comp.scale.y);

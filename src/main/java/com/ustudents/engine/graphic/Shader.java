@@ -14,13 +14,18 @@ import java.util.Set;
 
 import static org.lwjgl.opengl.GL32.*;
 
-//@SuppressWarnings({"unused"})
+@SuppressWarnings("unused")
 public class Shader {
     private int programHandle;
+
     private int vertexShaderHandle;
+
     private int fragmentShaderHandle;
+
     private Set<VertexVariable> vertexAttributes;
+
     private Set<VertexVariable> uniformVariables;
+
     private boolean destroyed;
 
     public Shader(String vertexShader, String fragmentShader) {
@@ -441,17 +446,5 @@ public class Shader {
 
     private void destroyProgram() {
         glDeleteProgram(programHandle);
-    }
-
-    @Override
-    public String toString() {
-        return "Shader{" +
-                "programHandle=" + programHandle +
-                ", vertexShaderHandle=" + vertexShaderHandle +
-                ", fragmentShaderHandle=" + fragmentShaderHandle +
-                ", vertexAttributes=" + vertexAttributes +
-                ", uniformVariables=" + uniformVariables +
-                ", destroyed=" + destroyed +
-                '}';
     }
 }

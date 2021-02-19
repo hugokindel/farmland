@@ -30,10 +30,20 @@ public class Pair<T, U> {
         return object2;
     }
 
+    /**
+     * Sets the first object of the pair.
+     *
+     * @param object The value.
+     */
     public void setObject1(T object) {
         object1 = object;
     }
 
+    /**
+     * Sets the second object of the pair.
+     *
+     * @param object The value.
+     */
     public void setObject2(U object) {
         object2 = object;
     }

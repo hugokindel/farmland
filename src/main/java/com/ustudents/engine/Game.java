@@ -19,12 +19,9 @@ import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.Window;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL33;
 
 import java.util.Arrays;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
@@ -130,17 +127,134 @@ public abstract class Game extends Runnable {
         return 0;
     }
 
+    /** Quits the game. */
+    public void quit() {
+        shouldQuit = true;
+    }
+
+    /** Force a resize of the game render viewport and camera matrices before the next frame. */
+    public void forceResize() {
+        shouldResize = true;
+    }
+
+    /**
+     * Changes the game's window cursor.
+     *
+     * @param filePath The file path.
+     */
+    public void changeCursor(String filePath) {
+        if (!forceNoCustomCursor) {
+            cursorTexture = Resources.loadTexture(filePath);
+        }
+    }
+
+    /**
+     * Changes the game's window icon.
+     *
+     * @param filepath The file path.
+     */
+    public void changeIcon(String filepath) {
+        if (!forceNoCustomIcon) {
+            window.changeIcon(filepath);
+        }
+    }
+
+    /** @return the game. */
+    public static Game get() {
+        return game;
+    }
+
+    /** @return the instance's name. */
+    public static String getInstanceName() {
+        return instanceName;
+    }
+
+    /** @return the window. */
+    public Window getWindow() {
+        return window;
+    }
+
+    /** @return the sound manager. */
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
+
+
+    /** @return the scene manager. */
+    public SceneManager getSceneManager() {
+        return sceneManager;
+    }
+
+    /** @return the ImGui manager. */
+    public ImGuiManager getImGuiManager() {
+        return imGuiManager;
+    }
+
+    /** @return the timer. */
+    public Timer getTimer() {
+        return timer;
+    }
+
+    /** @return the debug tools (using ImGui). */
+    public ImGuiTools getImGuiTools() {
+        return imGuiTools;
+    }
+
+    /** @return if ImGui tools are enabled. */
+    public boolean isImGuiToolsEnabled() {
+        return !noImGui && imGuiToolsEnabled;
+    }
+
+    /** @return the debug tools. */
+    public DebugTools getDebugTools() {
+        return debugTools;
+    }
+
+    /** @return if the debug tools are enabled. */
+    public boolean isDebugToolsEnabled() {
+        return debugToolsEnabled;
+    }
+
+    /** @return if we are currently in a debugging session. */
+    public static boolean isDebugging() {
+        return get() != null && get().isDebugging;
+    }
+
+    /** @return if the V-Sync is enabled. */
+    public boolean getVsync() {
+        return vsync;
+    }
+
+    /**
+     * Changes the V-Sync state.
+     *
+     * @param vsync The new V-Sync state.
+     */
+    public void setVsync(boolean vsync) {
+        this.vsync = vsync;
+        Resources.setSetting("vsync", vsync);
+        window.setVsync(vsync);
+    }
+
     /** Initialize the game. */
-    protected abstract void initialize();
+    protected void initialize() {
+
+    }
 
     /** Updates the game's logic. */
-    protected abstract void update(float dt);
+    protected void update(float dt) {
+
+    }
 
     /** Renders the game on the screen. */
-    protected abstract void render();
+    protected void render() {
+
+    }
 
     /** Destroys the game's data. */
-    protected abstract void destroy();
+    protected void destroy() {
+
+    }
 
     /** Initialize everything. */
     private void initializeInternals(String[] args) {
@@ -183,27 +297,22 @@ public abstract class Game extends Runnable {
     private void startGameLoop() {
         window.pollEvents();
 
-        while (!window.shouldClose() && !shouldQuit) {
+        while (!window.shouldQuit() && !shouldQuit) {
             sceneManager.startFrame();
-            _update();
-            _render();
+            updateInternal();
+            renderInternal();
             sceneManager.endFrame();
             window.pollEvents();
         }
     }
 
     /** Updates the game logic. */
-    private void _update() {
+    private void updateInternal() {
         timer.update();
 
         if (Input.isKeyPressed(Key.F1)) {
             imGuiToolsEnabled = !imGuiToolsEnabled;
-
-            if (isImGuiToolsEnabled()) {
-                glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            } else if (!forceNoCustomCursor && cursorTexture != null) {
-                glfwSetInputMode(getWindow().getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-            }
+            window.actualizeCursorType();
         }
 
         if (Input.isKeyPressed(Key.F2)) {
@@ -216,28 +325,15 @@ public abstract class Game extends Runnable {
         update(dt);
     }
 
-    private void resizeViewport() {
-        Vector2i size = window.getSize();
-
-        GL33.glViewport(0, 0, size.x, size.y);
-
-        if (getSceneManager() != null && getSceneManager().getScene() != null) {
-            Scene scene = getSceneManager().getScene();
-            scene.getCamera().resize(size.x, size.y);
-            scene.getUiCamera().resize(size.x, size.y);
-            shouldResize = false;
-        }
-    }
-
     /** Renders the game. */
-    private void _render() {
+    private void renderInternal() {
         Spritebatch spritebatch = sceneManager.getScene().getSpritebatch();
 
         timer.render();
         window.clear();
 
         if (shouldResize) {
-            resizeViewport();
+            resizeViewportAndCameras();
         }
 
         if (!noImGui && imGuiToolsEnabled) {
@@ -289,85 +385,17 @@ public abstract class Game extends Runnable {
         }
     }
 
-    /** @return the scene manager. */
-    public SceneManager getSceneManager() {
-        return sceneManager;
-    }
+    /** Resizes the render viewport and every camera matrices. */
+    private void resizeViewportAndCameras() {
+        Vector2i size = window.getSize();
 
-    public Window getWindow() {
-        return window;
-    }
+        GL33.glViewport(0, 0, size.x, size.y);
 
-    public Timer getTimer() {
-        return timer;
-    }
-
-    public static boolean isDebugging() {
-        return get() != null && get().isDebugging;
-    }
-
-    public boolean getVsync() {
-        return vsync;
-    }
-
-    public void setVsync(boolean vsync) {
-        this.vsync = vsync;
-        Resources.setSetting("vsync", vsync);
-        window.setVsync(vsync);
-    }
-
-    public void quit() {
-        shouldQuit = true;
-    }
-
-    public static Game get() {
-        return game;
-    }
-
-    public static String getInstanceName() {
-        return instanceName;
-    }
-
-    public void forceResize() {
-        shouldResize = true;
-    }
-
-    public void changeCursor(String filePath) {
-        if (!forceNoCustomCursor) {
-            cursorTexture = Resources.loadTexture(filePath);
+        if (getSceneManager() != null && getSceneManager().getScene() != null) {
+            Scene scene = getSceneManager().getScene();
+            scene.getCamera().resize(size.x, size.y);
+            scene.getUiCamera().resize(size.x, size.y);
+            shouldResize = false;
         }
-    }
-
-    public void changeIcon(String filepath) {
-        if (!forceNoCustomIcon) {
-            window.changeIcon(filepath);
-        }
-    }
-
-    public ImGuiManager getImGuiManager() {
-        return imGuiManager;
-    }
-
-    public SoundManager getSoundManager() {
-        return soundManager;
-    }
-
-    /** @return the debug tools (using ImGui). */
-    public ImGuiTools getImGuiTools() {
-        return imGuiTools;
-    }
-
-    /** @return if ImGui tools are enabled. */
-    public boolean isImGuiToolsEnabled() {
-        return !noImGui && imGuiToolsEnabled;
-    }
-
-    /** @return the debug tools. */
-    public DebugTools getDebugTools() {
-        return debugTools;
-    }
-
-    public boolean isDebugToolsEnabled() {
-        return debugToolsEnabled;
     }
 }

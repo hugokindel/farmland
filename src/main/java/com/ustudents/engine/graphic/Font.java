@@ -1,8 +1,5 @@
 package com.ustudents.engine.graphic;
 
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
-import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.imgui.annotation.Editable;
 import com.ustudents.engine.utility.FileUtil;
 import org.joml.Vector4f;
@@ -18,11 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.ustudents.engine.core.Resources.getFontsDirectory;
-import static com.ustudents.engine.core.Resources.getTexturesDirectory;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-@JsonSerializable
+@Editable
 public class Font {
     public static class GlyphInfo {
         Vector4f position;
@@ -31,6 +27,12 @@ public class Font {
 
     private static final String defaultCharacterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
             "0123456789.,;:?!-_~#\"'&()[]{}^|`/\\@°+=*%€$<>ÀÁÂÄÆÇÈÉÊËÌÍÎÏÒÓÔÖŒÙÚÛÜàáâäæçèéêëìíîïòóôöœùúûü ";
+
+    @Editable
+    private Integer fontSize;
+
+    @Editable
+    private String path;
 
     private Texture texture;
 
@@ -58,25 +60,11 @@ public class Font {
 
     public float averageHeight;
 
-    @JsonSerializable
-    private Integer fontSize;
-
-    @JsonSerializable
-    String path;
-
     public Font(String filePath, int fontSize) {
         this.path = filePath.replace(getFontsDirectory() + "/", "");
         this.fontSize = fontSize;
         glyphInfoPerCharacter = new HashMap<>();
         loadFont(filePath);
-        widthPerText = new HashMap<>();
-        heightPerText = new HashMap<>();
-    }
-
-    @JsonSerializableConstructor
-    private void fromJson() {
-        glyphInfoPerCharacter = new HashMap<>();
-        loadFont(getFontsDirectory() + "/" + path);
         widthPerText = new HashMap<>();
         heightPerText = new HashMap<>();
     }
@@ -99,18 +87,23 @@ public class Font {
             data = FileUtil.readFile(filePath);
             ByteBuffer bitmap = BufferUtils.createByteBuffer(1024 * 1024);
             characterData = STBTTPackedchar.malloc(8333);
+
             if (!stbtt_PackBegin(pc, bitmap, 1024, 1024, 0, 1, MemoryUtil.NULL)) {
                 throw new IllegalStateException("Failed to initialize font");
             }
+
             if (!stbtt_PackFontRange(pc, data, 0, fontSize, ' ', characterData)) {
                 throw new IllegalStateException("Failed to pack font");
             }
+
             stbtt_PackEnd(pc);
+
             texture = new Texture(bitmap, 1024, 1024, 1);
         }
 
         for (int i = 0; i < characterSet.length(); i++) {
             char c = characterSet.charAt(i);
+
             glyphInfoPerCharacter.put(c, makeGlyphInfo(c));
         }
 
@@ -132,46 +125,6 @@ public class Font {
             lineGap = pLineGap.get(0);
             averageHeight = (ascent - descent + lineGap) * stbtt_ScaleForPixelHeight(info, fontSize) / 2;
         }
-    }
-
-    public boolean isDestroyed() {
-        return destroyed;
-    }
-
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public ByteBuffer getData() {
-        return data;
-    }
-
-    public int getSize() {
-        return fontSize;
-    }
-
-    public int getAscent() {
-        return ascent;
-    }
-
-    public int getDescent() {
-        return descent;
-    }
-
-    public int getLineGap() {
-        return lineGap;
-    }
-
-    public int getKerning() {
-        return kerning;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public GlyphInfo getGlyphInfo(char c) {
-        return glyphInfoPerCharacter.get(c);
     }
 
     // Implementation from: https://github.com/LWJGL/lwjgl3/blob/master/modules/samples/src/test/java/org/lwjgl/demo/stb/Truetype.java
@@ -216,10 +169,12 @@ public class Font {
         if (heightPerText.containsKey(text)) {
             return heightPerText.get(text);
         }
-        //return (ascent - descent + lineGap) * stbtt_ScaleForPixelHeight(info, fontSize);
+
         long numNewLines = text.chars().filter(l -> l == '\n').count();
         float height = averageHeight * (numNewLines + 1) + (numNewLines > 0 ? fontSize * (numNewLines - 1) : 0);
+
         heightPerText.put(text, height);
+
         return height;
     }
 
@@ -227,19 +182,44 @@ public class Font {
         return averageHeight;
     }
 
-    public float getBiggestCharacterHeight(String text) {
-        String firstLine = text.split("\n")[0];
-        float max = -getGlyphInfo(firstLine.charAt(0)).position.y;
+    public boolean isDestroyed() {
+        return destroyed;
+    }
 
-        for (int i = 1; i < firstLine.length(); i++) {
-            float height = -getGlyphInfo(firstLine.charAt(i)).position.y;
+    public Texture getTexture() {
+        return texture;
+    }
 
-            if (height > max) {
-                max = height;
-            }
-        }
+    public ByteBuffer getData() {
+        return data;
+    }
 
-        return max;
+    public int getSize() {
+        return fontSize;
+    }
+
+    public int getAscent() {
+        return ascent;
+    }
+
+    public int getDescent() {
+        return descent;
+    }
+
+    public int getLineGap() {
+        return lineGap;
+    }
+
+    public int getKerning() {
+        return kerning;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public GlyphInfo getGlyphInfo(char c) {
+        return glyphInfoPerCharacter.get(c);
     }
 
     private GlyphInfo makeGlyphInfo(char c) {
