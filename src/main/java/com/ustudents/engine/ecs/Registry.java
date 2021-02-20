@@ -4,6 +4,7 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
+import com.ustudents.engine.ecs.component.graphics.RenderableComponent;
 import com.ustudents.engine.utility.TypeUtil;
 
 import java.util.*;
@@ -43,6 +44,10 @@ public class Registry {
 
     /** Map to keep track of children per entity. */
     private final Map<Integer, List<Entity>> childrenPerEntity;
+
+    private final Map<Integer, Set<Component>> componentsPerEntity;
+
+    private final Map<Entity, Set<RenderableComponent>> renderableComponentsPerEntity;
 
     /** Set to keep track of entities at root (with no parent). */
     private final List<Entity> entitiesAtRoot;
@@ -93,6 +98,8 @@ public class Registry {
         tagsPerEntity = new HashMap<>();
         parentPerEntity = new HashMap<>();
         childrenPerEntity = new HashMap<>();
+        componentsPerEntity = new HashMap<>();
+        renderableComponentsPerEntity = new HashMap<>();
         entitiesAtRoot = new ArrayList<>();
         entitiesToBeAddedToSystems = new HashSet<>();
         entitiesToBeRemovedFromEverything = new HashSet<>();
@@ -194,6 +201,8 @@ public class Registry {
         enabledEntities.add(entity);
         signaturePerEntity.put(entityId, new BitSet());
         entitiesToBeAddedToSystems.add(entity);
+        componentsPerEntity.put(entityId, new HashSet<>());
+        renderableComponentsPerEntity.put(entity, new HashSet<>());
         totalNumberOfEntities++;
 
         if (Game.isDebugging()) {
@@ -592,8 +601,14 @@ public class Registry {
         ((ComponentPool<T>)componentPools.get(componentId)).set(entityId, component);
         signaturePerEntity.get(entityId).set(componentId);
 
+        componentsPerEntity.get(entityId).add(component);
+
         if (component instanceof BehaviourComponent) {
             ((BehaviourComponent)component).initialize();
+        }
+
+        if (component instanceof RenderableComponent) {
+            renderableComponentsPerEntity.get(entity).add((RenderableComponent) component);
         }
 
         if (Game.isDebugging()) {
@@ -646,18 +661,11 @@ public class Registry {
      * @return the components.
      */
     public Set<Component> getComponentsOfEntity(Entity entity) {
-        int entityId = entity.getId();
-        Set<Component> set = new HashSet<>();
+        return componentsPerEntity.get(entity.getId());
+    }
 
-        for (Pool pool : componentPools) {
-            ComponentPool<Component> componentPool = ((ComponentPool<Component>)pool);
-
-            if (componentPool.containsEntity(entityId)) {
-                set.add(componentPool.getFromEntity(entityId));
-            }
-        }
-
-        return set;
+    public Set<RenderableComponent> getRenderableComponentsOfEntity(Entity entity) {
+        return renderableComponentsPerEntity.get(entity);
     }
 
     /**
@@ -700,8 +708,13 @@ public class Registry {
         int componentId = componentTypeRegistry.getIdForType(classType);
         int entityId = entity.getId();
 
+        componentsPerEntity.get(entityId).remove(((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId));
         ((ComponentPool<T>)componentPools.get(componentId)).remove(entityId);
         signaturePerEntity.get(entityId).clear(componentId);
+
+        if (classType.isAssignableFrom(RenderableComponent.class)) {
+            renderableComponentsPerEntity.get(entity).remove((RenderableComponent) ((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId));
+        }
 
         if (Game.isDebugging()) {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " +
@@ -836,6 +849,8 @@ public class Registry {
             entityPerIndex.remove(entityId);
             enabledEntities.remove(entity);
             disabledEntities.remove(entity);
+            componentsPerEntity.remove(entityId);
+            renderableComponentsPerEntity.remove(entity);
 
             for (Pool pool : componentPools) {
                 if (pool != null) {

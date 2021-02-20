@@ -74,8 +74,17 @@ public class AnimatedSpriteComponent extends BehaviourComponent implements Rende
         this.origin = origin;
     }
 
+    public float currentCounter = 0.0f;
+    public final float timePerTurn = 90.0f; // 90 seconds
+
     @Override
     public void update(float dt) {
+        currentCounter += dt;
+
+        if (currentCounter >= timePerTurn) {
+            // fin du tour
+        }
+
         currentDuration += dt;
 
         if (currentDuration >= currentNeededDuration) {

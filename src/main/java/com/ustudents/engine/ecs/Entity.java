@@ -1,5 +1,7 @@
 package com.ustudents.engine.ecs;
 
+import com.ustudents.engine.ecs.component.graphics.RenderableComponent;
+
 import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
@@ -192,6 +194,10 @@ public class Entity {
     /** @return a set of its components. */
     public Set<Component> getComponents() {
         return registry.getComponentsOfEntity(this);
+    }
+
+    public Set<RenderableComponent> getRenderableComponents() {
+        return registry.getRenderableComponentsOfEntity(this);
     }
 
     /** @return the number of components it possess. */

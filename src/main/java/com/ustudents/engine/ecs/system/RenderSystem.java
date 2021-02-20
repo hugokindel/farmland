@@ -20,10 +20,8 @@ public abstract class RenderSystem extends System {
         TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
         RendererComponent rendererComponent = entity.getComponent(rendererType);
 
-        for (Component component : entity.getComponents()) {
-            if (component instanceof RenderableComponent) {
-                ((RenderableComponent)component).render(spritebatch, rendererComponent, transformComponent);
-            }
+        for (RenderableComponent renderableComponent : entity.getRenderableComponents()) {
+            renderableComponent.render(spritebatch, rendererComponent, transformComponent);
         }
     }
 }
