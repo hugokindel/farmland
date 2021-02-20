@@ -99,7 +99,10 @@ public class JsonReader {
      */
     public static Map<String, Object> readMap(String filepath) {
         try {
-            return new JsonReader(filepath).parseMap();
+            JsonReader reader = new JsonReader(filepath);
+            Map<String, Object> map = reader.parseMap();
+            reader.reader.close();
+            return map;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -114,7 +117,10 @@ public class JsonReader {
      */
     public static Map<String, Object> readMap(InputStream file) {
         try {
-            return new JsonReader(file).parseMap();
+            JsonReader reader = new JsonReader(file);
+            Map<String, Object> map = reader.parseMap();
+            reader.reader.close();
+            return map;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -144,7 +150,10 @@ public class JsonReader {
      */
     public static List<Object> readArray(String filepath) {
         try {
-            return new JsonReader(filepath).parseArray();
+            JsonReader reader = new JsonReader(filepath);
+            List<Object> map = reader.parseArray();
+            reader.reader.close();
+            return map;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -159,7 +168,10 @@ public class JsonReader {
      */
     public static List<Object> readArray(InputStream file) {
         try {
-            return new JsonReader(file).parseArray();
+            JsonReader reader = new JsonReader(file);
+            List<Object> map = reader.parseArray();
+            reader.reader.close();
+            return map;
         } catch (Exception e) {
             e.printStackTrace();
         }
