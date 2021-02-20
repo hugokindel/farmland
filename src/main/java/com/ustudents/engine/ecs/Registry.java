@@ -49,6 +49,8 @@ public class Registry {
 
     private final Map<Entity, Set<RenderableComponent>> renderableComponentsPerEntity;
 
+    private final Map<Entity, Set<BehaviourComponent>> behaviourComponentsPerEntity;
+
     /** Set to keep track of entities at root (with no parent). */
     private final List<Entity> entitiesAtRoot;
 
@@ -100,6 +102,7 @@ public class Registry {
         childrenPerEntity = new HashMap<>();
         componentsPerEntity = new HashMap<>();
         renderableComponentsPerEntity = new HashMap<>();
+        behaviourComponentsPerEntity = new HashMap<>();
         entitiesAtRoot = new ArrayList<>();
         entitiesToBeAddedToSystems = new HashSet<>();
         entitiesToBeRemovedFromEverything = new HashSet<>();
@@ -203,6 +206,7 @@ public class Registry {
         entitiesToBeAddedToSystems.add(entity);
         componentsPerEntity.put(entityId, new HashSet<>());
         renderableComponentsPerEntity.put(entity, new HashSet<>());
+        behaviourComponentsPerEntity.put(entity, new HashSet<>());
         totalNumberOfEntities++;
 
         if (Game.isDebugging()) {
@@ -605,6 +609,8 @@ public class Registry {
 
         if (component instanceof BehaviourComponent) {
             ((BehaviourComponent)component).initialize();
+
+            behaviourComponentsPerEntity.get(entity).add((BehaviourComponent) component);
         }
 
         if (component instanceof RenderableComponent) {
@@ -668,6 +674,10 @@ public class Registry {
         return renderableComponentsPerEntity.get(entity);
     }
 
+    public Set<BehaviourComponent> getBehaviourComponentsOfEntity(Entity entity) {
+        return behaviourComponentsPerEntity.get(entity);
+    }
+
     /**
      * Gets the number of components of the entity.
      * 
@@ -714,6 +724,10 @@ public class Registry {
 
         if (classType.isAssignableFrom(RenderableComponent.class)) {
             renderableComponentsPerEntity.get(entity).remove((RenderableComponent) ((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId));
+        }
+
+        if (classType.isAssignableFrom(BehaviourComponent.class)) {
+            behaviourComponentsPerEntity.get(entity).remove((BehaviourComponent) ((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId));
         }
 
         if (Game.isDebugging()) {
@@ -851,6 +865,7 @@ public class Registry {
             disabledEntities.remove(entity);
             componentsPerEntity.remove(entityId);
             renderableComponentsPerEntity.remove(entity);
+            behaviourComponentsPerEntity.remove(entity);
 
             for (Pool pool : componentPools) {
                 if (pool != null) {

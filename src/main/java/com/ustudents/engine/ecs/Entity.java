@@ -1,6 +1,8 @@
 package com.ustudents.engine.ecs;
 
+import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 import com.ustudents.engine.ecs.component.graphics.RenderableComponent;
+import com.ustudents.engine.ecs.system.BehaviourSystem;
 
 import java.util.BitSet;
 import java.util.List;
@@ -198,6 +200,10 @@ public class Entity {
 
     public Set<RenderableComponent> getRenderableComponents() {
         return registry.getRenderableComponentsOfEntity(this);
+    }
+
+    public Set<BehaviourComponent> getBehaviourComponents() {
+        return registry.getBehaviourComponentsOfEntity(this);
     }
 
     /** @return the number of components it possess. */

@@ -16,10 +16,8 @@ public class BehaviourSystem extends System {
     @Override
     public void update(float dt) {
         for (Entity entity : getEntities()) {
-            for (Component component : entity.getComponents()) {
-                if (component instanceof BehaviourComponent) {
-                    ((BehaviourComponent)component).update(dt);
-                }
+            for (BehaviourComponent behaviourComponent : entity.getBehaviourComponents()) {
+                behaviourComponent.update(dt);
             }
         }
     }
@@ -27,10 +25,8 @@ public class BehaviourSystem extends System {
     @Override
     public void render() {
         for (Entity entity : getEntities()) {
-            for (Component component : entity.getComponents()) {
-                if (component instanceof BehaviourComponent) {
-                    ((BehaviourComponent)component).render();
-                }
+            for (BehaviourComponent behaviourComponent : entity.getBehaviourComponents()) {
+                behaviourComponent.render();
             }
         }
     }
