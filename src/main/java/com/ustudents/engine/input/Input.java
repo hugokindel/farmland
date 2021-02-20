@@ -22,7 +22,9 @@ public class Input {
 
     private static final boolean[] mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
 
-    private static Vector2f mousePos;
+    private static Vector2f mousePos = new Vector2f();
+
+    private static Vector2f mousePosInWorld = new Vector2f();
 
     private static double scrollX,scrollY;
 
@@ -49,6 +51,11 @@ public class Input {
         glfwSetCursorPosCallback(Farmland.get().getWindow().getHandle(), new GLFWCursorPosCallback() {
             public void invoke(long window, double xpos, double ypos) {
                 mousePos = new Vector2f((float)xpos, (float)ypos);
+
+                if (SceneManager.getScene().getCamera() != null) {
+                    mousePosInWorld = SceneManager.getScene().getCamera().screenCoordToWorldCoord(mousePos);
+                }
+
                 mouseMoved.dispatch();
             }
         });
@@ -158,7 +165,6 @@ public class Input {
     }
 
     public static boolean isMouseInWorldViewRect(Vector4f viewRect) {
-        Vector2f mousePosInWorld = SceneManager.getScene().getCamera().screenCoordToWorldCoord(mousePos);
         return mousePosInWorld.x > viewRect.x && mousePosInWorld.x < viewRect.z && mousePosInWorld.y > viewRect.y && mousePosInWorld.y < viewRect.w;
     }
 

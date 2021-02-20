@@ -9,16 +9,21 @@ import com.ustudents.engine.input.Input;
 import org.joml.Vector4f;
 
 public class CellComponent extends BehaviourComponent {
-    @Override
-    public void update(float dt) {
-        if (Input.isMouseInWorldViewRect(getViewRect())) {
-            getRegistry().getEntityByName("cellCursor").getComponent(TransformComponent.class).setPosition(getEntity().getComponent(TransformComponent.class).position);
-        }
-    }
+    private Vector4f viewRect;
 
-    private Vector4f getViewRect() {
+    @Override
+    public void initialize() {
+        super.initialize();
+
         TransformComponent transform = getEntity().getComponent(TransformComponent.class);
         TextureComponent texture = getEntity().getComponent(TextureComponent.class);
-        return new Vector4f(transform.position.x, transform.position.y, transform.position.x + texture.region.z, transform.position.y + texture.region.w);
+        viewRect = new Vector4f(transform.position.x, transform.position.y, transform.position.x + texture.region.z, transform.position.y + texture.region.w);
+    }
+
+    @Override
+    public void update(float dt) {
+        if (Input.isMouseInWorldViewRect(viewRect)) {
+            getRegistry().getEntityByName("cellCursor").getComponent(TransformComponent.class).setPosition(getEntity().getComponent(TransformComponent.class).position);
+        }
     }
 }
