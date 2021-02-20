@@ -8,6 +8,7 @@ import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.component.TimerComponent;
 import com.ustudents.farmland.player.Human;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -32,10 +33,10 @@ public class DefineUser extends Scene {
 
     @Override
     public void initialize() {
-        if (Timer.getCurrentTime() != 0){
+        if ((int)TimerComponent.getCurrentTime() != 0){
             disableRename = true;
         }else{
-            Timer.setCurrentTime(0);
+            TimerComponent.setCurrentTime(0);
         }
         humanFolder = new File(Resources.getKindPlayerDirectoryName("human"));
         list = humanFolder.listFiles();
@@ -43,17 +44,18 @@ public class DefineUser extends Scene {
 
     @Override
     public void update(float dt) {
-        if(Timer.getCurrentTime() >= Timer.getTimeBeforeRename()){
-            Timer.setCurrentTime(0);
+        if (disableRename){
+            TimerComponent.increaseCurrentTime(dt);
+        }
+        if(TimerComponent.getCurrentTime() >= TimerComponent.getTimeBeforeRename()){
+            TimerComponent.setCurrentTime(0);
             disableRename = false;
         }
     }
 
     @Override
     public void render() {
-        if (disableRename){
-            Timer.increaseCurrentTime();
-        }
+
     }
 
     private boolean checkIfFileExist(String name){
@@ -91,14 +93,11 @@ public class DefineUser extends Scene {
     private void changeNameOfFile(File rename,File renameFile){
         Path source = Paths.get(rename.getPath());
         Path destination = Paths.get(renameFile + ".json");
-        Runnable run = () -> {
-            try {
-                Files.move(source, destination);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        };
-        run.run();
+        try {
+            Files.move(source, destination);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void applyNewUserName(File rename,int index){
@@ -154,7 +153,7 @@ public class DefineUser extends Scene {
                         index=i;
                         disableRename = true;
                         applyNewUserName(rename,index);
-                        Timer.setCurrentTime(1);
+                        TimerComponent.setCurrentTime(1);
                         break;
                     }
                 }

@@ -4,6 +4,7 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
+import com.ustudents.farmland.component.TimerComponent;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 
@@ -16,14 +17,15 @@ public class MarketMenu extends Scene {
 
     @Override
     public void update(float dt) {
-        if(Timer.getCurrentTime() >= Timer.getTimerPerPlayer()){
+        TimerComponent.increaseCurrentTime(dt);
+        if(TimerComponent.getCurrentTime() >= TimerComponent.getTimerPerPlayer()){
             Game.get().getSceneManager().changeScene(InGameScene.class);
         }
     }
 
     @Override
     public void render() {
-        Timer.increaseCurrentTime();
+
     }
 
     @Override

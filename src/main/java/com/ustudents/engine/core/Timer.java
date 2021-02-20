@@ -8,10 +8,6 @@ public class Timer {
     private int framesCounter;
     private int fps;
     private double previousFrameCounterTime;
-    private static int currentTime;
-    private final static int timerPerPlayer = 90*10000;
-
-    private final static int timeBeforeRename = 3*10000;
 
     public Timer() {
         fps = 0;
@@ -49,23 +45,5 @@ public class Timer {
         return value != Double.POSITIVE_INFINITY && value != Double.NEGATIVE_INFINITY ? value : 0;
     }
 
-    public static int getCurrentTime(){
-        return currentTime;
-    }
 
-    public static void increaseCurrentTime(){
-        currentTime+=5;
-    }
-
-    public static void setCurrentTime(int time){
-        currentTime = time;
-    }
-
-    public static int getTimerPerPlayer() {
-        return timerPerPlayer;
-    }
-
-    public static int getTimeBeforeRename() {
-        return timeBeforeRename;
-    }
 }

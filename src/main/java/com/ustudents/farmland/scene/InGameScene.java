@@ -7,6 +7,7 @@ import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.component.TimerComponent;
 import com.ustudents.farmland.player.Player;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -50,7 +51,7 @@ public class InGameScene extends Scene {
     @Override
     public void initialize() {
         if(!Farmland.isInGame()){
-            Timer.setCurrentTime(0);
+            TimerComponent.setCurrentTime(0);
             Farmland.setInGame(true);
         }
         isTurnOf = new boolean[Farmland.numberOfPlayer()];
@@ -92,8 +93,9 @@ public class InGameScene extends Scene {
 
     @Override
     public void update(float dt) {
-        if(Timer.getCurrentTime() >= Timer.getTimerPerPlayer()){
-            Timer.setCurrentTime(0);
+        TimerComponent.increaseCurrentTime(dt);
+        if(TimerComponent.getCurrentTime() >= TimerComponent.getTimerPerPlayer()){
+            TimerComponent.setCurrentTime(0);
             for(int i = 0; i < isTurnOf.length; i++){
                 if(isTurnOf[i]){
                     isTurnOf[i] = false;
@@ -117,12 +119,12 @@ public class InGameScene extends Scene {
 
     @Override
     public void render() {
-        Timer.increaseCurrentTime();
+
     }
 
     public static void timerAction(){
-        int printTime = (Timer.getTimerPerPlayer()-Timer.getCurrentTime())/10000;
-        ImGui.text(makeSpace(13) + "Timer : " + printTime/60 + "min" + printTime%60 + "s");
+        float printTime = (TimerComponent.getTimerPerPlayer()-TimerComponent.getCurrentTime());
+        ImGui.text(makeSpace(13) + "Timer : " + (int)printTime/60 + "min" + (int)printTime%60 + "s");
     }
 
     private static boolean getYourPlayer(){
@@ -177,7 +179,7 @@ public class InGameScene extends Scene {
         if(isTurnOf[0]){
             if (ImGui.button("Finish your turn")){
                 if (currentPlayerTurn.getCurrentActionPlayed() > 0 || currentPlayerTurn.getCurrentActionPlayed() == -1){
-                    Timer.setCurrentTime(Timer.getTimerPerPlayer());
+                    TimerComponent.setCurrentTime(TimerComponent.getTimerPerPlayer());
                 }else{
                     currentPlayerTurn.setCurrentActionPlayed(-1);
                 }
@@ -199,7 +201,7 @@ public class InGameScene extends Scene {
             if (Farmland.getKindOfGame().equals("MultiPlayer")){
 
             }
-            Timer.setCurrentTime(0);
+            TimerComponent.setCurrentTime(0);
             Farmland.setInGame(false);
             currentPlayerTurn = null;
             Game.get().getSceneManager().changeScene(SinglePlayerMenu.class);
