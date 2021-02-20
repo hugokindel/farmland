@@ -23,7 +23,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 
-public class SingleplayerMenu extends Scene {
+public class SinglePlayerMenu extends Scene {
     @Override
     public void initialize() {
         camera.setMinimalX(-360);
