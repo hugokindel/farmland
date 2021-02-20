@@ -406,8 +406,10 @@ public class Resources {
         Spritesheet spritesheet = spritesheets.get(filePath);
 
         if (spritesheet == null) {
-            spritesheets.remove(filePath);
-            return loadSpritesheet(filePath);
+            //spritesheets.remove(filePath);
+            //return loadSpritesheet(filePath);
+
+            throw new IllegalStateException("Can't find spritesheet '" + filePath + "'");
         }
 
         return spritesheet;

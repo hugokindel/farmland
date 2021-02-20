@@ -19,7 +19,7 @@ public class MoveBlockComponent extends BehaviourComponent {
         }
 
         if (canMove) {
-            entity.getComponent(TransformComponent.class).position.x += 100 * dt;
+            getEntity().getComponent(TransformComponent.class).position.x += 100 * dt;
         }
     }
 

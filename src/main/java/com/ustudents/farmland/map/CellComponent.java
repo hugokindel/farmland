@@ -12,15 +12,13 @@ public class CellComponent extends BehaviourComponent {
     @Override
     public void update(float dt) {
         if (Input.isMouseInWorldViewRect(getViewRect())) {
-            entity.getComponent(TextureComponent.class).tint = Color.RED;
-        } else {
-            entity.getComponent(TextureComponent.class).tint = Color.WHITE;
+            getRegistry().getEntityByName("cellCursor").getComponent(TransformComponent.class).setPosition(getEntity().getComponent(TransformComponent.class).position);
         }
     }
 
     private Vector4f getViewRect() {
-        TransformComponent transform = entity.getComponent(TransformComponent.class);
-        TextureComponent texture = entity.getComponent(TextureComponent.class);
+        TransformComponent transform = getEntity().getComponent(TransformComponent.class);
+        TextureComponent texture = getEntity().getComponent(TextureComponent.class);
         return new Vector4f(transform.position.x, transform.position.y, transform.position.x + texture.region.z, transform.position.y + texture.region.w);
     }
 }

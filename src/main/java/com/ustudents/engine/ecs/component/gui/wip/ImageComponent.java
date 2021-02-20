@@ -1,4 +1,4 @@
-package com.ustudents.engine.ecs.component.gui;
+package com.ustudents.engine.ecs.component.gui.wip;
 
 import com.ustudents.engine.ecs.component.graphics.TextureComponent;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;

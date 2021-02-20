@@ -19,7 +19,7 @@ public class RotateBlockComponent extends BehaviourComponent {
         }
 
         if (canRotate) {
-            entity.getComponent(TransformComponent.class).rotation += 5.0f * dt;
+            getEntity().getComponent(TransformComponent.class).rotation += 5.0f * dt;
         }
     }
 

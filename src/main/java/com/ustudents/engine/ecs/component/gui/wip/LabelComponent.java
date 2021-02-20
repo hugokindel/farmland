@@ -1,6 +1,5 @@
-package com.ustudents.engine.ecs.component.gui;
+package com.ustudents.engine.ecs.component.gui.wip;
 
-import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.ecs.component.graphics.RenderableComponent;
 import com.ustudents.engine.ecs.component.graphics.RendererComponent;

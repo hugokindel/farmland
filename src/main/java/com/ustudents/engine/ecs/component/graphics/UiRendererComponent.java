@@ -15,6 +15,6 @@ public class UiRendererComponent extends RendererComponent {
      * @param zIndex The Z index.
      */
     public UiRendererComponent(Integer zIndex) {
-        this.zIndex = 0;
+        this.zIndex = zIndex;
     }
 }

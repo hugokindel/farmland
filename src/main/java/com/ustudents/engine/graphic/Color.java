@@ -69,6 +69,24 @@ public class Color {
         return new Color(r, g, b, a);
     }
 
+    public static Color rgbToColor(int value) {
+        Color color = new Color();
+        color.r = ((value & 0xFF000000) >>> 24) / 255.0f;
+        color.g = ((value & 0x00FF0000) >>> 16) / 255.0f;
+        color.b = ((value & 0x0000FF00) >>> 8) / 255.0f;
+        color.a = 1.0f;
+        return color;
+    }
+
+    public static Color rgbaToColor(int value) {
+        Color color = new Color();
+        color.r = ((value & 0xFF000000) >>> 24) / 255.0f;
+        color.g = ((value & 0x00FF0000) >>> 16) / 255.0f;
+        color.b = ((value & 0x0000FF00) >>> 8) / 255.0f;
+        color.a = ((value & 0x000000FF)) / 255.0f;
+        return color;
+    }
+
     public static void rgbaToColor(Color color, int value) {
         color.r = ((value & 0xFF000000) >>> 24) / 255.0f;
         color.g = ((value & 0x00FF0000) >>> 16) / 255.0f;

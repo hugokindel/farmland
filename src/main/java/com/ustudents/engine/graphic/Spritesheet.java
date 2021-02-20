@@ -12,6 +12,11 @@ import java.util.Map;
 @JsonSerializable
 @SuppressWarnings({"unchecked"})
 public class Spritesheet {
+    public enum Format {
+        NineSlicedSprite,
+        AnimatedSprite
+    }
+
     @JsonSerializable
     private String texturePath;
 
@@ -22,11 +27,14 @@ public class Spritesheet {
 
     private Map<String, Sprite> sprites;
 
+    private Map<String, SpriteAnimation> animations;
+
     @JsonSerializableConstructor
-    public void deserialize() {
+    public void deserialize(Map<String, Object> json) {
         spriteRegions = new HashMap<>(spriteRegions);
         sprites = new HashMap<>();
         texture = Resources.loadTexture(texturePath);
+        animations = new HashMap<>();
 
         for (Map.Entry<String, Vector4f> entry : spriteRegions.entrySet()) {
             Map<String, Integer> value = (Map<String, Integer>)entry.getValue();
@@ -36,6 +44,12 @@ public class Spritesheet {
         for (Map.Entry<String, Vector4f> entry : spriteRegions.entrySet()) {
             sprites.put(entry.getKey(), new Sprite(texture, entry.getValue()));
         }
+
+        if (json.containsKey("animations")) {
+            for (Map.Entry<String, Object> entry : ((Map<String, Object>)json.get("animations")).entrySet()) {
+                animations.put(entry.getKey(), SpriteAnimation.deserialize(this, (Map<String, Object>)entry.getValue()));
+            }
+        }
     }
 
     public Texture getTexture() {
@@ -44,5 +58,9 @@ public class Spritesheet {
 
     public Sprite getSprite(String name) {
         return sprites.get(name);
+    }
+
+    public SpriteAnimation getAnimation(String name) {
+        return animations.get(name);
     }
 }

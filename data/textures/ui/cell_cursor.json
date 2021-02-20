@@ -1,0 +1,42 @@
+{
+    "texturePath": "ui/cell_cursor.png",
+    "spriteRegions": {
+        "1": {
+            "x": 0,
+            "y": 0,
+            "z": 24,
+            "w": 24
+        },
+        "2": {
+            "x": 24,
+            "y": 0,
+            "z": 24,
+            "w": 24
+        },
+        "3": {
+            "x": 48,
+            "y": 0,
+            "z": 24,
+            "w": 24
+        }
+    },
+    "animations": {
+        "default": {
+            "loop": true,
+            "frames": [
+                {
+                    "spriteRegion": "1",
+                    "duration": 0.14
+                },
+                {
+                    "spriteRegion": "2",
+                    "duration": 0.14
+                },
+                {
+                    "spriteRegion": "3",
+                    "duration": 0.14
+                }
+            ]
+        }
+    }
+}

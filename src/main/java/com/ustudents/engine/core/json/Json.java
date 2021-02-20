@@ -142,7 +142,11 @@ public class Json {
 
             for (Method method : classType.getMethods()) {
                 if (method.isAnnotationPresent(JsonSerializableConstructor.class)) {
-                    method.invoke(object);
+                    if (method.getParameterTypes().length == 0) {
+                        method.invoke(object);
+                    } else {
+                        method.invoke(object, json);
+                    }
                 }
             }
 

@@ -7,6 +7,7 @@ import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.graphic.Spritesheet;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.debug.DebugTools;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;

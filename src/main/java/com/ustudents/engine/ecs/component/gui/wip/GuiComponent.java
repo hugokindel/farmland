@@ -1,7 +1,5 @@
-package com.ustudents.engine.ecs.component.gui;
+package com.ustudents.engine.ecs.component.gui.wip;
 
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.core.event.EventData;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.ecs.Entity;

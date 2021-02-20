@@ -1,4 +1,4 @@
-package com.ustudents.engine.ecs.component.gui;
+package com.ustudents.engine.ecs.component.gui.wip;
 
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.ecs.Component;

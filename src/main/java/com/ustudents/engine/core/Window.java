@@ -91,7 +91,7 @@ public class Window {
         setVsync(vsync);
 
         GL.createCapabilities();
-        glClearColor(0.1725f, 0.1882f, 0.2117f, 1.0f);
+        glClearColor(0.7647f, 0.7411f, 0.6901f, 1.0f);
 
         if (Game.isDebugging()) {
             Out.printlnDebug("OpenGL version: " + glGetString(GL_VERSION));

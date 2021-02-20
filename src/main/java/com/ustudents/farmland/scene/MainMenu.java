@@ -8,7 +8,7 @@ import com.ustudents.engine.ecs.component.audio.SoundComponent;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.ecs.component.graphics.*;
 import com.ustudents.engine.ecs.component.gui.ButtonComponent;
-import com.ustudents.engine.ecs.component.gui.CanvasComponent;
+import com.ustudents.engine.ecs.component.gui.wip.CanvasComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.utility.SeedRandom;
@@ -32,7 +32,7 @@ public class MainMenu extends Scene {
         camera.enableInput(false);
 
         grassTexture = Resources.loadTexture("examples/grass.png");
-        titleTexture = Resources.loadTexture("title.png");
+        titleTexture = Resources.loadTexture("ui/title.png");
         font = Resources.loadFont("default.ttf", 36);
         font2 = Resources.loadFont("kobold.ttf", 16);
         fontSmaller = Resources.loadFont("default.ttf", 24);

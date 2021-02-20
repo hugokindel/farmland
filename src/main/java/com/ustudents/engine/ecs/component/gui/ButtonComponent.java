@@ -6,6 +6,7 @@ import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.ecs.component.graphics.*;
+import com.ustudents.engine.ecs.component.gui.wip.GuiComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.input.Input;
@@ -15,7 +16,7 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 @Viewable
-public class ButtonComponent extends GuiComponent implements RenderableComponent {
+public class ButtonComponent extends BehaviourComponent implements RenderableComponent {
     @Viewable
     public TextComponent label;
 
@@ -100,10 +101,10 @@ public class ButtonComponent extends GuiComponent implements RenderableComponent
 
     @Override
     public void update(float dt) {
-        TransformComponent comp = entity.getComponent(TransformComponent.class);
+        TransformComponent comp = getEntity().getComponent(TransformComponent.class);
         Camera camera = getCamera();
         Vector2f cursorPos = Input.getMousePos();
-        Vector2f buttonPos = camera.worldCoordToScreenCoord(entity.getComponent(TransformComponent.class).position);
+        Vector2f buttonPos = camera.worldCoordToScreenCoord(getEntity().getComponent(TransformComponent.class).position);
         Vector2f realButtonSize = new Vector2f(size.x * comp.scale.x, size.y * comp.scale.y);
         Vector2f realButtonPos = new Vector2f(buttonPos.x, buttonPos.y);
         Vector4f buttonViewRect = new Vector4f(
@@ -189,9 +190,9 @@ public class ButtonComponent extends GuiComponent implements RenderableComponent
     }
 
     private Camera getCamera() {
-        if (entity.hasComponent(WorldRendererComponent.class)) {
+        if (getEntity().hasComponent(WorldRendererComponent.class)) {
             return Farmland.get().getSceneManager().getCurrentScene().getCamera();
-        } else if (entity.hasComponent(UiRendererComponent.class)) {
+        } else if (getEntity().hasComponent(UiRendererComponent.class)) {
             return Farmland.get().getSceneManager().getCurrentScene().getUiCamera();
         }
 

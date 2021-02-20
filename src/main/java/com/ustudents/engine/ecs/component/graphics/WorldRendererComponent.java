@@ -15,6 +15,6 @@ public class WorldRendererComponent extends RendererComponent {
      * @param zIndex The Z index.
      */
     public WorldRendererComponent(Integer zIndex) {
-        this.zIndex = 0;
+        this.zIndex = zIndex;
     }
 }
