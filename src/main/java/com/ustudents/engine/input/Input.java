@@ -2,8 +2,10 @@ package com.ustudents.engine.input;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.*;
 
 import java.util.Arrays;
@@ -149,6 +151,15 @@ public class Input {
 
     public static Vector2f getMousePos() {
         return mousePos == null ? new Vector2f(-1, -1) : mousePos;
+    }
+
+    public static boolean isMouseInViewRect(Vector4f viewRect) {
+        return mousePos.x > viewRect.x && mousePos.x < viewRect.z && mousePos.y > viewRect.y && mousePos.y < viewRect.w;
+    }
+
+    public static boolean isMouseInWorldViewRect(Vector4f viewRect) {
+        Vector2f mousePosInWorld = SceneManager.getScene().getCamera().screenCoordToWorldCoord(mousePos);
+        return mousePosInWorld.x > viewRect.x && mousePosInWorld.x < viewRect.z && mousePosInWorld.y > viewRect.y && mousePosInWorld.y < viewRect.w;
     }
 
     public GLFWKeyCallback getKeyBoard() {

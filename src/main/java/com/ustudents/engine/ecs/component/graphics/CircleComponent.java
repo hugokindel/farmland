@@ -1,7 +1,7 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.graphics;
 
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;

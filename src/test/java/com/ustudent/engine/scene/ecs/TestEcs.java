@@ -2,7 +2,7 @@ package com.ustudent.engine.scene.ecs;
 
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.TransformComponent;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
 import org.joml.Vector2f;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

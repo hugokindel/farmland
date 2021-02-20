@@ -1,6 +1,7 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.graphics;
 
 import com.ustudents.engine.ecs.Component;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.graphic.Texture;
@@ -82,6 +83,8 @@ public class TextureComponent extends Component implements RenderableComponent {
     @Override
     public void render(Spritebatch spritebatch, RendererComponent rendererComponent,
                        TransformComponent transformComponent) {
+
+
         Spritebatch.TextureData textureData = new Spritebatch.TextureData(texture, transformComponent.position);
         textureData.region = region;
         textureData.zIndex = rendererComponent.zIndex;

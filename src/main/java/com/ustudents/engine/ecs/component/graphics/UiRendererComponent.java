@@ -1,11 +1,11 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.graphics;
 
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 
 @Viewable
-public class WorldRendererComponent extends RendererComponent {
+public class UiRendererComponent extends RendererComponent {
     /** Class constructor. */
-    public WorldRendererComponent() {
+    public UiRendererComponent() {
         this(0);
     }
 
@@ -14,7 +14,7 @@ public class WorldRendererComponent extends RendererComponent {
      *
      * @param zIndex The Z index.
      */
-    public WorldRendererComponent(Integer zIndex) {
+    public UiRendererComponent(Integer zIndex) {
         this.zIndex = 0;
     }
 }

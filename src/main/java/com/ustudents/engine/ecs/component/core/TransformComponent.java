@@ -1,4 +1,4 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.core;
 
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
@@ -18,6 +18,13 @@ public class TransformComponent extends Component {
     /** The rotation. */
     @Viewable
     public Float rotation;
+
+    /** Class constructor. */
+    public TransformComponent() {
+        this.position = new Vector2f();
+        this.scale = new Vector2f(1.0f, 1.0f);
+        this.rotation = 0.0f;
+    }
 
     /** Class constructor. */
     public TransformComponent(Vector2f position) {

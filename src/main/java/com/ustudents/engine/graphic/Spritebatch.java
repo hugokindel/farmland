@@ -533,10 +533,10 @@ public class Spritebatch {
     }
 
     public Spritebatch(Camera camera, Shader shader) {
-        this.data = new ArrayList<>(4096);
+        this.data = new ArrayList<>(16384);
         this.shader = shader;
         this.camera = camera;
-        this.renderer = new Renderer(4096, shader.getVertexAttributes());
+        this.renderer = new Renderer(16384, shader.getVertexAttributes());
         this.destroyed = false;
         this.projection = new Matrix4f();
         this.primitiveTexture = new Texture(

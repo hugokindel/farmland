@@ -2,7 +2,7 @@ package com.ustudents.engine.ecs.system;
 
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.UiRendererComponent;
+import com.ustudents.engine.ecs.component.graphics.UiRendererComponent;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.scene.SceneManager;
 

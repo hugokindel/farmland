@@ -4,7 +4,7 @@ import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.ecs.System;
-import com.ustudents.engine.ecs.component.*;
+import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 
 public class BehaviourSystem extends System {
     public BehaviourSystem(Registry registry) {

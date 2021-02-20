@@ -4,8 +4,11 @@ import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.Window;
 import com.ustudents.engine.ecs.Entity;
-import com.ustudents.engine.ecs.component.*;
-import com.ustudents.engine.ecs.system.UiRenderSystem;
+import com.ustudents.engine.ecs.component.audio.SoundComponent;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
+import com.ustudents.engine.ecs.component.graphics.*;
+import com.ustudents.engine.ecs.component.gui.ButtonComponent;
+import com.ustudents.engine.ecs.component.gui.CanvasComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.utility.SeedRandom;
@@ -86,26 +89,31 @@ public class MainMenu extends Scene {
         String[] buttonsName = new String[] {"singleplayer", "multiplayer", "settings", "credits", "quit"};
 
         for (int i = 0; i < buttons.length; i++) {
+            int finalI = i;
             Entity button = registry.createEntity();
             button.setName(buttonsName[i] + "Button");
             button.setParent(uiContainer);
             button.addComponent(new TransformComponent(
                     new Vector2f(windowSize.x / 2.0f, 300 + 80 * i), new Vector2f(3.1f, 3.1f)));
-            button.addComponent(new ButtonComponent(buttons[i]));
-            int finalI = i;
-            button.getComponent(ButtonComponent.class).addListener((dataType, data) -> {
-                if (buttonsName[finalI].equals("singleplayer")) {
-                    changeScene(SingleplayerMenu.class);
-                } else if (buttonsName[finalI].equals("multiplayer")) {
-                    changeScene(MultiplayerMenu.class);
-                } else if (buttonsName[finalI].equals("settings")) {
-                    changeScene(SettingsMenu.class);
-                } else if (buttonsName[finalI].equals("credits")) {
-                    changeScene(CreditsMenu.class);
-                } else if (buttonsName[finalI].equals("quit")) {
-                    quit();
+            button.addComponent(new ButtonComponent(buttons[i], (dataType, data) -> {
+                switch (buttonsName[finalI]) {
+                    case "singleplayer":
+                        changeScene(SingleplayerMenu.class);
+                        break;
+                    case "multiplayer":
+                        changeScene(MultiplayerMenu.class);
+                        break;
+                    case "settings":
+                        changeScene(SettingsMenu.class);
+                        break;
+                    case "credits":
+                        changeScene(CreditsMenu.class);
+                        break;
+                    case "quit":
+                        quit();
+                        break;
                 }
-            });
+            }));
             Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
                 Window.SizeChangedEventData event = (Window.SizeChangedEventData)data;
                 button.getComponent(TransformComponent.class).setPosition(new Vector2f(event.newSize.x / 2.0f, 300 + 80 * finalI));
@@ -118,12 +126,23 @@ public class MainMenu extends Scene {
         version.setParent(uiContainer);
         version.addComponent(new TransformComponent(
                 new Vector2f(10, windowSize.y - font.getTextHeight("Version: 0.0.1")), new Vector2f(1, 1)));
-        version.addComponent(new LabelComponent("Version: 0.0.1", fontSmaller));
+        version.addComponent(new TextComponent("Version: 0.0.1", fontSmaller));
         version.addComponent(new UiRendererComponent());
         Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
             Window.SizeChangedEventData event = (Window.SizeChangedEventData)data;
             version.getComponent(TransformComponent.class).setPosition(new Vector2f(10, event.newSize.y - font.getTextHeight("Version: 0.0.1")));
         });
+    }
+
+    public void initializeUi2() {
+        Entity canvas = registry.createEntity();
+        canvas.addComponent(new TransformComponent());
+        canvas.addComponent(new UiRendererComponent());
+        canvas.addComponent(new CanvasComponent());
+
+        Entity title = registry.createEntity();
+        title.setParent(canvas);
+        title.addComponent(new TransformComponent());
     }
 
     public void initializeMusic() {

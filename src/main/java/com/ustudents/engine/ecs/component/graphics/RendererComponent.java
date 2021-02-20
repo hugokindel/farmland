@@ -1,4 +1,4 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.graphics;
 
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;

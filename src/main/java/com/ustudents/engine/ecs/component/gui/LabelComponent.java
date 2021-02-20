@@ -1,7 +1,9 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.gui;
 
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
+import com.ustudents.engine.ecs.component.graphics.RenderableComponent;
+import com.ustudents.engine.ecs.component.graphics.RendererComponent;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Spritebatch;
@@ -9,7 +11,7 @@ import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import org.joml.Vector2f;
 
 @Viewable
-public class LabelComponent extends Component implements RenderableComponent {
+public class LabelComponent extends GuiComponent implements RenderableComponent {
     /** The text. */
     @Viewable
     public String text;

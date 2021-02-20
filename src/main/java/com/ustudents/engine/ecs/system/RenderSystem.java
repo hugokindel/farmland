@@ -4,7 +4,9 @@ import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.ecs.System;
-import com.ustudents.engine.ecs.component.*;
+import com.ustudents.engine.ecs.component.graphics.RenderableComponent;
+import com.ustudents.engine.ecs.component.graphics.RendererComponent;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.graphic.Spritebatch;
 
 public abstract class RenderSystem extends System {

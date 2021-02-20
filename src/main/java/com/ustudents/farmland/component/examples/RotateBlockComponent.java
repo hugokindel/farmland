@@ -1,7 +1,7 @@
-package com.ustudents.farmland.component;
+package com.ustudents.farmland.component.examples;
 
-import com.ustudents.engine.ecs.component.BehaviourComponent;
-import com.ustudents.engine.ecs.component.TransformComponent;
+import com.ustudents.engine.ecs.component.core.BehaviourComponent;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.input.Input;
 import org.lwjgl.glfw.GLFW;
 

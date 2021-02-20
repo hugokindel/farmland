@@ -2,7 +2,7 @@ package com.ustudents.farmland.entities.properties;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.TextureComponent;
+import com.ustudents.engine.ecs.component.graphics.TextureComponent;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.entities.Property;
 import org.joml.Vector4f;

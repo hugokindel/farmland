@@ -1,10 +1,12 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.core;
 
 import com.ustudents.engine.ecs.Component;
-import com.ustudents.engine.graphic.Camera;
-import com.ustudents.farmland.Farmland;
 
 public abstract class BehaviourComponent extends Component {
+    public void initialize() {
+
+    }
+
     public void update(float dt) {
 
     }

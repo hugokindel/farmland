@@ -2,7 +2,7 @@ package com.ustudents.farmland.entities.resources;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.TextureComponent;
+import com.ustudents.engine.ecs.component.graphics.TextureComponent;
 import com.ustudents.farmland.entities.Resource;
 import org.joml.Vector4f;
 

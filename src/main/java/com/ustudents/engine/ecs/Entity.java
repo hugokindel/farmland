@@ -173,7 +173,6 @@ public class Entity {
      * @param args The component constructor arguments (do not use primitive types).
      * @param <T> The component type.
      */
-    @Deprecated
     public <T extends Component> T addComponent(Class<T> classType, Object... args) {
         return registry.addComponentToEntity(this, classType, args);
     }

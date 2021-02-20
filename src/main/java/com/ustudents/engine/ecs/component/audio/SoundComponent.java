@@ -1,4 +1,4 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.audio;
 
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.audio.SoundSource;

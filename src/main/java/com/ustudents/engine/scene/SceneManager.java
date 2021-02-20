@@ -35,7 +35,6 @@ public class SceneManager {
      * @param args The scene type constructor arguments.
      * @param <T> The scene type.
      */
-    @Deprecated
     public <T extends Scene> void changeScene(Class<T> classType, Object... args) {
         if (args.length == 0) {
             changeScene(TypeUtil.createInstance(classType));

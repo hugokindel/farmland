@@ -3,7 +3,7 @@ package com.ustudents.engine.ecs;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.cli.print.style.Style;
-import com.ustudents.engine.ecs.component.BehaviourComponent;
+import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 import com.ustudents.engine.utility.TypeUtil;
 
 import java.util.*;
@@ -592,6 +592,10 @@ public class Registry {
         ((ComponentPool<T>)componentPools.get(componentId)).set(entityId, component);
         signaturePerEntity.get(entityId).set(componentId);
 
+        if (component instanceof BehaviourComponent) {
+            ((BehaviourComponent)component).initialize();
+        }
+
         if (Game.isDebugging()) {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": component " +
                     Style.Bold + component.getId() + Style.Reset + ": added");
@@ -610,7 +614,6 @@ public class Registry {
      * @param args The component type constructor arguments.
      * @param <T> The component type.
      */
-    @Deprecated
     public <T extends Component> T addComponentToEntity(Entity entity, Class<T> classType, Object... args) {
         if (args.length == 0) {
             return addComponentToEntity(entity, Objects.requireNonNull(TypeUtil.createInstance(classType)));

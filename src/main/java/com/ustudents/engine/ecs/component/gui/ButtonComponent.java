@@ -1,12 +1,12 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.gui;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.graphic.Camera;
-import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.graphic.NineSlicedSprite;
-import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.ecs.component.core.BehaviourComponent;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
+import com.ustudents.engine.ecs.component.graphics.*;
+import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.MouseButton;
@@ -15,9 +15,9 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 @Viewable
-public class ButtonComponent extends BehaviourComponent implements RenderableComponent {
+public class ButtonComponent extends GuiComponent implements RenderableComponent {
     @Viewable
-    public LabelComponent label;
+    public TextComponent label;
 
     @Viewable
     public NineSlicedSpriteComponent sprite;
@@ -40,7 +40,7 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
 
     public ButtonComponent(String label, EventListener listener) {
         this(
-                new LabelComponent(
+                new TextComponent(
                         label,
                         Resources.loadFont("ui/default.ttf", 16)
                 )
@@ -49,7 +49,7 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
         addListener(listener);
     }
 
-    public ButtonComponent(LabelComponent label) {
+    public ButtonComponent(TextComponent label) {
         this(
                 label,
                 new NineSlicedSpriteComponent(
@@ -62,11 +62,11 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
         );
     }
 
-    public ButtonComponent(LabelComponent label, NineSlicedSpriteComponent sprite) {
+    public ButtonComponent(TextComponent label, NineSlicedSpriteComponent sprite) {
         this(label, sprite, null);
     }
 
-    public ButtonComponent(LabelComponent label, NineSlicedSpriteComponent sprite, EventListener listener) {
+    public ButtonComponent(TextComponent label, NineSlicedSpriteComponent sprite, EventListener listener) {
         event = new EventDispatcher();
 
         if (listener != null) {

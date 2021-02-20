@@ -1,5 +1,6 @@
-package com.ustudents.engine.ecs.component;
+package com.ustudents.engine.ecs.component.graphics;
 
+import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.graphic.Spritebatch;
 
 public interface RenderableComponent {
