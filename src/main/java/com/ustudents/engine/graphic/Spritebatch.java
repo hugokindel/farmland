@@ -525,7 +525,7 @@ public class Spritebatch {
     private boolean destroyed;
 
     public Spritebatch() {
-        this(Game.get().getSceneManager().getScene().getCamera());
+        this(Game.get().getSceneManager().getCurrentScene().getCamera());
     }
 
     public Spritebatch(Camera camera) {
@@ -606,116 +606,115 @@ public class Spritebatch {
         // TODO: Add rotation support (not useful for now).
         Vector2f realPosition = new Vector2f(
                 spriteRenderer.position.x - spriteRenderer.scale.x * spriteRenderer.origin.x,
-                spriteRenderer.position.y - spriteRenderer.scale.y * spriteRenderer.origin.y
-        );
+                spriteRenderer.position.y - spriteRenderer.scale.y * spriteRenderer.origin.y);
         Vector2f realSize = new Vector2f(
                 spriteRenderer.size.x == 0 ? 1 : spriteRenderer.size.x,
-                spriteRenderer.size.y == 0 ? 1 : spriteRenderer.size.y
-        );
+                spriteRenderer.size.y == 0 ? 1 : spriteRenderer.size.y);
         int numWidthNeeded = (int)(realSize.x / spriteRenderer.sprite.middle.getRegion().z);
         int numHeightNeeded = (int)(realSize.y / spriteRenderer.sprite.middle.getRegion().w);
 
         // Top left.
-        drawSprite(new SpriteData(spriteRenderer.sprite.topLeft, realPosition) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
-        }});
+        SpriteData topLeft = new SpriteData(spriteRenderer.sprite.topLeft, realPosition);
+        topLeft.zIndex = spriteRenderer.zIndex;
+        topLeft.tint = spriteRenderer.tint;
+        topLeft.rotation = spriteRenderer.rotation;
+        topLeft.scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
+
+        drawSprite(topLeft);
 
         // Top middle.
-        drawSprite(new SpriteData(spriteRenderer.sprite.topMiddle, new Vector2f(
+        SpriteData topMiddle = new SpriteData(spriteRenderer.sprite.topMiddle, new Vector2f(
                 realPosition.x + (spriteRenderer.sprite.topLeft.getRegion().z * spriteRenderer.scale.x),
-                realPosition.y
-        )) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(numWidthNeeded, 1.0f).mul(spriteRenderer.scale);
-        }});
+                realPosition.y));
+        topMiddle.zIndex = spriteRenderer.zIndex;
+        topMiddle.tint = spriteRenderer.tint;
+        topMiddle.rotation = spriteRenderer.rotation;
+        topMiddle.scale = new Vector2f(numWidthNeeded, 1.0f).mul(spriteRenderer.scale);
+
+        drawSprite(topMiddle);
 
         // Top right.
-        drawSprite(new SpriteData(spriteRenderer.sprite.topRight, new Vector2f(
+        SpriteData topRight = new SpriteData(spriteRenderer.sprite.topRight, new Vector2f(
                 realPosition.x + (spriteRenderer.sprite.topLeft.getRegion().z * spriteRenderer.scale.x) +
                         numWidthNeeded * (spriteRenderer.sprite.topMiddle.getRegion().z * spriteRenderer.scale.x),
-                realPosition.y
-        )) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
-        }});
+                realPosition.y));
+        topRight.zIndex = spriteRenderer.zIndex;
+        topRight.tint = spriteRenderer.tint;
+        topRight.rotation = spriteRenderer.rotation;
+        topRight.scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
+
+        drawSprite(topRight);
 
         // Middle left.
-        drawSprite(new SpriteData(spriteRenderer.sprite.middleLeft, new Vector2f(
+        SpriteData middleLeft = new SpriteData(spriteRenderer.sprite.middleLeft, new Vector2f(
                 realPosition.x,
-                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)
-        )) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(1.0f, numHeightNeeded).mul(spriteRenderer.scale);
-        }});
+                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)));
+        middleLeft.zIndex = spriteRenderer.zIndex;
+        middleLeft.tint = spriteRenderer.tint;
+        middleLeft.rotation = spriteRenderer.rotation;
+        middleLeft.scale = new Vector2f(1.0f, numHeightNeeded).mul(spriteRenderer.scale);
+
+        drawSprite(middleLeft);
 
         // Middle.
-        drawSprite(new SpriteData(spriteRenderer.sprite.middle, new Vector2f(
+        SpriteData middle = new SpriteData(spriteRenderer.sprite.middle, new Vector2f(
                 realPosition.x + (spriteRenderer.sprite.topLeft.getRegion().z * spriteRenderer.scale.x),
-                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)
-        )) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(numWidthNeeded, numHeightNeeded).mul(spriteRenderer.scale);
-        }});
+                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)));
+        middle.zIndex = spriteRenderer.zIndex;
+        middle.tint = spriteRenderer.tint;
+        middle.rotation = spriteRenderer.rotation;
+        middle.scale = new Vector2f(numWidthNeeded, numHeightNeeded).mul(spriteRenderer.scale);
+
+        drawSprite(middle);
 
         // Middle right.
-        drawSprite(new SpriteData(spriteRenderer.sprite.middleRight, new Vector2f(
+        SpriteData middleRight = new SpriteData(spriteRenderer.sprite.middleRight, new Vector2f(
                 realPosition.x + (spriteRenderer.sprite.topLeft.getRegion().z * spriteRenderer.scale.x) +
                         numWidthNeeded * (spriteRenderer.sprite.topMiddle.getRegion().z * spriteRenderer.scale.x),
-                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)
-        )) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(1.0f, numHeightNeeded).mul(spriteRenderer.scale);
-        }});
+                realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y)));
+        middleRight.zIndex = spriteRenderer.zIndex;
+        middleRight.tint = spriteRenderer.tint;
+        middleRight.rotation = spriteRenderer.rotation;
+        middleRight.scale = new Vector2f(1.0f, numHeightNeeded).mul(spriteRenderer.scale);
+
+        drawSprite(middleRight);
 
         // Bottom left.
-        drawSprite(new SpriteData(spriteRenderer.sprite.bottomLeft, new Vector2f(
+        SpriteData bottomLeft = new SpriteData(spriteRenderer.sprite.bottomLeft, new Vector2f(
                 realPosition.x,
                 realPosition.y + (spriteRenderer.sprite.bottomLeft.getRegion().w * spriteRenderer.scale.y) +
-                        numHeightNeeded * (spriteRenderer.sprite.middleLeft.getRegion().w * spriteRenderer.scale.y)
-        )) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
-        }});
+                        numHeightNeeded * (spriteRenderer.sprite.middleLeft.getRegion().w * spriteRenderer.scale.y)));
+        bottomLeft.zIndex = spriteRenderer.zIndex;
+        bottomLeft.tint = spriteRenderer.tint;
+        bottomLeft.rotation = spriteRenderer.rotation;
+        bottomLeft.scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
+
+        drawSprite(bottomLeft);
 
         // Bottom middle.
-        drawSprite(new SpriteData(spriteRenderer.sprite.bottomMiddle, new Vector2f(
+        SpriteData bottomMiddle = new SpriteData(spriteRenderer.sprite.bottomMiddle, new Vector2f(
                 realPosition.x + (spriteRenderer.sprite.bottomLeft.getRegion().z * spriteRenderer.scale.x),
                 realPosition.y + (spriteRenderer.sprite.topLeft.getRegion().w * spriteRenderer.scale.y) +
-                        numHeightNeeded * (spriteRenderer.sprite.middleLeft.getRegion().w * spriteRenderer.scale.y)
-        )) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(numWidthNeeded, 1.0f).mul(spriteRenderer.scale);
-        }});
+                        numHeightNeeded * (spriteRenderer.sprite.middleLeft.getRegion().w * spriteRenderer.scale.y)));
+        bottomMiddle.zIndex = spriteRenderer.zIndex;
+        bottomMiddle.tint = spriteRenderer.tint;
+        bottomMiddle.rotation = spriteRenderer.rotation;
+        bottomMiddle.scale = new Vector2f(numWidthNeeded, 1.0f).mul(spriteRenderer.scale);
+
+        drawSprite(bottomMiddle);
 
         // Bottom right.
-        drawSprite(new SpriteData(spriteRenderer.sprite.bottomRight, new Vector2f(
+        SpriteData bottomRight = new SpriteData(spriteRenderer.sprite.bottomRight, new Vector2f(
                 realPosition.x + (spriteRenderer.sprite.bottomLeft.getRegion().z * spriteRenderer.scale.x) +
                         numWidthNeeded * (spriteRenderer.sprite.bottomMiddle.getRegion().z * spriteRenderer.scale.x),
                 realPosition.y + (spriteRenderer.sprite.topRight.getRegion().w * spriteRenderer.scale.y) +
-                        numHeightNeeded * (spriteRenderer.sprite.middleRight.getRegion().w * spriteRenderer.scale.y)
-        )) {{
-            zIndex = spriteRenderer.zIndex;
-            tint = spriteRenderer.tint;
-            rotation = spriteRenderer.rotation;
-            scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
-        }});
+                        numHeightNeeded * (spriteRenderer.sprite.middleRight.getRegion().w * spriteRenderer.scale.y)));
+        bottomRight.zIndex = spriteRenderer.zIndex;
+        bottomRight.tint = spriteRenderer.tint;
+        bottomRight.rotation = spriteRenderer.rotation;
+        bottomRight.scale = new Vector2f(1.0f, 1.0f).mul(spriteRenderer.scale);
+
+        drawSprite(bottomRight);
     }
 
     public void drawRectangle(RectangleData rectangleData) {
@@ -767,29 +766,33 @@ public class Spritebatch {
                     rectangleData.rotation + 180.0f
             );
 
-            drawLine(new LineData(position42, position12) {{
-                zIndex = rectangleData.zIndex;
-                color = rectangleData.color;
-                thickness = rectangleData.thickness;
-            }});
+            LineData lineData1 = new LineData(position42, position12);
+            lineData1.zIndex = rectangleData.zIndex;
+            lineData1.color = rectangleData.color;
+            lineData1.thickness = rectangleData.thickness;
 
-            drawLine(new LineData(position21, position22) {{
-                zIndex = rectangleData.zIndex;
-                color = rectangleData.color;
-                thickness = rectangleData.thickness;
-            }});
+            drawLine(lineData1);
 
-            drawLine(new LineData(position31, position32) {{
-                zIndex = rectangleData.zIndex;
-                color = rectangleData.color;
-                thickness = rectangleData.thickness;
-            }});
+            LineData lineData2 = new LineData(position21, position22);
+            lineData2.zIndex = rectangleData.zIndex;
+            lineData2.color = rectangleData.color;
+            lineData2.thickness = rectangleData.thickness;
 
-            drawLine(new LineData(position41, position42) {{
-                zIndex = rectangleData.zIndex;
-                color = rectangleData.color;
-                thickness = rectangleData.thickness;
-            }});
+            drawLine(lineData2);
+
+            LineData lineData3 = new LineData(position31, position32);
+            lineData2.zIndex = rectangleData.zIndex;
+            lineData2.color = rectangleData.color;
+            lineData2.thickness = rectangleData.thickness;
+
+            drawLine(lineData3);
+
+            LineData lineData4 = new LineData(position41, position42);
+            lineData2.zIndex = rectangleData.zIndex;
+            lineData2.color = rectangleData.color;
+            lineData2.thickness = rectangleData.thickness;
+
+            drawLine(lineData4);
         }
     }
 
@@ -814,16 +817,17 @@ public class Spritebatch {
             Vector2f startPoint = pointsData.points.get(i - 1);
             Vector2f endPoint = pointsData.points.get(i);
 
-            drawLine(new LineData(new Vector2f(
+            LineData lineData = new LineData(new Vector2f(
                     startPoint.x + pointsData.position.x, startPoint.y + pointsData.position.y),
                     new Vector2f(
                             endPoint.x + pointsData.position.x,
                             endPoint.y + pointsData.position.y)
-            ) {{
-                zIndex = pointsData.zIndex;
-                color = pointsData.color;
-                thickness = pointsData.thickness;
-            }});
+            );
+            lineData.zIndex = pointsData.zIndex;
+            lineData.color = pointsData.color;
+            lineData.thickness = pointsData.thickness;
+
+            drawLine(lineData);
         }
     }
 
@@ -847,12 +851,13 @@ public class Spritebatch {
     }
 
     public void drawCircle(CircleData circleData) {
-        drawPoints(new PointsData(circleData.position,
-                MathUtil.createCircle(circleData.radius, circleData.sides))  {{
-            zIndex = circleData.zIndex;
-            color = circleData.color;
-            thickness = circleData.thickness;
-        }});
+        PointsData pointsData = new PointsData(circleData.position,
+                MathUtil.createCircle(circleData.radius, circleData.sides));
+        pointsData.zIndex = circleData.zIndex;
+        pointsData.color = circleData.color;
+        pointsData.thickness = circleData.thickness;
+
+        drawPoints(pointsData);
     }
 
     public void drawText(TextData textRenderer) {
@@ -900,14 +905,15 @@ public class Spritebatch {
         }
 
         if (Game.get().isDebugToolsEnabled() && Game.get().getDebugTools().isTextBoxEnabled()) {
-            drawRectangle(new RectangleData(debugPosition,
+            RectangleData rectangleData = new RectangleData(debugPosition,
                     new Vector2f(
                             realFont.getTextWidth(textRenderer.text),
                             realFont.getTextHeight(textRenderer.text))
-            ) {{
-                zIndex = textRenderer.zIndex;
-                color = new Color(1.0f, 0.0f, 0.0f, 0.3f);
-            }});
+            );
+            rectangleData.zIndex = textRenderer.zIndex;
+            rectangleData.color = new Color(1.0f, 0.0f, 0.0f, 0.3f);
+
+            drawRectangle(rectangleData);
         }
     }
 

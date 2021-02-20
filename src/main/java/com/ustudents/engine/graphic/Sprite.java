@@ -1,14 +1,14 @@
 package com.ustudents.engine.graphic;
 
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import org.joml.Vector4f;
 
-@Editable
+@Viewable
 public class Sprite {
-    @Editable
+    @Viewable
     private final Texture texture;
 
-    @Editable
+    @Viewable
     private final Vector4f region;
 
     public Sprite(Texture texture, Vector4f region) {

@@ -153,7 +153,7 @@ public class Window {
         glfwPollEvents();
     }
 
-    public Window get() {
+    public static Window get() {
         return Game.get().getWindow();
     }
 

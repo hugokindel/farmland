@@ -5,15 +5,11 @@ import com.ustudents.engine.graphic.Camera;
 import com.ustudents.farmland.Farmland;
 
 public abstract class BehaviourComponent extends Component {
-    public abstract void update(float dt);
+    public void update(float dt) {
 
-    public abstract void render();
+    }
 
-    public Camera getCamera() {
-        if (entity.hasComponent(UiComponent.class)) {
-            return Farmland.get().getSceneManager().getScene().getUiCamera();
-        }
+    public void render() {
 
-        return Farmland.get().getSceneManager().getScene().getCamera();
     }
 }

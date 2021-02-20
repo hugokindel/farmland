@@ -1,6 +1,6 @@
 package com.ustudents.engine.graphic;
 
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.utility.FileUtil;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -18,7 +18,7 @@ import static com.ustudents.engine.core.Resources.getFontsDirectory;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-@Editable
+@Viewable
 public class Font {
     public static class GlyphInfo {
         Vector4f position;
@@ -28,10 +28,10 @@ public class Font {
     private static final String defaultCharacterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
             "0123456789.,;:?!-_~#\"'&()[]{}^|`/\\@°+=*%€$<>ÀÁÂÄÆÇÈÉÊËÌÍÎÏÒÓÔÖŒÙÚÛÜàáâäæçèéêëìíîïòóôöœùúûü ";
 
-    @Editable
+    @Viewable
     private Integer fontSize;
 
-    @Editable
+    @Viewable
     private String path;
 
     private Texture texture;

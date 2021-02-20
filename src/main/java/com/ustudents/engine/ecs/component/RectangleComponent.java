@@ -1,37 +1,32 @@
 package com.ustudents.engine.ecs.component;
 
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import org.joml.Vector2f;
 
-@Editable
-@JsonSerializable
-public class RectangleComponent extends Component {
+@Viewable
+public class RectangleComponent extends Component implements RenderableComponent {
     /** The size. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Vector2f size;
 
     /** The color. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Color color;
 
     /** The thickness of the lines. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Integer thickness;
 
     /** The origin. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Vector2f origin;
 
-    public RectangleComponent() {
-        this(null, null, null,null);
-    }
+    /** Defines if the rectangle is filled. */
+    @Viewable
+    public Boolean filled;
 
     /**
      * Class constructor.
@@ -39,57 +34,45 @@ public class RectangleComponent extends Component {
      * @param size The size.
      */
     public RectangleComponent(Vector2f size) {
-        this(
-                size,
-                Color.WHITE,
-                1,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param size The size.
-     * @param color The color.
-     */
-    public RectangleComponent(Vector2f size, Color color) {
-        this(
-                size,
-                color,
-                1,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param size The size.
-     * @param color The color.
-     * @param thickness The thickness.
-     */
-    public RectangleComponent(Vector2f size, Color color, Integer thickness) {
-        this(
-                size,
-                color,
-                thickness,
-                new Vector2f(0.0f, 0.0f)
-        );
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param size The size.
-     * @param color The color.
-     * @param thickness The thickness.
-     * @param origin The origin.
-     */
-    public RectangleComponent(Vector2f size, Color color, Integer thickness, Vector2f origin) {
         this.size = size;
+        this.color = Color.WHITE;
+        this.thickness = 1;
+        this.origin = new Vector2f();
+        this.filled = false;
+    }
+
+    public void setSize(Vector2f size) {
+        this.size = size;
+    }
+
+    public void setColor(Color color) {
         this.color = color;
+    }
+
+    public void setThickness(Integer thickness) {
         this.thickness = thickness;
+    }
+
+    public void setOrigin(Vector2f origin) {
         this.origin = origin;
+    }
+
+    public void setFilled(Boolean filled) {
+        this.filled = filled;
+    }
+
+    @Override
+    public void render(Spritebatch spritebatch, RendererComponent rendererComponent,
+                       TransformComponent transformComponent) {
+        Spritebatch.RectangleData rectangleData = new Spritebatch.RectangleData(transformComponent.position, size);
+        rectangleData.zIndex = rendererComponent.zIndex;
+        rectangleData.color = color;
+        rectangleData.rotation = transformComponent.rotation;
+        rectangleData.scale = transformComponent.scale;
+        rectangleData.origin = origin;
+        rectangleData.filled = filled;
+        rectangleData.thickness = thickness;
+
+        spritebatch.drawRectangle(rectangleData);
     }
 }

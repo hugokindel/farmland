@@ -4,18 +4,22 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Camera;
+import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.NineSlicedSprite;
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.MouseButton;
+import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
-public class ButtonComponent extends BehaviourComponent {
-    @Editable
+@Viewable
+public class ButtonComponent extends BehaviourComponent implements RenderableComponent {
+    @Viewable
     public LabelComponent label;
 
-    @Editable
+    @Viewable
     public NineSlicedSpriteComponent sprite;
 
     private boolean focused;
@@ -155,8 +159,25 @@ public class ButtonComponent extends BehaviourComponent {
     }
 
     @Override
-    public void render() {
+    public void render(Spritebatch spritebatch, RendererComponent rendererComponent, TransformComponent transformComponent) {
+        Spritebatch.NineSlicedSpriteData spriteData = new Spritebatch.NineSlicedSpriteData(sprite.parts,
+                transformComponent.position, label.getTextSize());
+        spriteData.zIndex = rendererComponent.zIndex;
+        spriteData.tint = Color.WHITE;
+        spriteData.rotation = transformComponent.rotation;
+        spriteData.scale = transformComponent.scale;
+        spriteData.origin = sprite.origin;
 
+        spritebatch.drawNineSlicedSprite(spriteData);
+
+        Spritebatch.TextData textData = new Spritebatch.TextData(label.text, label.font, transformComponent.position);
+        textData.zIndex = rendererComponent.zIndex;
+        textData.color = label.color;
+        textData.rotation = transformComponent.rotation;
+        textData.scale = transformComponent.scale;
+        textData.origin = new Vector2f(getTextOrigin().x, getTextOrigin().y);
+
+        spritebatch.drawText(textData);
     }
 
     public Vector2f getTextOrigin() {
@@ -165,5 +186,15 @@ public class ButtonComponent extends BehaviourComponent {
 
     public Vector2f getSize() {
         return size;
+    }
+
+    private Camera getCamera() {
+        if (entity.hasComponent(WorldRendererComponent.class)) {
+            return Farmland.get().getSceneManager().getCurrentScene().getCamera();
+        } else if (entity.hasComponent(UiRendererComponent.class)) {
+            return Farmland.get().getSceneManager().getCurrentScene().getUiCamera();
+        }
+
+        return null;
     }
 }

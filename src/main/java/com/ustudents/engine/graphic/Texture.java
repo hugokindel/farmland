@@ -1,8 +1,7 @@
 package com.ustudents.engine.graphic;
 
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.utility.FileUtil;
 
 import org.lwjgl.system.*;
@@ -16,7 +15,7 @@ import static org.lwjgl.stb.STBImage.*;
 import static org.lwjgl.stb.STBImageWrite.stbi_write_png;
 import static org.lwjgl.system.MemoryStack.*;
 
-@Editable
+@Viewable
 public class Texture {
     private ByteBuffer data;
 
@@ -30,7 +29,7 @@ public class Texture {
 
     private boolean destroyed;
 
-    @Editable
+    @Viewable
     private String path;
 
     public Texture(String filePath) {

@@ -1,29 +1,32 @@
 package com.ustudents.engine.ecs.component;
 
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 
-@Editable
-@JsonSerializable
-public class PointComponent extends Component {
+@Viewable
+public class PointComponent extends Component implements RenderableComponent {
     /** The color. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Color color;
 
     /** Class constructor. */
     public PointComponent() {
-        this(Color.WHITE);
+        this.color = Color.WHITE;
     }
 
-    /**
-     * Class constructor.
-     *
-     * @param color The color.
-     */
-    public PointComponent(Color color) {
+    public void setColor(Color color) {
         this.color = color;
+    }
+
+    @Override
+    public void render(Spritebatch spritebatch, RendererComponent rendererComponent,
+                       TransformComponent transformComponent) {
+        Spritebatch.PointData pointData = new Spritebatch.PointData(transformComponent.position);
+        pointData.zIndex = rendererComponent.zIndex;
+        pointData.color = color;
+
+        spritebatch.drawPoint(pointData);
     }
 }

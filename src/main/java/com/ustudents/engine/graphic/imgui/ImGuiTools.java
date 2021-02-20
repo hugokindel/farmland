@@ -5,7 +5,7 @@ import com.ustudents.engine.audio.SoundSource;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.ecs.Component;
@@ -102,7 +102,7 @@ public class ImGuiTools {
 
         ImGui.begin("Scene hierarchy", showSceneHierarchyWindow);
 
-        ImGui.text(sceneManager.getScene().getClass().getSimpleName());
+        ImGui.text(sceneManager.getCurrentScene().getClass().getSimpleName());
 
         ImGui.separator();
 
@@ -120,7 +120,7 @@ public class ImGuiTools {
 
         ImGui.separator();
 
-        drawEntitiesTree(sceneManager.getScene().getRegistry().getEntitiesAtRoot(), true);
+        drawEntitiesTree(sceneManager.getCurrentScene().getRegistry().getEntitiesAtRoot(), true);
 
         ImGui.end();
     }
@@ -161,7 +161,7 @@ public class ImGuiTools {
             ImGui.text("Camera");
 
             ImGui.separator();
-            Camera camera = sceneManager.getScene().getCamera();
+            Camera camera = sceneManager.getCurrentScene().getCamera();
             Vector2f position = camera.getPosition();
 
             if (ImGui.treeNode("transform")) {
@@ -193,7 +193,7 @@ public class ImGuiTools {
             }
 
         } else if (selectedInspectorEntity != -1) {
-            Entity entity = sceneManager.getScene().getRegistry().getEntityById(selectedInspectorEntity);
+            Entity entity = sceneManager.getCurrentScene().getRegistry().getEntityById(selectedInspectorEntity);
 
             if (entity != null) {
                 int entityId = entity.getId();
@@ -234,7 +234,7 @@ public class ImGuiTools {
     private void drawEditableFields(int entityId, Object component) {
         ArrayList<Field> fields = new ArrayList<>(Arrays.asList(Runnable.class.getDeclaredFields()));
         fields.addAll(Arrays.asList(component.getClass().getDeclaredFields()));
-        fields.removeIf(field -> !field.isAnnotationPresent(Editable.class));
+        fields.removeIf(field -> !field.isAnnotationPresent(Viewable.class));
 
         /*if (!values.get(entityId).containsKey(componentId)) {
             values.get(entityId).put(componentId, new HashMap<>());
@@ -300,7 +300,7 @@ public class ImGuiTools {
                     value = new int[]{originalValue.x, originalValue.y, originalValue.z, originalValue.w};
                 } else if (type == Font.class || type == Texture.class || type == Color.class || type == SoundSource.class) {
                     value = field.get(component);
-                } else if (type.isAnnotationPresent(Editable.class)) {
+                } else if (type.isAnnotationPresent(Viewable.class)) {
                     if (ImGui.treeNode(name)) {
                         drawEditableFields(entityId, (Object)field.get(component));
                         ImGui.treePop();
@@ -343,7 +343,7 @@ public class ImGuiTools {
 
         ImGui.text("FPS: " + fps);
         ImGui.text("Framerate: " + ms + "/ms");
-        ImGui.text("Number of entities: " + sceneManager.getScene().getRegistry().getTotalNumberOfEntities());
+        ImGui.text("Number of entities: " + sceneManager.getCurrentScene().getRegistry().getTotalNumberOfEntities());
 
         ImGui.end();
     }

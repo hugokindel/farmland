@@ -3,7 +3,7 @@ package com.ustudents.engine.scene;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Window;
 import com.ustudents.engine.ecs.system.BehaviourSystem;
-import com.ustudents.engine.ecs.system.GameRenderSystem;
+import com.ustudents.engine.ecs.system.WorldRenderSystem;
 import com.ustudents.engine.ecs.system.UiRenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.ecs.Registry;
@@ -80,7 +80,7 @@ public abstract class Scene {
      *
      * @param scene The new current scene.
      */
-    public void changeScene(Scene scene) {
+    public <T extends Scene> void changeScene(T scene) {
         sceneManager.changeScene(scene);
     }
 
@@ -91,7 +91,6 @@ public abstract class Scene {
      * @param args The scene type constructor arguments.
      * @param <T> The scene type.
      */
-    @Deprecated
     public <T extends Scene> void changeScene(Class<T> classType, Object... args) {
         if (args.length == 0) {
             sceneManager.changeScene(classType);
@@ -148,7 +147,7 @@ public abstract class Scene {
     /** Initialize the scene internally. */
     void initializeInternals() {
         registry.addSystem(BehaviourSystem.class);
-        registry.addSystem(GameRenderSystem.class);
+        registry.addSystem(WorldRenderSystem.class);
         registry.addSystem(UiRenderSystem.class);
 
         initialize();

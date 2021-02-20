@@ -33,7 +33,7 @@ public class ExampleScene extends Scene {
 
         Entity player1 = registry.createEntity();
         player1.addComponent(TransformComponent.class, new Vector2f(0, 0), new Vector2f(1, 1));
-        player1.addComponent(RenderableComponent.class);
+        player1.addComponent(RendererComponent.class);
         player1.addComponent(TextureComponent.class, texture);
         player1.addTag("players");
         player1.setName("player1");
@@ -41,7 +41,7 @@ public class ExampleScene extends Scene {
 
         Entity player2 = registry.createEntity();
         player2.addComponent(TransformComponent.class, new Vector2f(400, 400), new Vector2f(1, 1), 21.0f);
-        player2.addComponent(RenderableComponent.class);
+        player2.addComponent(RendererComponent.class);
         player2.addComponent(TextureComponent.class, texture);
         player2.addTag("players");
         player2.setName("player2");
@@ -49,7 +49,7 @@ public class ExampleScene extends Scene {
 
         Entity player3 = registry.createEntity();
         player3.addComponent(TransformComponent.class, new Vector2f(-400, -400), new Vector2f(1, 1), 57.0f);
-        player3.addComponent(RenderableComponent.class);
+        player3.addComponent(RendererComponent.class);
         player3.addComponent(TextureComponent.class, texture2);
         player3.addComponent(MoveBlockComponent.class);
         player3.addComponent(RotateBlockComponent.class);
@@ -59,7 +59,7 @@ public class ExampleScene extends Scene {
 
         Entity player4 = registry.createEntity();
         player4.addComponent(TransformComponent.class, new Vector2f(400, 0), new Vector2f(1, 1));
-        player4.addComponent(RenderableComponent.class);
+        player4.addComponent(RendererComponent.class);
         registry.updateEntities();
         player4.addComponent(TextureComponent.class, texture2);
         player4.addTag("players");

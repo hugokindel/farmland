@@ -47,8 +47,8 @@ public class SceneManager {
     /** Updates the scene. */
     public void update(float dt) {
         if (scenes.size() > currentSceneIndex) {
-            getScene().update(dt);
-            getScene().getRegistry().update(dt);
+            getCurrentScene().update(dt);
+            getCurrentScene().getRegistry().update(dt);
 
             if (Game.get().isImGuiToolsEnabled()) {
                 Game.get().getImGuiTools().update(dt);
@@ -59,8 +59,8 @@ public class SceneManager {
     /** Renders the scene. */
     public void render() {
         if (scenes.size() > currentSceneIndex) {
-            getScene().getRegistry().render();
-            getScene().render();
+            getCurrentScene().getRegistry().render();
+            getCurrentScene().render();
 
             if (Game.get().isDebugToolsEnabled()) {
                 Game.get().getDebugTools().render();
@@ -71,7 +71,7 @@ public class SceneManager {
     /** Renders the scene (for ImGui windows). */
     public void renderImGui() {
         if (scenes.size() > currentSceneIndex) {
-            getScene().renderImGui();
+            getCurrentScene().renderImGui();
             Game.get().getImGuiTools().renderImGui();
         }
     }
@@ -79,8 +79,8 @@ public class SceneManager {
     /** Destroys the scene. */
     public void destroy() {
         if (scenes.size() > currentSceneIndex) {
-            getScene().getSpritebatch().destroy();
-            getScene().destroy();
+            getCurrentScene().getSpritebatch().destroy();
+            getCurrentScene().destroy();
 
             if (Game.isDebugging()) {
                 Out.printlnDebug("Scene destroyed.");
@@ -118,12 +118,22 @@ public class SceneManager {
     /** Updates the registry of the scene. */
     public void endFrame() {
         if (scenes.size() > currentSceneIndex) {
-            getScene().getRegistry().updateEntities();
+            getCurrentScene().getRegistry().updateEntities();
         }
     }
 
+    /** @return the scene manager. */
+    public static SceneManager get() {
+        return Game.get().getSceneManager();
+    }
+
     /** @return the current scene. */
-    public Scene getScene() {
+    public static Scene getScene() {
+        return Game.get().getSceneManager().getCurrentScene();
+    }
+
+    /** @return the current scene. */
+    public Scene getCurrentScene() {
         return scenes.get(currentSceneIndex);
     }
 }

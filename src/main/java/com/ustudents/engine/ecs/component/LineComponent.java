@@ -1,31 +1,24 @@
 package com.ustudents.engine.ecs.component;
 
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
-import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import org.joml.Vector2f;
 
-import static com.ustudents.engine.core.Resources.getTexturesDirectory;
-
-@Editable
-public class LineComponent extends Component {
+@Viewable
+public class LineComponent extends Component implements RenderableComponent {
     /** The color. */
-    @Editable
+    @Viewable
     public Color color;
 
     /** The thickness. */
-    @Editable
+    @Viewable
     public Integer thickness;
 
     /** The point. */
-    @Editable
+    @Viewable
     public Vector2f point2;
-
-    public LineComponent() {
-        this(null, null, null);
-    }
 
     /**
      * Class constructor.
@@ -33,29 +26,31 @@ public class LineComponent extends Component {
      * @param point2 The point.
      */
     public LineComponent(Vector2f point2) {
-        this(point2, Color.WHITE, 1);
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param point2 The point.
-     * @param color The color.
-     */
-    public LineComponent(Vector2f point2, Color color) {
-        this(point2, color, 1);
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param point2 The point.
-     * @param color The color.
-     * @param thickness The thickness.
-     */
-    public LineComponent(Vector2f point2, Color color, Integer thickness) {
         this.point2 = point2;
+        this.color = Color.WHITE;
+        this.thickness = 1;
+    }
+
+    public void setColor(Color color) {
         this.color = color;
+    }
+
+    public void setThickness(Integer thickness) {
         this.thickness = thickness;
+    }
+
+    public void setPoint2(Vector2f point2) {
+        this.point2 = point2;
+    }
+
+    @Override
+    public void render(Spritebatch spritebatch, RendererComponent rendererComponent,
+                       TransformComponent transformComponent) {
+        Spritebatch.LineData lineData = new Spritebatch.LineData(transformComponent.position, point2);
+        lineData.zIndex = rendererComponent.zIndex;
+        lineData.color = color;
+        lineData.thickness = thickness;
+
+        spritebatch.drawLine(lineData);
     }
 }

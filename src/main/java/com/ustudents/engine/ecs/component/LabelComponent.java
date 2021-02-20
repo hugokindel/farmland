@@ -4,32 +4,31 @@ import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import org.joml.Vector2f;
 
-@Editable
-@JsonSerializable
-public class LabelComponent extends Component {
+@Viewable
+public class LabelComponent extends Component implements RenderableComponent {
     /** The text. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public String text;
 
     /** The font. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Font font;
 
     /** The color. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Color color;
 
+    /** The text size. */
+    @Viewable
     private Vector2f textSize;
 
-    public LabelComponent() {
-        this(null, null);
-    }
+    /** The text size. */
+    @Viewable
+    private Vector2f origin;
 
     /**
      * Class constructor.
@@ -38,28 +37,52 @@ public class LabelComponent extends Component {
      * @param font The font.
      */
     public LabelComponent(String text, Font font) {
-        this(text, font, Color.WHITE);
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param text The text.
-     * @param font The font.
-     * @param color The color.
-     */
-    public LabelComponent(String text, Font font, Color color) {
         this.text = text;
         this.font = font;
-        this.color = color;
+        this.color = Color.WHITE;
+        this.origin = new Vector2f();
+        calculateTextSize();
+    }
 
+    public Vector2f getTextSize() {
+        return textSize;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        calculateTextSize();
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
+        calculateTextSize();
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void setOrigin(Vector2f origin) {
+        this.origin = origin;
+    }
+
+    private void calculateTextSize() {
         textSize = new Vector2f(
                 font.getTextWidth(text),
                 font.getTextHeight(text)
         );
     }
 
-    public Vector2f getTextSize() {
-        return textSize;
+    @Override
+    public void render(Spritebatch spritebatch, RendererComponent rendererComponent,
+                       TransformComponent transformComponent) {
+        Spritebatch.TextData textData = new Spritebatch.TextData(text, font, transformComponent.position);
+        textData.zIndex = rendererComponent.zIndex;
+        textData.color = color;
+        textData.rotation = transformComponent.rotation;
+        textData.scale = transformComponent.scale;
+        textData.origin = origin;
+
+        spritebatch.drawText(textData);
     }
 }

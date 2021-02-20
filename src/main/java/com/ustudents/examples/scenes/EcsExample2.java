@@ -3,7 +3,7 @@ package com.ustudents.examples.scenes;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.ecs.Entity;
-import com.ustudents.engine.ecs.component.RenderableComponent;
+import com.ustudents.engine.ecs.component.RendererComponent;
 import com.ustudents.engine.ecs.component.TextureComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
 import com.ustudents.engine.graphic.Texture;
@@ -49,7 +49,7 @@ public class EcsExample2 extends Scene {
                         new Vector4f(textureRegionX, textureRegionY, 24, 24));
 
                 // Je rajoute un RenderableComponent pour rendre l'entité affichable à l'écran.
-                grass.addComponent(RenderableComponent.class);
+                grass.addComponent(RendererComponent.class);
             }
         }
     }

@@ -3,34 +3,26 @@ package com.ustudents.engine.ecs.component;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 
-@Editable
-@JsonSerializable
-public class CircleComponent extends Component {
+@Viewable
+public class CircleComponent extends Component implements RenderableComponent {
     /** The radius. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Float radius;
 
     /** The number of sides to render. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Integer sides;
 
     /** The color. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Color color;
 
     /** The thickness of the lines. */
-    @JsonSerializable
-    @Editable
+    @Viewable
     public Integer thickness;
-
-    public CircleComponent() {
-        this(null, null, null, null);
-    }
 
     /**
      * Class constructor.
@@ -39,32 +31,56 @@ public class CircleComponent extends Component {
      * @param sides The sides.
      */
     public CircleComponent(Float radius, Integer sides) {
-        this(radius, sides, Color.WHITE, 1);
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param radius The radius.
-     * @param sides The sides.
-     * @param color The color.
-     */
-    public CircleComponent(Float radius, Integer sides, Color color) {
-        this(radius, sides, color, 1);
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @param radius The radius.
-     * @param sides The sides.
-     * @param color The color.
-     * @param thickness The thickness.
-     */
-    public CircleComponent(Float radius, Integer sides, Color color, Integer thickness) {
         this.radius = radius;
         this.sides = sides;
+        this.color = Color.WHITE;
+        this.thickness = 1;
+    }
+
+    /**
+     * Changes the circle radius.
+     *
+     * @param radius The radius.
+     */
+    public void setRadius(Float radius) {
+        this.radius = radius;
+    }
+
+    /**
+     * Changes the number of sides.
+     *
+     * @param sides The sides.
+     */
+    public void setSides(Integer sides) {
+        this.sides = sides;
+    }
+
+    /**
+     * Changes the color.
+     *
+     * @param color The color.
+     */
+    public void setColor(Color color) {
         this.color = color;
+    }
+
+    /**
+     * Changes the thickness.
+     *
+     * @param thickness The thickness.
+     */
+    public void setThickness(Integer thickness) {
         this.thickness = thickness;
+    }
+
+    @Override
+    public void render(Spritebatch spritebatch, RendererComponent rendererComponent,
+                       TransformComponent transformComponent) {
+        Spritebatch.CircleData circleData = new Spritebatch.CircleData(transformComponent.position, radius, sides);
+        circleData.zIndex = rendererComponent.zIndex;
+        circleData.color = color;
+        circleData.thickness = thickness;
+
+        spritebatch.drawCircle(circleData);
     }
 }

@@ -4,10 +4,13 @@ import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.ecs.component.*;
 import com.ustudents.engine.graphic.Spritebatch;
+import com.ustudents.engine.scene.SceneManager;
 
-public class GameRenderSystem extends RenderSystem {
-    public GameRenderSystem(Registry registry) {
+public class WorldRenderSystem extends RenderSystem {
+    public WorldRenderSystem(Registry registry) {
         super(registry);
+
+        requireComponent(WorldRendererComponent.class);
     }
 
     @Override
@@ -16,16 +19,12 @@ public class GameRenderSystem extends RenderSystem {
             return;
         }
 
-        Spritebatch spritebatch = getScene().getSpritebatch();
+        Spritebatch spritebatch = SceneManager.getScene().getSpritebatch();
 
-        spritebatch.begin(getScene().getCamera());
+        spritebatch.begin(SceneManager.getScene().getCamera());
 
         for (Entity entity : getEntities()) {
-            if (entity.hasComponent(UiComponent.class)) {
-                continue;
-            }
-
-            renderElement(spritebatch, entity);
+            renderElement(spritebatch, entity, WorldRendererComponent.class);
         }
 
         spritebatch.end();

@@ -1,35 +1,35 @@
 package com.ustudents.engine.graphic;
 
-import com.ustudents.engine.graphic.imgui.annotation.Editable;
+import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import org.joml.Vector2f;
 
-@Editable
+@Viewable
 public class NineSlicedSprite {
-    @Editable
+    @Viewable
     public Sprite topLeft;
 
-    @Editable
+    @Viewable
     public Sprite topMiddle;
 
-    @Editable
+    @Viewable
     public Sprite topRight;
 
-    @Editable
+    @Viewable
     public Sprite middleLeft;
 
-    @Editable
+    @Viewable
     public Sprite middle;
 
-    @Editable
+    @Viewable
     public Sprite middleRight;
 
-    @Editable
+    @Viewable
     public Sprite bottomLeft;
 
-    @Editable
+    @Viewable
     public Sprite bottomMiddle;
 
-    @Editable
+    @Viewable
     public Sprite bottomRight;
 
     public NineSlicedSprite(Sprite topLeft, Sprite topMiddle, Sprite topRight, Sprite middleLeft, Sprite middle,

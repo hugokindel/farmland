@@ -1,13 +1,9 @@
 package com.ustudents.examples.scenes;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.ecs.component.RenderableComponent;
+import com.ustudents.engine.ecs.component.RendererComponent;
 import com.ustudents.engine.ecs.component.TransformComponent;
-import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
-import com.ustudents.engine.input.Input;
-import com.ustudents.engine.input.Key;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.entities.mapElements.*;
@@ -16,8 +12,6 @@ import com.ustudents.farmland.entities.resources.*;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
-import org.joml.Vector4f;
 
 public class EcsExample3 extends Scene {
 
@@ -37,7 +31,7 @@ public class EcsExample3 extends Scene {
                     Citie citie = registry.createEntity(Citie.class);
                     citie.init();
                     citie.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1, 1));
-                    citie.addComponent(RenderableComponent.class, 2);
+                    citie.addComponent(RendererComponent.class, 2);
                 }
                 if(rd < 4){
                     // Crée une nouvelle entité.
@@ -46,52 +40,52 @@ public class EcsExample3 extends Scene {
                     mountain.init(random);
                     // Je rajoute un TransformComponent
                     mountain.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1, 1));
-                    mountain.addComponent(RenderableComponent.class, 1);
+                    mountain.addComponent(RendererComponent.class, 1);
                 }
                 Plain grass = registry.createEntity(Plain.class);
                 grass.init(random);
                 grass.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1, 1));
-                grass.addComponent(RenderableComponent.class);
+                grass.addComponent(RendererComponent.class);
                 if(y == 0 && x%2 == 0){
                     Field field = registry.createEntity(Field.class);
                     field.init(random);
                     field.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
-                    field.addComponent(RenderableComponent.class, 10);
+                    field.addComponent(RendererComponent.class, 10);
                 }
                 if(y == 3 && x%3 == 0){
                     Fence fence = registry.createEntity(Fence.class);
                     fence.init();
                     fence.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
-                    fence.addComponent(RenderableComponent.class, 10);
+                    fence.addComponent(RendererComponent.class, 10);
                 }
                 if(y == 0 && x%2 == 0){
                     Corn corn = registry.createEntity(Corn.class);
                     corn.init();
                     corn.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24 - 6), new Vector2f(1,1));
-                    corn.addComponent(RenderableComponent.class, 11);
+                    corn.addComponent(RendererComponent.class, 11);
                 }
                 if(y == -3 && x%2 == 0){
                     Pumpkin pumpkin = registry.createEntity(Pumpkin.class);
                     pumpkin.init();
                     pumpkin.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
-                    pumpkin.addComponent(RenderableComponent.class, 11);
+                    pumpkin.addComponent(RendererComponent.class, 11);
                 }
                 if(y == -6 && x%2 == 0){
                     WaterMelon waterMelon = registry.createEntity(WaterMelon.class);
                     waterMelon.init();
                     waterMelon.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
-                    waterMelon.addComponent(RenderableComponent.class, 11);
+                    waterMelon.addComponent(RendererComponent.class, 11);
                 }if(y == 6 && x%2 == 0){
                     Pepper pepper = registry.createEntity(Pepper.class);
                     pepper.init();
                     pepper.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
-                    pepper.addComponent(RenderableComponent.class, 11);
+                    pepper.addComponent(RendererComponent.class, 11);
                 }
                 if(y == 4 && x%2 == 0){
                     Carrots carrots = registry.createEntity(Carrots.class);
                     carrots.init();
                     carrots.addComponent(TransformComponent.class, new Vector2f(x * 24, y * 24), new Vector2f(1,1));
-                    carrots.addComponent(RenderableComponent.class, 11);
+                    carrots.addComponent(RendererComponent.class, 11);
                 }
 
             }
@@ -99,23 +93,23 @@ public class EcsExample3 extends Scene {
         Cow cow = registry.createEntity(Cow.class);
         cow.init(random);
         cow.addComponent(TransformComponent.class, new Vector2f(-128, 200), new Vector2f(1,1));
-        cow.addComponent(RenderableComponent.class);
+        cow.addComponent(RendererComponent.class);
         Goat goat = registry.createEntity(Goat.class);
         goat.init(random);
         goat.addComponent(TransformComponent.class, new Vector2f(0, 200), new Vector2f(1,1));
-        goat.addComponent(RenderableComponent.class);
+        goat.addComponent(RendererComponent.class);
         Pig pig = registry.createEntity(Pig.class);
         pig.init(random);
         pig.addComponent(TransformComponent.class, new Vector2f(128, 200), new Vector2f(1,1));
-        pig.addComponent(RenderableComponent.class);
+        pig.addComponent(RendererComponent.class);
         Sheep sheep = registry.createEntity(Sheep.class);
         sheep.init(random);
         sheep.addComponent(TransformComponent.class, new Vector2f(-256, 200), new Vector2f(1,1));
-        sheep.addComponent(RenderableComponent.class);
+        sheep.addComponent(RendererComponent.class);
         Chicken chicken = registry.createEntity(Chicken.class);
         chicken.init(random);
         chicken.addComponent(TransformComponent.class, new Vector2f(-384, 200), new Vector2f(1,1));
-        chicken.addComponent(RenderableComponent.class);
+        chicken.addComponent(RendererComponent.class);
     }
 
     @Override

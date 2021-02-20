@@ -1,21 +1,17 @@
 package com.ustudents.engine.ecs;
 
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
-
 import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 
 /** Defines an entity object from an ECS point of view. */
 @SuppressWarnings({"unused"})
-@JsonSerializable
 public class Entity {
     /** The unique ID. */
-    @JsonSerializable
-    private Integer id;
+    private final Integer id;
 
     /** The registry used to interact with this entity. */
-    private Registry registry;
+    private final Registry registry;
 
     /**
      * Class constructor.
@@ -166,6 +162,10 @@ public class Entity {
         return registry.getChildrenOfEntity(this);
     }
 
+    public <T extends Component> T addComponent(T component) {
+        return registry.addComponentToEntity(this, component);
+    }
+
     /**
      * Adds a component of a given type.
      *
@@ -173,8 +173,9 @@ public class Entity {
      * @param args The component constructor arguments (do not use primitive types).
      * @param <T> The component type.
      */
-    public <T extends Component> void addComponent(Class<T> classType, Object... args) {
-        registry.addComponentToEntity(this, classType, args);
+    @Deprecated
+    public <T extends Component> T addComponent(Class<T> classType, Object... args) {
+        return registry.addComponentToEntity(this, classType, args);
     }
 
     /**

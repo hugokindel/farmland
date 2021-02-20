@@ -27,7 +27,7 @@ public class DebugTools {
 
     public void render() {
         if (statisticsEnabled || gridEnabled) {
-            Scene scene = Farmland.get().getSceneManager().getScene();
+            Scene scene = Farmland.get().getSceneManager().getCurrentScene();
             Spritebatch spritebatch = scene.getSpritebatch();
 
             spritebatch.begin(scene.getUiCamera());

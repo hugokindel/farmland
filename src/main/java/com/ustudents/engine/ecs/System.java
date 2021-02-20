@@ -23,10 +23,16 @@ public class System {
         this.registry = registry;
     }
 
+    /**
+     * Updates the system's logic.
+     *
+     * @param dt The delta time.
+     */
     public void update(float dt) {
 
     }
 
+    /** Renders the system on the screen. */
     public void render() {
 
     }
@@ -78,9 +84,5 @@ public class System {
         }
 
         signatures.get(signatureId).set(registry.getComponentTypeRegistry().getIdForType(classType));
-    }
-
-    protected Scene getScene() {
-        return Game.get().getSceneManager().getScene();
     }
 }

@@ -1,25 +1,18 @@
 package com.ustudents.farmland.scene;
 
-import com.ustudents.engine.Game;
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.Window;
-import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.component.*;
+import com.ustudents.engine.ecs.system.UiRenderSystem;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.scene.Scene;
-import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
-import imgui.ImGui;
-import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class MainMenu extends Scene {
     Texture grassTexture;
@@ -57,17 +50,15 @@ public class MainMenu extends Scene {
 
         for (int x = 0; x < 30; x++) {
             for (int y = 0; y < 15; y++) {
-                Entity grass = registry.createEntity();
-                grass.setParent(grassContainer);
-
-                grass.addComponent(TransformComponent.class, new Vector2f(-360 + x * 24, -240 + y * 24), new Vector2f(1, 1));
-
                 int textureRegionX = 24 * random.generateInRange(1, 5);
                 int textureRegionY = 24 * random.generateInRange(1, 5);
-                grass.addComponent(TextureComponent.class, grassTexture,
-                        new Vector4f(textureRegionX, textureRegionY, 24, 24));
 
-                grass.addComponent(RenderableComponent.class);
+                Entity grass = registry.createEntity();
+                grass.setParent(grassContainer);
+                grass.addComponent(new TransformComponent(new Vector2f(-360 + x * 24, -240 + y * 24)));
+                TextureComponent textureComponent = grass.addComponent(new TextureComponent(grassTexture));
+                textureComponent.setRegion(new Vector4f(textureRegionX, textureRegionY, 24, 24));
+                grass.addComponent(new WorldRendererComponent());
             }
         }
     }
@@ -81,15 +72,15 @@ public class MainMenu extends Scene {
         Entity title = registry.createEntity();
         title.setName("titleLabel");
         title.setParent(uiContainer);
-        title.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f, 20), new Vector2f(1.5f, 1.5f));
-        title.addComponent(TextureComponent.class, titleTexture);
+        title.addComponent(
+                new TransformComponent(new Vector2f(windowSize.x / 2.0f, 20), new Vector2f(1.5f, 1.5f)));
+        title.addComponent(new TextureComponent(titleTexture));
         Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
             Window.SizeChangedEventData event = (Window.SizeChangedEventData)data;
-            title.getComponent(TransformComponent.class).position = new Vector2f(event.newSize.x / 2.0f, 20);
+            title.getComponent(TransformComponent.class).setPosition(new Vector2f(event.newSize.x / 2.0f, 20));
         });
-        title.getComponent(TextureComponent.class).origin = new Vector2f(256.0f, 0.0f);
-        title.addComponent(RenderableComponent.class);
-        title.addComponent(UiComponent.class);
+        title.getComponent(TextureComponent.class).setOrigin(new Vector2f(256.0f, 0.0f));
+        title.addComponent(new UiRendererComponent());
 
         String[] buttons = new String[] {"Jouer", "Multijoueur", "Paramètres", "Crédits", "Quitter"};
         String[] buttonsName = new String[] {"singleplayer", "multiplayer", "settings", "credits", "quit"};
@@ -98,8 +89,9 @@ public class MainMenu extends Scene {
             Entity button = registry.createEntity();
             button.setName(buttonsName[i] + "Button");
             button.setParent(uiContainer);
-            button.addComponent(TransformComponent.class, new Vector2f(windowSize.x / 2.0f, 300 + 80 * i), new Vector2f(3.1f, 3.1f));
-            button.addComponent(ButtonComponent.class, buttons[i]);
+            button.addComponent(new TransformComponent(
+                    new Vector2f(windowSize.x / 2.0f, 300 + 80 * i), new Vector2f(3.1f, 3.1f)));
+            button.addComponent(new ButtonComponent(buttons[i]));
             int finalI = i;
             button.getComponent(ButtonComponent.class).addListener((dataType, data) -> {
                 if (buttonsName[finalI].equals("singleplayer")) {
@@ -116,29 +108,28 @@ public class MainMenu extends Scene {
             });
             Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
                 Window.SizeChangedEventData event = (Window.SizeChangedEventData)data;
-                button.getComponent(TransformComponent.class).position = new Vector2f(event.newSize.x / 2.0f, 300 + 80 * finalI);
+                button.getComponent(TransformComponent.class).setPosition(new Vector2f(event.newSize.x / 2.0f, 300 + 80 * finalI));
             });
-            button.addComponent(RenderableComponent.class);
-            button.addComponent(UiComponent.class);
+            button.addComponent(new UiRendererComponent());
         }
 
         Entity version = registry.createEntity();
         version.setName("versionLabel");
         version.setParent(uiContainer);
-        version.addComponent(TransformComponent.class, new Vector2f(10, windowSize.y - font.getTextHeight("Version: 0.0.1")), new Vector2f(1, 1));
-        version.addComponent(LabelComponent.class, "Version: 0.0.1", fontSmaller);
-        version.addComponent(RenderableComponent.class);
-        version.addComponent(UiComponent.class);
+        version.addComponent(new TransformComponent(
+                new Vector2f(10, windowSize.y - font.getTextHeight("Version: 0.0.1")), new Vector2f(1, 1)));
+        version.addComponent(new LabelComponent("Version: 0.0.1", fontSmaller));
+        version.addComponent(new UiRendererComponent());
         Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
             Window.SizeChangedEventData event = (Window.SizeChangedEventData)data;
-            version.getComponent(TransformComponent.class).position = new Vector2f(10, event.newSize.y - font.getTextHeight("Version: 0.0.1"));
+            version.getComponent(TransformComponent.class).setPosition(new Vector2f(10, event.newSize.y - font.getTextHeight("Version: 0.0.1")));
         });
     }
 
     public void initializeMusic() {
         Entity music = registry.createEntity();
         music.setName("music");
-        music.addComponent(SoundComponent.class, musicSound, true);
+        music.addComponent(new SoundComponent(musicSound, true, true));
     }
 
     @Override

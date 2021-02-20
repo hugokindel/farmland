@@ -327,7 +327,7 @@ public abstract class Game extends Runnable {
 
     /** Renders the game. */
     private void renderInternal() {
-        Spritebatch spritebatch = sceneManager.getScene().getSpritebatch();
+        Spritebatch spritebatch = sceneManager.getCurrentScene().getSpritebatch();
 
         timer.render();
         window.clear();
@@ -348,9 +348,9 @@ public abstract class Game extends Runnable {
             imGuiManager.endFrame();
         }
 
-        if (!isImGuiToolsEnabled() && sceneManager.getScene() != null &&
+        if (!isImGuiToolsEnabled() && sceneManager.getCurrentScene() != null &&
                 cursorTexture != null && Input.getMousePos() != null) {
-            spritebatch.begin(sceneManager.getScene().getCursorCamera());
+            spritebatch.begin(sceneManager.getCurrentScene().getCursorCamera());
             spritebatch.drawTexture(new Spritebatch.TextureData(cursorTexture, Input.getMousePos()) {{
                 scale = new Vector2f(2.0f, 2.0f);
             }});
@@ -391,8 +391,8 @@ public abstract class Game extends Runnable {
 
         GL33.glViewport(0, 0, size.x, size.y);
 
-        if (getSceneManager() != null && getSceneManager().getScene() != null) {
-            Scene scene = getSceneManager().getScene();
+        if (getSceneManager() != null && getSceneManager().getCurrentScene() != null) {
+            Scene scene = getSceneManager().getCurrentScene();
             scene.getCamera().resize(size.x, size.y);
             scene.getUiCamera().resize(size.x, size.y);
             shouldResize = false;

@@ -113,19 +113,20 @@ public class Registry {
      * @param args The system type constructor arguments.
      * @param <T> The system type.
      */
-    public <T extends System> void addSystem(Class<T> classType, Object... args) {
+    public <T extends System> T addSystem(Class<T> classType, Object... args) {
         int systemId = classType.getName().hashCode();
+
         T system;
 
         if (args.length == 0) {
-            system = TypeUtil.createInstance(classType, this);
+            system = Objects.requireNonNull(TypeUtil.createInstance(classType, this));
         } else {
-            system = TypeUtil.createInstance(classType, this, args);
+            system = Objects.requireNonNull(TypeUtil.createInstance(classType, this, args));
         }
 
-        assert system != null;
-
         systems.put(systemId, system);
+
+        return system;
     }
 
     /**
@@ -178,7 +179,8 @@ public class Registry {
      * @return the entity.
      */
     public <T extends Entity> T createEntity(Class<T> classType, Object... args) {
-        int entityId = freeIds.isEmpty() ? lastEntityNumber++ : freeIds.pop();
+        int entityId = requestId();
+
         T entity;
 
         if (args.length == 0) {
@@ -566,30 +568,26 @@ public class Registry {
     }
 
     /**
-     * Add a component of a given type to the entity.
-     * 
+     * Add a component to the entity.
+     *
      * @param entity The entity.
-     * @param classType The component type class.
-     * @param args The component type constructor arguments.
-     * @param <T> The component type.
+     * @param component The component.
      */
-    public <T extends Component> void addComponentToEntity(Entity entity, Class<T> classType, Object... args) {
+    public <T extends Component> T addComponentToEntity(Entity entity, T component) {
+        Class<?> classType = component.getClass();
+
         if (classType == BehaviourComponent.class) {
             Out.printError("You can't add a " + Style.Bold + "BehaviourComponent" + Style.Reset + " to an entity, you need to use a subclass of BehaviourComponent!");
         }
 
         int entityId = entity.getId();
-        int componentId = componentTypeRegistry.getIdForType(classType);
+        int componentId = componentTypeRegistry.getIdForType(component.getClass());
 
         while (componentPools.size() <= componentId) {
             componentPools.add(new ComponentPool<T>(baseComponentPoolCapacity));
         }
 
-        T component = TypeUtil.createInstance(classType, args);
-
-        assert component != null;
-
-        component.setId(componentTypeRegistry.getIdForType(classType));
+        component.setId(componentTypeRegistry.getIdForType(component.getClass()));
         component.setEntity(entity);
         ((ComponentPool<T>)componentPools.get(componentId)).set(entityId, component);
         signaturePerEntity.get(entityId).set(componentId);
@@ -600,6 +598,25 @@ public class Registry {
         }
 
         entitiesToBeAddedToSystems.add(entity);
+
+        return component;
+    }
+
+    /**
+     * Add a component of a given type to the entity.
+     * 
+     * @param entity The entity.
+     * @param classType The component type class.
+     * @param args The component type constructor arguments.
+     * @param <T> The component type.
+     */
+    @Deprecated
+    public <T extends Component> T addComponentToEntity(Entity entity, Class<T> classType, Object... args) {
+        if (args.length == 0) {
+            return addComponentToEntity(entity, Objects.requireNonNull(TypeUtil.createInstance(classType)));
+        }
+
+        return addComponentToEntity(entity, Objects.requireNonNull(TypeUtil.createInstance(classType, args)));
     }
 
     /**
@@ -781,6 +798,10 @@ public class Registry {
     /** @return the component type registry. */
     public ComponentTypeRegistry getComponentTypeRegistry() {
         return componentTypeRegistry;
+    }
+
+    public int requestId() {
+        return freeIds.isEmpty() ? lastEntityNumber++ : freeIds.pop();
     }
 
     /** Add recently created or enabled entities to all systems. */

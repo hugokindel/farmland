@@ -9,15 +9,14 @@ import imgui.glfw.ImGuiImplGlfw;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 
-// FIXME: Bug where an ImGui window becomes unresponsive when closing imgui with F1 when an ImGui window is outside the game window.
 public class ImGuiManager {
-    private ImGuiImplGlfw imGuiGlfw;
-    private ImGuiImplGl3 imGuiGl3;
+    // FIXME: Bug where an ImGui window becomes unresponsive when closing imgui with F1 when an ImGui window is outside the game window.
 
-    public ImGuiManager() {
-        imGuiGlfw = new ImGuiImplGlfw();
-        imGuiGl3 = new ImGuiImplGl3();
-    }
+    /** The ImGui GLFW implementation. */
+    private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
+
+    /** The ImGui OpenGL 3.X implementation. */
+    private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
 
     public void initialize(long windowHandle, String glslVersion) {
         ImGui.createContext();
