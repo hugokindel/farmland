@@ -16,7 +16,7 @@ import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.map.CellComponent;
+import com.ustudents.farmland.component.CellComponent;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import org.joml.Vector2f;
