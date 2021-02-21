@@ -17,7 +17,7 @@ public class Component {
         return id;
     }
 
-    void setEntity(Entity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 

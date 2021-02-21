@@ -57,10 +57,10 @@ public class NineSlicedSprite {
         this.bottomRight = spritesheet.getSprite("bottomRight");
     }
 
-    public Vector2f getSizeForContent(Vector2f contentSize) {
+    public Vector2f getSizeForContent(Vector2f contentSize, Vector2f scale) {
         Vector2f realSize = new Vector2f(
-                contentSize.x == 0 ? 1 : contentSize.x,
-                contentSize.y == 0 ? 1 : contentSize.y
+                contentSize.x == 0 ? 1 : contentSize.x / scale.x,
+                contentSize.y == 0 ? 1 : contentSize.y / scale.y
         );
 
         return new Vector2f(

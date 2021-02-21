@@ -125,7 +125,7 @@ public abstract class Scene {
     }
 
     /** @return the world camera. */
-    public Camera getCamera() {
+    public Camera getWorldCamera() {
         return camera;
     }
 

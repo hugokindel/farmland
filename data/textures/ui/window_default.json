@@ -1,5 +1,5 @@
 {
-    "path": "ui/canvas_default.png",
+    "path": "ui/window_default.png",
     "sprites": {
         "topLeft": {
             "x": 0,

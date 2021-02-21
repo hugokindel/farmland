@@ -13,7 +13,7 @@ import com.ustudents.farmland.scene.MainMenu;
 import java.util.ArrayList;
 
 /** The main class of the project. */
-@Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
+@Command(name = "farmland", version = "0.0.1", description = "A management game about farming.")
 public class Farmland extends Game {
     private static ArrayList<Player> players;
 

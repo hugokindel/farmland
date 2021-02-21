@@ -7,7 +7,6 @@ import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.Spritebatch;
-import com.ustudents.engine.graphic.Spritesheet;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.debug.DebugTools;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;
@@ -394,7 +393,7 @@ public abstract class Game extends Runnable {
 
         if (getSceneManager() != null && getSceneManager().getCurrentScene() != null) {
             Scene scene = getSceneManager().getCurrentScene();
-            scene.getCamera().resize(size.x, size.y);
+            scene.getWorldCamera().resize(size.x, size.y);
             scene.getUiCamera().resize(size.x, size.y);
             shouldResize = false;
         }

@@ -118,8 +118,6 @@ public class ImGuiTools {
             ImGui.treePop();
         }
 
-        ImGui.separator();
-
         drawEntitiesTree(sceneManager.getCurrentScene().getRegistry().getEntitiesAtRoot(), true);
 
         ImGui.end();
@@ -161,7 +159,7 @@ public class ImGuiTools {
             ImGui.text("camera");
 
             ImGui.separator();
-            Camera camera = sceneManager.getCurrentScene().getCamera();
+            Camera camera = sceneManager.getCurrentScene().getWorldCamera();
             Vector2f position = camera.getPosition();
 
             if (ImGui.treeNode("transform")) {

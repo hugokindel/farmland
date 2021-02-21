@@ -23,6 +23,6 @@ public abstract class BehaviourComponent extends Component {
     }
 
     protected Camera getWorldCamera() {
-        return Farmland.get().getSceneManager().getCurrentScene().getCamera();
+        return Farmland.get().getSceneManager().getCurrentScene().getWorldCamera();
     }
 }

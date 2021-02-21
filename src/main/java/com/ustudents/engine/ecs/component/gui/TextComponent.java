@@ -1,7 +1,9 @@
-package com.ustudents.engine.ecs.component.graphics;
+package com.ustudents.engine.ecs.component.gui;
 
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
+import com.ustudents.engine.ecs.component.graphics.RenderableComponent;
+import com.ustudents.engine.ecs.component.graphics.RendererComponent;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Spritebatch;
@@ -84,5 +86,10 @@ public class TextComponent extends Component implements RenderableComponent {
         textData.origin = origin;
 
         spritebatch.drawText(textData);
+    }
+
+    public Vector2f getSize() {
+        TransformComponent transformComponent = getEntity().getComponent(TransformComponent.class);
+        return font.getScaledTextSize(text, getEntity().getComponent(TransformComponent.class).scale).mul(transformComponent.scale);
     }
 }

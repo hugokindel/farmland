@@ -525,7 +525,7 @@ public class Spritebatch {
     private boolean destroyed;
 
     public Spritebatch() {
-        this(Game.get().getSceneManager().getCurrentScene().getCamera());
+        this(Game.get().getSceneManager().getCurrentScene().getWorldCamera());
     }
 
     public Spritebatch(Camera camera) {
@@ -608,8 +608,8 @@ public class Spritebatch {
                 spriteRenderer.position.x - spriteRenderer.scale.x * spriteRenderer.origin.x,
                 spriteRenderer.position.y - spriteRenderer.scale.y * spriteRenderer.origin.y);
         Vector2f realSize = new Vector2f(
-                spriteRenderer.size.x == 0 ? 1 : spriteRenderer.size.x,
-                spriteRenderer.size.y == 0 ? 1 : spriteRenderer.size.y);
+                spriteRenderer.size.x == 0 ? 1 : spriteRenderer.size.x / spriteRenderer.scale.x,
+                spriteRenderer.size.y == 0 ? 1 : spriteRenderer.size.y / spriteRenderer.scale.y);
         int numWidthNeeded = (int)(realSize.x / spriteRenderer.sprite.middle.getRegion().z);
         int numHeightNeeded = (int)(realSize.y / spriteRenderer.sprite.middle.getRegion().w);
 
@@ -781,16 +781,16 @@ public class Spritebatch {
             drawLine(lineData2);
 
             LineData lineData3 = new LineData(position31, position32);
-            lineData2.zIndex = rectangleData.zIndex;
-            lineData2.color = rectangleData.color;
-            lineData2.thickness = rectangleData.thickness;
+            lineData3.zIndex = rectangleData.zIndex;
+            lineData3.color = rectangleData.color;
+            lineData3.thickness = rectangleData.thickness;
 
             drawLine(lineData3);
 
             LineData lineData4 = new LineData(position41, position42);
-            lineData2.zIndex = rectangleData.zIndex;
-            lineData2.color = rectangleData.color;
-            lineData2.thickness = rectangleData.thickness;
+            lineData4.zIndex = rectangleData.zIndex;
+            lineData4.color = rectangleData.color;
+            lineData4.thickness = rectangleData.thickness;
 
             drawLine(lineData4);
         }
@@ -862,7 +862,6 @@ public class Spritebatch {
 
     public void drawText(TextData textRenderer) {
         // TODO: Add rotation support (not useful for now).
-        // TODO: Better handling of scaling
         Font realFont;
 
         if (textRenderer.scale.x == textRenderer.scale.y) {
@@ -872,48 +871,63 @@ public class Spritebatch {
             realFont = textRenderer.font;
         }
 
+        String[] lines = textRenderer.text.split("\n");
+
         Vector2f debugPosition = new Vector2f(
                 textRenderer.position.x - textRenderer.scale.x * textRenderer.origin.x,
                 textRenderer.position.y - textRenderer.scale.y * textRenderer.origin.y
         );
-        Vector2f realPosition = new Vector2f(debugPosition.x, debugPosition.y + realFont.getAverageTextHeight());
+        Vector2f debugPosition2 = new Vector2f(
+                textRenderer.position.x - textRenderer.scale.x * textRenderer.origin.x,
+                textRenderer.position.y - textRenderer.scale.y * textRenderer.origin.y - realFont.getLineHeight(lines[0])
+        );
 
-        for (int i = 0; i < textRenderer.text.length(); i++) {
-            char c = textRenderer.text.charAt(i);
+        Vector4f viewRect1 = new Vector4f(
+                textRenderer.position.x - textRenderer.scale.x * textRenderer.origin.x,
+                textRenderer.position.y - textRenderer.scale.y * textRenderer.origin.y,
+                realFont.getTextWidth(textRenderer.text),
+                realFont.getTextHeight(textRenderer.text)
+        );
 
-            if (c == ' ') {
-                realPosition.add(new Vector2f(realFont.getTextWidth(" "), 0));
-            } else if (c == '\n') {
-                realPosition = new Vector2f(textRenderer.position.x, realPosition.y + realFont.getSize());
-            } else if (c == '\t') {
-                realPosition.add(new Vector2f(realFont.getTextWidth(" ") * 4, 0));
-            } else {
-                Font.GlyphInfo glyphInfo = realFont.getGlyphInfo(c);
+        // TODO: Remove '- 1f' ?
+        Vector2f realPosition = new Vector2f(debugPosition.x, debugPosition.y + realFont.getAscentHeight() - realFont.getDescentHeight() - 1f);
 
-                drawGlyph(
-                        new Vector2f(realPosition.x, realPosition.y),
-                        realFont, glyphInfo.position, glyphInfo.region,
-                        textRenderer.zIndex,
-                        textRenderer.color,
-                        textRenderer.rotation,
-                        textRenderer.scale,
-                        textRenderer.origin
-                );
+        for (String line : lines) {
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
 
-                realPosition.add(new Vector2f(glyphInfo.position.z + realFont.getKerning(), 0));
+                if (c == ' ') {
+                    realPosition.add(new Vector2f(realFont.getTextWidth(" "), 0));
+                } else if (c == '\t') {
+                    realPosition.add(new Vector2f(realFont.getTextWidth(" ") * 4, 0));
+                } else if (c >= ' ') {
+                    Font.GlyphInfo glyphInfo = realFont.getGlyphInfo(c);
+
+                    drawGlyph(
+                            new Vector2f(realPosition.x, realPosition.y),
+                            realFont, glyphInfo.position, glyphInfo.region,
+                            textRenderer.zIndex,
+                            textRenderer.color,
+                            textRenderer.rotation,
+                            textRenderer.scale,
+                            textRenderer.origin);
+
+                    realPosition.add(new Vector2f(glyphInfo.position.z + realFont.getKerning(), 0));
+                }
             }
+
+            realPosition = new Vector2f(textRenderer.position.x, realPosition.y + realFont.getLineHeight(line) + realFont.getLineSpacing());
         }
 
         if (Game.get().isDebugToolsEnabled() && Game.get().getDebugTools().isTextBoxEnabled()) {
-            RectangleData rectangleData = new RectangleData(debugPosition,
-                    new Vector2f(
-                            realFont.getTextWidth(textRenderer.text),
-                            realFont.getTextHeight(textRenderer.text))
-            );
-            rectangleData.zIndex = textRenderer.zIndex;
-            rectangleData.color = new Color(1.0f, 0.0f, 0.0f, 0.3f);
-
-            drawRectangle(rectangleData);
+            {
+                RectangleData rectangleData = new RectangleData(new Vector2f(viewRect1.x - 3, viewRect1.y - 3), new Vector2f(viewRect1.z + 3, viewRect1.w + 3));
+                rectangleData.zIndex = textRenderer.zIndex;
+                rectangleData.filled = false;
+                rectangleData.thickness = 2;
+                rectangleData.color = new Color(1.0f, 1.0f, 0.0f, 1.0f);
+                drawRectangle(rectangleData);
+            }
         }
     }
 

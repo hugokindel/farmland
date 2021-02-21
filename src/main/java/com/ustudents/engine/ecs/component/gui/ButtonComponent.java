@@ -6,7 +6,6 @@ import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.ecs.component.graphics.*;
-import com.ustudents.engine.ecs.component.gui.wip.GuiComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.input.Input;
@@ -15,6 +14,7 @@ import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+// TODO: Optimize & refactor
 @Viewable
 public class ButtonComponent extends BehaviourComponent implements RenderableComponent {
     @Viewable
@@ -80,40 +80,47 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
         this.changeState = false;
         this.label = label;
         this.sprite = sprite;
+    }
 
+    @Override
+    public void initialize() {
+        TransformComponent transformComponent = getEntity().getComponent(TransformComponent.class);
+
+        Vector2f textViewRect = label.font.getScaledTextSize(label.text, transformComponent.scale);
+        label.setEntity(getEntity());
         textSize = new Vector2f(
-                label.font.getTextWidth(label.text) - label.font.fontOverweight,
+                label.font.getTextWidth(label.text),
                 label.font.getTextHeight(label.text)
         );
 
-        Vector2f buttonSize = sprite.parts.getSizeForContent(textSize);
+        Vector2f buttonSize = sprite.parts.getSizeForContent(textSize, new Vector2f(1, 1));
 
-        sprite.origin = new Vector2f(buttonSize.x / 2, buttonSize.y / 2);
+        sprite.origin = new Vector2f(0, 0);
 
         textOrigin = new Vector2f(
-                label.getTextSize().x / 2,
-                label.getTextSize().y / 2
+                sprite.origin.x - 5,
+                sprite.origin.y - 5
         );
 
         size = new Vector2f(
-                sprite.parts.topLeft.getRegion().z + label.getTextSize().x + sprite.parts.topRight.getRegion().z,
-                sprite.parts.topLeft.getRegion().w + label.getTextSize().y + sprite.parts.bottomLeft.getRegion().w
+                10 * transformComponent.scale.x + textViewRect.x,
+                10 * transformComponent.scale.y + textViewRect.y
         );
     }
 
     @Override
     public void update(float dt) {
         TransformComponent comp = getEntity().getComponent(TransformComponent.class);
-        Camera camera = getCamera();
+        Camera camera = getWorldCamera();
         Vector2f cursorPos = Input.getMousePos();
         Vector2f buttonPos = camera.worldCoordToScreenCoord(getEntity().getComponent(TransformComponent.class).position);
-        Vector2f realButtonSize = new Vector2f(size.x * comp.scale.x, size.y * comp.scale.y);
-        Vector2f realButtonPos = new Vector2f(buttonPos.x, buttonPos.y);
+        Vector2f realButtonSize = new Vector2f(size.x, size.y);
+        Vector2f realButtonPos = new Vector2f(comp.position.x, comp.position.y);
         Vector4f buttonViewRect = new Vector4f(
-                realButtonPos.x - (realButtonSize.x / 2),
-                realButtonPos.y - (realButtonSize.y / 2),
-                (realButtonPos.x - (realButtonSize.x / 2)) + realButtonSize.x,
-                (realButtonPos.y - (realButtonSize.y / 2)) + realButtonSize.y
+                realButtonPos.x,
+                realButtonPos.y,
+                realButtonPos.x + realButtonSize.x,
+                realButtonPos.y + realButtonSize.y
         );
 
         if (cursorPos.x > buttonViewRect.x && cursorPos.x < buttonViewRect.z && cursorPos.y > buttonViewRect.y && cursorPos.y < buttonViewRect.w) {
@@ -164,12 +171,12 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
     @Override
     public void render(Spritebatch spritebatch, RendererComponent rendererComponent, TransformComponent transformComponent) {
         Spritebatch.NineSlicedSpriteData spriteData = new Spritebatch.NineSlicedSpriteData(sprite.parts,
-                transformComponent.position, textSize);
+                transformComponent.position, new Vector2f(label.getSize().x / transformComponent.scale.x, label.getSize().y / transformComponent.scale.y));
         spriteData.zIndex = rendererComponent.zIndex;
         spriteData.tint = Color.WHITE;
         spriteData.rotation = transformComponent.rotation;
         spriteData.scale = transformComponent.scale;
-        spriteData.origin = sprite.origin;
+        spriteData.origin = new Vector2f(0, 0);
 
         spritebatch.drawNineSlicedSprite(spriteData);
 
@@ -187,17 +194,16 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
         return textOrigin;
     }
 
-    public Vector2f getSize() {
+    public Vector2f getOldSize() {
         return size;
     }
 
-    private Camera getCamera() {
-        if (getEntity().hasComponent(WorldRendererComponent.class)) {
-            return Farmland.get().getSceneManager().getCurrentScene().getCamera();
-        } else if (getEntity().hasComponent(UiRendererComponent.class)) {
-            return Farmland.get().getSceneManager().getCurrentScene().getUiCamera();
-        }
-
-        return null;
+    public Vector2f getSize() {
+        TransformComponent transformComponent = getEntity().getComponent(TransformComponent.class);
+        Vector2f textSize = label.getSize();
+        return new Vector2f(
+                sprite.parts.topLeft.getRegion().z + sprite.parts.topRight.getRegion().z,
+                sprite.parts.topLeft.getRegion().w + sprite.parts.topRight.getRegion().w
+        ).mul(transformComponent.scale).add(textSize);
     }
 }

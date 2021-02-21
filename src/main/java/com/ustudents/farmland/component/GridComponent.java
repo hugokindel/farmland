@@ -1,13 +1,13 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.ecs.component.graphics.*;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.input.Input;
-import com.ustudents.engine.scene.SceneManager;
+import com.ustudents.engine.input.Key;
+import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.core.Cell;
 import org.joml.Vector2f;
@@ -31,6 +31,9 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     public AnimatedSprite selectionCursor;
 
     @Viewable
+    public Spritesheet territoryTexture;
+
+    @Viewable
     public List<List<Cell>> cells;
 
     private Vector2i currentSelectedCell;
@@ -39,17 +42,24 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private Vector2i gridBackgroundSideSize;
 
+    private boolean selectionCursorEnabled;
+
+    private boolean showTypeOfTerritory;
+
     public GridComponent(Vector2i gridSize, Vector2i cellSize, NineSlicedSprite gridBackground, Texture cellBackground,
-                         AnimatedSprite selectionCursor) {
+                         AnimatedSprite selectionCursor, Spritesheet territoryTexture) {
         this.gridSize = gridSize;
         this.gridBackground = gridBackground;
         this.cellBackground = cellBackground;
         this.selectionCursor = selectionCursor;
+        this.territoryTexture = territoryTexture;
+        this.cells = new ArrayList<>();
         this.currentSelectedCell = new Vector2i(-1, -1);
         this.cellSize = cellSize;
         this.gridBackgroundSideSize = new Vector2i(
                 (int)gridBackground.topLeft.getRegion().z, (int)gridBackground.topLeft.getRegion().w);
-        this.cells = new ArrayList<>();
+        this.selectionCursorEnabled = true;
+        this.showTypeOfTerritory = false;
     }
 
     @Override
@@ -71,11 +81,21 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                         transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y,
                         transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + cellSize.x,
                         transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + cellSize.y);
-                this.cells.get(x).add(new Cell(sprite, viewRectangle));
+
+                Cell cell = new Cell(sprite, viewRectangle);
+
+                if ((x == gridSize.x / 2 && y == gridSize.y / 2) ||
+                        (x == gridSize.x / 2 - 1 && y == gridSize.y / 2) ||
+                        (x == gridSize.x / 2 && y == gridSize.y / 2 - 1) ||
+                        (x == gridSize.x / 2 - 1 && y == gridSize.y / 2 - 1)) {
+                    cell.setOwned(true);
+                }
+
+                this.cells.get(x).add(cell);
             }
         }
 
-        Camera camera = getScene().getCamera();
+        Camera camera = getScene().getWorldCamera();
         camera.setMinimalX(transformComponent.position.x + gridBackgroundSideSize.x);
         camera.setMaximalX(transformComponent.position.x + gridBackgroundSideSize.x + gridSize.x * cellSize.x);
         camera.setMinimalY(transformComponent.position.x + gridBackgroundSideSize.y);
@@ -89,16 +109,28 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     public void update(float dt) {
         selectionCursor.update(dt);
 
+        showTypeOfTerritory = Input.isKeyDown(Key.LeftControl) || Input.isKeyDown(Key.RightControl);
+
         if (currentSelectedCell.x == -1 || !Input.isMouseInWorldViewRect(
                 cells.get(currentSelectedCell.x).get(currentSelectedCell.y).viewRectangle)) {
-            for (int x = 0; x < gridSize.x; x++) {
-                for (int y = 0; y < gridSize.y; y++) {
-                    Cell cell = cells.get(x).get(y);
+            updateCurrentSelectedCell();
+        }
 
-                    if (Input.isMouseInWorldViewRect(cell.viewRectangle)) {
-                        currentSelectedCell = new Vector2i(x, y);
-                        return;
-                    }
+        if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
+                !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
+                Input.isMousePressed(MouseButton.Left) && !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y)) {
+            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).isOwned = true;
+        }
+    }
+
+    public void updateCurrentSelectedCell() {
+        for (int x = 0; x < gridSize.x; x++) {
+            for (int y = 0; y < gridSize.y; y++) {
+                Cell cell = cells.get(x).get(y);
+
+                if (Input.isMouseInWorldViewRect(cell.viewRectangle)) {
+                    currentSelectedCell = new Vector2i(x, y);
+                    return;
                 }
             }
         }
@@ -110,13 +142,32 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         renderBackground(spritebatch, rendererComponent, transformComponent);
         renderCells(spritebatch, rendererComponent, transformComponent);
 
-        if (currentSelectedCell.x != -1) {
+        if (selectionCursorEnabled && currentSelectedCell.x != -1) {
             renderSelectionCursor(spritebatch, rendererComponent, transformComponent);
+        }
+
+        if (selectionCursorEnabled && showTypeOfTerritory) {
+            renderTerritory(spritebatch, rendererComponent, transformComponent);
         }
     }
 
     public void setGridSize(Vector2i size) {
         this.gridSize = size;
+    }
+
+    public void setSelectionCursorEnabled(boolean selectionCursorEnabled) {
+        this.selectionCursorEnabled = selectionCursorEnabled;
+    }
+
+    public boolean cellIsOwned(int x, int y) {
+        return cells.get(x).get(y).isOwned;
+    }
+
+    public boolean cellIsClosedToOwnedCell(int x, int y) {
+        return (x < gridSize.x - 1 && cells.get(x + 1).get(y).isOwned) ||
+               (x > 0 && cells.get(x - 1).get(y).isOwned) ||
+               (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwned) ||
+               (y > 0 && cells.get(x).get(y - 1).isOwned);
     }
 
     private void renderBackground(Spritebatch spritebatch, RendererComponent rendererComponent,
@@ -155,6 +206,31 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                                 currentSelectedCell.x * cellSize.x,
                         transformComponent.position.y + gridBackgroundSideSize.y +
                                 currentSelectedCell.y * cellSize.y));
+        spriteData.zIndex = rendererComponent.zIndex + 3;
+
+        spritebatch.drawSprite(spriteData);
+    }
+
+    private void renderTerritory(Spritebatch spritebatch, RendererComponent rendererComponent,
+                                       TransformComponent transformComponent) {
+        for (int x = 0; x < gridSize.x; x++) {
+            for (int y = 0; y < gridSize.y; y++) {
+                if (cellIsOwned(x, y)) {
+                    renderTerritoryCell("owned", x, y, spritebatch, rendererComponent, transformComponent);
+                } else if (cellIsClosedToOwnedCell(x, y)) {
+                    renderTerritoryCell("notOwned", x, y, spritebatch, rendererComponent, transformComponent);
+                }
+            }
+        }
+    }
+
+    private void renderTerritoryCell(String type, int x, int y, Spritebatch spritebatch,
+                                     RendererComponent rendererComponent, TransformComponent transformComponent) {
+        Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
+                territoryTexture.getSprite(type),
+                new Vector2f(
+                        transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
+                        transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
         spriteData.zIndex = rendererComponent.zIndex + 2;
 
         spritebatch.drawSprite(spriteData);

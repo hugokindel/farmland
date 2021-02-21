@@ -1,7 +1,10 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.utility.FileUtil;
+import com.ustudents.farmland.entities.Resource;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.*;
@@ -54,13 +57,15 @@ public class Font {
 
     private int lineGap;
 
-    private Map<String, Float> widthPerText;
+    private Map<String, Integer> widthPerText;
 
-    private Map<String, Float> heightPerText;
+    private Map<String, Integer> heightPerText;
 
     public float averageHeight;
 
     public int fontOverweight;
+
+    private int spaceWidth = -1;
 
     public Font(String filePath, int fontSize) {
         this.path = filePath.replace(getFontsDirectory() + "/", "");
@@ -133,35 +138,47 @@ public class Font {
     }
 
     // Implementation from: https://github.com/LWJGL/lwjgl3/blob/master/modules/samples/src/test/java/org/lwjgl/demo/stb/Truetype.java
-    public float getTextWidth(String text) {
+    public int getSpaceWidth() {
+        if (spaceWidth != -1) {
+            return spaceWidth;
+        }
+
+        int width = 0;
+
+        try (MemoryStack stack = stackPush()) {
+            IntBuffer pCodePoint = stack.mallocInt(1);
+            IntBuffer pAdvancedWidth = stack.mallocInt(1);
+            IntBuffer pLeftSideBearing = stack.mallocInt(1);
+
+            int i = 0;
+            int to = " ".length();
+            while (i < to) {
+                i += getCharacterCodepointMetrics(" ", to, i, pCodePoint);
+                int cp = pCodePoint.get(0);
+                stbtt_GetCodepointHMetrics(info, cp, pAdvancedWidth, pLeftSideBearing);
+                width += pAdvancedWidth.get(0);
+            }
+        }
+
+        spaceWidth = (int)(width * stbtt_ScaleForPixelHeight(info, fontSize));
+
+        return spaceWidth;
+    }
+
+    public int getTextWidth(String text) {
         if (widthPerText.containsKey(text)) {
             return widthPerText.get(text);
         }
 
-        float maxWidth = 0;
+        int maxWidth = 0;
 
-        for (String line : text.split("\n")) {
-            int width = 0;
+        String[] lines = text.split("\n");
 
-            try (MemoryStack stack = stackPush()) {
-                IntBuffer pCodePoint = stack.mallocInt(1);
-                IntBuffer pAdvancedWidth = stack.mallocInt(1);
-                IntBuffer pLeftSideBearing = stack.mallocInt(1);
+        for (String line : lines) {
+            int width = getLineWidth(line);
 
-                int i = 0;
-                int to = line.length();
-                while (i < to) {
-                    i += getCharacterCodepointMetrics(line, to, i, pCodePoint);
-                    int cp = pCodePoint.get(0);
-                    stbtt_GetCodepointHMetrics(info, cp, pAdvancedWidth, pLeftSideBearing);
-                    width += pAdvancedWidth.get(0);
-                }
-            }
-
-            float realWidth = (width * stbtt_ScaleForPixelHeight(info, fontSize)) - 1;
-
-            if (realWidth > maxWidth) {
-                maxWidth = realWidth;
+            if (width > maxWidth) {
+                maxWidth = width;
             }
         }
 
@@ -170,17 +187,96 @@ public class Font {
         return maxWidth;
     }
 
-    public float getTextHeight(String text) {
+    public int getLineWidth(String line) {
+        int width = 0;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+
+            if (c == ' ') {
+                width += getSpaceWidth();
+            } else {
+                GlyphInfo cInfo = getGlyphInfo(c);
+                width += (int)cInfo.position.z - (int)cInfo.position.x;
+            }
+        }
+
+        width += kerning * line.length();
+
+        return width;
+    }
+
+    public int getTextHeight(String text) {
         if (heightPerText.containsKey(text)) {
             return heightPerText.get(text);
         }
 
-        long numNewLines = text.chars().filter(l -> l == '\n').count();
-        float height = averageHeight * (numNewLines + 1) + (numNewLines > 0 ? fontSize * (numNewLines - 1) : 0);
+        int height = 0;
+
+        String[] lines = text.split("\n");
+
+        for (String line : lines) {
+            height += getLineHeight(line);
+        }
+
+        height += getLineSpacing() * lines.length - 1;
 
         heightPerText.put(text, height);
 
         return height;
+    }
+
+    public int getDescentHeight() {
+        return -(int) (descent * stbtt_ScaleForPixelHeight(info, fontSize));
+    }
+
+    public int getAscentHeight() {
+        return (int) (ascent * stbtt_ScaleForPixelHeight(info, fontSize));
+    }
+
+    public int getScaledTextWidth(String text, float scale) {
+        Font scaledFont = Resources.loadFont(path, fontSize * (int)scale);
+
+        return scaledFont.getTextWidth(text) / (int)scale;
+    }
+
+    public int getScaledTextHeight(String text, float scale) {
+        Font scaledFont = Resources.loadFont(path, fontSize * (int)scale);
+
+        return scaledFont.getTextHeight(text) / (int)scale;
+    }
+
+    public Vector2f getScaledTextSize(String text, Vector2f scale) {
+        Font realFont;
+
+        if (scale.x == scale.y) {
+            realFont = Resources.loadFont(getPath(), (int)(getSize() * scale.x));
+        } else {
+            realFont = this;
+        }
+
+        return new Vector2f(realFont.getTextWidth(text), realFont.getTextHeight(text));
+    }
+
+    /*public int getHeight() {
+        return (int) ((ascent - descent + lineGap) * stbtt_ScaleForPixelHeight(info, fontSize));
+    }*/
+
+    public int getLineHeight(String line) {
+        int maxHeight = 0;
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            GlyphInfo cInfo = getGlyphInfo(c);
+
+            int height = (int)cInfo.position.w - (int)cInfo.position.y;
+
+            if (height > maxHeight) {
+                maxHeight = height;
+            }
+        }
+
+        return maxHeight;
     }
 
     public float getAverageTextHeight() {
@@ -217,6 +313,10 @@ public class Font {
 
     public int getKerning() {
         return kerning;
+    }
+
+    public int getLineSpacing() {
+        return 1;
     }
 
     public String getPath() {

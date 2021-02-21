@@ -52,8 +52,8 @@ public class Input {
             public void invoke(long window, double xpos, double ypos) {
                 mousePos = new Vector2f((float)xpos, (float)ypos);
 
-                if (SceneManager.getScene().getCamera() != null) {
-                    mousePosInWorld = SceneManager.getScene().getCamera().screenCoordToWorldCoord(mousePos);
+                if (SceneManager.getScene().getWorldCamera() != null) {
+                    mousePosInWorld = SceneManager.getScene().getWorldCamera().screenCoordToWorldCoord(mousePos);
                 }
 
                 mouseMoved.dispatch();
@@ -177,7 +177,7 @@ public class Input {
     }
 
     public static void recalculateMousePosition() {
-        mousePosInWorld = SceneManager.getScene().getCamera().screenCoordToWorldCoord(mousePos);
+        mousePosInWorld = SceneManager.getScene().getWorldCamera().screenCoordToWorldCoord(mousePos);
     }
 
     private static void resetKeyAndButton() {
