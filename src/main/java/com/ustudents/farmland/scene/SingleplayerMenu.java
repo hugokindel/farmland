@@ -23,7 +23,7 @@ public class SingleplayerMenu extends Scene {
     @Override
     public void initialize() {
         Farmland.setKindOfGame("SinglePlayer");
-        
+
         initializeGameplay();
         initializeGui();
     }

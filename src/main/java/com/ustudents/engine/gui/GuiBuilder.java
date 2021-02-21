@@ -139,10 +139,20 @@ public class GuiBuilder {
         }
     }
 
-    private class WindowContainer {
+    private static class WindowContainer {
         Entity entity;
         WindowData data;
         Entity content;
+        TextData contentData;
+
+        public static WindowContainer copy(WindowContainer data, TextData contentData) {
+            WindowContainer windowContainer = new WindowContainer();
+            windowContainer.entity = data.entity;
+            windowContainer.data = WindowData.copy(data.data);
+            windowContainer.contentData = contentData;
+            windowContainer.content = data.content;
+            return windowContainer;
+        }
     }
 
     Scene scene = SceneManager.getScene();
@@ -176,12 +186,12 @@ public class GuiBuilder {
             Entity text = currentWindow.entity.createChildWithName(data.id);
             TransformComponent transformComponent = createScaledComponent(data.scale, data.applyGlobalScaling);
             textPosition(data, transformComponent);
-            Window.get().sizeChanged.add((dataType, windowData) -> textPosition(data, transformComponent));
             text.addComponent(transformComponent);
             text.addComponent(new UiRendererComponent());
             TextComponent textComponent = text.addComponent(new TextComponent(data.text, data.font));
             textComponent.color = data.color;
             currentWindow.content = text;
+            currentWindow.contentData = data;
         }
     }
 
@@ -216,9 +226,9 @@ public class GuiBuilder {
         NineSlicedSprite nineSlicedSprite = new NineSlicedSprite(Resources.loadSpritesheet("ui/window_default.json"));
 
         TransformComponent transformComponent = createScaledComponent(currentWindow.data.scale, true);
-        windowPosition(currentWindow.data, transformComponent);
-        WindowData copy = WindowData.copy(currentWindow.data);
-        Window.get().sizeChanged.add((dataType, windowData) -> windowPosition(copy, transformComponent));
+        WindowContainer copy = WindowContainer.copy(currentWindow, currentWindow.contentData);
+        windowPosition(copy.content, copy.data, transformComponent);
+        Window.get().sizeChanged.add((dataType, windowData) -> windowPosition(copy.content, copy.data, transformComponent));
         currentWindow.entity.addComponent(transformComponent);
         currentWindow.entity.addComponent(new UiRendererComponent());
         currentWindow.entity.addComponent(new NineSlicedSpriteComponent(nineSlicedSprite, currentWindow.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale)));
@@ -226,6 +236,7 @@ public class GuiBuilder {
         TransformComponent contentTransform = currentWindow.content.getComponent(TransformComponent.class);
         currentWindow.content.getComponent(UiRendererComponent.class).zIndex++;
         contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y);
+        Window.get().sizeChanged.add((dataType, windowData) -> contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y));
 
         currentWindow = null;
     }
@@ -401,10 +412,10 @@ public class GuiBuilder {
         }
     }
 
-    private void windowPosition(WindowData data, TransformComponent transformComponent) {
+    private void windowPosition(Entity content, WindowData data, TransformComponent transformComponent) {
         transformComponent.position = new Vector2f(data.position.x, data.position.y);
 
-        TextComponent textComponent = currentWindow.content.getComponent(TextComponent.class);
+        TextComponent textComponent = content.getComponent(TextComponent.class);
 
         switch (data.origin.horizontal) {
             case Custom:
