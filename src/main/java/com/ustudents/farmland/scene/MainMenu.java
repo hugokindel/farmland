@@ -90,7 +90,7 @@ public class MainMenu extends Scene {
             button.addComponent(new ButtonComponent(buttons[i], (dataType, data) -> {
                 switch (buttonsName[finalI]) {
                     case "singleplayer":
-                        changeScene(SinglePlayerMenu.class);
+                        changeScene(SingleplayerMenu.class);
                         break;
                     case "multiplayer":
                         changeScene(MultiplayerMenu.class);

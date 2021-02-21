@@ -41,7 +41,7 @@ public class WaitingRoom extends Scene {
 
     private void buttonForSinglePlayer(){
         if (ImGui.button("Singleplayer Mode")) {
-            Game.get().getSceneManager().changeScene(SinglePlayerMenu.class);
+            Game.get().getSceneManager().changeScene(SingleplayerMenu.class);
         }
         ImGui.separator();
         ImGui.text("Choose your number of opponent :");

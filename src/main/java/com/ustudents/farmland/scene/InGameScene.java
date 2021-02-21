@@ -72,7 +72,7 @@ public class InGameScene extends Scene {
     private void ejectBot(){
         if(isTurnOf[0]){
             giveMoney(-1);
-            Game.get().getSceneManager().changeScene(SinglePlayerMenu.class);
+            Game.get().getSceneManager().changeScene(SingleplayerMenu.class);
         }else{
             int index = 0;
             for(int i = 1; i < isTurnOf.length; i++){
@@ -204,7 +204,7 @@ public class InGameScene extends Scene {
             TimerComponent.setCurrentTime(0);
             Farmland.setInGame(false);
             currentPlayerTurn = null;
-            Game.get().getSceneManager().changeScene(SinglePlayerMenu.class);
+            Game.get().getSceneManager().changeScene(SingleplayerMenu.class);
         }
         if(currentPlayerTurn != null && currentPlayerTurn.getCurrentActionPlayed() == -1){
             ImGui.text("Are you sure to end your turn ?");
