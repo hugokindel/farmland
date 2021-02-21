@@ -2,6 +2,7 @@ package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.input.Input;
 import com.ustudents.engine.utility.TypeUtil;
 
 import java.util.ArrayList;
@@ -105,6 +106,7 @@ public class SceneManager {
 
             scenes.get(currentSceneIndex).create(this);
             scenes.get(currentSceneIndex).initializeInternals();
+            Input.recalculateMousePosition();
 
             transitioningScene = false;
 

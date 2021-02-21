@@ -176,6 +176,10 @@ public class Input {
         return mouseButton;
     }
 
+    public static void recalculateMousePosition() {
+        mousePosInWorld = SceneManager.getScene().getCamera().screenCoordToWorldCoord(mousePos);
+    }
+
     private static void resetKeyAndButton() {
         Arrays.fill(keyStates, -1);
         Arrays.fill(mouseStates, -1);
