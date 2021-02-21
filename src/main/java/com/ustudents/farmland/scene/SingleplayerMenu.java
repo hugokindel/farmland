@@ -23,50 +23,9 @@ public class SingleplayerMenu extends Scene {
     @Override
     public void initialize() {
         Farmland.setKindOfGame("SinglePlayer");
-
-        Vector2i size = Window.get().getSize();
-
+        
         initializeGameplay();
         initializeGui();
-
-        // ----
-
-        /*{
-            Font font = Resources.loadFont("ui/default.ttf", 16);
-
-            Entity button = registry.createEntity();
-            button.addComponent(new TransformComponent(
-                    new Vector2f(size.x - 120, size.y - 35), new Vector2f(3.1f, 3.1f)));
-            button.addComponent(new ButtonComponent("Finir le tour"));
-            Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
-                Window.SizeChangedEventData event = (Window.SizeChangedEventData) data;
-                button.getComponent(TransformComponent.class).setPosition(new Vector2f(event.newSize.x - 160, event.newSize.y - 140));
-            });
-            button.addComponent(new UiRendererComponent());
-
-            String text = "Tour 1 de Joueur 1";
-            Vector2f textSize = new Vector2f(font.getTextWidth(text) * 3 / 2, font.getTextHeight(text) * 3 / 2);
-
-            Entity canvasTitle = registry.createEntity();
-            canvasTitle.addComponent(new TransformComponent(
-                    new Vector2f((float) size.x / 2 - (textSize.x), -12), new Vector2f(3f, 3f)));
-            NineSlicedSpriteComponent sprite = canvasTitle.addComponent(new NineSlicedSpriteComponent(new NineSlicedSprite(Resources.loadSpritesheet("ui/canvas_default.json")), new Vector2f(textSize.x, textSize.y)));
-            sprite.setOrigin(new Vector2f(new Vector2f(textSize.x / 4, 0)));
-            canvasTitle.addComponent(new UiRendererComponent(0));
-
-            Entity playerText = registry.createEntity();
-            playerText.addComponent(new TransformComponent(
-                    new Vector2f((float) size.x / 2 - (textSize.x), 10), new Vector2f(3.1f, 3.1f)));
-            TextComponent textComponent = playerText.addComponent(new TextComponent(text, Resources.loadFont("ui/default.ttf", 16)));
-            textComponent.setColor(Color.BLACK);
-            Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
-                Window.SizeChangedEventData event = (Window.SizeChangedEventData) data;
-                playerText.getComponent(TransformComponent.class).setPosition(new Vector2f((float) event.newSize.x / 2, 10));
-            });
-            playerText.addComponent(new UiRendererComponent(1));
-        }*/
-
-
     }
 
     public void initializeGameplay() {
