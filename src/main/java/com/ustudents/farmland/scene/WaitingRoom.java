@@ -29,7 +29,7 @@ public class WaitingRoom extends Scene {
 
     private void buttonForMultiPlayer(){
         if (ImGui.button("Multiplayer Mode")) {
-            Game.get().getSceneManager().changeScene(MultiPlayerMenu.class);
+            Game.get().getSceneManager().changeScene(MultiplayerMenu.class);
         }
     }
 

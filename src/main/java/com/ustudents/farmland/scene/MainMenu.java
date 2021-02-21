@@ -93,7 +93,7 @@ public class MainMenu extends Scene {
                         changeScene(SinglePlayerMenu.class);
                         break;
                     case "multiplayer":
-                        changeScene(MultiPlayerMenu.class);
+                        changeScene(MultiplayerMenu.class);
                         break;
                     case "settings":
                         changeScene(SettingsMenu.class);
