@@ -60,6 +60,8 @@ public class Font {
 
     public float averageHeight;
 
+    public int fontOverweight;
+
     public Font(String filePath, int fontSize) {
         this.path = filePath.replace(getFontsDirectory() + "/", "");
         this.fontSize = fontSize;
@@ -67,6 +69,9 @@ public class Font {
         loadFont(filePath);
         widthPerText = new HashMap<>();
         heightPerText = new HashMap<>();
+        if (filePath.endsWith("ui/default.ttf")) {
+           // fontOverweight = 10;
+        }
     }
 
     public void destroy() {

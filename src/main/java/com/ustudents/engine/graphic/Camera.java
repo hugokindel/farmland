@@ -136,8 +136,8 @@ public class Camera {
         viewFrustum = new Vector4f(minX, minY, maxX, maxY);
     }
 
-    public void centerOnPosition(float x, float y) {
-        viewMatrix.setTranslation(0, 0).translate(-x, -y);
+    public void centerOnPosition(Vector2f position) {
+        viewMatrix.setTranslation(0, 0).translate(-position.x, position.y);
         update();
     }
 

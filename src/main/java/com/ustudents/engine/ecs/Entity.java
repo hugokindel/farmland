@@ -161,6 +161,24 @@ public class Entity {
         return entity;
     }
 
+    public <T extends Entity> T createChildWithName(String name, Class<T> classType, Object... args) {
+        T entity;
+
+        if (args.length == 0) {
+            entity = createChild(classType);
+        } else {
+            entity = createChild(classType, args);
+        }
+
+        entity.setName(name);
+
+        return entity;
+    }
+
+    public Entity createChildWithName(String name) {
+        return createChildWithName(name, Entity.class);
+    }
+
     /** @return a set of its children. */
     public List<Entity> getChildren() {
         return registry.getChildrenOfEntity(this);

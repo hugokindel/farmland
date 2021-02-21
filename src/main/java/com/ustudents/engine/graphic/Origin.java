@@ -1,13 +1,15 @@
 package com.ustudents.engine.graphic;
 
-public class Anchor {
+public class Origin {
     public enum Vertical {
+        Custom,
         Top,
         Middle,
         Bottom
     }
 
     public enum Horizontal {
+        Custom,
         Left,
         Center,
         Right
@@ -17,12 +19,16 @@ public class Anchor {
 
     public Horizontal horizontal;
 
-    public Anchor() {
+    public float customHorizontal;
+
+    public float customVertical;
+
+    public Origin() {
         this.vertical = Vertical.Top;
         this.horizontal = Horizontal.Left;
     }
 
-    public Anchor(Vertical vertical, Horizontal horizontal) {
+    public Origin(Vertical vertical, Horizontal horizontal) {
         this.vertical = vertical;
         this.horizontal = horizontal;
     }

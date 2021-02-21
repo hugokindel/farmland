@@ -110,7 +110,7 @@ public class ImGuiTools {
         if (selectedInspectorEntity == -2) {
             flags |= ImGuiTreeNodeFlags.Selected;
         }
-        if (ImGui.treeNodeEx("Camera", flags)) {
+        if (ImGui.treeNodeEx("camera", flags)) {
             if (ImGui.isItemClicked()) {
                 selectedInspectorEntity = -2;
             }
@@ -158,7 +158,7 @@ public class ImGuiTools {
         ImGui.begin("Inspector", showInspectorWindow);
 
         if (selectedInspectorEntity == -2) {
-            ImGui.text("Camera");
+            ImGui.text("camera");
 
             ImGui.separator();
             Camera camera = sceneManager.getCurrentScene().getCamera();

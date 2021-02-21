@@ -9,7 +9,7 @@ import org.joml.Vector2f;
 
 /** Component for a sprite to show on screen. */
 @Viewable
-public class AnimatedSpriteComponent extends BehaviourComponent implements RenderableComponent {
+public class AnimationSpriteComponent extends BehaviourComponent implements RenderableComponent {
     /** The sprite. */
     @Viewable
     public Spritesheet spritesheet;
@@ -37,7 +37,7 @@ public class AnimatedSpriteComponent extends BehaviourComponent implements Rende
      *
      * @param sprite The sprite.
      */
-    public AnimatedSpriteComponent(Spritesheet sprite, String animationName) {
+    public AnimationSpriteComponent(Spritesheet sprite, String animationName) {
         this.spritesheet = sprite;
         this.currentAnimation = spritesheet.getAnimation(animationName);
         this.currentFrame = 0;

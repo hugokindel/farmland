@@ -35,6 +35,8 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
 
     private EventDispatcher event;
 
+    private Vector2f textSize;
+
     public ButtonComponent(String label) {
         this(label, null);
     }
@@ -79,8 +81,8 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
         this.label = label;
         this.sprite = sprite;
 
-        Vector2f textSize = new Vector2f(
-                label.font.getTextWidth(label.text),
+        textSize = new Vector2f(
+                label.font.getTextWidth(label.text) - label.font.fontOverweight,
                 label.font.getTextHeight(label.text)
         );
 
@@ -162,7 +164,7 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
     @Override
     public void render(Spritebatch spritebatch, RendererComponent rendererComponent, TransformComponent transformComponent) {
         Spritebatch.NineSlicedSpriteData spriteData = new Spritebatch.NineSlicedSpriteData(sprite.parts,
-                transformComponent.position, label.getTextSize());
+                transformComponent.position, textSize);
         spriteData.zIndex = rendererComponent.zIndex;
         spriteData.tint = Color.WHITE;
         spriteData.rotation = transformComponent.rotation;

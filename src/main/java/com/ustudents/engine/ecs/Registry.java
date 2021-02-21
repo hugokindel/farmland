@@ -225,6 +225,29 @@ public class Registry {
         return createEntity(Entity.class);
     }
 
+    public <T extends Entity> T createEntityWithName(String name, Class<T> classType, Object... args) {
+        T entity;
+
+        if (args.length == 0) {
+            entity = createEntity(classType);
+        } else {
+            entity = createEntity(classType, args);
+        }
+
+        entity.setName(name);
+
+        return entity;
+    }
+
+    /**
+     * Creates an entity.
+     *
+     * @return the entity.
+     */
+    public Entity createEntityWithName(String name) {
+        return createEntityWithName(name, Entity.class);
+    }
+
     /**
      * Kills an entity (it will be deleted at the next registry update).
      *
