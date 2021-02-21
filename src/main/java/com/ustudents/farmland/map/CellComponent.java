@@ -1,10 +1,8 @@
 package com.ustudents.farmland.map;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.ecs.component.graphics.TextureComponent;
-import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.input.Input;
 import org.joml.Vector4f;
 

@@ -27,7 +27,7 @@ public class Farmland extends Game {
 
     @Override
     protected void initialize() {
-        changeIcon("ui/logo.png");
+        changeIcon("ui/farmland_logo.png");
         changeCursor("ui/cursor.png");
 
         players = new ArrayList<>();

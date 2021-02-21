@@ -43,7 +43,7 @@ public class SpriteAnimation {
             Map<String, Object> frameJson = (Map<String, Object>)frameElement;
 
             Frame frame = new Frame(
-                    spritesheet.getSprite((String)frameJson.get("spriteRegion")),
+                    spritesheet.getSprite((String)frameJson.get("sprite")),
                     frameJson.containsKey("duration") ? ((Double)frameJson.get("duration")).floatValue() : 0
             );
 

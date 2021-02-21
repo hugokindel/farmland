@@ -18,31 +18,31 @@ public class Spritesheet {
     }
 
     @JsonSerializable
-    private String texturePath;
+    private String path;
 
     @JsonSerializable
-    private Map<String, Vector4f> spriteRegions;
+    private Map<String, Vector4f> sprites;
 
     private Texture texture;
 
-    private Map<String, Sprite> sprites;
+    private Map<String, Sprite> spritePerName;
 
     private Map<String, SpriteAnimation> animations;
 
     @JsonSerializableConstructor
     public void deserialize(Map<String, Object> json) {
-        spriteRegions = new HashMap<>(spriteRegions);
-        sprites = new HashMap<>();
-        texture = Resources.loadTexture(texturePath);
+        sprites = new HashMap<>(sprites);
+        spritePerName = new HashMap<>();
+        texture = Resources.loadTexture(path);
         animations = new HashMap<>();
 
-        for (Map.Entry<String, Vector4f> entry : spriteRegions.entrySet()) {
+        for (Map.Entry<String, Vector4f> entry : sprites.entrySet()) {
             Map<String, Integer> value = (Map<String, Integer>)entry.getValue();
-            spriteRegions.put(entry.getKey(), new Vector4f(value.get("x"), value.get("y"), value.get("z"), value.get("w")));
+            sprites.put(entry.getKey(), new Vector4f(value.get("x"), value.get("y"), value.get("z"), value.get("w")));
         }
 
-        for (Map.Entry<String, Vector4f> entry : spriteRegions.entrySet()) {
-            sprites.put(entry.getKey(), new Sprite(texture, entry.getValue()));
+        for (Map.Entry<String, Vector4f> entry : sprites.entrySet()) {
+            spritePerName.put(entry.getKey(), new Sprite(texture, entry.getValue()));
         }
 
         if (json.containsKey("animations")) {
@@ -57,7 +57,7 @@ public class Spritesheet {
     }
 
     public Sprite getSprite(String name) {
-        return sprites.get(name);
+        return spritePerName.get(name);
     }
 
     public SpriteAnimation getAnimation(String name) {

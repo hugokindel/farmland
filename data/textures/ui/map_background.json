@@ -1,6 +1,6 @@
 {
-    "texturePath": "ui/map_background.png",
-    "spriteRegions": {
+    "path": "ui/map_background.png",
+    "sprites": {
         "topLeft": {
             "x": 0,
             "y": 0,
@@ -8,50 +8,50 @@
             "w": 5
         },
         "topMiddle": {
-            "x": 6,
+            "x": 5,
             "y": 0,
             "z": 1,
             "w": 5
         },
         "topRight": {
-            "x": 8,
+            "x": 6,
             "y": 0,
             "z": 5,
             "w": 5
         },
         "middleLeft": {
             "x": 0,
-            "y": 6,
+            "y": 5,
             "z": 5,
             "w": 1
         },
         "middle": {
-            "x": 6,
-            "y": 6,
+            "x": 5,
+            "y": 5,
             "z": 1,
             "w": 1
         },
         "middleRight": {
-            "x": 8,
-            "y": 6,
+            "x": 6,
+            "y": 5,
             "z": 5,
             "w": 1
         },
         "bottomLeft": {
             "x": 0,
-            "y": 8,
+            "y": 6,
             "z": 5,
             "w": 5
         },
         "bottomMiddle": {
-            "x": 6,
-            "y": 8,
+            "x": 5,
+            "y": 6,
             "z": 1,
             "w": 5
         },
         "bottomRight": {
-            "x": 8,
-            "y": 8,
+            "x": 6,
+            "y": 6,
             "z": 5,
             "w": 5
         }

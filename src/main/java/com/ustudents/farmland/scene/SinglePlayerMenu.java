@@ -66,7 +66,7 @@ public class SinglePlayerMenu extends Scene {
             Entity cursorSelector = registry.createEntity();
             cursorSelector.setName("cellCursor");
             cursorSelector.addComponent(new TransformComponent(new Vector2f(0, 0)));
-            AnimatedSpriteComponent textureComponent2 = cursorSelector.addComponent(new AnimatedSpriteComponent(Resources.loadSpritesheet("ui/cell_cursor.json"), "default"));
+            AnimatedSpriteComponent textureComponent2 = cursorSelector.addComponent(new AnimatedSpriteComponent(Resources.loadSpritesheet("ui/map_cell_cursor.json"), "default"));
             cursorSelector.addComponent(new WorldRendererComponent(2));
         }
 

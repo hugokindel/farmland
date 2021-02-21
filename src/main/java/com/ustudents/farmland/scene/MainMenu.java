@@ -18,27 +18,19 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 public class MainMenu extends Scene {
+    Font font;
     Texture grassTexture;
     Texture titleTexture;
-    Font font;
-    Font fontSmaller;
-    Font font2;
     Sound musicSound;
-    Spritesheet spritesheet;
-    NineSlicedSprite nineSlicedSprite;
 
     @Override
     public void initialize() {
         camera.enableInput(false);
 
-        grassTexture = Resources.loadTexture("examples/grass.png");
-        titleTexture = Resources.loadTexture("ui/title.png");
-        font = Resources.loadFont("default.ttf", 36);
-        font2 = Resources.loadFont("kobold.ttf", 16);
-        fontSmaller = Resources.loadFont("default.ttf", 24);
-        musicSound = Resources.loadSound("backgroundMenu1.ogg");
-        spritesheet = Resources.loadSpritesheet("ui/button_default.json");
-        nineSlicedSprite = new NineSlicedSprite(spritesheet);
+        font = Resources.loadFont("ui/debug.ttf", 32);
+        grassTexture = Resources.loadTexture("map/grass.png");
+        titleTexture = Resources.loadTexture("ui/farmland_title.png");
+        musicSound = Resources.loadSound("music/main_menu_background.ogg");
 
         initializeBackground();
         initializeUi();
@@ -76,13 +68,13 @@ public class MainMenu extends Scene {
         title.setName("titleLabel");
         title.setParent(uiContainer);
         title.addComponent(
-                new TransformComponent(new Vector2f(windowSize.x / 2.0f, 20), new Vector2f(1.5f, 1.5f)));
+                new TransformComponent(new Vector2f(windowSize.x / 2, 20), new Vector2f(1.5f, 1.5f)));
         title.addComponent(new TextureComponent(titleTexture));
         Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
             Window.SizeChangedEventData event = (Window.SizeChangedEventData)data;
             title.getComponent(TransformComponent.class).setPosition(new Vector2f(event.newSize.x / 2.0f, 20));
         });
-        title.getComponent(TextureComponent.class).setOrigin(new Vector2f(256.0f, 0.0f));
+        title.getComponent(TextureComponent.class).setOrigin(new Vector2f(titleTexture.getWidth() / 2, 0.0f));
         title.addComponent(new UiRendererComponent());
 
         String[] buttons = new String[] {"Jouer", "Multijoueur", "Paramètres", "Crédits", "Quitter"};
@@ -125,12 +117,12 @@ public class MainMenu extends Scene {
         version.setName("versionLabel");
         version.setParent(uiContainer);
         version.addComponent(new TransformComponent(
-                new Vector2f(10, windowSize.y - font.getTextHeight("Version: 0.0.1")), new Vector2f(1, 1)));
-        version.addComponent(new TextComponent("Version: 0.0.1", fontSmaller));
+                new Vector2f(10, windowSize.y - font.getTextHeight("Version: 0.0.1") - 8), new Vector2f(1, 1)));
+        version.addComponent(new TextComponent("Version: 0.0.1", font));
         version.addComponent(new UiRendererComponent());
         Farmland.get().getWindow().sizeChanged.add((dataType, data) -> {
             Window.SizeChangedEventData event = (Window.SizeChangedEventData)data;
-            version.getComponent(TransformComponent.class).setPosition(new Vector2f(10, event.newSize.y - font.getTextHeight("Version: 0.0.1")));
+            version.getComponent(TransformComponent.class).setPosition(new Vector2f(10, event.newSize.y - font.getTextHeight("Version: 0.0.1") - 8));
         });
     }
 
