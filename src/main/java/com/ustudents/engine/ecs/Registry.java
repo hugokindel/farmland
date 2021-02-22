@@ -987,6 +987,7 @@ public class Registry {
             componentsPerEntity.remove(entityId);
             renderableComponentsPerEntity.remove(entity);
             behaviourComponentsPerEntity.remove(entity);
+            entitiesToKeepBetweenLoads.remove(entity);
 
             // TODO: Remove code
             /*for (Pool pool : componentPools) {
