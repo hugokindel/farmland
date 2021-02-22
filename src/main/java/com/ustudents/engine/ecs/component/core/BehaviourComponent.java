@@ -6,10 +6,6 @@ import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.Farmland;
 
 public abstract class BehaviourComponent extends Component {
-    public void initialize() {
-
-    }
-
     public void update(float dt) {
 
     }

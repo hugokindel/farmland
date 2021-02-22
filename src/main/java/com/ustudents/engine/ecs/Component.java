@@ -29,16 +29,16 @@ public class Component {
         return entity.getRegistry();
     }
 
-    /**
-     * Converts to string.
-     *
-     * @return a string.
-     */
-    @Override
-    public String toString() {
-        return "Component{" +
-                "id=" + id +
-                '}';
+    public void onSceneLoaded() {
+
+    }
+
+    public void initialize() {
+
+    }
+
+    public void destroy() {
+
     }
 
     public void renderImGui() {

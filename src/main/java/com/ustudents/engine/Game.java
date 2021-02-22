@@ -1,6 +1,7 @@
 package com.ustudents.engine;
 
 import com.ustudents.engine.audio.SoundManager;
+import com.ustudents.engine.audio.SoundSystemType;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
@@ -49,6 +50,10 @@ public abstract class Game extends Runnable {
     @Option(names = "--force-no-custom-icon", description = "Force to use the default operating system window icon.")
     protected boolean forceNoCustomIcon = false;
 
+    /** Option to force to disable any custom cursors. */
+    @Option(names = "--force-no-sound", description = "Force to disable any sounds.")
+    protected boolean forceNoSound = false;
+
     /** The window. */
     protected final Window window = new Window();
 
@@ -56,7 +61,7 @@ public abstract class Game extends Runnable {
     protected final SceneManager sceneManager = new SceneManager();
 
     /** The sound manager (handle every sound sources). */
-    private final SoundManager soundManager = new SoundManager();
+    private final SoundManager soundManager;
 
     /** The ImGui manager (handle most debugging tools). */
     protected final ImGuiManager imGuiManager = new ImGuiManager();
@@ -94,6 +99,8 @@ public abstract class Game extends Runnable {
     /** Class constructor. */
     public Game() {
         game = this;
+
+        soundManager = new SoundManager();
     }
 
     /**
@@ -234,6 +241,10 @@ public abstract class Game extends Runnable {
         this.vsync = vsync;
         Resources.setSetting("vsync", vsync);
         window.setVsync(vsync);
+    }
+
+    public SoundSystemType getSoundSystemType() {
+        return forceNoSound ? SoundSystemType.Empty : SoundSystemType.OpenAL;
     }
 
     /** Initialize the game. */

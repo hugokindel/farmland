@@ -77,6 +77,11 @@ public class Registry {
     /** Set to keep track of deleted entities. */
     private final Set<Entity> disabledEntities;
 
+    /** Map to keep track of entity per ID. */
+    private final Set<Entity> entitiesToKeepBetweenLoads;
+
+    private final Set<System> systemsToKeepBetweenLoads;
+
     /** List to keep track of all component pools (list of components per type). */
     private final List<Pool> componentPools;
 
@@ -110,6 +115,8 @@ public class Registry {
         entitiesToBeRemovedFromSystems = new HashSet<>();
         enabledEntities = new HashSet<>();
         disabledEntities = new HashSet<>();
+        entitiesToKeepBetweenLoads = new HashSet<>();
+        systemsToKeepBetweenLoads = new HashSet<>();
         componentPools = new ArrayList<>();
         freeIds = new ArrayDeque<>();
         componentTypeRegistry = new ComponentTypeRegistry();
@@ -254,11 +261,19 @@ public class Registry {
      * @param entity The entity.
      */
     public void killEntity(Entity entity) {
+        killEntity(entity, false);
+    }
+
+    public void killEntity(Entity entity, boolean updateRegistry) {
         entitiesToBeRemovedFromEverything.add(entity);
         totalNumberOfEntities--;
 
         if (Game.isDebugging()) {
             Out.printlnDebug("entity " + Style.Bold + entity.getId() + Style.Reset + ": killed");
+        }
+
+        if (updateRegistry) {
+            updateEntities();
         }
     }
 
@@ -335,6 +350,10 @@ public class Registry {
      */
     public Set<Entity> getEntitiesByName(String name) {
         return entitiesPerName.get(name);
+    }
+
+    public boolean entityWithNameExists(String name) {
+        return entitiesPerName.containsKey(name);
     }
 
     /**
@@ -627,12 +646,11 @@ public class Registry {
         component.setEntity(entity);
         ((ComponentPool<T>)componentPools.get(componentId)).set(entityId, component);
         signaturePerEntity.get(entityId).set(componentId);
-
         componentsPerEntity.get(entityId).add(component);
 
-        if (component instanceof BehaviourComponent) {
-            ((BehaviourComponent)component).initialize();
+        component.initialize();
 
+        if (component instanceof BehaviourComponent) {
             behaviourComponentsPerEntity.get(entity).add((BehaviourComponent) component);
         }
 
@@ -680,6 +698,13 @@ public class Registry {
         int componentId = componentTypeRegistry.getIdForType(classType);
 
         return ((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId);
+    }
+
+    public <T extends Component> T getComponentOfEntitySafe(Entity entity, Class<T> classType) {
+        int entityId = entity.getId();
+        int componentId = componentTypeRegistry.getIdForType(classType);
+
+        return ((ComponentPool<T>)componentPools.get(componentId)).getFromEntitySafe(entityId);
     }
 
     /**
@@ -741,16 +766,19 @@ public class Registry {
         int componentId = componentTypeRegistry.getIdForType(classType);
         int entityId = entity.getId();
 
-        componentsPerEntity.get(entityId).remove(((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId));
+        T component = ((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId);
+        component.destroy();
+
+        componentsPerEntity.get(entityId).remove(component);
         ((ComponentPool<T>)componentPools.get(componentId)).remove(entityId);
         signaturePerEntity.get(entityId).clear(componentId);
 
         if (classType.isAssignableFrom(RenderableComponent.class)) {
-            renderableComponentsPerEntity.get(entity).remove((RenderableComponent) ((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId));
+            renderableComponentsPerEntity.get(entity).remove(component);
         }
 
         if (classType.isAssignableFrom(BehaviourComponent.class)) {
-            behaviourComponentsPerEntity.get(entity).remove((BehaviourComponent) ((ComponentPool<T>)componentPools.get(componentId)).getFromEntity(entityId));
+            behaviourComponentsPerEntity.get(entity).remove(component);
         }
 
         if (Game.isDebugging()) {
@@ -796,6 +824,40 @@ public class Registry {
         for (Map.Entry<Integer, System> system : systems.entrySet()) {
             system.getValue().removeEntity(entity);
         }
+    }
+
+    public void keepEntityOnLoad(Entity entity, boolean keep) {
+        if (keep) {
+            entitiesToKeepBetweenLoads.add(entity);
+        } else {
+            entitiesToKeepBetweenLoads.remove(entity);
+        }
+    }
+
+    public boolean isEntityKeptOnLoad(Entity entity) {
+        return entitiesToKeepBetweenLoads.contains(entity);
+    }
+
+    public <T extends System> void keepSystemOnLoad(Class<T> classType, boolean keep) {
+        for (Map.Entry<Integer, System> system : systems.entrySet()) {
+            if (system.getValue().getClass() == classType) {
+                if (keep) {
+                    systemsToKeepBetweenLoads.add(system.getValue());
+                } else {
+                    systemsToKeepBetweenLoads.remove(system.getValue());
+                }
+            }
+        }
+    }
+
+    public <T extends System> boolean isSystemKeptBetweenLoads(Class<T> classType) {
+        for (Map.Entry<Integer, System> system : systems.entrySet()) {
+            if (system.getValue().getClass() == classType) {
+                return systemsToKeepBetweenLoads.contains(system.getValue());
+            }
+        }
+
+        return false;
     }
 
     /** Updates the registry (takes care of all recently created entities and all recently killed entities). */
@@ -866,6 +928,32 @@ public class Registry {
         entitiesToBeAddedToSystems.clear();
     }
 
+    public void clearRegistry() {
+        Map<Integer, Entity> entitiesClone = new HashMap<>(entityPerIndex);
+
+        for (Map.Entry<Integer, Entity> set : entitiesClone.entrySet()) {
+            if (!entitiesToKeepBetweenLoads.contains(set.getValue())) {
+                killEntity(set.getValue());
+            }
+        }
+
+        updateEntities();
+
+        Map<Integer, System> systemsClone = new HashMap<>(systems);
+
+        for (Map.Entry<Integer, System> set : systemsClone.entrySet()) {
+            if (!systemsToKeepBetweenLoads.contains(set.getValue())) {
+                removeSystem(set.getValue().getClass());
+            }
+        }
+
+        updateEntities();
+    }
+
+    public void addAllCurrentEntitiesToSystemCheck() {
+        entitiesToBeAddedToSystems.addAll(entitiesToKeepBetweenLoads);
+    }
+
     /** Remove all entities that are disabled from systems. */
     private void removeEntitiesFromSystems() {
         for (Entity entity : entitiesToBeRemovedFromSystems) {
@@ -882,7 +970,16 @@ public class Registry {
 
             int entityId = entity.getId();
 
+            Set<Component> copy = new HashSet<>(componentsPerEntity.get(entityId));
+
+            for (Component component : copy) {
+                removeComponentFromEntity(entity, component.getClass());
+            }
+
             signaturePerEntity.remove(entityId);
+            parentPerEntity.remove(entityId);
+            childrenPerEntity.remove(entityId);
+            entitiesAtRoot.remove(entity);
             entityPerIndex.remove(entityId);
             enabledEntities.remove(entity);
             disabledEntities.remove(entity);
@@ -890,11 +987,12 @@ public class Registry {
             renderableComponentsPerEntity.remove(entity);
             behaviourComponentsPerEntity.remove(entity);
 
-            for (Pool pool : componentPools) {
+            // TODO: Remove code
+            /*for (Pool pool : componentPools) {
                 if (pool != null) {
                     pool.removeEntityFromPool(entityId);
                 }
-            }
+            }*/
 
             freeIds.add(entityId);
             removeNameFromEntity(entity);

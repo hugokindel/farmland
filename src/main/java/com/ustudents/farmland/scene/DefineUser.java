@@ -2,14 +2,13 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.TimerComponent;
-import com.ustudents.farmland.player.Human;
+import com.ustudents.farmland.core.player.Human;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.type.ImString;

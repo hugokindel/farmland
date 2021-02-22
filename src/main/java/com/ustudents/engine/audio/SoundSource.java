@@ -1,14 +1,13 @@
 package com.ustudents.engine.audio;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.audio.empty.EmptySound;
+import com.ustudents.engine.audio.empty.EmptySoundSource;
+import com.ustudents.engine.audio.openal.ALSoundSource;
 import org.joml.Vector2f;
 
-import static org.lwjgl.openal.AL10.*;
-
 public class SoundSource {
-    private final int handle;
-
-    private Sound sound;
+    private EmptySoundSource soundSource;
 
     public SoundSource() {
         this(null, false, false);
@@ -23,79 +22,73 @@ public class SoundSource {
     }
 
     public SoundSource(Sound sound, boolean loop, boolean relative) {
-        this.handle = alGenSources();
-
-        if (sound != null) {
-            changeSound(sound);
-        }
-
-        if (loop) {
-            alSourcei(handle, AL_LOOPING, AL_TRUE);
-        }
-
-        if (relative) {
-            alSourcei(handle, AL_SOURCE_RELATIVE, AL_TRUE);
+        switch (Game.get().getSoundSystemType()) {
+            case Empty:
+                soundSource = new EmptySoundSource(sound.getSound(), loop, relative);
+                break;
+            case OpenAL:
+                soundSource = new ALSoundSource(sound.getSound(), loop, relative);
+                break;
         }
     }
 
     public void play() {
-        Game.get().getSoundManager().play(this);
+        soundSource.play();
     }
 
     public void pause() {
-        alSourcePause(handle);
+        soundSource.pause();
     }
 
     public void stop() {
-        alSourceStop(handle);
+        soundSource.stop();
     }
 
     public void destroy() {
-        stop();
-        alSourcei(handle, AL_BUFFER, 0);
-        alDeleteSources(handle);
+        soundSource.stop();
     }
 
-    public void changeSound(Sound sound) {
-        stop();
-        this.sound = sound;
-        alSourcei(handle, AL_BUFFER, sound.getHandle());
+    public void changeSound(EmptySound sound) {
+        soundSource.changeSound(sound);
     }
 
     public void setPosition(Vector2f position) {
-        alSource3f(handle, AL_POSITION, position.x, position.y,0);
+        soundSource.setPosition(position);
     }
 
     public void setSpeed(Vector2f speed) {
-        alSource3f(handle, AL_VELOCITY, speed.x, speed.y,0);
+        soundSource.setSpeed(speed);
     }
 
     public void setGain(float gain) {
-        alSourcef(handle, AL_GAIN, gain);
+        soundSource.setGain(gain);
     }
 
     public void setProperty(int param, float value) {
-        alSourcef(handle, param, value);
+        soundSource.setProperty(param, value);
     }
 
     public boolean isPlaying() {
-        return alGetSourcei(handle, AL_SOURCE_STATE) == AL_PLAYING;
+        return soundSource.isPlaying();
     }
 
     public boolean isPaused() {
-        return alGetSourcei(handle, AL_SOURCE_STATE) == AL_PAUSED;
+        return soundSource.isPaused();
     }
 
     public boolean isStopped() {
-        int state = alGetSourcei(handle, AL_SOURCE_STATE);
-        return state == AL_STOPPED || state == AL_INITIAL;
+        return soundSource.isStopped();
     }
 
     public int getHandle() {
-        return handle;
+        return soundSource.getHandle();
     }
 
-    public Sound getSound() {
-        return sound;
+    public EmptySound getSound() {
+        return soundSource.getSound();
+    }
+
+    public EmptySoundSource getSoundSource() {
+        return soundSource;
     }
 }

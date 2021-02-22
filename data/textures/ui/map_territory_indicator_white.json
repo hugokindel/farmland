@@ -1,0 +1,17 @@
+{
+    "path": "ui/map_territory_indicator_white.png",
+    "sprites": {
+        "notOwned": {
+            "x": 0,
+            "y": 0,
+            "z": 22,
+            "w": 22
+        },
+        "owned": {
+            "x": 22,
+            "y": 0,
+            "z": 22,
+            "w": 22
+        },
+    }
+}

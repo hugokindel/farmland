@@ -211,6 +211,10 @@ public class Entity {
         return registry.getComponentOfEntity(this, classType);
     }
 
+    public <T extends Component> T getComponentSafe(Class<T> classType) {
+        return registry.getComponentOfEntitySafe(this, classType);
+    }
+
     /** @return a set of its components. */
     public Set<Component> getComponents() {
         return registry.getComponentsOfEntity(this);
@@ -265,6 +269,14 @@ public class Entity {
         return registry.isEntityEnabled(this);
     }
 
+    public void keepOnLoad(boolean keep) {
+        registry.keepEntityOnLoad(this, keep);
+    }
+
+    public boolean isKeptOnLoad() {
+        return registry.isEntityKeptOnLoad(this);
+    }
+
     /** @return its ID. */
     public int getId() {
         return id;
@@ -278,23 +290,5 @@ public class Entity {
     /** @return its signature. */
     public BitSet getSignature() {
         return registry.getSignatureOfEntity(this);
-    }
-
-    /**
-     * Converts to string.
-     *
-     * @return a string.
-     */
-    @Override
-    public String toString() {
-        return "Entity{" +
-                "id=" + id +
-                ", registry=" + registry +
-                (hasName() ? ", name=" + getName() : "") +
-                ", tags=" + getTags() +
-                (hasParent() ? ", parentId=" + getParent().getId() : "") +
-                (getChildren().size() > 0 ? ", children=" + getChildren() : "") +
-                ", components=" + getComponents() +
-                '}';
     }
 }

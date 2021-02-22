@@ -2,6 +2,8 @@ package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Window;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.System;
 import com.ustudents.engine.ecs.system.BehaviourSystem;
 import com.ustudents.engine.ecs.system.WorldRenderSystem;
 import com.ustudents.engine.ecs.system.UiRenderSystem;
@@ -10,6 +12,8 @@ import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
 import com.ustudents.farmland.Farmland;
 import org.joml.Vector2i;
+
+import java.util.Map;
 
 /** Defines a scene element. */
 public abstract class Scene {
@@ -39,7 +43,7 @@ public abstract class Scene {
      void create(SceneManager sceneManager) {
          Vector2i size = Farmland.get().getWindow().getSize();
 
-         this.registry = new Registry();
+         this.registry = SceneManager.get().getRegistry();
          this.sceneManager = sceneManager;
          this.camera = new Camera(100, 0.005f, 0.01f, Camera.Type.World);
          this.camera.resize(size.x, size.y);
@@ -97,6 +101,74 @@ public abstract class Scene {
         } else {
             sceneManager.changeScene(classType, args);
         }
+    }
+
+    public <T extends System> T addSystem(Class<T> classType, Object... args) {
+        if (args.length == 0) {
+            return registry.addSystem(classType);
+        } else {
+            return registry.addSystem(classType, args);
+        }
+    }
+
+    public <T extends System> void removeSystem(Class<T> classType) {
+        registry.removeSystem(classType);
+    }
+
+    public <T extends System> boolean hasSystem(Class<T> classType) {
+        return registry.hasSystem(classType);
+    }
+
+    public <T extends System> T getSystem(Class<T> classType) {
+        return registry.getSystem(classType);
+    }
+
+    public <T extends Entity> T createEntity(Class<T> classType, Object... args) {
+        if (args.length == 0) {
+            return registry.createEntity(classType);
+        } else {
+            return registry.createEntity(classType, args);
+        }
+    }
+
+    public Entity createEntity() {
+        return registry.createEntity();
+    }
+
+    public <T extends Entity> T createEntityWithName(String name, Class<T> classType, Object... args) {
+        if (args.length == 0) {
+            return registry.createEntityWithName(name, classType);
+        } else {
+            return registry.createEntityWithName(name, classType, args);
+        }
+    }
+
+    public Entity createEntityWithName(String name) {
+        return registry.createEntityWithName(name);
+    }
+
+    public void killEntity(Entity entity) {
+        registry.killEntity(entity);
+    }
+
+    public void killEntity(Entity entity, boolean updateRegistry) {
+        registry.killEntity(entity, updateRegistry);
+    }
+
+    public boolean hasEntityWithName(String name) {
+        return registry.entityWithNameExists(name);
+    }
+
+    public Map<Integer, Entity> getEntities() {
+        return registry.getEntities();
+    }
+
+    public Entity getEntityByName(String name) {
+        return registry.getEntityByName(name);
+    }
+
+    public void updateRegistry() {
+        registry.updateEntities();
     }
 
     /** Quit the game. */

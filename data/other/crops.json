@@ -1,0 +1,8 @@
+[
+	{
+		"name": "Tomate",
+		"id": "tomato",
+		"numberOfTurnsToGrow": 6,
+		"texture": "tomato.json"
+	}
+]

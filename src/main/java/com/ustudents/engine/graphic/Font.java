@@ -3,7 +3,6 @@ package com.ustudents.engine.graphic;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.utility.FileUtil;
-import com.ustudents.farmland.entities.Resource;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;

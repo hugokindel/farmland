@@ -2,6 +2,9 @@ package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.ecs.Component;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.utility.TypeUtil;
 
@@ -18,6 +21,9 @@ public class SceneManager {
 
     /** Defines if we need to transition before the next frame. */
     private boolean transitioningScene = false;
+
+    /** The registry for every entities in the scene. */
+    private final Registry registry = new Registry();
 
     /**
      * Changes the current scene to the given scene.
@@ -91,13 +97,13 @@ public class SceneManager {
     /** Called at the beginning of the frame (to check if we need to do a scene transition). */
     public void startFrame() {
         if (transitioningScene) {
-            Game.get().getSoundManager().removeAll();
-
             currentSceneIndex = scenes.size() - 1;
 
             if (currentSceneIndex > 0) {
                 scenes.get(currentSceneIndex - 1).getSpritebatch().destroy();
                 scenes.get(currentSceneIndex - 1).destroy();
+                registry.clearRegistry();
+                registry.addAllCurrentEntitiesToSystemCheck();
 
                 if (Game.isDebugging()) {
                     Out.printlnDebug("Previous scene destroyed.");
@@ -106,7 +112,14 @@ public class SceneManager {
 
             scenes.get(currentSceneIndex).create(this);
             scenes.get(currentSceneIndex).initializeInternals();
+            scenes.get(currentSceneIndex).registry.updateEntities();
             Input.recalculateMousePosition();
+
+            for (Entity entity : registry.getEntities().values()) {
+                for (Component component : entity.getComponents()) {
+                    component.onSceneLoaded();
+                }
+            }
 
             transitioningScene = false;
 
@@ -136,5 +149,9 @@ public class SceneManager {
     /** @return the current scene. */
     public Scene getCurrentScene() {
         return scenes.get(currentSceneIndex);
+    }
+
+    public Registry getRegistry() {
+        return registry;
     }
 }

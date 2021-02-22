@@ -9,7 +9,7 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.utility.SeedRandom;
-import com.ustudents.farmland.core.Cell;
+import com.ustudents.farmland.core.grid.Cell;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -94,6 +94,11 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 this.cells.get(x).add(cell);
             }
         }
+    }
+
+    @Override
+    public void onSceneLoaded() {
+        TransformComponent transformComponent = getEntity().getComponent(TransformComponent.class);
 
         Camera camera = getScene().getWorldCamera();
         camera.setMinimalX(transformComponent.position.x + gridBackgroundSideSize.x);
@@ -231,6 +236,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 new Vector2f(
                         transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
                         transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
+        // TODO: Player color
+        spriteData.tint = Color.WHITE;
         spriteData.zIndex = rendererComponent.zIndex + 2;
 
         spritebatch.drawSprite(spriteData);

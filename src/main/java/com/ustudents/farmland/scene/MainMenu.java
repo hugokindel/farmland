@@ -26,18 +26,21 @@ public class MainMenu extends Scene {
     }
 
     public void initializeGameplay() {
-        camera.enableInput(false);
+        getWorldCamera().enableInput(false);
 
         NineSlicedSprite gridBackground = new NineSlicedSprite(Resources.loadSpritesheet("ui/map_background.json"));
         Texture cellBackground = Resources.loadTexture("map/grass.png");
         AnimatedSprite selectionCursor = new AnimatedSprite(Resources.loadSpritesheet("ui/map_cell_cursor.json"));
         Spritesheet territoryTexture = Resources.loadSpritesheet("ui/map_territory_indicator.json");
 
-        Entity grid = registry.createEntityWithName("grid");
-        grid.addComponent(new TransformComponent());
-        grid.addComponent(new WorldRendererComponent());
-        GridComponent gridComponent = grid.addComponent(new GridComponent(new Vector2i(32, 32), new Vector2i(24, 24), gridBackground, cellBackground, selectionCursor, territoryTexture));
-        gridComponent.setSelectionCursorEnabled(false);
+        if (!hasEntityWithName("grid")) {
+            Entity grid = createEntityWithName("grid");
+            grid.keepOnLoad(true);
+            grid.addComponent(new TransformComponent());
+            grid.addComponent(new WorldRendererComponent());
+            GridComponent gridComponent = grid.addComponent(new GridComponent(new Vector2i(32, 32), new Vector2i(24, 24), gridBackground, cellBackground, selectionCursor, territoryTexture));
+            gridComponent.setSelectionCursorEnabled(false);
+        }
     }
 
     public void initializeGui() {
@@ -96,9 +99,11 @@ public class MainMenu extends Scene {
     }
 
     public void initializeMusic() {
-        Sound musicSound = Resources.loadSound("music/main_menu_background.ogg");
-
-        Entity music = registry.createEntityWithName("backgroundMusic");
-        music.addComponent(new SoundComponent(musicSound, true, true));
+        if (!hasEntityWithName("backgroundMusic")) {
+            Sound musicSound = Resources.loadSound("music/main_menu_background.ogg");
+            Entity music = createEntityWithName("backgroundMusic");
+            music.keepOnLoad(true);
+            music.addComponent(new SoundComponent(musicSound, true, true));
+        }
     }
 }

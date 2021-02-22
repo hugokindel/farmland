@@ -2,7 +2,6 @@ package com.ustudents.engine.ecs.component.audio;
 
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.audio.SoundSource;
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import imgui.ImGui;
@@ -58,6 +57,12 @@ public class SoundComponent extends Component {
         if (play) {
             source.play();
         }
+    }
+
+    @Override
+    public void destroy() {
+        source.stop();
+        source.destroy();
     }
 
     /** Plays the sound. */

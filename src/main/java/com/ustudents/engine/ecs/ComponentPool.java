@@ -144,4 +144,19 @@ public class ComponentPool<T extends Component> implements Pool {
     public T getFromEntity(int entityId) {
         return data.get(entityIdToIndex.get(entityId));
     }
+
+    /**
+     * Gets the component data at the given entity ID.
+     *
+     * @param entityId The entity ID.
+     *
+     * @return the data.
+     */
+    public T getFromEntitySafe(int entityId) {
+        if (!entityIdToIndex.containsKey(entityId)) {
+            return null;
+        }
+
+        return data.get(entityIdToIndex.get(entityId));
+    }
 }

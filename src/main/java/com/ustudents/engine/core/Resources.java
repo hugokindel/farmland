@@ -30,6 +30,7 @@ public class Resources {
     private static final String playersDirectoryName = "players";
     private static final String fontsDirectoryName = "fonts";
     private static final String soundsDirectoryName = "sounds";
+    private static final String otherDirectoryName = "other";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
@@ -81,6 +82,10 @@ public class Resources {
 
     public static String getKindPlayerDirectoryName(String type){
         return createPathIfNeeded(getPlayersDirectoryName() + "/" + type);
+    }
+
+    public static String getOtherDirectoryName(){
+        return createPathIfNeeded(getDataDirectory() + "/" + otherDirectoryName);
     }
 
     /**

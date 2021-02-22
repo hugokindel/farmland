@@ -1,19 +1,22 @@
 package com.ustudents.farmland;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.audio.SoundManager;
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.json.Json;
-import com.ustudents.engine.graphic.Spritesheet;
+import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.farmland.component.GoalComponent;
-import com.ustudents.farmland.player.Player;
+import com.ustudents.farmland.core.item.Crop;
+import com.ustudents.farmland.core.item.Item;
+import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.MainMenu;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /** The main class of the project. */
 @Command(name = "farmland", version = "0.0.1", description = "A management game about farming.")
+@SuppressWarnings("unchecked")
 public class Farmland extends Game {
     private static ArrayList<Player> players;
 
@@ -25,6 +28,8 @@ public class Farmland extends Game {
 
     private static GoalComponent goal;
 
+    private static List<Item> itemDatabase;
+
     @Override
     protected void initialize() {
         changeIcon("ui/farmland_logo.png");
@@ -32,6 +37,7 @@ public class Farmland extends Game {
 
         players = new ArrayList<>();
         goal = new GoalComponent();
+        itemDatabase = new ArrayList<>();
 
         sceneManager.changeScene(new MainMenu());
     }
@@ -90,5 +96,19 @@ public class Farmland extends Game {
 
     public static void setGoal(GoalComponent goal) {
         Farmland.goal = goal;
+    }
+
+    public static List<Item> getItemDatabase() {
+        return itemDatabase;
+    }
+
+    private void loadItemDatabases() {
+        List<Object> listOfCrops = JsonReader.readArray(Resources.getOtherDirectoryName() + "/crops.json");
+
+        for (Object object : listOfCrops) {
+            Crop crop = new Crop();
+            crop.deserialize((Map<String, Object>)object);
+            itemDatabase.add(crop);
+        }
     }
 }

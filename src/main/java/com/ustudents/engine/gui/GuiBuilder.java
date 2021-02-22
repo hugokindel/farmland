@@ -413,61 +413,63 @@ public class GuiBuilder {
     }
 
     private void windowPosition(Entity content, WindowData data, TransformComponent transformComponent) {
-        transformComponent.position = new Vector2f(data.position.x, data.position.y);
+        if (content != null && content.getComponentSafe(TextComponent.class) != null) {
+            transformComponent.position = new Vector2f(data.position.x, data.position.y);
 
-        TextComponent textComponent = content.getComponent(TextComponent.class);
+            TextComponent textComponent = content.getComponent(TextComponent.class);
 
-        switch (data.origin.horizontal) {
-            case Custom:
-                transformComponent.position.x += data.origin.customHorizontal;
-                break;
-            case Left:
-                break;
-            case Center:
-                transformComponent.position.x -= (5 + (textComponent.font.getScaledTextWidth(textComponent.text, transformComponent.scale.x) / 2)) * transformComponent.scale.x;
-                break;
-            case Right:
-                transformComponent.position.x -= (10 + (textComponent.font.getScaledTextWidth(textComponent.text, transformComponent.scale.x))) * transformComponent.scale.x;
-                break;
-        }
+            switch (data.origin.horizontal) {
+                case Custom:
+                    transformComponent.position.x += data.origin.customHorizontal;
+                    break;
+                case Left:
+                    break;
+                case Center:
+                    transformComponent.position.x -= (5 + (textComponent.font.getScaledTextWidth(textComponent.text, transformComponent.scale.x) / 2)) * transformComponent.scale.x;
+                    break;
+                case Right:
+                    transformComponent.position.x -= (10 + (textComponent.font.getScaledTextWidth(textComponent.text, transformComponent.scale.x))) * transformComponent.scale.x;
+                    break;
+            }
 
-        switch (data.origin.vertical) {
-            case Custom:
-                transformComponent.position.x += data.origin.customVertical;
-                break;
-            case Top:
-                break;
-            case Middle:
-                transformComponent.position.y -= (5 + (textComponent.font.getScaledTextHeight(textComponent.text, transformComponent.scale.y) / 2)) * transformComponent.scale.y;
-                break;
-            case Bottom:
-                transformComponent.position.y -= (10 + (textComponent.font.getScaledTextHeight(textComponent.text, transformComponent.scale.y))) * transformComponent.scale.x;
-                break;
-        }
+            switch (data.origin.vertical) {
+                case Custom:
+                    transformComponent.position.x += data.origin.customVertical;
+                    break;
+                case Top:
+                    break;
+                case Middle:
+                    transformComponent.position.y -= (5 + (textComponent.font.getScaledTextHeight(textComponent.text, transformComponent.scale.y) / 2)) * transformComponent.scale.y;
+                    break;
+                case Bottom:
+                    transformComponent.position.y -= (10 + (textComponent.font.getScaledTextHeight(textComponent.text, transformComponent.scale.y))) * transformComponent.scale.x;
+                    break;
+            }
 
-        Vector2i windowSize = Window.get().getSize();
+            Vector2i windowSize = Window.get().getSize();
 
-        switch (data.anchor.horizontal) {
-            case Left:
-                break;
-            case Center:
-                transformComponent.position.x += (float)windowSize.x / 2;
-                break;
-            case Right:
-                transformComponent.position.x += (float)windowSize.x;
-                break;
-        }
+            switch (data.anchor.horizontal) {
+                case Left:
+                    break;
+                case Center:
+                    transformComponent.position.x += (float)windowSize.x / 2;
+                    break;
+                case Right:
+                    transformComponent.position.x += (float)windowSize.x;
+                    break;
+            }
 
-        switch (data.anchor.vertical) {
+            switch (data.anchor.vertical) {
 
-            case Top:
-                break;
-            case Middle:
-                transformComponent.position.y += (float)windowSize.y / 2;
-                break;
-            case Bottom:
-                transformComponent.position.y += (float)windowSize.y;
-                break;
+                case Top:
+                    break;
+                case Middle:
+                    transformComponent.position.y += (float)windowSize.y / 2;
+                    break;
+                case Bottom:
+                    transformComponent.position.y += (float)windowSize.y;
+                    break;
+            }
         }
     }
 

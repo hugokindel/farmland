@@ -4,7 +4,7 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.player.Robot;
+import com.ustudents.farmland.core.player.Robot;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 
