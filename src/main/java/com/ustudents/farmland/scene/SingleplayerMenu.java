@@ -22,6 +22,8 @@ import org.joml.Vector2i;
 public class SingleplayerMenu extends Scene {
     @Override
     public void initialize() {
+        getWorldCamera().enableInput(false);
+
         Farmland.setKindOfGame("SinglePlayer");
     }
 
