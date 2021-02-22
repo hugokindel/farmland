@@ -96,6 +96,7 @@ public class Registry {
 
     /** Class constructor. */
     public Registry() {
+        totalNumberOfEntities = 1; // camera
         systems = new LinkedHashMap<>();
         entityPerIndex = new HashMap<>();
         signaturePerEntity = new HashMap<>();
