@@ -1,6 +1,5 @@
 package com.ustudents.farmland.scene.menus;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -8,18 +7,14 @@ import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.scene.InGameScene;
-import imgui.ImColor;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiDataType;
-import imgui.type.ImInt;
 import imgui.type.ImLong;
 import imgui.type.ImString;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class NewGameMenu extends MenuScene {
@@ -96,8 +91,8 @@ public class NewGameMenu extends MenuScene {
             if (errors.isEmpty()) {
                 SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3]), new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0]);
 
-                Farmland.get().getSaveGames().add(saveGame);
-                Farmland.get().currentSave = saveGame;
+                Farmland.get().getSaveGames().put(saveGame.name, saveGame);
+                Farmland.get().saveId = saveGame.name;
                 Farmland.get().saveSavedGames();
 
                 SceneManager.get().getTypeOfLastScene();

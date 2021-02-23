@@ -1,7 +1,6 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
@@ -10,7 +9,6 @@ import com.ustudents.engine.scene.component.gui.TextComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
-import com.ustudents.engine.scene.ecs.Registry;
 import com.ustudents.engine.utility.DateUtil;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.EconomicComponent;
@@ -27,7 +25,6 @@ import imgui.type.ImBoolean;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -101,7 +98,7 @@ public class InGameScene extends Scene {
         guiBuilder.addButton(buttonData3);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
-            Farmland.get().currentSave = null;
+            Farmland.get().saveId = null;
             changeScene(new MainMenu());
         });
         buttonData2.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Left);
@@ -127,7 +124,7 @@ public class InGameScene extends Scene {
 
         guiBuilder.endWindow();
 
-        GuiBuilder.TextData textData = new GuiBuilder.TextData("Temps restant: " + DateUtil.secondsToText(SaveGame.timePerTurn - Farmland.get().currentSave.turnTimePassed));
+        GuiBuilder.TextData textData = new GuiBuilder.TextData("Temps restant: " + DateUtil.secondsToText(SaveGame.timePerTurn - Farmland.get().getCurrentSave().turnTimePassed));
         textData.id = "timeRemainingLabel";
         textData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
         textData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
@@ -171,12 +168,10 @@ public class InGameScene extends Scene {
 
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
         int playerMoney = player.money;
-        List<Item> items = Farmland.get().getItemDatabase();
-        assert items != null;
-        for(Item item : items){
+        for(Item item : Farmland.get().getItemDatabase().values()){
             if(ImGui.button(item.name) && playerMoney>=item.value){
                 player.money = playerMoney-item.value;
-                player.listOfItems.add(item);
+                player.addToInventory(item);
                 Farmland.get().getCurrentSave().itemsTurn.add(item);
             }
             ImGui.sameLine();
@@ -185,7 +180,7 @@ public class InGameScene extends Scene {
     }
 
     private void makeListOfPlayerItem(){
-        List<Item> playerItems = Farmland.get().getCurrentSave().getCurrentPlayer().listOfItems;
+        /*List<Item> playerItems = Farmland.get().getCurrentSave().getCurrentPlayer().listOfItems;
         Set<Item> uniqueItems = new HashSet<>(playerItems);
 
         for(Item item: uniqueItems){
@@ -198,15 +193,15 @@ public class InGameScene extends Scene {
             if(count>0){
                 ImGui.text(item.name + " x" + count);
             }
-        }
+        }*/
     }
 
     public void onTurnEnded() {
         if(Farmland.get().getCurrentSave().turn%2 == 0){
             economicComponent.changeValueOfRessource();
             economicComponent.lastItemTurn = new ArrayList<>();
-            economicComponent.lastItemTurn.addAll(Farmland.get().currentSave.itemsTurn);
-            Farmland.get().currentSave.itemsTurn= new ArrayList<>();
+            economicComponent.lastItemTurn.addAll(Farmland.get().getCurrentSave().itemsTurn);
+            Farmland.get().getCurrentSave().itemsTurn= new ArrayList<>();
         }
         getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
     }

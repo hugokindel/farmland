@@ -26,9 +26,9 @@ public class TurnTimerComponent extends BehaviourComponent {
 
     @Override
     public void initialize() {
-        time = Farmland.get().currentSave.turnTimePassed;
+        time = Farmland.get().getCurrentSave().turnTimePassed;
 
-        Farmland.get().currentSave.turnEnded.add((dataType, data) -> {
+        Farmland.get().getCurrentSave().turnEnded.add((dataType, data) -> {
             time = 0;
             setTimeElapsed(0);
         });
@@ -41,13 +41,13 @@ public class TurnTimerComponent extends BehaviourComponent {
         if (time >= timePerTurn) {
             time = 0;
 
-            if (Farmland.get().currentSave != null) {
-                Farmland.get().currentSave.endTurn();
+            if (Farmland.get().getCurrentSave() != null) {
+                Farmland.get().getCurrentSave().endTurn();
             }
 
             setTimeElapsed(0);
-        } else if (Farmland.get().currentSave != null && time >= Farmland.get().currentSave.turnTimePassed + 1) {
-            setTimeElapsed(Farmland.get().currentSave.turnTimePassed + 1);
+        } else if (Farmland.get().getCurrentSave() != null && time >= Farmland.get().getCurrentSave().turnTimePassed + 1) {
+            setTimeElapsed(Farmland.get().getCurrentSave().turnTimePassed + 1);
         }
     }
 
@@ -60,7 +60,7 @@ public class TurnTimerComponent extends BehaviourComponent {
     }
 
     private void setTimeElapsed(int seconds) {
-        Farmland.get().currentSave.turnTimePassed = seconds;
-        secondElapsed.dispatch(new SecondElapsed(Farmland.get().currentSave.turnTimePassed));
+        Farmland.get().getCurrentSave().turnTimePassed = seconds;
+        secondElapsed.dispatch(new SecondElapsed(Farmland.get().getCurrentSave().turnTimePassed));
     }
 }

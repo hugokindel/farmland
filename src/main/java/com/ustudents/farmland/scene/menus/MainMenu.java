@@ -6,7 +6,7 @@ import com.ustudents.farmland.Farmland;
 public class MainMenu extends MenuScene {
     @Override
     public void initialize() {
-        Farmland.get().currentSave = null;
+        Farmland.get().saveId = null;
 
         String[] buttonNames = {"Solo", "Multijoueur", "Paramètres", "Crédits"};
         String[] buttonIds = {"singleplayerButton", "multiplayerButton", "settingsButton", "creditsButton"};

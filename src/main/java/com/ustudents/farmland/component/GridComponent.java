@@ -68,7 +68,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         SeedRandom random = new SeedRandom();
         TransformComponent transformComponent = getEntity().getComponent(TransformComponent.class);
 
-        if (Farmland.get().currentSave == null) {
+        if (Farmland.get().getCurrentSave() == null) {
             for (int x = 0; x < gridSize.x; x++) {
                 this.cells.add(new ArrayList<>());
 
@@ -108,26 +108,26 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         camera.setMinimalY(transformComponent.position.x + gridBackgroundSideSize.y);
         camera.setMaximalY(transformComponent.position.y + gridBackgroundSideSize.y + gridSize.x * cellSize.y);
 
-        if (Farmland.get().currentSave == null) {
+        if (Farmland.get().getCurrentSave() == null) {
             camera.centerOnPosition(new Vector2f(
                     transformComponent.position.x + gridBackgroundSideSize.x + (gridSize.x * cellSize.x) / 2.0f,
                     transformComponent.position.y + gridBackgroundSideSize.y + (gridSize.y * cellSize.y) / 2.0f));
         } else {
-            if (Farmland.get().currentSave.players.get(0).position != null) {
+            if (Farmland.get().getCurrentSave().players.get(0).position != null) {
                 camera.centerOnPosition(new Vector2f(
-                        Farmland.get().currentSave.players.get(0).position.x,
-                        Farmland.get().currentSave.players.get(0).position.y));
+                        Farmland.get().getCurrentSave().players.get(0).position.x,
+                        Farmland.get().getCurrentSave().players.get(0).position.y));
             } else {
                 camera.centerOnPosition(new Vector2f(
-                        Farmland.get().currentSave.players.get(0).village.position.x,
-                        Farmland.get().currentSave.players.get(0).village.position.y));
+                        Farmland.get().getCurrentSave().players.get(0).village.position.x,
+                        Farmland.get().getCurrentSave().players.get(0).village.position.y));
             }
         }
 
         camera.moved.add((dataType, data) -> {
             Camera.PositionChanged eventData = (Camera.PositionChanged) data;
-            if (Farmland.get().currentSave != null) {
-                Farmland.get().currentSave.players.get(0).position = new Vector2f(eventData.position.x, eventData.position.y);
+            if (Farmland.get().getCurrentSave() != null) {
+                Farmland.get().getCurrentSave().players.get(0).position = new Vector2f(eventData.position.x, eventData.position.y);
             }
         });
     }

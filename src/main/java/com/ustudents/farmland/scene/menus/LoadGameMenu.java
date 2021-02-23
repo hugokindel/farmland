@@ -13,12 +13,12 @@ public class LoadGameMenu extends MenuScene {
         String[] buttonIds = new String[buttonNames.length];
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
-        for (SaveGame save : Farmland.get().getSaveGames()) {
+        for (SaveGame save : Farmland.get().getSaveGames().values()) {
             int j = i;
             buttonNames[i] = save.name;
             buttonIds[i] = save.path.replace(".json", "") + "Button";
             eventListeners[i] = (dataType, data) -> {
-                Farmland.get().currentSave = Farmland.get().getSaveGame(buttonIds[j].replace("Button", ""));
+                Farmland.get().saveId = Farmland.get().getSaveGame(buttonIds[j].replace("Button", "")).name;
                 changeScene(new InGameScene());
             };
             i++;
