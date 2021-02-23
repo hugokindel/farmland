@@ -12,14 +12,13 @@ public class Item {
     @JsonSerializable
     public String id;
 
+    @JsonSerializable
     public String name;
 
     public Spritesheet spritesheet;
 
     @JsonSerializableConstructor
     public void deserialize(Map<String, Object> json) {
-        this.id = (String)json.get("id");
-        this.name = (String)json.get("name");
         this.spritesheet = Resources.loadSpritesheet("crops/" + (String)json.get("texture"));
     }
 }

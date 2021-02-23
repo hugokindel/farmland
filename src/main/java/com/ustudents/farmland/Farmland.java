@@ -59,9 +59,7 @@ public class Farmland extends Game {
         List<Object> listOfCrops = JsonReader.readArray(Resources.getOtherDirectoryName() + "/crops.json");
 
         for (Object object : listOfCrops) {
-            Crop crop = new Crop();
-            crop.deserialize((Map<String, Object>)object);
-            itemDatabase.add(crop);
+            itemDatabase.add(Json.deserialize((Map<String, Object>)object, Crop.class));
         }
     }
 

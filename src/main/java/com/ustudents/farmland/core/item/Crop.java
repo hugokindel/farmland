@@ -7,12 +7,6 @@ import java.util.Map;
 
 @JsonSerializable
 public class Crop extends Item {
+	@JsonSerializable
     public Integer numberOfTurnsToGrow;
-
-    @JsonSerializableConstructor
-    @Override
-    public void deserialize(Map<String, Object> json) {
-        super.deserialize(json);
-        numberOfTurnsToGrow = ((Long)json.get("numberOfTurnsToGrow")).intValue();
-    }
 }
