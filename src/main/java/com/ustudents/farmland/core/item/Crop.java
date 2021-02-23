@@ -15,11 +15,4 @@ public class Crop extends Item {
         super.deserialize(json);
         numberOfTurnsToGrow = ((Long)json.get("numberOfTurnsToGrow")).intValue();
     }
-
-    @Override
-    public String toString() {
-        return "Crop{" +
-                "numberOfTurnsToGrow=" + numberOfTurnsToGrow +
-                '}';
-    }
 }

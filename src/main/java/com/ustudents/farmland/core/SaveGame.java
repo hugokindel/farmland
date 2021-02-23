@@ -19,11 +19,16 @@ import java.util.List;
 
 @JsonSerializable
 public class SaveGame {
+    public static final int timePerTurn = 90;
+
     @JsonSerializable
     public String name;
 
     @JsonSerializable
     public Integer turn;
+
+    @JsonSerializable
+    public Integer turnTimePassed;
 
     @JsonSerializable
     public Long seed;
@@ -55,6 +60,7 @@ public class SaveGame {
         SeedRandom random = new SeedRandom(this.seed);
 
         this.turn = 0;
+        this.turnTimePassed = 0;
         this.currentPlayerId = 0;
         this.name = name;
         this.players = new ArrayList<>();
