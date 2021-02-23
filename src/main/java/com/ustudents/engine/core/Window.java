@@ -86,8 +86,6 @@ public class Window {
 
     private String glslVersion;
 
-    public Input input;
-
     public EventDispatcher sizeChanged = new EventDispatcher(SizeChangedEventData.class);
 
     public EventDispatcher keyStateChanged = new EventDispatcher(KeyStateChangedEventData.class);
@@ -118,7 +116,6 @@ public class Window {
         findGlslVersion();
 
         windowHandle = glfwCreateWindow(size.x, size.y, name, NULL, NULL);
-        input = new Input();
 
         if (windowHandle == NULL) {
             String errorMessage = "Failed to create the glfw window!";

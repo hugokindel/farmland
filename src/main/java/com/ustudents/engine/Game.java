@@ -13,6 +13,7 @@ import com.ustudents.engine.graphic.debug.DebugTools;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;
 import com.ustudents.engine.graphic.imgui.ImGuiTools;
 import com.ustudents.engine.input.Input;
+import com.ustudents.engine.input.InputSystemType;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
@@ -53,6 +54,10 @@ public abstract class Game extends Runnable {
     /** Option to force to disable any custom cursors. */
     @Option(names = "--no-sound", description = "Force to disable any sounds.")
     protected boolean forceNoSound = false;
+
+    /** Option to force to disable any custom cursors. */
+    @Option(names = "--no-input", description = "Force to disable any inputs.")
+    protected boolean forceNoInput = false;
 
     /** The window. */
     protected final Window window = new Window();
@@ -251,6 +256,10 @@ public abstract class Game extends Runnable {
         return forceNoSound ? SoundSystemType.Empty : SoundSystemType.OpenAL;
     }
 
+    public InputSystemType getInputSystemType() {
+        return forceNoInput ? InputSystemType.Empty : InputSystemType.GLFW;
+    }
+
     /** Initialize the game. */
     protected void initialize() {
 
@@ -289,6 +298,8 @@ public abstract class Game extends Runnable {
                 new Vector2i(1280, 720),
                 vsync
         );
+
+        Input.initialize();
 
         Resources.loadDefaultResources();
 
