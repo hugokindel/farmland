@@ -1,6 +1,7 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
@@ -9,12 +10,16 @@ import com.ustudents.engine.scene.component.gui.TextComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
+import com.ustudents.engine.scene.ecs.Registry;
 import com.ustudents.engine.utility.DateUtil;
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.component.EconomicComponent;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.component.PlayerMovementComponent;
 import com.ustudents.farmland.component.TurnTimerComponent;
 import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.item.Item;
+import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -22,10 +27,18 @@ import imgui.type.ImBoolean;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class InGameScene extends Scene {
     public ImBoolean showInventory;
 
     public ImBoolean showMarket;
+
+    public EconomicComponent economicComponent;
 
     @Override
     public void initialize() {
@@ -37,6 +50,7 @@ public class InGameScene extends Scene {
         initializeEntities();
         initializeGui();
         initializeGameplay();
+        economicComponent = new EconomicComponent();
     }
 
     public void initializeEntities() {
@@ -87,7 +101,7 @@ public class InGameScene extends Scene {
         guiBuilder.addButton(buttonData3);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
-            Farmland.get().saveSavedGames();
+            Farmland.get().currentSave = null;
             changeScene(new MainMenu());
         });
         buttonData2.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Left);
@@ -133,7 +147,8 @@ public class InGameScene extends Scene {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
             ImGui.begin("Inventaire", showInventory);
-
+            ImGui.text("Votre argent : " + Farmland.get().getCurrentSave().getCurrentPlayer().money + "\n\n");
+            makeListOfPlayerItem();
             ImGui.end();
         }
 
@@ -141,14 +156,55 @@ public class InGameScene extends Scene {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
             ImGui.begin("Marché", showMarket);
-
+            ImGui.text("Votre argent : " + Farmland.get().getCurrentSave().getCurrentPlayer().money + "\n\n");
+            ImGuiBuyingItem();
             ImGui.end();
         }
     }
 
+    private void ImGuiBuyingItem(){
+        ImGui.text("Buying Item : \n\n");
+
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        int playerMoney = player.money;
+        List<Item> items = Farmland.get().getItemDatabase();
+        assert items != null;
+        for(Item item : items){
+            if(ImGui.button(item.name) && playerMoney>=item.value){
+                player.money = playerMoney-item.value;
+                player.listOfItems.add(item);
+                Farmland.get().getCurrentSave().itemsTurn.add(item);
+            }
+            ImGui.sameLine();
+            ImGui.text("Price : " + item.value);
+        }
+    }
+
+    private void makeListOfPlayerItem(){
+        List<Item> playerItems = Farmland.get().getCurrentSave().getCurrentPlayer().listOfItems;
+        Set<Item> uniqueItems = new HashSet<>(playerItems);
+
+        for(Item item: uniqueItems){
+            int count = 0;
+            for (Item item1: playerItems){
+                if(item.getClass().getName().equals(item1.getClass().getName())){
+                    count++;
+                }
+            }
+            if(count>0){
+                ImGui.text(item.name + " x" + count);
+            }
+        }
+    }
+
     public void onTurnEnded() {
+        if(Farmland.get().getCurrentSave().turn%2 == 0){
+            economicComponent.changeValueOfRessource();
+            economicComponent.lastItemTurn = new ArrayList<>();
+            economicComponent.lastItemTurn.addAll(Farmland.get().currentSave.itemsTurn);
+            Farmland.get().currentSave.itemsTurn= new ArrayList<>();
+        }
         getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
-        Farmland.get().saveSavedGames();
     }
 
     public void onSecondElapsed(int secondsElapsed) {

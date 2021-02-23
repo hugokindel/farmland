@@ -8,6 +8,7 @@ import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.core.grid.Cell;
+import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -39,6 +40,8 @@ public class SaveGame {
     @JsonSerializable
     public List<Player> players;
 
+    public List<Item> itemsTurn;
+
     @JsonSerializable
     public List<List<Cell>> cells;
 
@@ -47,7 +50,7 @@ public class SaveGame {
     public EventDispatcher turnEnded = new EventDispatcher();
 
     public SaveGame() {
-
+        this.itemsTurn = new ArrayList<>();
     }
 
     public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
@@ -66,6 +69,7 @@ public class SaveGame {
         this.players = new ArrayList<>();
         this.players.add(new Player(playerName, playerVillageName, playerColor));
         this.players.get(0).village.position = new Vector2f(5 + (mapSize.x / 2) * 24, 5 + (mapSize.y / 2) * 24);
+        this.itemsTurn = new ArrayList<>();
 
         this.cells = new ArrayList<>();
 
