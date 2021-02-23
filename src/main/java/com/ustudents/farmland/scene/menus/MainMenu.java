@@ -1,10 +1,13 @@
 package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.farmland.Farmland;
 
 public class MainMenu extends MenuScene {
     @Override
     public void initialize() {
+        Farmland.get().currentSave = null;
+
         String[] buttonNames = {"Solo", "Multijoueur", "Paramètres", "Crédits"};
         String[] buttonIds = {"singleplayerButton", "multiplayerButton", "settingsButton", "creditsButton"};
         EventListener[] eventListeners = new EventListener[buttonNames.length];
