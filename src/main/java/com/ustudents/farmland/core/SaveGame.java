@@ -50,7 +50,7 @@ public class SaveGame {
 
     }
 
-    public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed) {
+    public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
         this.seed = seed;
 
         if (this.seed == null) {
@@ -92,11 +92,27 @@ public class SaveGame {
                         (x == mapSize.x / 2 - 1 && y == mapSize.y / 2) ||
                         (x == mapSize.x / 2 && y == mapSize.y / 2 - 1) ||
                         (x == mapSize.x / 2 - 1 && y == mapSize.y / 2 - 1)) {
-                    cell.setOwned(true);
+                    cell.setOwned(true, 0);
                 }
 
                 cells.get(x).add(cell);
             }
+        }
+
+        List<Color> usedColors = new ArrayList<>();
+        usedColors.add(playerColor);
+
+        List<Vector2i> usedLocations = new ArrayList<>();
+        usedLocations.add(new Vector2i(mapSize.x / 2 - 1, mapSize.y / 2 - 1));
+
+        for (int i = 0; i < numberOfBots; i++) {
+            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors)));
+            Vector2i villagePosition = generateMapLocation(random, usedLocations);
+            this.players.get(i + 1).village.position = new Vector2f(villagePosition.x, villagePosition.y);
+            this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i + 1);
+            this.cells.get(villagePosition.x + 1).get(villagePosition.y).setOwned(true, i + 1);
+            this.cells.get(villagePosition.x).get(villagePosition.y + 1).setOwned(true, i + 1);
+            this.cells.get(villagePosition.x + 1).get(villagePosition.y + 1).setOwned(true, i + 1);
         }
 
         File f = new File(Resources.getSavesDirectoryName());
@@ -116,5 +132,54 @@ public class SaveGame {
 
     public Player getCurrentPlayer() {
         return players.get(currentPlayerId);
+    }
+
+    private Color generateColor(SeedRandom random, List<Color> usedColors) {
+        while (true) {
+            boolean unique = true;
+
+            Color color = new Color();
+            color.r = random.generateInRange(0, 255) / 255.0f;
+            color.g = random.generateInRange(0, 255) / 255.0f;
+            color.b = random.generateInRange(0, 255) / 255.0f;
+            color.a = random.generateInRange(0, 255) / 255.0f;
+
+            for (Color usedColor : usedColors) {
+                if (color.equals(usedColor)) {
+                    unique = false;
+                    break;
+                }
+            }
+
+            if (unique) {
+                usedColors.add(color);
+                return color;
+            }
+        }
+    }
+
+    private Vector2i generateMapLocation(SeedRandom random, List<Vector2i> usedLocations) {
+        while (true) {
+            boolean unique = true;
+
+            Vector2i position = new Vector2i();
+            position.x = random.generateInRange(0, cells.size() - 2);
+            position.y = random.generateInRange(0, cells.get(0).size() - 2);
+
+            for (Vector2i usedPosition : usedLocations) {
+                if (position.x < usedPosition.x + 2 &&
+                        position.x + 2 > usedPosition.x &&
+                        position.y < usedPosition.y + 2 &&
+                        position.y + 2 > usedPosition.y) {
+                    unique = false;
+                    break;
+                }
+            }
+
+            if (unique) {
+                usedLocations.add(position);
+                return position;
+            }
+        }
     }
 }

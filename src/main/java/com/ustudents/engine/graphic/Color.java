@@ -99,4 +99,11 @@ public class Color {
         color.b = ((value & 0x0000FF00) >>> 8) / 255.0f;
         color.a = ((value & 0x000000FF)) / 255.0f;
     }
+
+    public boolean equals(Color color) {
+        return r.floatValue() == color.r.floatValue() &&
+               g.floatValue() == color.g.floatValue() &&
+               b.floatValue() == color.b.floatValue() &&
+               a.floatValue() == color.a.floatValue();
+    }
 }

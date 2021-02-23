@@ -33,8 +33,8 @@ public class Cell {
         this.itemId = -1;
     }
 
-    public void setOwned(boolean owned) {
-        ownerId = 0;
+    public void setOwned(boolean owned, int ownerId) {
+        this.ownerId = ownerId;
     }
 
     public void setItem(Integer item) {
@@ -43,5 +43,9 @@ public class Cell {
 
     public boolean isOwned() {
         return ownerId != -1;
+    }
+
+    public boolean isOwnedByCurrentPlayer() {
+        return ownerId == 0;
     }
 }

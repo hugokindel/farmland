@@ -84,16 +84,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                             transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + cellSize.x,
                             transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + cellSize.y);
 
-                    Cell cell = new Cell(sprite, viewRectangle);
-
-                    if ((x == gridSize.x / 2 && y == gridSize.y / 2) ||
-                            (x == gridSize.x / 2 - 1 && y == gridSize.y / 2) ||
-                            (x == gridSize.x / 2 && y == gridSize.y / 2 - 1) ||
-                            (x == gridSize.x / 2 - 1 && y == gridSize.y / 2 - 1)) {
-                        cell.setOwned(true);
-                    }
-
-                    this.cells.get(x).add(cell);
+                    this.cells.get(x).add(new Cell(sprite, viewRectangle));
                 }
             }
         } else {
@@ -158,7 +149,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
                 Farmland.get().getCurrentSave().currentPlayerId == 0) {
-            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true);
+            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
         }
     }
 
@@ -203,10 +194,10 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     }
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
-        return (x < gridSize.x - 1 && cells.get(x + 1).get(y).isOwned()) ||
-               (x > 0 && cells.get(x - 1).get(y).isOwned()) ||
-               (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwned()) ||
-               (y > 0 && cells.get(x).get(y - 1).isOwned());
+        return (x < gridSize.x - 1 && cells.get(x + 1).get(y).isOwnedByCurrentPlayer()) ||
+               (x > 0 && cells.get(x - 1).get(y).isOwnedByCurrentPlayer()) ||
+               (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwnedByCurrentPlayer()) ||
+               (y > 0 && cells.get(x).get(y - 1).isOwnedByCurrentPlayer());
     }
 
     private void renderBackground(Spritebatch spritebatch, RendererComponent rendererComponent,
@@ -255,24 +246,23 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
                 if (cellIsOwned(x, y)) {
-                    renderTerritoryCell("owned", x, y, spritebatch, rendererComponent, transformComponent);
+                    renderTerritoryCell("owned", x, y, spritebatch, rendererComponent, transformComponent, cells.get(x).get(y).ownerId);
                 } else if (cellIsClosedToOwnedCell(x, y)) {
-                    renderTerritoryCell("notOwned", x, y, spritebatch, rendererComponent, transformComponent);
+                    renderTerritoryCell("notOwned", x, y, spritebatch, rendererComponent, transformComponent, 0);
                 }
             }
         }
     }
 
     private void renderTerritoryCell(String type, int x, int y, Spritebatch spritebatch,
-                                     RendererComponent rendererComponent, TransformComponent transformComponent) {
+                                     RendererComponent rendererComponent, TransformComponent transformComponent, int ownderId) {
         if (Farmland.get().getCurrentSave() != null) {
             Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
                     territoryTexture.getSprite(type),
                     new Vector2f(
                             transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
                             transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
-            // TODO: Player color
-            spriteData.tint = Farmland.get().getCurrentSave().players.get(0).color;
+            spriteData.tint = Farmland.get().getCurrentSave().players.get(ownderId).color;
             spriteData.zIndex = rendererComponent.zIndex + 2;
 
             spritebatch.drawSprite(spriteData);
