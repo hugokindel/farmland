@@ -108,7 +108,7 @@ public class SaveGame {
         for (int i = 0; i < numberOfBots; i++) {
             this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors)));
             Vector2i villagePosition = generateMapLocation(random, usedLocations);
-            this.players.get(i + 1).village.position = new Vector2f(villagePosition.x, villagePosition.y);
+            this.players.get(i + 1).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
             this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i + 1);
             this.cells.get(villagePosition.x + 1).get(villagePosition.y).setOwned(true, i + 1);
             this.cells.get(villagePosition.x).get(villagePosition.y + 1).setOwned(true, i + 1);
