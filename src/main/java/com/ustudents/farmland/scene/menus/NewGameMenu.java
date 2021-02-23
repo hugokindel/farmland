@@ -15,6 +15,9 @@ import imgui.type.ImLong;
 import imgui.type.ImString;
 import org.joml.Vector2i;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NewGameMenu extends MenuScene {
     ImString saveName = new ImString();
     ImString playerName = new ImString();
@@ -22,6 +25,7 @@ public class NewGameMenu extends MenuScene {
     float[] color = {1, 0, 0, 1};
     int[] size = {16, 16};
     ImLong seed = new ImLong(System.currentTimeMillis());
+    List<String> errors = new ArrayList<>();
 
     @Override
     public void initialize() {
@@ -47,14 +51,14 @@ public class NewGameMenu extends MenuScene {
 
     @Override
     public void renderImGui() {
-        ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
+        ImGuiUtils.setNextWindowWithSizeCentered(450, 300, ImGuiCond.Appearing);
         ImGui.begin("New Game");
 
         ImGui.text("Enter savegame informations:");
-        ImGui.inputText("Savegame's name", saveName);
-        ImGui.inputText("Player's name", playerName);
-        ImGui.inputText("Player village's name", villageName);
-        ImGui.colorEdit4("Player banner's color", color);
+        ImGui.inputText("Savegame name", saveName);
+        ImGui.inputText("Player name", playerName);
+        ImGui.inputText("Village name", villageName);
+        ImGui.colorEdit4("Banner color", color);
         ImGui.inputInt2("Map size", size);
         ImGui.inputScalar("Map seed", ImGuiDataType.S64, seed);
 
@@ -65,13 +69,37 @@ public class NewGameMenu extends MenuScene {
         ImGui.sameLine();
 
         if (ImGui.button("Create")) {
-            SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3]), new Vector2i(size[0], size[1]), seed.get());
+            errors.clear();
 
-            Farmland.get().getSaveGames().add(saveGame);
-            Farmland.get().currentSave = saveGame;
+            if (saveName.isEmpty()) {
+                errors.add("Please enter a savegame name!");
+            }
+            if (playerName.isEmpty()) {
+                errors.add("Please enter a player name!");
+            }
+            if (villageName.isEmpty()) {
+                errors.add("Please enter a village name!");
+            }
+            if (size[0] <= 0 || size[1] <= 0) {
+                errors.add("Please enter a valid map size (greater than 0)!");
+            }
+            if (seed.get() <= 0) {
+                errors.add("Please enter a valid seed (greater than 0)!");
+            }
 
-            SceneManager.get().getTypeOfLastScene();
-            changeScene(new InGameScene());
+            if (errors.isEmpty()) {
+                SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3]), new Vector2i(size[0], size[1]), seed.get());
+
+                Farmland.get().getSaveGames().add(saveGame);
+                Farmland.get().currentSave = saveGame;
+
+                SceneManager.get().getTypeOfLastScene();
+                changeScene(new InGameScene());
+            }
+        }
+
+        for (String error : errors) {
+            ImGui.text(error);
         }
 
         ImGui.end();

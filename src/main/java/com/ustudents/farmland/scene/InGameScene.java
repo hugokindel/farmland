@@ -1,6 +1,7 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
@@ -12,12 +13,23 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.component.PlayerMovementComponent;
 import com.ustudents.farmland.scene.menus.MainMenu;
+import imgui.ImGui;
+import imgui.flag.ImGuiCond;
+import imgui.type.ImBoolean;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 public class InGameScene extends Scene {
+    private ImBoolean showInventory;
+    private ImBoolean showMarket;
+
     @Override
     public void initialize() {
+        forceImGui = true;
+
+        showInventory = new ImBoolean(false);
+        showMarket = new ImBoolean(false);
+
         initializeEntities();
         initializeGui();
         initializeGameplay();
@@ -53,14 +65,30 @@ public class InGameScene extends Scene {
         buttonData.position = new Vector2f(-10, -10);
         guiBuilder.addButton(buttonData);
 
-        GuiBuilder.ButtonData buttonData1 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
+        GuiBuilder.ButtonData buttonData1 = new GuiBuilder.ButtonData("Inventaire", (dataType, data) -> {
+            showInventory.set(!showInventory.get());
+        });
+        buttonData1.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        buttonData1.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        buttonData1.position = new Vector2f(-220, -12);
+        guiBuilder.addButton(buttonData1);
+
+        GuiBuilder.ButtonData buttonData3 = new GuiBuilder.ButtonData("Marché", (dataType, data) -> {
+            showMarket.set(!showMarket.get());
+        });
+        buttonData3.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        buttonData3.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        buttonData3.position = new Vector2f(-400, -10);
+        guiBuilder.addButton(buttonData3);
+
+        GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
             Farmland.get().currentSave = null;
             changeScene(new MainMenu());
         });
-        buttonData1.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Left);
-        buttonData1.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Left);
-        buttonData1.position = new Vector2f(10, -10);
-        guiBuilder.addButton(buttonData1);
+        buttonData2.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Left);
+        buttonData2.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Left);
+        buttonData2.position = new Vector2f(10, -10);
+        guiBuilder.addButton(buttonData2);
 
         GuiBuilder.WindowData windowData = new GuiBuilder.WindowData();
         windowData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
@@ -83,6 +111,25 @@ public class InGameScene extends Scene {
 
     public void initializeGameplay() {
         Farmland.get().getCurrentSave().turnEnded.add((dataType, data) -> onTurnEnded());
+    }
+
+    @Override
+    public void renderImGui() {
+        if (showInventory.get()) {
+            ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
+
+            ImGui.begin("Inventaire", showInventory);
+
+            ImGui.end();
+        }
+
+        if (showMarket.get()) {
+            ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
+
+            ImGui.begin("Marché", showMarket);
+
+            ImGui.end();
+        }
     }
 
     public void onTurnEnded() {
