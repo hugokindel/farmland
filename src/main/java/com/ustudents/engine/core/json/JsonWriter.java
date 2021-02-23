@@ -208,14 +208,12 @@ public class JsonWriter {
 
         prefix = oldPrefix;
 
-        if (beforeParentIsArray) {
-            if (!array.isEmpty() && array.get(0) instanceof List) {
-                write("\n", false);
-                write("]");
-            } else if (!array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
-                write("\n", false);
-                write("]");
-            }
+        if (beforeParentIsArray && !array.isEmpty() && array.get(0) instanceof List) {
+            write("\n", false);
+            write("]");
+        } else if (beforeParentIsArray && !array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
+            write("\n", false);
+            write("]");
         } else {
             write("]", !beforeParentIsArray);
         }
