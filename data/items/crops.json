@@ -4,6 +4,7 @@
 		"id": "tomato",
 		"value" : 10,
 		"numberOfTurnsToGrow": 6,
-		"texture": "tomato.json"
+		"texture": "tomato.json",
+		"initValue": 50
 	}
 ]

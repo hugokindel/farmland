@@ -4,6 +4,7 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
+import com.ustudents.engine.core.json.annotation.JsonSerializableType;
 import com.ustudents.engine.scene.ecs.Component;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.ecs.Registry;
@@ -65,6 +66,11 @@ public class Json {
 
             for (Field field : fields) {
                 JsonSerializable serializable = field.getAnnotation(JsonSerializable.class);
+
+                if (serializable.type() == JsonSerializableType.SerializableOnly) {
+                    continue;
+                }
+
                 String key = serializable.path().isEmpty() ? field.getName() : serializable.path();
                 String[] path = key.split("\\.");
                 Map<String, Object> mapToSearch = json;
@@ -216,7 +222,7 @@ public class Json {
             for (Field field : fields) {
                 JsonSerializable serializable = field.getAnnotation(JsonSerializable.class);
 
-                if (serializable.deserializeOnly()) {
+                if (serializable.type() == JsonSerializableType.DeserializableOnly) {
                     continue;
                 }
 

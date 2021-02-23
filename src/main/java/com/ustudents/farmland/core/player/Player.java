@@ -26,9 +26,10 @@ public class Player {
     @JsonSerializable
     public Vector2f position;
 
-    private int currentActionPlayed;
-
+    @JsonSerializable
     public List<Item> listOfItems;
+
+    public int currentActionPlayed;
 
     public Player() {
         listOfItems = new ArrayList<>();

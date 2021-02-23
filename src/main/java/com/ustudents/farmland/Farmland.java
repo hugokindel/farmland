@@ -5,12 +5,10 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
-import com.ustudents.engine.graphic.Color;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.Crop;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.scene.menus.MainMenu;
-import org.joml.Vector2i;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,7 +54,7 @@ public class Farmland extends Game {
     private void loadItemDatabases() {
         itemDatabase = new ArrayList<>();
 
-        List<Object> listOfCrops = JsonReader.readArray(Resources.getOtherDirectoryName() + "/crops.json");
+        List<Object> listOfCrops = JsonReader.readArray(Resources.getItemsDirectoryName() + "/crops.json");
 
         for (Object object : listOfCrops) {
             itemDatabase.add(Json.deserialize((Map<String, Object>)object, Crop.class));

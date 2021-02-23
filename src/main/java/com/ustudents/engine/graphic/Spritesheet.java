@@ -3,8 +3,8 @@ package com.ustudents.engine.graphic;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
+import com.ustudents.engine.core.json.annotation.JsonSerializableType;
 import org.joml.Vector4f;
-import org.joml.Vector4i;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class Spritesheet {
     @JsonSerializable
     private String path;
 
-    @JsonSerializable(deserializeOnly = true)
+    @JsonSerializable(type = JsonSerializableType.DeserializableOnly)
     private Map<String, Vector4f> sprites;
 
     private Texture texture;
