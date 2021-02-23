@@ -27,8 +27,16 @@ public class Font {
         Vector4f region;
     }
 
+    /**
+     * The default character set to use (latin extended).
+     * To decode the unicode escape sequences with ease (necessary for javadoc):
+     * https://dencode.com/string/unicode-escape
+     */
     private static final String defaultCharacterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
-            "0123456789.,;:?!-_~#\"'&()[]{}^|`/\\@°+=*%€$<>ÀÁÂÄÆÇÈÉÊËÌÍÎÏÒÓÔÖŒÙÚÛÜàáâäæçèéêëìíîïòóôöœùúûü ";
+            "0123456789.,;:?!-_~#\"'&()[]{}^|`/\\\u0040\u00b0\u002b\u003d\u002a\u0025\u20ac\u0024\u003c\u003e\u00c0" +
+            "\u00c1\u00c2\u00c4\u00c6\u00c7\u00c8\u00c9\u00ca\u00cb\u00cc\u00cd\u00ce\u00cf\u00d2\u00d3\u00d4\u00d6" +
+            "\u0152\u00d9\u00da\u00db\u00dc\u00e0\u00e1\u00e2\u00e4\u00e6\u00e7\u00e8\u00e9\u00ea\u00eb\u00ec\u00ed" +
+            "\u00ee\u00ef\u00f2\u00f3\u00f4\u00f6\u0153\u00f9\u00fa\u00fb\u00fc ";
 
     @Viewable
     private Integer fontSize;
