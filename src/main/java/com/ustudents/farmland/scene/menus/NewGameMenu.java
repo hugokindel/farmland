@@ -51,40 +51,40 @@ public class NewGameMenu extends MenuScene {
 
     @Override
     public void renderImGui() {
-        ImGuiUtils.setNextWindowWithSizeCentered(450, 300, ImGuiCond.Appearing);
-        ImGui.begin("New Game");
+        ImGuiUtils.setNextWindowWithSizeCentered(550, 300, ImGuiCond.Appearing);
+        ImGui.begin("Nouvelle partie");
 
-        ImGui.text("Enter savegame informations:");
-        ImGui.inputText("Savegame name", saveName);
-        ImGui.inputText("Player name", playerName);
-        ImGui.inputText("Village name", villageName);
-        ImGui.colorEdit4("Banner color", color);
-        ImGui.inputInt2("Map size", size);
-        ImGui.inputScalar("Map seed", ImGuiDataType.S64, seed);
+        ImGui.text("Entrez les informations de la sauvegarde:");
+        ImGui.inputText("Nom de la partie", saveName);
+        ImGui.inputText("Votre nom de joueur", playerName);
+        ImGui.inputText("Votre nom de village", villageName);
+        ImGui.colorEdit4("Couleur de votre bannière", color);
+        ImGui.inputInt2("Taille de la carte", size);
+        ImGui.inputScalar("Graine de la carte", ImGuiDataType.S64, seed);
 
-        if (ImGui.button("Go back")) {
+        if (ImGui.button("Retour")) {
             SceneManager.get().goBack();
         }
 
         ImGui.sameLine();
 
-        if (ImGui.button("Create")) {
+        if (ImGui.button("Créer")) {
             errors.clear();
 
             if (saveName.isEmpty()) {
-                errors.add("Please enter a savegame name!");
+                errors.add("Veuillez entrer un nom de partie !");
             }
             if (playerName.isEmpty()) {
-                errors.add("Please enter a player name!");
+                errors.add("Veuillez entrer un nom de joueur !");
             }
             if (villageName.isEmpty()) {
-                errors.add("Please enter a village name!");
+                errors.add("Veuillez entrer un nom de village !");
             }
             if (size[0] <= 0 || size[1] <= 0) {
-                errors.add("Please enter a valid map size (greater than 0)!");
+                errors.add("Veuillez entrer une taille de carte valide (plus grande que 0) !");
             }
             if (seed.get() <= 0) {
-                errors.add("Please enter a valid seed (greater than 0)!");
+                errors.add("Veuillez entrer une graine valide (plus grande que 0) !");
             }
 
             if (errors.isEmpty()) {
