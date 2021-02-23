@@ -87,6 +87,7 @@ public class InGameScene extends Scene {
         guiBuilder.addButton(buttonData3);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
+            Farmland.get().saveSavedGames();
             Farmland.get().currentSave = null;
             changeScene(new MainMenu());
         });
@@ -148,6 +149,7 @@ public class InGameScene extends Scene {
 
     public void onTurnEnded() {
         getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
+        Farmland.get().saveSavedGames();
     }
 
     public void onSecondElapsed(int secondsElapsed) {

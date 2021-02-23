@@ -98,6 +98,7 @@ public class NewGameMenu extends MenuScene {
 
                 Farmland.get().getSaveGames().add(saveGame);
                 Farmland.get().currentSave = saveGame;
+                Farmland.get().saveSavedGames();
 
                 SceneManager.get().getTypeOfLastScene();
                 changeScene(new InGameScene());
