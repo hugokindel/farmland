@@ -40,7 +40,6 @@ public class SaveGame {
     @JsonSerializable
     public List<Player> players;
 
-    @JsonSerializable
     public List<Item> itemsTurn;
 
     @JsonSerializable
