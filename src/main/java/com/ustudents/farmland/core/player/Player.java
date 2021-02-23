@@ -28,7 +28,8 @@ public class Player {
 
     private int currentActionPlayed;
 
-    public List<Item> listOfItems;;
+    @JsonSerializable
+    public List<Item> listOfItems;
 
     public Player() {
         listOfItems = new ArrayList<>();

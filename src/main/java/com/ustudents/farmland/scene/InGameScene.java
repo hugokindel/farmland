@@ -143,6 +143,10 @@ public class InGameScene extends Scene {
 
     @Override
     public void renderImGui() {
+        if (Farmland.get().getCurrentSave() == null) {
+            return;
+        }
+
         if (showInventory.get()) {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
