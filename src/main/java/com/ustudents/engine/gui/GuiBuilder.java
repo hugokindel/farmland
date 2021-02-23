@@ -3,20 +3,19 @@ package com.ustudents.engine.gui;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.Window;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.ecs.Entity;
-import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.core.TransformComponent;
-import com.ustudents.engine.ecs.component.graphics.NineSlicedSpriteComponent;
-import com.ustudents.engine.ecs.component.graphics.TextureComponent;
-import com.ustudents.engine.ecs.component.graphics.UiRendererComponent;
-import com.ustudents.engine.ecs.component.gui.ButtonComponent;
-import com.ustudents.engine.ecs.component.gui.TextComponent;
+import com.ustudents.engine.scene.ecs.Entity;
+import com.ustudents.engine.scene.ecs.Registry;
+import com.ustudents.engine.scene.component.core.TransformComponent;
+import com.ustudents.engine.scene.component.graphics.NineSlicedSpriteComponent;
+import com.ustudents.engine.scene.component.graphics.TextureComponent;
+import com.ustudents.engine.scene.component.graphics.UiRendererComponent;
+import com.ustudents.engine.scene.component.gui.ButtonComponent;
+import com.ustudents.engine.scene.component.gui.TextComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.w3c.dom.Text;
 
 public class GuiBuilder {
     public static class TextData {
@@ -168,7 +167,7 @@ public class GuiBuilder {
     WindowContainer currentWindow;
 
     public GuiBuilder() {
-        canvas = registry.createEntityWithName("canvas");
+        canvas = registry.addEntityWithName("canvas");
         globalScale = new Vector2f(3.0f, 3.0f);
     }
 

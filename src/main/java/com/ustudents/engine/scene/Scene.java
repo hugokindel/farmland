@@ -2,13 +2,13 @@ package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Window;
-import com.ustudents.engine.ecs.Entity;
-import com.ustudents.engine.ecs.System;
-import com.ustudents.engine.ecs.system.BehaviourSystem;
-import com.ustudents.engine.ecs.system.WorldRenderSystem;
-import com.ustudents.engine.ecs.system.UiRenderSystem;
+import com.ustudents.engine.scene.ecs.Entity;
+import com.ustudents.engine.scene.ecs.System;
+import com.ustudents.engine.scene.system.BehaviourSystem;
+import com.ustudents.engine.scene.system.WorldRenderSystem;
+import com.ustudents.engine.scene.system.UiRenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
-import com.ustudents.engine.ecs.Registry;
+import com.ustudents.engine.scene.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
 import com.ustudents.farmland.Farmland;
 import org.joml.Vector2i;
@@ -139,27 +139,27 @@ public abstract class Scene {
     @Deprecated
     public <T extends Entity> T createEntity(Class<T> classType, Object... args) {
         if (args.length == 0) {
-            return registry.createEntity(classType);
+            return registry.addEntity(classType);
         } else {
-            return registry.createEntity(classType, args);
+            return registry.addEntity(classType, args);
         }
     }
 
     public Entity createEntity() {
-        return registry.createEntity();
+        return registry.addEntity();
     }
 
     @Deprecated
     public <T extends Entity> T createEntityWithName(String name, Class<T> classType, Object... args) {
         if (args.length == 0) {
-            return registry.createEntityWithName(name, classType);
+            return registry.addEntityWithName(name, classType);
         } else {
-            return registry.createEntityWithName(name, classType, args);
+            return registry.addEntityWithName(name, classType, args);
         }
     }
 
     public Entity createEntityWithName(String name) {
-        return registry.createEntityWithName(name);
+        return registry.addEntityWithName(name);
     }
 
     public void killEntity(Entity entity) {

@@ -1,13 +1,5 @@
 package com.ustudent.engine.scene.ecs;
 
-import com.ustudents.engine.ecs.Entity;
-import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.ecs.component.core.TransformComponent;
-import org.joml.Vector2f;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 // TODO: Fix the  tests (will need the game to be able to run headlessly).
 public class TestEcs {
 //    private Registry registry;

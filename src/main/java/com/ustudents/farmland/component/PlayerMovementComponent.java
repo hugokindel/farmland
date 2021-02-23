@@ -1,6 +1,6 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.ecs.component.core.BehaviourComponent;
+import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 

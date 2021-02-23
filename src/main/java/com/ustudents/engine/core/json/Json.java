@@ -4,10 +4,9 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
-import com.ustudents.engine.ecs.Component;
-import com.ustudents.engine.ecs.Entity;
-import com.ustudents.engine.ecs.Registry;
-import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.scene.ecs.Component;
+import com.ustudents.engine.scene.ecs.Entity;
+import com.ustudents.engine.scene.ecs.Registry;
 import com.ustudents.engine.scene.Scene;
 import org.joml.*;
 

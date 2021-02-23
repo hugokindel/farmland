@@ -1,12 +1,10 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.ecs.Entity;
-import com.ustudents.engine.ecs.component.core.TransformComponent;
-import com.ustudents.engine.ecs.component.graphics.WorldRendererComponent;
-import com.ustudents.engine.ecs.component.gui.ButtonComponent;
-import com.ustudents.engine.ecs.component.gui.TextComponent;
+import com.ustudents.engine.scene.ecs.Entity;
+import com.ustudents.engine.scene.component.core.TransformComponent;
+import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
+import com.ustudents.engine.scene.component.gui.TextComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;

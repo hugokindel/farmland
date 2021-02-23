@@ -1,9 +1,8 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.ecs.component.core.BehaviourComponent;
-import com.ustudents.engine.ecs.component.core.TransformComponent;
-import com.ustudents.engine.ecs.component.graphics.*;
+import com.ustudents.engine.scene.component.core.BehaviourComponent;
+import com.ustudents.engine.scene.component.core.TransformComponent;
+import com.ustudents.engine.scene.component.graphics.*;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.input.Input;
