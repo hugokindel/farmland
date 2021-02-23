@@ -27,10 +27,10 @@ public class Resources {
     private static final String logsDirectoryName = "logs";
     private static final String shadersDirectoryName = "shaders";
     private static final String texturesDirectoryName = "textures";
-    private static final String playersDirectoryName = "players";
     private static final String fontsDirectoryName = "fonts";
     private static final String soundsDirectoryName = "sounds";
     private static final String otherDirectoryName = "other";
+    private static final String savesDirectoryName = "saves";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
@@ -72,16 +72,12 @@ public class Resources {
         return createPathIfNeeded(getDataDirectory() + "/" + fontsDirectoryName);
     }
 
-    public static String getSoundsDirectoryName(){
+    public static String getSoundsDirectoryName() {
         return createPathIfNeeded(getDataDirectory() + "/" + soundsDirectoryName);
     }
 
-    public static String getPlayersDirectoryName(){
-        return createPathIfNeeded(getDataDirectory() + "/" + playersDirectoryName);
-    }
-
-    public static String getKindPlayerDirectoryName(String type){
-        return createPathIfNeeded(getPlayersDirectoryName() + "/" + type);
+    public static String getSavesDirectoryName() {
+        return createPathIfNeeded(getDataDirectory() + "/" + savesDirectoryName);
     }
 
     public static String getOtherDirectoryName(){

@@ -2,6 +2,7 @@ package com.ustudents.engine.ecs;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.scene.Scene;
+import com.ustudents.engine.scene.SceneManager;
 
 import java.util.*;
 
@@ -17,10 +18,10 @@ public class System {
     protected Registry registry;
 
     /** Class constructor. */
-    public System(Registry registry) {
+    public System() {
         signatures = new ArrayList<>();
         entities = new HashSet<>();
-        this.registry = registry;
+        this.registry = SceneManager.get().getRegistry();
     }
 
     /**

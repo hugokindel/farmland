@@ -1,5 +1,7 @@
 package com.ustudents.engine.utility;
 
+import java.util.List;
+
 /** Utility functions for types. */
 public class TypeUtil {
     /**

@@ -1,6 +1,7 @@
 package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Window;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.ecs.Component;
 import com.ustudents.engine.ecs.Entity;
@@ -10,6 +11,7 @@ import com.ustudents.engine.utility.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /** The scene manager which handles the list of scenes and interact with them. */
 public class SceneManager {
@@ -22,8 +24,12 @@ public class SceneManager {
     /** Defines if we need to transition before the next frame. */
     private boolean transitioningScene = false;
 
+    private boolean addLastToTypeStack = true;
+
     /** The registry for every entities in the scene. */
     private final Registry registry = new Registry();
+
+    private final Stack<Class<?>> lastScenesType = new Stack<>();
 
     /**
      * Changes the current scene to the given scene.
@@ -31,8 +37,13 @@ public class SceneManager {
      * @param scene The new current scene.
      */
     public void changeScene(Scene scene) {
+        changeScene(scene, true);
+    }
+
+    public void changeScene(Scene scene, boolean addLastToTypeStack) {
         scenes.add(scene);
         transitioningScene = true;
+        this.addLastToTypeStack = addLastToTypeStack;
     }
 
     /**
@@ -42,6 +53,7 @@ public class SceneManager {
      * @param args The scene type constructor arguments.
      * @param <T> The scene type.
      */
+    @Deprecated
     public <T extends Scene> void changeScene(Class<T> classType, Object... args) {
         if (args.length == 0) {
             changeScene(TypeUtil.createInstance(classType));
@@ -78,7 +90,6 @@ public class SceneManager {
     public void renderImGui() {
         if (scenes.size() > currentSceneIndex) {
             getCurrentScene().renderImGui();
-            Game.get().getImGuiTools().renderImGui();
         }
     }
 
@@ -100,10 +111,15 @@ public class SceneManager {
             currentSceneIndex = scenes.size() - 1;
 
             if (currentSceneIndex > 0) {
+                if (addLastToTypeStack) {
+                    lastScenesType.add(scenes.get(currentSceneIndex - 1).getClass());
+                }
                 scenes.get(currentSceneIndex - 1).getSpritebatch().destroy();
                 scenes.get(currentSceneIndex - 1).destroy();
                 registry.clearRegistry();
                 registry.addAllCurrentEntitiesToSystemCheck();
+
+                addLastToTypeStack = true;
 
                 if (Game.isDebugging()) {
                     Out.printlnDebug("Previous scene destroyed.");
@@ -113,13 +129,15 @@ public class SceneManager {
             scenes.get(currentSceneIndex).create(this);
             scenes.get(currentSceneIndex).initializeInternals();
             scenes.get(currentSceneIndex).registry.updateEntities();
-            Input.recalculateMousePosition();
+            Window.get().actualizeCursorType();
 
             for (Entity entity : registry.getEntities().values()) {
                 for (Component component : entity.getComponents()) {
                     component.onSceneLoaded();
                 }
             }
+
+            Input.recalculateMousePosition();
 
             transitioningScene = false;
 
@@ -153,5 +171,17 @@ public class SceneManager {
 
     public Registry getRegistry() {
         return registry;
+    }
+
+    public Class<?> getTypeOfLastScene() {
+        return lastScenesType.pop();
+    }
+
+    public void goBack() {
+        try {
+            changeScene((Scene) lastScenesType.pop().getConstructors()[0].newInstance(), false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

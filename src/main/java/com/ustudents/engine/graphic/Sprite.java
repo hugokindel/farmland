@@ -1,15 +1,24 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import org.joml.Vector4f;
 
 @Viewable
+@JsonSerializable
 public class Sprite {
     @Viewable
-    private final Texture texture;
+    @JsonSerializable
+    private Texture texture;
 
     @Viewable
-    private final Vector4f region;
+    @JsonSerializable
+    private Vector4f region;
+
+    public Sprite() {
+        this.texture = null;
+        this.region = null;
+    }
 
     public Sprite(Texture texture, Vector4f region) {
         this.texture = texture;

@@ -2,7 +2,7 @@ package com.ustudents.engine.ecs;
 
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 import com.ustudents.engine.ecs.component.graphics.RenderableComponent;
-import com.ustudents.engine.ecs.system.BehaviourSystem;
+import com.ustudents.engine.scene.SceneManager;
 
 import java.util.BitSet;
 import java.util.List;
@@ -17,15 +17,10 @@ public class Entity {
     /** The registry used to interact with this entity. */
     private final Registry registry;
 
-    /**
-     * Class constructor.
-     *
-     * @param id The ID.
-     * @param registry The registry.
-     */
-    public Entity(Integer id, Registry registry) {
-        this.id = id;
-        this.registry = registry;
+    /** Class constructor. */
+    public Entity() {
+        this.registry = SceneManager.get().getRegistry();
+        this.id = registry.requestId();
     }
 
     /** Kills it. */
@@ -134,6 +129,7 @@ public class Entity {
      *
      * @return the entity.
      */
+    @Deprecated
     public <T extends Entity> T createChild(Class<T> classType, Object... args) {
         T entity;
 
@@ -155,12 +151,11 @@ public class Entity {
      */
     public Entity createChild() {
         Entity entity = registry.createEntity();
-
         entity.setParent(this);
-
         return entity;
     }
 
+    @Deprecated
     public <T extends Entity> T createChildWithName(String name, Class<T> classType, Object... args) {
         T entity;
 
@@ -176,7 +171,9 @@ public class Entity {
     }
 
     public Entity createChildWithName(String name) {
-        return createChildWithName(name, Entity.class);
+        Entity entity = createChild();
+        entity.setName(name);
+        return entity;
     }
 
     /** @return a set of its children. */
@@ -195,6 +192,7 @@ public class Entity {
      * @param args The component constructor arguments (do not use primitive types).
      * @param <T> The component type.
      */
+    @Deprecated
     public <T extends Component> T addComponent(Class<T> classType, Object... args) {
         return registry.addComponentToEntity(this, classType, args);
     }

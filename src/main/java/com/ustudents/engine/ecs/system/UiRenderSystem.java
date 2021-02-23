@@ -7,9 +7,7 @@ import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.scene.SceneManager;
 
 public class UiRenderSystem extends RenderSystem {
-    public UiRenderSystem(Registry registry) {
-        super(registry);
-
+    public UiRenderSystem() {
         requireComponent(UiRendererComponent.class);
     }
 

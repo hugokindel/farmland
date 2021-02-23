@@ -35,23 +35,23 @@ public abstract class Game extends Runnable {
     protected boolean isDebugging = false;
 
     /** Option to disable ImGui. */
-    @Option(names = "--force-no-imgui", description = "Disable ImGui completely (debug graphical interface).")
+    @Option(names = "--no-imgui", description = "Disable ImGui completely (debug graphical interface).")
     protected boolean noImGui = false;
 
     /** Option to force V-Sync at launch. */
-    @Option(names = "--force-vsync", description = "Enable vertical synchronisation.")
+    @Option(names = "--vsync", description = "Enable vertical synchronisation.")
     protected boolean vsync = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--force-no-custom-cursor", description = "Force to use the default operating system cursor.")
+    @Option(names = "--no-custom-cursor", description = "Force to use the default operating system cursor.")
     protected boolean forceNoCustomCursor = false;
 
     /** Option to force to disable any custom window icons. */
-    @Option(names = "--force-no-custom-icon", description = "Force to use the default operating system window icon.")
+    @Option(names = "--no-custom-icon", description = "Force to use the default operating system window icon.")
     protected boolean forceNoCustomIcon = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--force-no-sound", description = "Force to disable any sounds.")
+    @Option(names = "--no-sound", description = "Force to disable any sounds.")
     protected boolean forceNoSound = false;
 
     /** The window. */
@@ -140,7 +140,7 @@ public abstract class Game extends Runnable {
     }
 
     /** Force a resize of the game render viewport and camera matrices before the next frame. */
-    public void forceResize() {
+    public void forceResizeBeforeNextFrame() {
         shouldResize = true;
     }
 
@@ -210,6 +210,10 @@ public abstract class Game extends Runnable {
     /** @return if ImGui tools are enabled. */
     public boolean isImGuiToolsEnabled() {
         return !noImGui && imGuiToolsEnabled;
+    }
+
+    public boolean isImGuiEnabled() {
+        return !noImGui;
     }
 
     /** @return the debug tools. */
@@ -347,19 +351,26 @@ public abstract class Game extends Runnable {
             resizeViewportAndCameras();
         }
 
-        if (!noImGui && imGuiToolsEnabled) {
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene().isForceImGuiEnabled())) {
             imGuiManager.startFrame();
         }
 
         sceneManager.render();
         render();
 
-        if (!noImGui && imGuiToolsEnabled) {
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene().isForceImGuiEnabled())) {
             sceneManager.renderImGui();
+        }
+
+        if (!noImGui && imGuiToolsEnabled) {
+            imGuiTools.renderImGui();
+        }
+
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene().isForceImGuiEnabled())) {
             imGuiManager.endFrame();
         }
 
-        if (!isImGuiToolsEnabled() && sceneManager.getCurrentScene() != null &&
+        if (noImGui || (!isImGuiToolsEnabled() && !SceneManager.getScene().isForceImGuiEnabled()) && sceneManager.getCurrentScene() != null &&
                 cursorTexture != null && Input.getMousePos() != null) {
             spritebatch.begin(sceneManager.getCurrentScene().getCursorCamera());
             spritebatch.drawTexture(new Spritebatch.TextureData(cursorTexture, Input.getMousePos()) {{

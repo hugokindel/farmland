@@ -260,11 +260,12 @@ public class JsonReader {
             contentBuilder.append(currentCharacter);
         }
         String number = contentBuilder.toString();
+
         if (number.contains(".")) {
             return Double.parseDouble(number);
         }
 
-        return Integer.parseInt(number);
+        return Long.parseLong(number);
     }
 
     /**

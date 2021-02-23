@@ -1,23 +1,47 @@
-package com.ustudents.farmland.scene;
+package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
-import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.ecs.component.audio.SoundComponent;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
-import com.ustudents.engine.ecs.component.graphics.*;
-import com.ustudents.engine.ecs.component.gui.wip.CanvasComponent;
+import com.ustudents.engine.ecs.component.graphics.WorldRendererComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
+import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-public class MainMenu extends Scene {
+import java.util.Stack;
+
+public abstract class MenuScene extends Scene {
+    private String[] buttonNames;
+    private String[] buttonIds;
+    private EventListener[] eventListeners;
+    boolean canGoToMainMenu;
+    boolean canQuit;
+    boolean canGoBack;
+
+    public MenuScene() {
+        this.buttonNames = new String[0];
+        this.buttonIds = new String[0];
+        this.eventListeners = new EventListener[0];
+    }
+
+    public void initializeMenu(String[] buttonNames, String[] buttonIds, EventListener[] eventListeners, boolean canGoToMainMenu, boolean canQuit, boolean canGoBack) {
+        this.buttonNames = buttonNames;
+        this.buttonIds = buttonIds;
+        this.eventListeners = eventListeners;
+        this.canGoToMainMenu = canGoToMainMenu;
+        this.canQuit = canQuit;
+        this.canGoBack = canGoBack;
+    }
+
     @Override
     public void initialize() {
         initializeGameplay();
@@ -56,34 +80,52 @@ public class MainMenu extends Scene {
         imageData.position.y = 50;
         guiBuilder.addImage(imageData);
 
-        String[] buttonNames = {"Solo", "Multijoueur", "Paramètres", "Crédits", "Quitter"};
-        String[] buttonIds = {"singleplayerButton", "multiplayerButton", "settingsButton", "creditsButton", "quitButton"};
-
-        for (int i = 0; i < buttonNames.length; i++) {
-            int j = i;
-            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(buttonNames[i], (dataType, data) -> {
-                switch (buttonIds[j]) {
-                    case "singleplayerButton":
-                        getSceneManager().changeScene(new SingleplayerMenu());
-                        break;
-                    case "multiplayerButton":
-                        changeScene(new MultiplayerMenu());
-                        break;
-                    case "settingsButton":
-                        changeScene(new SettingsMenu());
-                        break;
-                    case "creditsButton":
-                        changeScene(new CreditsMenu());
-                        break;
-                    case "quitButton":
-                        quit();
-                        break;
-                }
-            });
+        int i;
+        for (i = 0; i < buttonNames.length; i++) {
+            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(buttonNames[i], eventListeners[i]);
             buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
             buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
             buttonData.position = new Vector2f(0, 250 + i * 75);
             buttonData.id = buttonIds[i];
+            guiBuilder.addButton(buttonData);
+        }
+
+        if (canGoBack) {
+            try {
+                GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Retour", (dataType, data) -> {
+                    try {
+                        SceneManager.get().goBack();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+                buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+                buttonData.position = new Vector2f(0, 250 + i * 75);
+                buttonData.id = "backButton";
+                guiBuilder.addButton(buttonData);
+                i++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (canGoToMainMenu) {
+            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> changeScene(new MainMenu(), false));
+            buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+            buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+            buttonData.position = new Vector2f(0, 250 + i * 75);
+            buttonData.id = "mainMenuButton";
+            guiBuilder.addButton(buttonData);
+            i++;
+        }
+
+        if (canQuit) {
+            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Quitter", (dataType, data) -> quit());
+            buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+            buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+            buttonData.position = new Vector2f(0, 250 + i * 75);
+            buttonData.id = "quitButton";
             guiBuilder.addButton(buttonData);
         }
 

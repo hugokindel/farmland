@@ -1,0 +1,5436 @@
+{
+	"name": "fdg",
+	"turn": 1,
+	"seed": 1614037043725,
+	"currentPlayerId": 0,
+	"players": [
+		{
+			"name": "dfg",
+			"village": {
+				"name": "dfg",
+				"position": {
+					"x": 197.0,
+					"y": 197.0
+				}
+			},
+			"money": 500,
+			"color": {
+				"r": 1.0,
+				"g": 0.0,
+				"b": 0.0,
+				"a": 1.0
+			},
+			"position": null
+		}
+	],
+	"cells": [
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 5.0,
+					"z": 29.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 29.0,
+					"z": 29.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 53.0,
+					"z": 29.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 77.0,
+					"z": 29.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 101.0,
+					"z": 29.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 125.0,
+					"z": 29.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 149.0,
+					"z": 29.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 173.0,
+					"z": 29.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 197.0,
+					"z": 29.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 221.0,
+					"z": 29.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 245.0,
+					"z": 29.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 269.0,
+					"z": 29.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 293.0,
+					"z": 29.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 317.0,
+					"z": 29.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 341.0,
+					"z": 29.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 5.0,
+					"y": 365.0,
+					"z": 29.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 5.0,
+					"z": 53.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 29.0,
+					"z": 53.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 53.0,
+					"z": 53.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 77.0,
+					"z": 53.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 101.0,
+					"z": 53.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 125.0,
+					"z": 53.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 149.0,
+					"z": 53.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 173.0,
+					"z": 53.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 197.0,
+					"z": 53.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 221.0,
+					"z": 53.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 245.0,
+					"z": 53.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 269.0,
+					"z": 53.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 293.0,
+					"z": 53.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 317.0,
+					"z": 53.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 341.0,
+					"z": 53.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 29.0,
+					"y": 365.0,
+					"z": 53.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 5.0,
+					"z": 77.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 29.0,
+					"z": 77.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 53.0,
+					"z": 77.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 77.0,
+					"z": 77.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 101.0,
+					"z": 77.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 125.0,
+					"z": 77.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 149.0,
+					"z": 77.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 173.0,
+					"z": 77.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 197.0,
+					"z": 77.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 221.0,
+					"z": 77.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 245.0,
+					"z": 77.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 269.0,
+					"z": 77.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 293.0,
+					"z": 77.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 317.0,
+					"z": 77.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 341.0,
+					"z": 77.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 53.0,
+					"y": 365.0,
+					"z": 77.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 5.0,
+					"z": 101.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 29.0,
+					"z": 101.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 53.0,
+					"z": 101.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 77.0,
+					"z": 101.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 101.0,
+					"z": 101.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 125.0,
+					"z": 101.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 149.0,
+					"z": 101.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 173.0,
+					"z": 101.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 197.0,
+					"z": 101.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 221.0,
+					"z": 101.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 245.0,
+					"z": 101.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 269.0,
+					"z": 101.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 293.0,
+					"z": 101.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 317.0,
+					"z": 101.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 341.0,
+					"z": 101.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 77.0,
+					"y": 365.0,
+					"z": 101.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 5.0,
+					"z": 125.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 29.0,
+					"z": 125.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 53.0,
+					"z": 125.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 77.0,
+					"z": 125.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 101.0,
+					"z": 125.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 125.0,
+					"z": 125.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 149.0,
+					"z": 125.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 173.0,
+					"z": 125.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 197.0,
+					"z": 125.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 221.0,
+					"z": 125.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 245.0,
+					"z": 125.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 269.0,
+					"z": 125.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 293.0,
+					"z": 125.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 317.0,
+					"z": 125.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 341.0,
+					"z": 125.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 101.0,
+					"y": 365.0,
+					"z": 125.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 5.0,
+					"z": 149.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 29.0,
+					"z": 149.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 53.0,
+					"z": 149.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 77.0,
+					"z": 149.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 101.0,
+					"z": 149.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 125.0,
+					"z": 149.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 149.0,
+					"z": 149.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 173.0,
+					"z": 149.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 197.0,
+					"z": 149.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 221.0,
+					"z": 149.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 245.0,
+					"z": 149.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 269.0,
+					"z": 149.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 293.0,
+					"z": 149.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 317.0,
+					"z": 149.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 341.0,
+					"z": 149.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 125.0,
+					"y": 365.0,
+					"z": 149.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 5.0,
+					"z": 173.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 29.0,
+					"z": 173.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 53.0,
+					"z": 173.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 77.0,
+					"z": 173.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 101.0,
+					"z": 173.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 125.0,
+					"z": 173.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 149.0,
+					"z": 173.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 173.0,
+					"z": 173.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 197.0,
+					"z": 173.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 221.0,
+					"z": 173.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 245.0,
+					"z": 173.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 269.0,
+					"z": 173.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 293.0,
+					"z": 173.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 317.0,
+					"z": 173.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 341.0,
+					"z": 173.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 149.0,
+					"y": 365.0,
+					"z": 173.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 5.0,
+					"z": 197.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 29.0,
+					"z": 197.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 53.0,
+					"z": 197.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 77.0,
+					"z": 197.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 101.0,
+					"z": 197.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 125.0,
+					"z": 197.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 149.0,
+					"z": 197.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 173.0,
+					"z": 197.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 197.0,
+					"z": 197.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 221.0,
+					"z": 197.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 245.0,
+					"z": 197.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 269.0,
+					"z": 197.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 293.0,
+					"z": 197.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 317.0,
+					"z": 197.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 341.0,
+					"z": 197.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 173.0,
+					"y": 365.0,
+					"z": 197.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 5.0,
+					"z": 221.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 29.0,
+					"z": 221.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 53.0,
+					"z": 221.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 77.0,
+					"z": 221.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 101.0,
+					"z": 221.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 125.0,
+					"z": 221.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 149.0,
+					"z": 221.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 173.0,
+					"z": 221.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 197.0,
+					"z": 221.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 221.0,
+					"z": 221.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 245.0,
+					"z": 221.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 269.0,
+					"z": 221.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 293.0,
+					"z": 221.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 317.0,
+					"z": 221.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 341.0,
+					"z": 221.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 197.0,
+					"y": 365.0,
+					"z": 221.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 5.0,
+					"z": 245.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 29.0,
+					"z": 245.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 53.0,
+					"z": 245.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 77.0,
+					"z": 245.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 101.0,
+					"z": 245.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 125.0,
+					"z": 245.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 149.0,
+					"z": 245.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 173.0,
+					"z": 245.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 197.0,
+					"z": 245.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 221.0,
+					"z": 245.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 245.0,
+					"z": 245.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 269.0,
+					"z": 245.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 293.0,
+					"z": 245.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 317.0,
+					"z": 245.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 341.0,
+					"z": 245.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 221.0,
+					"y": 365.0,
+					"z": 245.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 5.0,
+					"z": 269.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 29.0,
+					"z": 269.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 53.0,
+					"z": 269.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 77.0,
+					"z": 269.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 101.0,
+					"z": 269.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 125.0,
+					"z": 269.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 149.0,
+					"z": 269.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 173.0,
+					"z": 269.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 197.0,
+					"z": 269.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 221.0,
+					"z": 269.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 245.0,
+					"z": 269.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 269.0,
+					"z": 269.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 293.0,
+					"z": 269.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 317.0,
+					"z": 269.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 341.0,
+					"z": 269.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 245.0,
+					"y": 365.0,
+					"z": 269.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 5.0,
+					"z": 293.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 29.0,
+					"z": 293.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 53.0,
+					"z": 293.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 77.0,
+					"z": 293.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 101.0,
+					"z": 293.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 125.0,
+					"z": 293.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 149.0,
+					"z": 293.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 173.0,
+					"z": 293.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 197.0,
+					"z": 293.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 221.0,
+					"z": 293.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 245.0,
+					"z": 293.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 269.0,
+					"z": 293.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 293.0,
+					"z": 293.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 317.0,
+					"z": 293.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 341.0,
+					"z": 293.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 269.0,
+					"y": 365.0,
+					"z": 293.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 5.0,
+					"z": 317.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 29.0,
+					"z": 317.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 53.0,
+					"z": 317.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 77.0,
+					"z": 317.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 101.0,
+					"z": 317.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 125.0,
+					"z": 317.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 149.0,
+					"z": 317.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 173.0,
+					"z": 317.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 197.0,
+					"z": 317.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 221.0,
+					"z": 317.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 245.0,
+					"z": 317.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 269.0,
+					"z": 317.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 293.0,
+					"z": 317.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 317.0,
+					"z": 317.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 341.0,
+					"z": 317.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 293.0,
+					"y": 365.0,
+					"z": 317.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 5.0,
+					"z": 341.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 29.0,
+					"z": 341.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 53.0,
+					"z": 341.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 77.0,
+					"z": 341.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 101.0,
+					"z": 341.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 125.0,
+					"z": 341.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 149.0,
+					"z": 341.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 173.0,
+					"z": 341.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 197.0,
+					"z": 341.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 221.0,
+					"z": 341.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 245.0,
+					"z": 341.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 269.0,
+					"z": 341.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 293.0,
+					"z": 341.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 317.0,
+					"z": 341.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 341.0,
+					"z": 341.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 317.0,
+					"y": 365.0,
+					"z": 341.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 5.0,
+					"z": 365.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 29.0,
+					"z": 365.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 53.0,
+					"z": 365.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 77.0,
+					"z": 365.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 101.0,
+					"z": 365.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 125.0,
+					"z": 365.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 149.0,
+					"z": 365.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 173.0,
+					"z": 365.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 197.0,
+					"z": 365.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 221.0,
+					"z": 365.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 245.0,
+					"z": 365.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 269.0,
+					"z": 365.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 293.0,
+					"z": 365.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 317.0,
+					"z": 365.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 341.0,
+					"z": 365.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 341.0,
+					"y": 365.0,
+					"z": 365.0,
+					"w": 389.0
+				}
+			}
+		],
+		[
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 5.0,
+					"z": 389.0,
+					"w": 29.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 29.0,
+					"z": 389.0,
+					"w": 53.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 96.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 53.0,
+					"z": 389.0,
+					"w": 77.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 48.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 77.0,
+					"z": 389.0,
+					"w": 101.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 101.0,
+					"z": 389.0,
+					"w": 125.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 125.0,
+					"z": 389.0,
+					"w": 149.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 149.0,
+					"z": 389.0,
+					"w": 173.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 173.0,
+					"z": 389.0,
+					"w": 197.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 197.0,
+					"z": 389.0,
+					"w": 221.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 221.0,
+					"z": 389.0,
+					"w": 245.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 120.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 245.0,
+					"z": 389.0,
+					"w": 269.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 96.0,
+						"y": 72.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 269.0,
+					"z": 389.0,
+					"w": 293.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 24.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 293.0,
+					"z": 389.0,
+					"w": 317.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 72.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 317.0,
+					"z": 389.0,
+					"w": 341.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 24.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 341.0,
+					"z": 389.0,
+					"w": 365.0
+				}
+			},
+			{
+				"sprite": {
+					"texture": {
+						"path": "map/grass.png"
+					},
+					"region": {
+						"x": 120.0,
+						"y": 48.0,
+						"z": 24.0,
+						"w": 24.0
+					}
+				},
+				"ownerId": -1,
+				"itemId": -1,
+				"viewRectangle": {
+					"x": 365.0,
+					"y": 365.0,
+					"z": 389.0,
+					"w": 389.0
+				}
+			}
+		]
+	]
+}

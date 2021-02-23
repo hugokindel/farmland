@@ -6,9 +6,8 @@ import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.Scene;
-import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.TimerComponent;
-import com.ustudents.farmland.core.player.Human;
+import com.ustudents.farmland.scene.menus.MainMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.type.ImString;
@@ -37,14 +36,14 @@ public class DefineUser extends Scene {
         }else{
             TimerComponent.setCurrentTime(0);
         }
-        humanFolder = new File(Resources.getKindPlayerDirectoryName("human"));
+        humanFolder = new File(Resources.getSavesDirectoryName());
         list = humanFolder.listFiles();
     }
 
     @Override
     public void update(float dt) {
         if (disableRename){
-            TimerComponent.increaseCurrentTime(dt);
+            TimerComponent.update(dt);
         }
         if(TimerComponent.getCurrentTime() >= TimerComponent.getTimeBeforeRename()){
             TimerComponent.setCurrentTime(0);
@@ -73,7 +72,7 @@ public class DefineUser extends Scene {
     }
 
     private void establishPlayer(){
-        Human currentPlayer;
+        /*Human currentPlayer;
         boolean hasFile = checkIfFileExist(userName.get());
         if(list.length<=5 && !hasFile){
             currentPlayer = new Human(userName.get(), villageName.get());
@@ -84,9 +83,9 @@ public class DefineUser extends Scene {
                 json.put("villageName",villageName.get());
                 JsonWriter.writeToFile(humanFolder + "/"+userName.get() +".json",json);
             }
-            currentPlayer = (Human) Human.deserializePlayer(Resources.getKindPlayerDirectoryName("human"),userName.get());
-        }
-        Farmland.setPlayers(currentPlayer);
+            currentPlayer = (Human) Human.deserializePlayer(Resources.getSavesDirectoryName(),userName.get());
+        }*/
+        //Farmland.setPlayers(currentPlayer);
     }
 
     private void changeNameOfFile(File rename,File renameFile){
@@ -100,7 +99,7 @@ public class DefineUser extends Scene {
     }
 
     private void applyNewUserName(File rename,int index){
-        File renameFile = new File(Resources.getKindPlayerDirectoryName("human") + "/" + newUserName.get(index));
+        File renameFile = new File(Resources.getSavesDirectoryName() + "/" + newUserName.get(index));
         if(rename != null && !renameFile.exists()){
             changeNameOfFile(rename, renameFile);
             Map<String, Object> json = null;
@@ -128,12 +127,12 @@ public class DefineUser extends Scene {
                 userName.set(list[i].getName());
                 userName.set(userName.get().substring(0,userName.get().length()-5));
                 establishPlayer();
-                Game.get().getSceneManager().changeScene(WaitingRoom.class);
+                Game.get().getSceneManager().changeScene(new WaitingRoom());
             }
             ImGui.sameLine();
             if(!disableRename && ImGui.button("Clear " + (i+1))){
                 list[i].delete();
-                Game.get().getSceneManager().changeScene(DefineUser.class);
+                Game.get().getSceneManager().changeScene(new DefineUser());
             }
             newUserName.add(new ImString());
             ImGui.sameLine();
@@ -156,7 +155,7 @@ public class DefineUser extends Scene {
                         break;
                     }
                 }
-                Game.get().getSceneManager().changeScene(DefineUser.class);
+                Game.get().getSceneManager().changeScene(new DefineUser());
             }
             ImGui.sameLine();
         }
@@ -167,7 +166,7 @@ public class DefineUser extends Scene {
             for (File file : list) {
                 file.delete();
             }
-            Game.get().getSceneManager().changeScene(DefineUser.class);
+            Game.get().getSceneManager().changeScene(new DefineUser());
         }
     }
 
@@ -176,7 +175,7 @@ public class DefineUser extends Scene {
         ImGuiUtils.setNextWindowWithSizeCentered(300, 300, ImGuiCond.Appearing);
         ImGui.begin("Define User Scene");
         if (ImGui.button("Main Menu")) {
-            Game.get().getSceneManager().changeScene(MainMenu.class);
+            Game.get().getSceneManager().changeScene(new MainMenu());
         }
 
         ImGui.separator();
@@ -199,7 +198,7 @@ public class DefineUser extends Scene {
         ImGui.text("\n");
         if(ImGui.button("Create player") && checkArg(userName.get()) && checkArg(villageName.get())){
             establishPlayer();
-            Game.get().getSceneManager().changeScene(WaitingRoom.class);
+            Game.get().getSceneManager().changeScene(new WaitingRoom());
         }
         ImGui.end();
     }

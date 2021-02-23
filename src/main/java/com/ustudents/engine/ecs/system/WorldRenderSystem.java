@@ -7,9 +7,7 @@ import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.scene.SceneManager;
 
 public class WorldRenderSystem extends RenderSystem {
-    public WorldRenderSystem(Registry registry) {
-        super(registry);
-
+    public WorldRenderSystem() {
         requireComponent(WorldRendererComponent.class);
     }
 

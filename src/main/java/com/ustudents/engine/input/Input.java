@@ -1,17 +1,12 @@
 package com.ustudents.engine.input;
 
-import com.ustudents.engine.Game;
-import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.core.Window;
 import com.ustudents.engine.scene.SceneManager;
-import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.*;
 
 import java.util.Arrays;
-
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 
 public class Input {
     private static final int[] keyStates = new int[GLFW.GLFW_KEY_LAST];
@@ -26,52 +21,39 @@ public class Input {
 
     private static Vector2f mousePosInWorld = new Vector2f();
 
-    private static double scrollX,scrollY;
-
-    private final GLFWKeyCallback keyBoard;
-
-    private final GLFWMouseButtonCallback mouseButton;
-
-    private static GLFWScrollCallback scrollCallback;
-
-    public static EventDispatcher mouseMoved;
+    private static Vector2f scroll = new Vector2f();
 
     public Input() {
-        mouseMoved = new EventDispatcher();
-
         initialize();
-        keyBoard = new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                keys[key] = (action != GLFW.GLFW_RELEASE);
-                keyStates[key] = action;
-            }
-        };
 
-        glfwSetCursorPosCallback(Farmland.get().getWindow().getHandle(), new GLFWCursorPosCallback() {
-            public void invoke(long window, double xpos, double ypos) {
-                mousePos = new Vector2f((float)xpos, (float)ypos);
+        Window.get().keyStateChanged.add((dataType, data) -> {
+            Window.KeyStateChangedEventData eventData = (Window.KeyStateChangedEventData) data;
+            keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
+            keyStates[eventData.key] = eventData.action;
+        });
 
-                if (SceneManager.getScene().getWorldCamera() != null) {
-                    mousePosInWorld = SceneManager.getScene().getWorldCamera().screenCoordToWorldCoord(mousePos);
-                }
-
-                mouseMoved.dispatch();
+        Window.get().cursorMoved.add((dataType, data) -> {
+            Window.CursorMovedEventData eventData = (Window.CursorMovedEventData) data;
+            mousePos = new Vector2f(eventData.position.x, eventData.position.y);
+            if (SceneManager.getScene().getWorldCamera() != null) {
+                mousePosInWorld = SceneManager.getScene().getWorldCamera().screenCoordToWorldCoord(mousePos);
             }
         });
 
-        mouseButton = new GLFWMouseButtonCallback() {
-            @Override
-            public void invoke(long window, int button, int action, int mods) {
-                mouseButtons[button] = (action != GLFW.GLFW_RELEASE);
-                mouseStates[button] = action;
-            }
-        };
+        Window.get().mouseButtonStateChanged.add((dataType, data) -> {
+            Window.MouseButtonStateChangedEventData eventData = (Window.MouseButtonStateChangedEventData) data;
+            mouseButtons[eventData.button] = (eventData.action != GLFW.GLFW_RELEASE);
+            mouseStates[eventData.button] = eventData.action;
+        });
+
+        Window.get().scrollMoved.add((dataType, data) -> {
+            Window.ScrollMovedEventData eventData = (Window.ScrollMovedEventData) data;
+            scroll = new Vector2f(eventData.offets.x, eventData.offets.y);
+        });
     }
 
     public void destroy() {
-        keyBoard.free();
-        mouseButton.free();
+
     }
 
     protected static void initialize() {
@@ -142,15 +124,11 @@ public class Input {
     }
 
     public static int scroll() {
-        if (scrollCallback == null) {
-            hasScroll();
-        }
-
-        if (scrollY < 0){
-            scrollY = 0;
+        if (scroll.y < 0){
+            scroll.y = 0;
             return -1;
-        } else if (scrollY > 0) {
-            scrollY = 0;
+        } else if (scroll.y > 0) {
+            scroll.y = 0;
             return 1;
         }
         return 0;
@@ -168,14 +146,6 @@ public class Input {
         return mousePosInWorld.x > viewRect.x && mousePosInWorld.x < viewRect.z && mousePosInWorld.y > viewRect.y && mousePosInWorld.y < viewRect.w;
     }
 
-    public GLFWKeyCallback getKeyBoard() {
-        return keyBoard;
-    }
-
-    public GLFWMouseButtonCallback getMouseButton() {
-        return mouseButton;
-    }
-
     public static void recalculateMousePosition() {
         mousePosInWorld = SceneManager.getScene().getWorldCamera().screenCoordToWorldCoord(mousePos);
     }
@@ -183,15 +153,5 @@ public class Input {
     private static void resetKeyAndButton() {
         Arrays.fill(keyStates, -1);
         Arrays.fill(mouseStates, -1);
-    }
-
-    private static void hasScroll() {
-        glfwSetScrollCallback(Game.get().getWindow().getHandle(), scrollCallback = new GLFWScrollCallback() {
-            @Override
-            public void invoke(long window, double xoffset, double yoffset) {
-                scrollX = xoffset;
-                scrollY = yoffset;
-            }
-        });
     }
 }

@@ -10,9 +10,7 @@ import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.graphic.Spritebatch;
 
 public abstract class RenderSystem extends System {
-    public RenderSystem(Registry registry) {
-        super(registry);
-
+    public RenderSystem() {
         requireComponent(TransformComponent.class);
     }
 

@@ -5,6 +5,11 @@ import com.ustudents.engine.core.event.EventData;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.scene.SceneManager;
+import com.ustudents.farmland.Farmland;
+import imgui.ImGui;
+import imgui.ImGuiIO;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
@@ -24,7 +29,53 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
     public class SizeChangedEventData extends EventData {
-        public Vector2i newSize;
+        public Vector2i size;
+
+        public SizeChangedEventData(Vector2i size) {
+            this.size = size;
+        }
+    }
+
+    public class KeyStateChangedEventData extends EventData {
+        public int key;
+        public int scancode;
+        public int action;
+        public int mods;
+
+        public KeyStateChangedEventData(int key, int scancode, int action, int mods) {
+            this.key = key;
+            this.scancode = scancode;
+            this.action = action;
+            this.mods = mods;
+        }
+    }
+
+    public class MouseButtonStateChangedEventData extends EventData {
+        public int button;
+        public int action;
+        public int mods;
+
+        public MouseButtonStateChangedEventData(int button, int action, int mods) {
+            this.button = button;
+            this.action = action;
+            this.mods = mods;
+        }
+    }
+
+    public class CursorMovedEventData extends EventData {
+        public Vector2f position;
+
+        public CursorMovedEventData(Vector2f position) {
+            this.position = position;
+        }
+    }
+
+    public class ScrollMovedEventData extends EventData {
+        public Vector2f offets;
+
+        public ScrollMovedEventData(Vector2f offets) {
+            this.offets = offets;
+        }
     }
 
     private String name;
@@ -37,7 +88,15 @@ public class Window {
 
     public Input input;
 
-    public EventDispatcher sizeChanged;
+    public EventDispatcher sizeChanged = new EventDispatcher(SizeChangedEventData.class);
+
+    public EventDispatcher keyStateChanged = new EventDispatcher(KeyStateChangedEventData.class);
+
+    public EventDispatcher mouseButtonStateChanged = new EventDispatcher(MouseButtonStateChangedEventData.class);
+
+    public EventDispatcher cursorMoved = new EventDispatcher(CursorMovedEventData.class);
+
+    public EventDispatcher scrollMoved = new EventDispatcher(ScrollMovedEventData.class);
 
     public void initialize(String name, Vector2i size, boolean vsync) {
         this.name = name;
@@ -60,7 +119,6 @@ public class Window {
 
         windowHandle = glfwCreateWindow(size.x, size.y, name, NULL, NULL);
         input = new Input();
-        sizeChanged = new EventDispatcher();
 
         if (windowHandle == NULL) {
             String errorMessage = "Failed to create the glfw window!";
@@ -84,8 +142,6 @@ public class Window {
                     (vidmode.height() - pHeight.get(0)) / 2
             );
         }
-        glfwSetKeyCallback(windowHandle, input.getKeyBoard());
-        glfwSetMouseButtonCallback(windowHandle, input.getMouseButton());
 
         glfwMakeContextCurrent(windowHandle);
         setVsync(vsync);
@@ -100,17 +156,8 @@ public class Window {
             Out.printlnDebug("OpenGL shading language version: " + glGetString(GL_SHADING_LANGUAGE_VERSION));
         }
 
-        glfwSetWindowSizeCallback(windowHandle, new GLFWWindowSizeCallback() {
-            @Override
-            public void invoke(long window, int width, int height) {
-                resize(new Vector2i(width, height));
-                sizeChanged.dispatch(new SizeChangedEventData() {{
-                    newSize = new Vector2i(width, height);
-                }});
-            }
-        });
-
         actualizeCursorType();
+        setupCallbacks();
     }
 
     public void clear() {
@@ -225,6 +272,68 @@ public class Window {
 
     private void resize(Vector2i size) {
         this.size = size;
-        Game.get().forceResize();
+        Game.get().forceResizeBeforeNextFrame();
+    }
+
+    private void setupCallbacks() {
+        glfwSetWindowSizeCallback(windowHandle, new GLFWWindowSizeCallback() {
+            @Override
+            public void invoke(long window, int width, int height) {
+                resize(new Vector2i(width, height));
+                sizeChanged.dispatch(new SizeChangedEventData(new Vector2i(width, height)));
+            }
+        });
+
+        glfwSetKeyCallback(windowHandle, new GLFWKeyCallback() {
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                /*if (Farmland.get().isImGuiEnabled() && (Farmland.get().isImGuiToolsEnabled() || SceneManager.getScene().isForceImGuiEnabled())) {
+                    final ImGuiIO io = ImGui.getIO();
+
+                    if (io.getWantCaptureKeyboard()) {
+                        return;
+                    }
+                }*/
+
+                keyStateChanged.dispatch(new KeyStateChangedEventData(key, scancode, action, mods));
+            }
+        });
+
+        glfwSetMouseButtonCallback(windowHandle, new GLFWMouseButtonCallback() {
+            @Override
+            public void invoke(long window, int button, int action, int mods) {
+                if (Farmland.get().isImGuiEnabled() && (Farmland.get().isImGuiToolsEnabled() || SceneManager.getScene().isForceImGuiEnabled())) {
+                    final ImGuiIO io = ImGui.getIO();
+
+                    if (io.getWantCaptureMouse()) {
+                        return;
+                    }
+                }
+
+                mouseButtonStateChanged.dispatch(new MouseButtonStateChangedEventData(button, action, mods));
+            }
+        });
+
+        glfwSetCursorPosCallback(windowHandle, new GLFWCursorPosCallback() {
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                cursorMoved.dispatch(new CursorMovedEventData(new Vector2f((float)xpos, (float)ypos)));
+            }
+        });
+
+        glfwSetScrollCallback(windowHandle, new GLFWScrollCallback() {
+            @Override
+            public void invoke(long window, double xoffset, double yoffset) {
+                if (Farmland.get().isImGuiEnabled() && (Farmland.get().isImGuiToolsEnabled() || SceneManager.getScene().isForceImGuiEnabled())) {
+                    final ImGuiIO io = ImGui.getIO();
+
+                    if (io.getWantCaptureMouse()) {
+                        return;
+                    }
+                }
+
+                scrollMoved.dispatch(new ScrollMovedEventData(new Vector2f((float)xoffset, (float)yoffset)));
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 package com.ustudents.farmland.component;
 
+import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 import com.ustudents.engine.ecs.component.core.TransformComponent;
 import com.ustudents.engine.ecs.component.graphics.*;
@@ -9,6 +10,7 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.utility.SeedRandom;
+import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -67,31 +69,41 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         SeedRandom random = new SeedRandom();
         TransformComponent transformComponent = getEntity().getComponent(TransformComponent.class);
 
-        for (int x = 0; x < gridSize.x; x++) {
-            this.cells.add(new ArrayList<>());
+        if (Farmland.get().currentSave == null) {
+            for (int x = 0; x < gridSize.x; x++) {
+                this.cells.add(new ArrayList<>());
 
-            for (int y = 0; y < gridSize.y; y++) {
-                Vector2f spriteRegion = new Vector2f(
-                        cellSize.x * random.generateInRange(1, cellBackground.getWidth() / cellSize.x),
-                        cellSize.y * random.generateInRange(1, cellBackground.getHeight() / cellSize.y));
-                Sprite sprite = new Sprite(cellBackground,
-                        new Vector4f(spriteRegion.x, spriteRegion.y, cellSize.x, cellSize.y));
-                Vector4f viewRectangle = new Vector4f(
-                        transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x,
-                        transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y,
-                        transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + cellSize.x,
-                        transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + cellSize.y);
+                for (int y = 0; y < gridSize.y; y++) {
+                    Vector2f spriteRegion = new Vector2f(
+                            cellSize.x * random.generateInRange(1, cellBackground.getWidth() / cellSize.x),
+                            cellSize.y * random.generateInRange(1, cellBackground.getHeight() / cellSize.y));
+                    Sprite sprite = new Sprite(cellBackground,
+                            new Vector4f(spriteRegion.x, spriteRegion.y, cellSize.x, cellSize.y));
+                    Vector4f viewRectangle = new Vector4f(
+                            transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x,
+                            transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y,
+                            transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + cellSize.x,
+                            transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + cellSize.y);
 
-                Cell cell = new Cell(sprite, viewRectangle);
+                    Cell cell = new Cell(sprite, viewRectangle);
 
-                if ((x == gridSize.x / 2 && y == gridSize.y / 2) ||
-                        (x == gridSize.x / 2 - 1 && y == gridSize.y / 2) ||
-                        (x == gridSize.x / 2 && y == gridSize.y / 2 - 1) ||
-                        (x == gridSize.x / 2 - 1 && y == gridSize.y / 2 - 1)) {
-                    cell.setOwned(true);
+                    if ((x == gridSize.x / 2 && y == gridSize.y / 2) ||
+                            (x == gridSize.x / 2 - 1 && y == gridSize.y / 2) ||
+                            (x == gridSize.x / 2 && y == gridSize.y / 2 - 1) ||
+                            (x == gridSize.x / 2 - 1 && y == gridSize.y / 2 - 1)) {
+                        cell.setOwned(true);
+                    }
+
+                    this.cells.get(x).add(cell);
                 }
+            }
+        } else {
+            for (int x = 0; x < gridSize.x; x++) {
+                this.cells.add(new ArrayList<>());
 
-                this.cells.get(x).add(cell);
+                for (int y = 0; y < gridSize.y; y++) {
+                    this.cells.get(x).add(Farmland.get().getCurrentSave().cells.get(x).get(y));
+                }
             }
         }
     }
@@ -105,9 +117,29 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         camera.setMaximalX(transformComponent.position.x + gridBackgroundSideSize.x + gridSize.x * cellSize.x);
         camera.setMinimalY(transformComponent.position.x + gridBackgroundSideSize.y);
         camera.setMaximalY(transformComponent.position.y + gridBackgroundSideSize.y + gridSize.x * cellSize.y);
-        camera.centerOnPosition(new Vector2f(
-                transformComponent.position.x + gridBackgroundSideSize.x + (gridSize.x * cellSize.x) / 2.0f,
-                transformComponent.position.y + gridBackgroundSideSize.y + (gridSize.y * cellSize.y) / 2.0f));
+
+        if (Farmland.get().currentSave == null) {
+            camera.centerOnPosition(new Vector2f(
+                    transformComponent.position.x + gridBackgroundSideSize.x + (gridSize.x * cellSize.x) / 2.0f,
+                    transformComponent.position.y + gridBackgroundSideSize.y + (gridSize.y * cellSize.y) / 2.0f));
+        } else {
+            if (Farmland.get().currentSave.players.get(0).position != null) {
+                camera.centerOnPosition(new Vector2f(
+                        Farmland.get().currentSave.players.get(0).position.x,
+                        Farmland.get().currentSave.players.get(0).position.y));
+            } else {
+                camera.centerOnPosition(new Vector2f(
+                        Farmland.get().currentSave.players.get(0).village.position.x,
+                        Farmland.get().currentSave.players.get(0).village.position.y));
+            }
+        }
+
+        camera.moved.add((dataType, data) -> {
+            Camera.PositionChanged eventData = (Camera.PositionChanged) data;
+            if (Farmland.get().currentSave != null) {
+                Farmland.get().currentSave.players.get(0).position = new Vector2f(eventData.position.x, eventData.position.y);
+            }
+        });
     }
 
     @Override
@@ -123,8 +155,11 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
         if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
-                Input.isMousePressed(MouseButton.Left) && !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y)) {
-            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).isOwned = true;
+                Input.isMousePressed(MouseButton.Left) &&
+                !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
+                cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
+                Farmland.get().getCurrentSave().currentPlayerId == 0) {
+            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true);
         }
     }
 
@@ -165,14 +200,14 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     }
 
     public boolean cellIsOwned(int x, int y) {
-        return cells.get(x).get(y).isOwned;
+        return cells.get(x).get(y).isOwned();
     }
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
-        return (x < gridSize.x - 1 && cells.get(x + 1).get(y).isOwned) ||
-               (x > 0 && cells.get(x - 1).get(y).isOwned) ||
-               (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwned) ||
-               (y > 0 && cells.get(x).get(y - 1).isOwned);
+        return (x < gridSize.x - 1 && cells.get(x + 1).get(y).isOwned()) ||
+               (x > 0 && cells.get(x - 1).get(y).isOwned()) ||
+               (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwned()) ||
+               (y > 0 && cells.get(x).get(y - 1).isOwned());
     }
 
     private void renderBackground(Spritebatch spritebatch, RendererComponent rendererComponent,
@@ -231,15 +266,17 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderTerritoryCell(String type, int x, int y, Spritebatch spritebatch,
                                      RendererComponent rendererComponent, TransformComponent transformComponent) {
-        Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
-                territoryTexture.getSprite(type),
-                new Vector2f(
-                        transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
-                        transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
-        // TODO: Player color
-        spriteData.tint = Color.WHITE;
-        spriteData.zIndex = rendererComponent.zIndex + 2;
+        if (Farmland.get().getCurrentSave() != null) {
+            Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
+                    territoryTexture.getSprite(type),
+                    new Vector2f(
+                            transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
+                            transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
+            // TODO: Player color
+            spriteData.tint = Farmland.get().getCurrentSave().players.get(0).color;
+            spriteData.zIndex = rendererComponent.zIndex + 2;
 
-        spritebatch.drawSprite(spriteData);
+            spritebatch.drawSprite(spriteData);
+        }
     }
 }

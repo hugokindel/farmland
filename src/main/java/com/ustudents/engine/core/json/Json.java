@@ -121,18 +121,7 @@ public class Json {
                     field.set(object, deserialize((Map<String, Object>)value, field.getType()));
                     continue;
                 } else if (field.getType().isAssignableFrom(List.class)) {
-                    ParameterizedType parameterizedType = (ParameterizedType)field.getGenericType();
-                    Type tType = parameterizedType.getActualTypeArguments()[0];
-
-                    if (!tType.getTypeName().contains("<") &&
-                            Class.forName(tType.getTypeName()).isAnnotationPresent(JsonSerializable.class)) {
-                        List<Object> list = new ArrayList<>();
-
-                        for (Object element : (List<Object>)value) {
-                            list.add(deserialize((Map<String, Object>)element, Class.forName(tType.getTypeName())));
-                        }
-
-                        field.set(object, list);
+                    if (listExtraction(field, value, object)) {
                         continue;
                     }
                 }
@@ -156,6 +145,50 @@ public class Json {
         }
 
         return null;
+    }
+
+    public static boolean listExtraction(Field field, Object value, Object object) throws ClassNotFoundException {
+       try {
+           ParameterizedType parameterizedType = (ParameterizedType)field.getGenericType();
+           Type tType = parameterizedType.getActualTypeArguments()[0];
+
+           if (!tType.getTypeName().contains("<") &&
+                   Class.forName(tType.getTypeName()).isAnnotationPresent(JsonSerializable.class)) {
+               List<Object> list = new ArrayList<>();
+
+               for (Object element : (List<Object>) value) {
+                   list.add(deserialize((Map<String, Object>) element, Class.forName(tType.getTypeName())));
+               }
+
+               field.set(object, list);
+               return true;
+           } else if (tType.getTypeName().contains("<") && tType.getTypeName().startsWith("java.util.List") &&
+                   Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>')).isAnnotationPresent(JsonSerializable.class)) {
+               List<Object> list = new ArrayList<>();
+
+               int i = 0;
+               for (Object element : (List<Object>) value) {
+                   list.add(new ArrayList<>());
+
+                   for (Object realElement : (List<Object>)element) {
+                       ((List<Object>)list.get(i)).add(deserialize((Map<String, Object>) realElement, Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>'))));
+                   }
+                   i++;
+               }
+
+               field.set(object, list);
+               return true;
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+       return false;
+    }
+
+    public static String getBetweenFirstAndLast(String text, char first, char last) {
+        int firstSep = text.indexOf(first);
+        int lastSep = text.lastIndexOf(last);
+        return text.substring(firstSep + 1, lastSep);
     }
 
     /**
@@ -183,6 +216,11 @@ public class Json {
 
             for (Field field : fields) {
                 JsonSerializable serializable = field.getAnnotation(JsonSerializable.class);
+
+                if (serializable.deserializeOnly()) {
+                    continue;
+                }
+
                 String key = serializable.path().isEmpty() ? field.getName() : serializable.path();
                 String[] path = key.split("\\.");
                 field.setAccessible(true);
@@ -328,8 +366,12 @@ public class Json {
      */
     private static void convertAndAdd(Field field, Object value, Object instance) {
         try {
-            if (field.getType() == Float.class) {
+            if (value == null) {
+                field.set(instance, null);
+            } else  if (field.getType() == Float.class) {
                 field.set(instance, ((Double)value).floatValue());
+            } else  if (field.getType() == Integer.class) {
+                field.set(instance, ((Long)value).intValue());
             } else if (field.getType() == Vector2f.class) {
                 Map<String, Object> map = (Map<String, Object>)value;
                 field.set(instance, new Vector2f(

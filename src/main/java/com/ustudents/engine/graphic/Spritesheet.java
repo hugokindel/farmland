@@ -20,7 +20,7 @@ public class Spritesheet {
     @JsonSerializable
     private String path;
 
-    @JsonSerializable
+    @JsonSerializable(deserializeOnly = true)
     private Map<String, Vector4f> sprites;
 
     private Texture texture;
@@ -37,7 +37,7 @@ public class Spritesheet {
         animations = new HashMap<>();
 
         for (Map.Entry<String, Vector4f> entry : sprites.entrySet()) {
-            Map<String, Integer> value = (Map<String, Integer>)entry.getValue();
+            Map<String, Long> value = (Map<String, Long>)entry.getValue();
             sprites.put(entry.getKey(), new Vector4f(value.get("x"), value.get("y"), value.get("z"), value.get("w")));
         }
 

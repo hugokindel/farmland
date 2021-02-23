@@ -14,4 +14,6 @@ public @interface JsonSerializable {
 
     /** Defines if this is a necessary field or not (if not, it can be deserialized as null if not found). */
     boolean necessary() default true;
+
+    boolean deserializeOnly() default false;
 }

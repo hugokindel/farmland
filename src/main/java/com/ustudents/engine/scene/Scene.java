@@ -35,6 +35,8 @@ public abstract class Scene {
     /** The spritebatch (the main renderer). */
     protected Spritebatch spritebatch;
 
+    protected boolean forceImGui;
+
     /**
      * Initialize the variables of the scene.
      *
@@ -52,6 +54,7 @@ public abstract class Scene {
          this.cursorCamera = new Camera(100, 0.005f, 0.01f, Camera.Type.Cursor);
          this.cursorCamera.resize(size.x, size.y);
          this.spritebatch = new Spritebatch(this.camera);
+         this.forceImGui = false;
     }
 
     /** Initialize the scene (called when created). */
@@ -88,6 +91,10 @@ public abstract class Scene {
         sceneManager.changeScene(scene);
     }
 
+    public <T extends Scene> void changeScene(T scene, boolean addToTypeStack) {
+        sceneManager.changeScene(scene, addToTypeStack);
+    }
+
     /**
      * Changes the current scene to the given scene of specific type.
      *
@@ -95,6 +102,7 @@ public abstract class Scene {
      * @param args The scene type constructor arguments.
      * @param <T> The scene type.
      */
+    @Deprecated
     public <T extends Scene> void changeScene(Class<T> classType, Object... args) {
         if (args.length == 0) {
             sceneManager.changeScene(classType);
@@ -103,6 +111,11 @@ public abstract class Scene {
         }
     }
 
+    public <T extends System> T addSystem(T system) {
+        return registry.addSystem(system);
+    }
+
+    @Deprecated
     public <T extends System> T addSystem(Class<T> classType, Object... args) {
         if (args.length == 0) {
             return registry.addSystem(classType);
@@ -123,6 +136,7 @@ public abstract class Scene {
         return registry.getSystem(classType);
     }
 
+    @Deprecated
     public <T extends Entity> T createEntity(Class<T> classType, Object... args) {
         if (args.length == 0) {
             return registry.createEntity(classType);
@@ -135,6 +149,7 @@ public abstract class Scene {
         return registry.createEntity();
     }
 
+    @Deprecated
     public <T extends Entity> T createEntityWithName(String name, Class<T> classType, Object... args) {
         if (args.length == 0) {
             return registry.createEntityWithName(name, classType);
@@ -218,10 +233,14 @@ public abstract class Scene {
 
     /** Initialize the scene internally. */
     void initializeInternals() {
-        registry.addSystem(BehaviourSystem.class);
-        registry.addSystem(WorldRenderSystem.class);
-        registry.addSystem(UiRenderSystem.class);
+        registry.addSystem(new BehaviourSystem());
+        registry.addSystem(new WorldRenderSystem());
+        registry.addSystem(new UiRenderSystem());
 
         initialize();
+    }
+
+    public boolean isForceImGuiEnabled() {
+        return forceImGui;
     }
 }

@@ -124,6 +124,14 @@ public class Registry {
         baseComponentPoolCapacity = 64;
     }
 
+    public <T extends System> T addSystem(T system) {
+        int systemId = system.getClass().getName().hashCode();
+
+        systems.put(systemId, system);
+
+        return system;
+    }
+
     /**
      * Adds a system of given type.
      *
@@ -131,20 +139,13 @@ public class Registry {
      * @param args The system type constructor arguments.
      * @param <T> The system type.
      */
+    @Deprecated
     public <T extends System> T addSystem(Class<T> classType, Object... args) {
-        int systemId = classType.getName().hashCode();
-
-        T system;
-
         if (args.length == 0) {
-            system = Objects.requireNonNull(TypeUtil.createInstance(classType, this));
-        } else {
-            system = Objects.requireNonNull(TypeUtil.createInstance(classType, this, args));
+            return addSystem(Objects.requireNonNull(TypeUtil.createInstance(classType)));
         }
 
-        systems.put(systemId, system);
-
-        return system;
+        return addSystem(Objects.requireNonNull(TypeUtil.createInstance(classType, this, args)));
     }
 
     /**
@@ -196,16 +197,17 @@ public class Registry {
      *
      * @return the entity.
      */
+    @Deprecated
     public <T extends Entity> T createEntity(Class<T> classType, Object... args) {
-        int entityId = requestId();
-
-        T entity;
-
         if (args.length == 0) {
-            entity = TypeUtil.createInstance(classType, entityId, this);
-        } else {
-            entity = TypeUtil.createInstance(classType, entityId, this, args);
+            return createEntity(Objects.requireNonNull(TypeUtil.createInstance(classType)));
         }
+
+        return createEntity(Objects.requireNonNull(TypeUtil.createInstance(classType, args)));
+    }
+
+    public <T extends Entity> T createEntity(T entity) {
+        int entityId = entity.getId();
 
         entityPerIndex.put(entityId, entity);
         entitiesAtRoot.add(entity);
@@ -230,9 +232,16 @@ public class Registry {
      * @return the entity.
      */
     public Entity createEntity() {
-        return createEntity(Entity.class);
+        return createEntity(new Entity());
     }
 
+    public <T extends Entity> T createEntityWithName(String name, T entity) {
+        createEntity(entity);
+        entity.setName(name);
+        return entity;
+    }
+
+    @Deprecated
     public <T extends Entity> T createEntityWithName(String name, Class<T> classType, Object... args) {
         T entity;
 
@@ -253,7 +262,7 @@ public class Registry {
      * @return the entity.
      */
     public Entity createEntityWithName(String name) {
-        return createEntityWithName(name, Entity.class);
+        return createEntityWithName(name, new Entity());
     }
 
     /**
@@ -632,10 +641,6 @@ public class Registry {
     public <T extends Component> T addComponentToEntity(Entity entity, T component) {
         Class<?> classType = component.getClass();
 
-        if (classType == BehaviourComponent.class) {
-            Out.printError("You can't add a " + Style.Bold + "BehaviourComponent" + Style.Reset + " to an entity, you need to use a subclass of BehaviourComponent!");
-        }
-
         int entityId = entity.getId();
         int componentId = componentTypeRegistry.getIdForType(component.getClass());
 
@@ -677,6 +682,7 @@ public class Registry {
      * @param args The component type constructor arguments.
      * @param <T> The component type.
      */
+    @Deprecated
     public <T extends Component> T addComponentToEntity(Entity entity, Class<T> classType, Object... args) {
         if (args.length == 0) {
             return addComponentToEntity(entity, Objects.requireNonNull(TypeUtil.createInstance(classType)));

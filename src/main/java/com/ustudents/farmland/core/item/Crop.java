@@ -13,7 +13,7 @@ public class Crop extends Item {
     @Override
     public void deserialize(Map<String, Object> json) {
         super.deserialize(json);
-        numberOfTurnsToGrow = (Integer)json.get("numberOfTurnsToGrow");
+        numberOfTurnsToGrow = ((Long)json.get("numberOfTurnsToGrow")).intValue();
     }
 
     @Override

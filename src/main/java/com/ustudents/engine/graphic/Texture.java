@@ -1,5 +1,6 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.utility.FileUtil;
@@ -16,6 +17,7 @@ import static org.lwjgl.stb.STBImageWrite.stbi_write_png;
 import static org.lwjgl.system.MemoryStack.*;
 
 @Viewable
+@JsonSerializable
 public class Texture {
     private ByteBuffer data;
 
@@ -30,7 +32,13 @@ public class Texture {
     private boolean destroyed;
 
     @Viewable
+    @JsonSerializable
     private String path;
+
+    public Texture() {
+        this.path = null;
+        destroyed = false;
+    }
 
     public Texture(String filePath) {
         this.path = filePath.replace(getTexturesDirectory() + "/", "");
@@ -51,7 +59,7 @@ public class Texture {
     }
 
     @JsonSerializableConstructor
-    private void fromJson() {
+    public void deserialize() {
         loadTexture(getTexturesDirectory() + "/" + path);
         handle = createTexture();
         destroyed = false;

@@ -1,10 +1,15 @@
 package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Window;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventData;
+import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;
+import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
 import imgui.ImGuiIO;
@@ -15,6 +20,14 @@ import static org.lwjgl.glfw.GLFW.*;
 
 // Implementation in part from: https://github.com/JOML-CI/joml-camera/blob/master/src/org/joml/camera/OrthoCameraControl.java
 public class Camera {
+    public static class PositionChanged extends EventData {
+        public Vector2f position;
+
+        public PositionChanged(Vector2f position) {
+            this.position = position;
+        }
+    }
+
     public enum Type {
         World,
         UI,
@@ -46,6 +59,8 @@ public class Camera {
     float[][] viewProjectionArray;
     float[][] viewArray;
     private Vector4f viewFrustum;
+
+    public EventDispatcher moved = new EventDispatcher(PositionChanged.class);
 
     public Camera(float extents, float minZoom, float maxZoom, Type type) {
         viewMatrix = new Matrix3x2f();
@@ -134,6 +149,8 @@ public class Camera {
         }
 
         viewFrustum = new Vector4f(minX, minY, maxX, maxY);
+
+        moved.dispatch(new PositionChanged(getPosition()));
     }
 
     public void centerOnPosition(Vector2f position) {
@@ -283,54 +300,34 @@ public class Camera {
     private void setupCallbacks() {
         long windowHandle = Game.get().getWindow().getHandle();
 
-        glfwSetMouseButtonCallback(windowHandle, new GLFWMouseButtonCallback() {
-            public void invoke(long window, int button, int action, int mods) {
-                Farmland.get().getImGuiManager().getImGuiGlfw().mouseButtonCallback(window, button, action, mods);
+        Window.get().mouseButtonStateChanged.add((dataType, data) -> {
+            if (inputEnabled) {
+                Window.MouseButtonStateChangedEventData eventData = (Window.MouseButtonStateChangedEventData) data;
 
-                if (inputEnabled) {
-                    if (Game.get().isImGuiToolsEnabled()) {
-                        final ImGuiIO io = ImGui.getIO();
-
-                        if (io.getWantCaptureMouse()) {
-                            return;
-                        }
-                    }
-
-                    if (action == GLFW_PRESS) {
-                        onMouseDown(button);
-                    } else {
-                        onMouseUp(button);
-                    }
+                if (eventData.action == GLFW_PRESS) {
+                    onMouseDown(eventData.button);
+                } else {
+                    onMouseUp(eventData.button);
                 }
             }
         });
 
-        Input.mouseMoved.add((dataType, data) -> {
+        Window.get().cursorMoved.add((dataType, data) -> {
             if (inputEnabled) {
-                Vector2f mousePos = Input.getMousePos();
-                moveToMousePosition(new Vector2f((int) mousePos.x, Farmland.get().getWindow().getSize().y - (int) mousePos.y));
+                Window.CursorMovedEventData eventData = (Window.CursorMovedEventData) data;
+                moveToMousePosition(new Vector2f((int) eventData.position.x, Farmland.get().getWindow().getSize().y - (int) eventData.position.y));
             }
         });
 
-        glfwSetScrollCallback(windowHandle, new GLFWScrollCallback() {
-            public void invoke(long window, double xoffset, double yoffset) {
-                Farmland.get().getImGuiManager().getImGuiGlfw().scrollCallback(window, xoffset, yoffset);
+        Window.get().scrollMoved.add((dataType, data) -> {
+            if (inputEnabled) {
+                Window.ScrollMovedEventData eventData = (Window.ScrollMovedEventData) data;
 
-                if (inputEnabled) {
-                    if (Game.get().isImGuiToolsEnabled()) {
-                        final ImGuiIO io = ImGui.getIO();
-
-                        if (io.getWantCaptureMouse()) {
-                            return;
-                        }
-                    }
-
-                    if (/*Input.isKeyDown(Key.LeftAlt) || Input.isKeyDown(Key.RightAlt)*/true) {
-                        if (yoffset > 0) {
-                            zoom(1.1f);
-                        } else {
-                            zoom(1.0f / 1.1f);
-                        }
+                if (/*Input.isKeyDown(Key.LeftAlt) || Input.isKeyDown(Key.RightAlt)*/true) {
+                    if (eventData.offets.y > 0) {
+                        zoom(1.1f);
+                    } else {
+                        zoom(1.0f / 1.1f);
                     }
                 }
             }

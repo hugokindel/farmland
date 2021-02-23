@@ -1,5 +1,6 @@
 package com.ustudents.engine.core.json;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.utility.StringUtil;
 import org.joml.*;
 
@@ -157,7 +158,11 @@ public class JsonWriter {
         boolean beforeParentIsArray = parentIsArray;
 
         if (beforeParentIsArray) {
-            write("[", false);
+            if (!array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
+                write("[\n" + prefix + "\t", false);
+            } else {
+                write("[", false);
+            }
         } else {
             write("[\n", false);
         }
@@ -177,13 +182,21 @@ public class JsonWriter {
             } else if (!beforeParentIsArray) {
                 write("");
             } else if (i != 1) {
-                write(" ", false);
+                if (!array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
+
+                } else {
+                    write(" ", false);
+                }
             }
 
             writeValue(object);
 
             if (i != array.size()) {
-                write(",", false);
+                if (beforeParentIsArray && !array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
+                    write(",\n" + prefix, false);
+                } else {
+                    write(",", false);
+                }
             }
 
             if (!beforeParentIsArray) {
@@ -195,9 +208,14 @@ public class JsonWriter {
 
         prefix = oldPrefix;
 
-        if (beforeParentIsArray && array.get(0) instanceof List) {
-            write("\n", false);
-            write("]");
+        if (beforeParentIsArray) {
+            if (!array.isEmpty() && array.get(0) instanceof List) {
+                write("\n", false);
+                write("]");
+            } else if (!array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
+                write("\n", false);
+                write("]");
+            }
         } else {
             write("]", !beforeParentIsArray);
         }
@@ -213,7 +231,7 @@ public class JsonWriter {
      * @param value The value to write.
      */
     private void writeValue(Object value) {
-        if (value instanceof Integer || value instanceof Double || value instanceof Float) {
+        if (value instanceof Integer || value instanceof Double || value instanceof Float || value instanceof Long) {
             writeNumber(value);
         } else if (value instanceof String) {
             writeString(value);
@@ -241,6 +259,8 @@ public class JsonWriter {
             writeVector4i(value);
         } else if (value == null) {
             writeNull();
+        } else if (value.getClass().isAnnotationPresent(JsonSerializable.class)) {
+            writeMap(Json.serialize(value));
         }
     }
 

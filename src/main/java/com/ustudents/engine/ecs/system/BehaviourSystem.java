@@ -7,9 +7,7 @@ import com.ustudents.engine.ecs.System;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
 
 public class BehaviourSystem extends System {
-    public BehaviourSystem(Registry registry) {
-        super(registry);
-
+    public BehaviourSystem() {
         requireComponent(BehaviourComponent.class);
     }
 
