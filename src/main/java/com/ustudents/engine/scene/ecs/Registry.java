@@ -977,6 +977,7 @@ public class Registry {
         return componentTypeRegistry;
     }
 
+    /** @return an available ID. */
     public int requestId() {
         return freeIds.isEmpty() ? lastEntityNumber++ : freeIds.pop();
     }
@@ -990,6 +991,7 @@ public class Registry {
         entitiesToBeAddedToSystems.clear();
     }
 
+    /** Clears the registry (kills all entity, except entities to be kept between scenes). */
     public void clearRegistry() {
         Map<Integer, Entity> entitiesClone = new HashMap<>(entityPerIndex);
 
