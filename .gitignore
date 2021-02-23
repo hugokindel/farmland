@@ -2,6 +2,7 @@
 data/logs/
 data/players/
 data/settings.json
+data/saves/
 imgui.ini
 *.log
 
