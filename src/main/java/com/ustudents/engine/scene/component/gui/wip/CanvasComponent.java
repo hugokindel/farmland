@@ -1,6 +1,6 @@
 package com.ustudents.engine.scene.component.gui.wip;
 
-import com.ustudents.engine.core.Window;
+import com.ustudents.engine.core.window.Window;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 

@@ -1,10 +1,11 @@
-package com.ustudents.engine.core;
+package com.ustudents.engine.core.window.glfw;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.core.event.EventData;
-import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.input.Input;
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.core.window.empty.EmptyWindow;
+import com.ustudents.engine.core.window.events.*;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
@@ -22,62 +23,14 @@ import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL32.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
 import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window {
-    public class SizeChangedEventData extends EventData {
-        public Vector2i size;
-
-        public SizeChangedEventData(Vector2i size) {
-            this.size = size;
-        }
-    }
-
-    public class KeyStateChangedEventData extends EventData {
-        public int key;
-        public int scancode;
-        public int action;
-        public int mods;
-
-        public KeyStateChangedEventData(int key, int scancode, int action, int mods) {
-            this.key = key;
-            this.scancode = scancode;
-            this.action = action;
-            this.mods = mods;
-        }
-    }
-
-    public class MouseButtonStateChangedEventData extends EventData {
-        public int button;
-        public int action;
-        public int mods;
-
-        public MouseButtonStateChangedEventData(int button, int action, int mods) {
-            this.button = button;
-            this.action = action;
-            this.mods = mods;
-        }
-    }
-
-    public class CursorMovedEventData extends EventData {
-        public Vector2f position;
-
-        public CursorMovedEventData(Vector2f position) {
-            this.position = position;
-        }
-    }
-
-    public class ScrollMovedEventData extends EventData {
-        public Vector2f offets;
-
-        public ScrollMovedEventData(Vector2f offets) {
-            this.offets = offets;
-        }
-    }
-
+public class GLFWWindow extends EmptyWindow {
     private String name;
 
     private Vector2i size;
@@ -86,16 +39,7 @@ public class Window {
 
     private String glslVersion;
 
-    public EventDispatcher sizeChanged = new EventDispatcher(SizeChangedEventData.class);
-
-    public EventDispatcher keyStateChanged = new EventDispatcher(KeyStateChangedEventData.class);
-
-    public EventDispatcher mouseButtonStateChanged = new EventDispatcher(MouseButtonStateChangedEventData.class);
-
-    public EventDispatcher cursorMoved = new EventDispatcher(CursorMovedEventData.class);
-
-    public EventDispatcher scrollMoved = new EventDispatcher(ScrollMovedEventData.class);
-
+    @Override
     public void initialize(String name, Vector2i size, boolean vsync) {
         this.name = name;
         this.size = size;
@@ -113,7 +57,7 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, 0);
         glfwWindowHint(GLFW_RESIZABLE, 1);
 
-        findGlslVersion();
+        setGlslVersion();
 
         windowHandle = glfwCreateWindow(size.x, size.y, name, NULL, NULL);
 
@@ -157,14 +101,17 @@ public class Window {
         setupCallbacks();
     }
 
+    @Override
     public void clear() {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    @Override
     public void swap() {
         glfwSwapBuffers(windowHandle);
     }
 
+    @Override
     public void destroy() {
         glfwFreeCallbacks(windowHandle);
         glfwDestroyWindow(windowHandle);
@@ -172,6 +119,7 @@ public class Window {
         Objects.requireNonNull(glfwSetErrorCallback(null)).free();
     }
 
+    @Override
     public void show(boolean show) {
         if (show) {
             glfwShowWindow(windowHandle);
@@ -181,6 +129,7 @@ public class Window {
         }
     }
 
+    @Override
     public void actualizeCursorType() {
         if (Game.get().isImGuiToolsEnabled()) {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -189,42 +138,42 @@ public class Window {
         }
     }
 
+    @Override
     public boolean shouldQuit() {
         return glfwWindowShouldClose(windowHandle);
     }
 
+    @Override
     public void pollEvents() {
         glfwPollEvents();
     }
 
-    public static Window get() {
-        return Game.get().getWindow();
-    }
-
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Vector2i getSize() {
         return size;
     }
 
+    @Override
     public void setSize(Vector2i size) {
         this.size = size;
     }
 
+    @Override
     public long getHandle() {
         return windowHandle;
     }
 
-    public String getGlslVersion() {
-        return glslVersion;
-    }
-
+    @Override
     public Vector2i getPosition() {
         IntBuffer x = BufferUtils.createIntBuffer(1);
         IntBuffer y = BufferUtils.createIntBuffer(1);
@@ -238,14 +187,7 @@ public class Window {
         glfwSwapInterval(enabled ? 1 : 0);
     }
 
-    private void findGlslVersion() {
-        glslVersion = "#version 330 core";
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-    }
-
+    @Override
     public void changeIcon(String filePath) {
         ByteBuffer imageBuffer;
         int width, heigh;
@@ -267,6 +209,18 @@ public class Window {
         glfwSetWindowIcon(windowHandle, imagebf);
     }
 
+    public String getGlslVersion() {
+        return glslVersion;
+    }
+
+    private void setGlslVersion() {
+        glslVersion = "#version 330 core";
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+    }
+
     private void resize(Vector2i size) {
         this.size = size;
         Game.get().forceResizeBeforeNextFrame();
@@ -277,7 +231,7 @@ public class Window {
             @Override
             public void invoke(long window, int width, int height) {
                 resize(new Vector2i(width, height));
-                sizeChanged.dispatch(new SizeChangedEventData(new Vector2i(width, height)));
+                sizeChanged.dispatch(new SizeChangedEvent(new Vector2i(width, height)));
             }
         });
 
@@ -292,7 +246,7 @@ public class Window {
                     }
                 }*/
 
-                keyStateChanged.dispatch(new KeyStateChangedEventData(key, scancode, action, mods));
+                keyStateChanged.dispatch(new KeyStateChangedEvent(key, scancode, action, mods));
             }
         });
 
@@ -307,14 +261,14 @@ public class Window {
                     }
                 }
 
-                mouseButtonStateChanged.dispatch(new MouseButtonStateChangedEventData(button, action, mods));
+                mouseButtonStateChanged.dispatch(new MouseButtonStateChangedEvent(button, action, mods));
             }
         });
 
         glfwSetCursorPosCallback(windowHandle, new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                cursorMoved.dispatch(new CursorMovedEventData(new Vector2f((float)xpos, (float)ypos)));
+                cursorMoved.dispatch(new CursorMovedEvent(new Vector2f((float)xpos, (float)ypos)));
             }
         });
 
@@ -329,7 +283,7 @@ public class Window {
                     }
                 }
 
-                scrollMoved.dispatch(new ScrollMovedEventData(new Vector2f((float)xoffset, (float)yoffset)));
+                scrollMoved.dispatch(new ScrollMovedEvent(new Vector2f((float)xoffset, (float)yoffset)));
             }
         });
     }

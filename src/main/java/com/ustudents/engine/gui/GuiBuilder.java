@@ -1,7 +1,7 @@
 package com.ustudents.engine.gui;
 
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.Window;
+import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.ecs.Registry;
@@ -176,7 +176,7 @@ public class GuiBuilder {
             Entity text = canvas.createChildWithName(data.id);
             TransformComponent transformComponent = createScaledComponent(data.scale, data.applyGlobalScaling);
             textPosition(data, transformComponent);
-            Window.get().sizeChanged.add((dataType, windowData) -> textPosition(data, transformComponent));
+            Window.get().getSizeChanged().add((dataType, windowData) -> textPosition(data, transformComponent));
             text.addComponent(transformComponent);
             text.addComponent(new UiRendererComponent());
             TextComponent textComponent = text.addComponent(new TextComponent(data.text, data.font));
@@ -198,7 +198,7 @@ public class GuiBuilder {
         Entity button = canvas.createChildWithName(data.id);
         TransformComponent transformComponent = createScaledComponent(data.scale, data.applyGlobalScaling);
         buttonPosition(data, transformComponent);
-        Window.get().sizeChanged.add((dataType, windowData) -> buttonPosition(data, transformComponent));
+        Window.get().getSizeChanged().add((dataType, windowData) -> buttonPosition(data, transformComponent));
         button.addComponent(transformComponent);
         button.addComponent(new UiRendererComponent());
         button.addComponent(new ButtonComponent(data.text, data.listener));
@@ -208,7 +208,7 @@ public class GuiBuilder {
         Entity image = canvas.createChildWithName(data.id);
         TransformComponent transformComponent = createScaledComponent(data.scale, data.applyGlobalScaling);
         imagePosition(data, transformComponent);
-        Window.get().sizeChanged.add((dataType, windowData) -> imagePosition(data, transformComponent));
+        Window.get().getSizeChanged().add((dataType, windowData) -> imagePosition(data, transformComponent));
         image.addComponent(transformComponent);
         image.addComponent(new UiRendererComponent());
         image.addComponent(new TextureComponent(data.texture));
@@ -227,7 +227,7 @@ public class GuiBuilder {
         TransformComponent transformComponent = createScaledComponent(currentWindow.data.scale, true);
         WindowContainer copy = WindowContainer.copy(currentWindow, currentWindow.contentData);
         windowPosition(copy.content, copy.data, transformComponent);
-        Window.get().sizeChanged.add((dataType, windowData) -> windowPosition(copy.content, copy.data, transformComponent));
+        Window.get().getSizeChanged().add((dataType, windowData) -> windowPosition(copy.content, copy.data, transformComponent));
         currentWindow.entity.addComponent(transformComponent);
         currentWindow.entity.addComponent(new UiRendererComponent());
         currentWindow.entity.addComponent(new NineSlicedSpriteComponent(nineSlicedSprite, currentWindow.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale)));
@@ -235,7 +235,7 @@ public class GuiBuilder {
         TransformComponent contentTransform = currentWindow.content.getComponent(TransformComponent.class);
         currentWindow.content.getComponent(UiRendererComponent.class).zIndex++;
         contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y);
-        Window.get().sizeChanged.add((dataType, windowData) -> contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y));
+        Window.get().getSizeChanged().add((dataType, windowData) -> contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y));
 
         currentWindow = null;
     }

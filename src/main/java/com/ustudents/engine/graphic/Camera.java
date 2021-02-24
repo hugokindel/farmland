@@ -1,26 +1,23 @@
 package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.core.Window;
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.event.EventData;
+import com.ustudents.engine.core.window.Window;
+import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.core.window.events.CursorMovedEvent;
+import com.ustudents.engine.core.window.events.MouseButtonStateChangedEvent;
+import com.ustudents.engine.core.window.events.ScrollMovedEvent;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;
-import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
-import imgui.ImGui;
-import imgui.ImGuiIO;
 import org.joml.*;
-import org.lwjgl.glfw.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 // Implementation in part from: https://github.com/JOML-CI/joml-camera/blob/master/src/org/joml/camera/OrthoCameraControl.java
 public class Camera {
-    public static class PositionChanged extends EventData {
+    public static class PositionChanged extends Event {
         public Vector2f position;
 
         public PositionChanged(Vector2f position) {
@@ -300,9 +297,9 @@ public class Camera {
     private void setupCallbacks() {
         long windowHandle = Game.get().getWindow().getHandle();
 
-        Window.get().mouseButtonStateChanged.add((dataType, data) -> {
+        Window.get().getMouseButtonStateChanged().add((dataType, data) -> {
             if (inputEnabled) {
-                Window.MouseButtonStateChangedEventData eventData = (Window.MouseButtonStateChangedEventData) data;
+                MouseButtonStateChangedEvent eventData = (MouseButtonStateChangedEvent) data;
 
                 if (eventData.action == GLFW_PRESS) {
                     onMouseDown(eventData.button);
@@ -312,16 +309,16 @@ public class Camera {
             }
         });
 
-        Window.get().cursorMoved.add((dataType, data) -> {
+        Window.get().getCursorMoved().add((dataType, data) -> {
             if (inputEnabled) {
-                Window.CursorMovedEventData eventData = (Window.CursorMovedEventData) data;
+                CursorMovedEvent eventData = (CursorMovedEvent) data;
                 moveToMousePosition(new Vector2f((int) eventData.position.x, Farmland.get().getWindow().getSize().y - (int) eventData.position.y));
             }
         });
 
-        Window.get().scrollMoved.add((dataType, data) -> {
+        Window.get().getScrollMoved().add((dataType, data) -> {
             if (inputEnabled) {
-                Window.ScrollMovedEventData eventData = (Window.ScrollMovedEventData) data;
+                ScrollMovedEvent eventData = (ScrollMovedEvent) data;
 
                 if (/*Input.isKeyDown(Key.LeftAlt) || Input.isKeyDown(Key.RightAlt)*/true) {
                     if (eventData.offets.y > 0) {

@@ -57,8 +57,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         this.cells = new ArrayList<>();
         this.currentSelectedCell = new Vector2i(-1, -1);
         this.cellSize = cellSize;
-        this.gridBackgroundSideSize = new Vector2i(
-                (int)gridBackground.topLeft.getRegion().z, (int)gridBackground.topLeft.getRegion().w);
+        this.gridBackgroundSideSize = new Vector2i(5, 5);
         this.selectionCursorEnabled = true;
         this.showTypeOfTerritory = false;
     }
@@ -74,8 +73,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
                 for (int y = 0; y < gridSize.y; y++) {
                     Vector2f spriteRegion = new Vector2f(
-                            cellSize.x * random.generateInRange(1, cellBackground.getWidth() / cellSize.x),
-                            cellSize.y * random.generateInRange(1, cellBackground.getHeight() / cellSize.y));
+                            cellSize.x * random.generateInRange(1, 120 / cellSize.x),
+                            cellSize.y * random.generateInRange(1, 120 / cellSize.y));
                     Sprite sprite = new Sprite(cellBackground,
                             new Vector4f(spriteRegion.x, spriteRegion.y, cellSize.x, cellSize.y));
                     Vector4f viewRectangle = new Vector4f(

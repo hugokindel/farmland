@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.farmland.Farmland;
 
@@ -35,5 +36,10 @@ public class MainMenu extends MenuScene {
         initializeMenu(buttonNames, buttonIds, eventListeners, false, true, false);
 
         super.initialize();
+    }
+
+    @Override
+    public void update(float dt) {
+
     }
 }

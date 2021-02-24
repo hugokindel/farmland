@@ -901,18 +901,18 @@ public class Spritebatch {
                 } else if (c == '\t') {
                     realPosition.add(new Vector2f(realFont.getTextWidth(" ") * 4, 0));
                 } else if (c >= ' ') {
-                    Font.GlyphInfo glyphInfo = realFont.getGlyphInfo(c);
+                    FontGlyphInfo fontGlyphInfo = realFont.getGlyphInfo(c);
 
                     drawGlyph(
                             new Vector2f(realPosition.x, realPosition.y),
-                            realFont, glyphInfo.position, glyphInfo.region,
+                            realFont, fontGlyphInfo.position, fontGlyphInfo.region,
                             textRenderer.zIndex,
                             textRenderer.color,
                             textRenderer.rotation,
                             textRenderer.scale,
                             textRenderer.origin);
 
-                    realPosition.add(new Vector2f(glyphInfo.position.z + realFont.getKerning(), 0));
+                    realPosition.add(new Vector2f(fontGlyphInfo.position.z + realFont.getKerning(), 0));
                 }
             }
 

@@ -8,7 +8,7 @@ public class EventDispatcher {
     Class<?> dataType;
 
     public EventDispatcher() {
-        this(EventData.class);
+        this(Event.class);
     }
 
     public EventDispatcher(Class<?> eventType) {
@@ -17,7 +17,7 @@ public class EventDispatcher {
     }
 
     public void dispatch() {
-        dispatch(new EventData());
+        dispatch(new Event());
     }
 
     public void dispatch(Object data) {

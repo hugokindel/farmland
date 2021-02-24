@@ -1,5 +1,6 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.utility.FileUtil;
@@ -22,11 +23,6 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 @Viewable
 public class Font {
-    public static class GlyphInfo {
-        Vector4f position;
-        Vector4f region;
-    }
-
     /**
      * The default character set to use (latin extended).
      * To decode the unicode escape sequences with ease (necessary for javadoc):
@@ -50,7 +46,7 @@ public class Font {
 
     private STBTTPackedchar.Buffer characterData;
 
-    private Map<Character, GlyphInfo> glyphInfoPerCharacter;
+    private Map<Character, FontGlyphInfo> glyphInfoPerCharacter;
 
     private boolean destroyed;
 
@@ -70,25 +66,25 @@ public class Font {
 
     public float averageHeight;
 
-    public int fontOverweight;
-
     private int spaceWidth = -1;
 
     public Font(String filePath, int fontSize) {
         this.path = filePath.replace(getFontsDirectory() + "/", "");
         this.fontSize = fontSize;
         glyphInfoPerCharacter = new HashMap<>();
-        loadFont(filePath);
         widthPerText = new HashMap<>();
         heightPerText = new HashMap<>();
-        if (filePath.endsWith("ui/default.ttf")) {
-           // fontOverweight = 10;
+
+        if (Game.get().canRender()) {
+            loadFont(filePath);
         }
     }
 
     public void destroy() {
         if (!destroyed) {
-            texture.destroy();
+            if (Game.get().canRender()) {
+                texture.destroy();
+            }
             destroyed = true;
         }
     }
@@ -146,6 +142,10 @@ public class Font {
 
     // Implementation from: https://github.com/LWJGL/lwjgl3/blob/master/modules/samples/src/test/java/org/lwjgl/demo/stb/Truetype.java
     public int getSpaceWidth() {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         if (spaceWidth != -1) {
             return spaceWidth;
         }
@@ -173,6 +173,10 @@ public class Font {
     }
 
     public int getTextWidth(String text) {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         if (widthPerText.containsKey(text)) {
             return widthPerText.get(text);
         }
@@ -195,6 +199,10 @@ public class Font {
     }
 
     public int getLineWidth(String line) {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         int width = 0;
 
         for (int i = 0; i < line.length(); i++) {
@@ -203,7 +211,7 @@ public class Font {
             if (c == ' ') {
                 width += getSpaceWidth();
             } else {
-                GlyphInfo cInfo = getGlyphInfo(c);
+                FontGlyphInfo cInfo = getGlyphInfo(c);
                 width += (int)cInfo.position.z - (int)cInfo.position.x;
             }
         }
@@ -214,6 +222,10 @@ public class Font {
     }
 
     public int getTextHeight(String text) {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         if (heightPerText.containsKey(text)) {
             return heightPerText.get(text);
         }
@@ -234,26 +246,46 @@ public class Font {
     }
 
     public int getDescentHeight() {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         return -(int) (descent * stbtt_ScaleForPixelHeight(info, fontSize));
     }
 
     public int getAscentHeight() {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         return (int) (ascent * stbtt_ScaleForPixelHeight(info, fontSize));
     }
 
     public int getScaledTextWidth(String text, float scale) {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         Font scaledFont = Resources.loadFont(path, fontSize * (int)scale);
 
         return scaledFont.getTextWidth(text) / (int)scale;
     }
 
     public int getScaledTextHeight(String text, float scale) {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         Font scaledFont = Resources.loadFont(path, fontSize * (int)scale);
 
         return scaledFont.getTextHeight(text) / (int)scale;
     }
 
     public Vector2f getScaledTextSize(String text, Vector2f scale) {
+        if (!Game.get().canRender()) {
+            return new Vector2f();
+        }
+
         Font realFont;
 
         if (scale.x == scale.y) {
@@ -270,11 +302,15 @@ public class Font {
     }*/
 
     public int getLineHeight(String line) {
+        if (!Game.get().canRender()) {
+            return 0;
+        }
+
         int maxHeight = 0;
 
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
-            GlyphInfo cInfo = getGlyphInfo(c);
+            FontGlyphInfo cInfo = getGlyphInfo(c);
 
             int height = (int)cInfo.position.w - (int)cInfo.position.y;
 
@@ -330,16 +366,16 @@ public class Font {
         return path;
     }
 
-    public GlyphInfo getGlyphInfo(char c) {
+    public FontGlyphInfo getGlyphInfo(char c) {
         return glyphInfoPerCharacter.get(c);
     }
 
-    private GlyphInfo makeGlyphInfo(char c) {
+    private FontGlyphInfo makeGlyphInfo(char c) {
         try (MemoryStack stack = stackPush()) {
             STBTTAlignedQuad q = STBTTAlignedQuad.mallocStack(stack);
             FloatBuffer x = stack.floats(0.0f);
             FloatBuffer y = stack.floats(0.0f);
-            GlyphInfo info = new GlyphInfo();
+            FontGlyphInfo info = new FontGlyphInfo();
 
             stbtt_GetPackedQuad(characterData, 1024, 1024, c - ' ', x, y, q, true);
 

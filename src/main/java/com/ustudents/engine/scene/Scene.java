@@ -1,7 +1,7 @@
 package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.core.Window;
+import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.ecs.System;
 import com.ustudents.engine.scene.system.BehaviourSystem;
@@ -53,7 +53,9 @@ public abstract class Scene {
          this.uiCamera.resize(size.x, size.y);
          this.cursorCamera = new Camera(100, 0.005f, 0.01f, Camera.Type.Cursor);
          this.cursorCamera.resize(size.x, size.y);
-         this.spritebatch = new Spritebatch(this.camera);
+         if (Game.get().canRender()) {
+             this.spritebatch = new Spritebatch(this.camera);
+         }
          this.forceImGui = false;
     }
 
@@ -234,8 +236,11 @@ public abstract class Scene {
     /** Initialize the scene internally. */
     void initializeInternals() {
         registry.addSystem(new BehaviourSystem());
-        registry.addSystem(new WorldRenderSystem());
-        registry.addSystem(new UiRenderSystem());
+
+        if (Game.get().canRender()) {
+            registry.addSystem(new WorldRenderSystem());
+            registry.addSystem(new UiRenderSystem());
+        }
 
         initialize();
     }

@@ -1,12 +1,12 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.core.event.EventData;
+import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.farmland.Farmland;
 
 public class TurnTimerComponent extends BehaviourComponent {
-    public static class SecondElapsed extends EventData {
+    public static class SecondElapsed extends Event {
         public int numberOfSecondElapsed;
 
         public SecondElapsed(int numberOfSecondElapsed) {

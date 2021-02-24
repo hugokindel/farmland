@@ -1,6 +1,6 @@
 package com.ustudents.engine.scene.component.gui.wip;
 
-import com.ustudents.engine.core.event.EventData;
+import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.scene.ecs.Component;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
@@ -9,10 +9,10 @@ import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import org.joml.Vector2f;
 
 public class GuiComponent extends BehaviourComponent {
-    public class SizeChangedEventData extends EventData {
+    public class SizeChangedEvent extends Event {
         public Vector2f newSize;
 
-        public SizeChangedEventData(Vector2f newSize) {
+        public SizeChangedEvent(Vector2f newSize) {
             this.newSize = newSize;
         }
     }

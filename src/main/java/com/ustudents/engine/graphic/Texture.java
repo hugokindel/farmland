@@ -1,5 +1,6 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
@@ -42,15 +43,23 @@ public class Texture {
 
     public Texture(String filePath) {
         this.path = filePath.replace(getTexturesDirectory() + "/", "");
-        loadTexture(filePath);
-        handle = createTexture();
+
+        if (Game.get().canRender()) {
+            loadTexture(filePath);
+            handle = createTexture();
+        }
+
         destroyed = false;
     }
 
     public Texture(ByteBuffer data, int width, int height, int numberOfComponents) {
         this.path = "from memory (bytebuffer)";
-        loadTexture(data, width, height, numberOfComponents);
-        handle = createTexture();
+
+        if (Game.get().canRender()) {
+            loadTexture(data, width, height, numberOfComponents);
+            handle = createTexture();
+        }
+
         destroyed = false;
     }
 
@@ -60,14 +69,18 @@ public class Texture {
 
     @JsonSerializableConstructor
     public void deserialize() {
-        loadTexture(getTexturesDirectory() + "/" + path);
-        handle = createTexture();
+        if (Game.get().canRender()) {
+            loadTexture(getTexturesDirectory() + "/" + path);
+            handle = createTexture();
+        }
         destroyed = false;
     }
 
     public void destroy() {
         if (!destroyed) {
-            glDeleteTextures(handle);
+            if (Game.get().canRender()) {
+                glDeleteTextures(handle);
+            }
             destroyed = true;
         }
     }

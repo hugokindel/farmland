@@ -1,9 +1,5 @@
 package com.ustudents.engine.graphic.imgui;
 
-import com.ustudents.engine.core.Window;
-import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.scene.SceneManager;
-import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;

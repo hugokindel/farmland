@@ -1,6 +1,10 @@
 package com.ustudents.engine.input.glfw;
 
-import com.ustudents.engine.core.Window;
+import com.ustudents.engine.core.window.Window;
+import com.ustudents.engine.core.window.events.CursorMovedEvent;
+import com.ustudents.engine.core.window.events.KeyStateChangedEvent;
+import com.ustudents.engine.core.window.events.MouseButtonStateChangedEvent;
+import com.ustudents.engine.core.window.events.ScrollMovedEvent;
 import com.ustudents.engine.input.empty.EmptyInput;
 import com.ustudents.engine.scene.SceneManager;
 import org.joml.Vector2f;
@@ -140,28 +144,28 @@ public class GLFWInput extends EmptyInput {
     }
 
     private void setupCallbacks() {
-        Window.get().keyStateChanged.add((dataType, data) -> {
-            Window.KeyStateChangedEventData eventData = (Window.KeyStateChangedEventData) data;
+        Window.get().getKeyStateChanged().add((dataType, data) -> {
+            KeyStateChangedEvent eventData = (KeyStateChangedEvent) data;
             keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
             keyStates[eventData.key] = eventData.action;
         });
 
-        Window.get().cursorMoved.add((dataType, data) -> {
-            Window.CursorMovedEventData eventData = (Window.CursorMovedEventData) data;
+        Window.get().getCursorMoved().add((dataType, data) -> {
+            CursorMovedEvent eventData = (CursorMovedEvent) data;
             mousePos = new Vector2f(eventData.position.x, eventData.position.y);
             if (SceneManager.getScene().getWorldCamera() != null) {
                 mousePosInWorld = SceneManager.getScene().getWorldCamera().screenCoordToWorldCoord(mousePos);
             }
         });
 
-        Window.get().mouseButtonStateChanged.add((dataType, data) -> {
-            Window.MouseButtonStateChangedEventData eventData = (Window.MouseButtonStateChangedEventData) data;
+        Window.get().getMouseButtonStateChanged().add((dataType, data) -> {
+            MouseButtonStateChangedEvent eventData = (MouseButtonStateChangedEvent) data;
             mouseButtons[eventData.button] = (eventData.action != GLFW.GLFW_RELEASE);
             mouseStates[eventData.button] = eventData.action;
         });
 
-        Window.get().scrollMoved.add((dataType, data) -> {
-            Window.ScrollMovedEventData eventData = (Window.ScrollMovedEventData) data;
+        Window.get().getScrollMoved().add((dataType, data) -> {
+            ScrollMovedEvent eventData = (ScrollMovedEvent) data;
             scroll = new Vector2f(eventData.offets.x, eventData.offets.y);
         });
     }

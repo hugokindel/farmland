@@ -7,6 +7,9 @@ import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.window.WindowSystemType;
+import com.ustudents.engine.core.window.glfw.GLFWWindow;
+import com.ustudents.engine.graphic.RenderSystemType;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.debug.DebugTools;
@@ -15,10 +18,11 @@ import com.ustudents.engine.graphic.imgui.ImGuiTools;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.InputSystemType;
 import com.ustudents.engine.input.Key;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
-import com.ustudents.engine.core.Window;
+import com.ustudents.engine.core.window.Window;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL33;
@@ -58,6 +62,18 @@ public abstract class Game extends Runnable {
     /** Option to force to disable any custom cursors. */
     @Option(names = "--no-input", description = "Force to disable any inputs.")
     protected boolean forceNoInput = false;
+
+    /** Option to force to disable any custom cursors. */
+    @Option(names = "--no-render", description = "Force to disable any renders.")
+    protected boolean forceNoRender = false;
+
+    /** Option to force to disable any custom cursors. */
+    @Option(names = "--listen", description = "Launches this instance in listen server mode.")
+    protected boolean listenMode = false;
+
+    /** Option to force to disable any custom cursors. */
+    @Option(names = "--server", description = "Launches this instance in dedicated server mode.")
+    protected boolean serverMode = false;
 
     /** The window. */
     protected final Window window = new Window();
@@ -127,6 +143,17 @@ public abstract class Game extends Runnable {
         }
 
         Out.canUseAnsiCode(!noAnsiCodes);
+
+        if (!noImGui && forceNoRender) {
+            noImGui = true;
+        }
+
+        if (serverMode) {
+            noImGui = true;
+            forceNoInput = true;
+            forceNoRender = true;
+            forceNoSound = true;
+        }
 
         if (!showHelp && !showVersion) {
             initializeInternals(args);
@@ -260,6 +287,30 @@ public abstract class Game extends Runnable {
         return forceNoInput ? InputSystemType.Empty : InputSystemType.GLFW;
     }
 
+    public RenderSystemType getRenderSystemType() {
+        return forceNoRender ? RenderSystemType.Empty : RenderSystemType.OpenGL;
+    }
+
+    public WindowSystemType getWindowSystemType() {
+        return forceNoRender ? WindowSystemType.Empty : WindowSystemType.GLFW;
+    }
+
+    public NetMode getNetMode() {
+        return serverMode ? NetMode.DedicatedServer : (listenMode ? NetMode.ListenServer : NetMode.Client);
+    }
+
+    public boolean canRender() {
+        return !serverMode && !forceNoRender;
+    }
+
+    public boolean hasAuthority() {
+        return serverMode || listenMode;
+    }
+
+    public boolean isLocallyControlled() {
+        return !serverMode;
+    }
+
     /** Initialize the game. */
     protected void initialize() {
 
@@ -282,6 +333,10 @@ public abstract class Game extends Runnable {
 
     /** Initialize everything. */
     private void initializeInternals(String[] args) {
+        Out.clear();
+
+        Out.println("Launched in dedicated server mode.");
+
         if (isDebugging()) {
             Out.printlnDebug("Initializing...");
         }
@@ -301,15 +356,19 @@ public abstract class Game extends Runnable {
 
         Input.initialize();
 
-        Resources.loadDefaultResources();
+        soundManager.initialize();
 
-        if (!noImGui) {
-            imGuiManager.initialize(window.getHandle(), window.getGlslVersion());
+        if (canRender()) {
+            Resources.loadDefaultResources();
+
+            if (!noImGui) {
+                imGuiManager.initialize(window.getHandle(), ((GLFWWindow)window.getWindow()).getGlslVersion());
+            }
+
+            imGuiTools.initialize(sceneManager);
+            debugTools.initialize();
         }
 
-        soundManager.initialize();
-        imGuiTools.initialize(sceneManager);
-        debugTools.initialize();
         initialize();
 
         window.show(true);
@@ -326,7 +385,11 @@ public abstract class Game extends Runnable {
         while (!window.shouldQuit() && !shouldQuit) {
             sceneManager.startFrame();
             updateInternal();
-            renderInternal();
+
+            if (canRender()) {
+                renderInternal();
+            }
+
             sceneManager.endFrame();
             window.pollEvents();
         }
@@ -405,7 +468,7 @@ public abstract class Game extends Runnable {
         soundManager.destroy();
         sceneManager.destroy();
 
-        if (!noImGui && imGuiToolsEnabled) {
+        if (canRender() && !noImGui && imGuiToolsEnabled) {
             imGuiManager.destroy();
         }
 
