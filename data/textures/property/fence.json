@@ -1,0 +1,11 @@
+{
+  "path": "property/fence.png",
+  "sprites": {
+    "fence1": {
+      "x": 0,
+      "y": 0,
+      "z": 96,
+      "w": 32
+    }
+  }
+}

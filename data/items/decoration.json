@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Montagne",
+    "id": "mountain",
+    "value" : 0,
+    "texture": "mountain.json",
+    "sprites" :[
+      "mountain1",
+      "mountain2"
+    ],
+    "initValue": 0
+  },
+  {
+    "name": "Ville",
+    "id": "cities",
+    "value" : 0,
+    "texture": "cities.json",
+    "sprites" :[
+      "cities1"
+    ],
+    "initValue": 0
+  }
+]
