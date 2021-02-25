@@ -118,6 +118,54 @@ public class Farmland extends Game {
         return ResourceDatabase;
     }
 
+    public Map<String, Item> getCropDatabase(){
+        Map<String, Item> CropDatabase = new HashMap<>();
+
+        for (Item item : itemDatabase.values()){
+            if(item.getClass() == Crop.class){
+                CropDatabase.put(item.id,item);
+            }
+        }
+
+        return CropDatabase;
+    }
+
+    public Map<String, Item> getAnimalDatabase(){
+        Map<String, Item> AnimalDatabase = new HashMap<>();
+
+        for (Item item : itemDatabase.values()){
+            if(item.getClass() == Animal.class){
+                AnimalDatabase.put(item.id,item);
+            }
+        }
+
+        return AnimalDatabase;
+    }
+
+    public Map<String, Item> getDecorationDatabase(){
+        Map<String, Item> DecorationDatabase = new HashMap<>();
+
+        for (Item item : itemDatabase.values()){
+            if(item.getClass() == Decoration.class){
+                DecorationDatabase.put(item.id,item);
+            }
+        }
+
+        return DecorationDatabase;
+    }
+
+    public Map<String, Item> getPropertyDatabase(){
+        Map<String, Item> PropertyDatabase = new HashMap<>();
+
+        for (Item item : itemDatabase.values()){
+            if(item.getClass() == Property.class){
+                PropertyDatabase.put(item.id,item);
+            }
+        }
+
+        return PropertyDatabase;
+    }
+
     public Map<String, SaveGame> getSaveGames() {
         return saveGames;
     }
