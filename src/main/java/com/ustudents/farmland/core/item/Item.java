@@ -23,12 +23,12 @@ public class Item {
     public Integer value;
 
     @JsonSerializable
-    private String texture;
+    protected String texture;
 
     public Spritesheet spritesheet;
 
     @JsonSerializableConstructor
     public void deserialize(Map<String, Object> json) {
-        this.spritesheet = Resources.loadSpritesheet("crops/" + texture);
+        this.spritesheet = Resources.loadSpritesheet(texture);
     }
 }
