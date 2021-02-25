@@ -25,10 +25,7 @@ import imgui.type.ImBoolean;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class InGameScene extends Scene {
     public ImBoolean showInventory;
@@ -180,20 +177,11 @@ public class InGameScene extends Scene {
     }
 
     private void makeListOfPlayerItem(){
-        /*List<Item> playerItems = Farmland.get().getCurrentSave().getCurrentPlayer().listOfItems;
-        Set<Item> uniqueItems = new HashSet<>(playerItems);
-
-        for(Item item: uniqueItems){
-            int count = 0;
-            for (Item item1: playerItems){
-                if(item.getClass().getName().equals(item1.getClass().getName())){
-                    count++;
-                }
-            }
-            if(count>0){
-                ImGui.text(item.name + " x" + count);
-            }
-        }*/
+        Map<String,Integer> playerInventory = Farmland.get().getCurrentSave().getCurrentPlayer().inventory;
+        Set<String> uniqueItems = playerInventory.keySet();
+        for(String item: uniqueItems){
+            ImGui.text(item + " x" + playerInventory.get(item));
+        }
     }
 
     public void onTurnEnded() {

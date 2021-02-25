@@ -1,5 +1,6 @@
 package com.ustudents.farmland.core.player;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.farmland.core.item.Item;
@@ -46,7 +47,8 @@ public class Player {
         if (!inventory.containsKey(item.id)) {
             inventory.put(item.id, 1);
         } else {
-            inventory.put(item.id, inventory.get(item.id) + 1);
+            String test = String.valueOf(inventory.get(item.id));
+            inventory.put(item.id, Integer.parseInt(test) + 1);
         }
     }
 }
