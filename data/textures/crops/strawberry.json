@@ -1,0 +1,41 @@
+{
+  "path": "crops/strawberry.png",
+  "sprites": {
+    "strawberry1": {
+      "x": 0,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "strawberry2": {
+      "x": 24,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "strawberry3": {
+      "x": 48,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "strawberry4": {
+      "x": 72,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "strawberry5": {
+      "x": 96,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "strawberry6": {
+      "x": 120,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    }
+  }
+}

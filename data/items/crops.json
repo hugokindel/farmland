@@ -5,6 +5,126 @@
 		"value" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "tomato.json",
+		"sprites" :[
+			"tomato1",
+			"tomato2",
+			"tomato3",
+			"tomato4",
+			"tomato5",
+			"tomato6"
+		],
+		"initValue": 50
+	},
+	{
+		"name": "Fraise",
+		"id": "strawberry",
+		"value" : 10,
+		"numberOfTurnsToGrow": 6,
+		"texture": "strawberry.json",
+		"sprites" :[
+			"strawberry1",
+			"strawberry2",
+			"strawberry3",
+			"strawberry4",
+			"strawberry5",
+			"strawberry6"
+		],
+		"initValue": 50
+	},
+	{
+		"name": "Mais",
+		"id": "corn",
+		"value" : 10,
+		"numberOfTurnsToGrow": 6,
+		"texture": "corn.json",
+		"sprites" :[
+			"corn1",
+			"corn2",
+			"corn3",
+			"corn4",
+			"corn5",
+			"corn6"
+		],
+		"initValue": 50
+	},
+	{
+		"name": "Raisins",
+		"id": "grapes",
+		"value" : 10,
+		"numberOfTurnsToGrow": 6,
+		"texture": "grapes.json",
+		"sprites" :[
+			"grapes1",
+			"grapes2",
+			"grapes3",
+			"grapes4",
+			"grapes5",
+			"grapes6"
+		],
+		"initValue": 50
+	},
+	{
+		"name": "Orange",
+		"id": "orange",
+		"value" : 10,
+		"numberOfTurnsToGrow": 6,
+		"texture": "orange.json",
+		"sprites" :[
+			"orange1",
+			"orange2",
+			"orange3",
+			"orange4",
+			"orange5",
+			"orange6"
+		],
+		"initValue": 50
+	},
+	{
+		"name": "Ananas",
+		"id": "pineapple",
+		"value" : 10,
+		"numberOfTurnsToGrow": 6,
+		"texture": "pineapple.json",
+		"sprites" :[
+			"pineapple1",
+			"pineapple2",
+			"pineapple3",
+			"pineapple4",
+			"pineapple5",
+			"pineapple6"
+		],
+		"initValue": 50
+	},
+	{
+		"name": "Radis",
+		"id": "shuttle",
+		"value" : 10,
+		"numberOfTurnsToGrow": 6,
+		"texture": "shuttle.json",
+		"sprites" :[
+			"shuttle1",
+			"shuttle2",
+			"shuttle3",
+			"shuttle4",
+			"shuttle5",
+			"shuttle6"
+		],
+		"initValue": 50
+	},
+	{
+		"name": "Pasteque",
+		"id": "watermelon",
+		"value" : 10,
+		"numberOfTurnsToGrow": 6,
+		"texture": "watermelon.json",
+		"sprites" :[
+			"watermelon1",
+			"watermelon2",
+			"watermelon3",
+			"watermelon4",
+			"watermelon5",
+			"watermelon6"
+		],
 		"initValue": 50
 	}
 ]

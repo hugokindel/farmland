@@ -1,0 +1,41 @@
+{
+  "path": "crops/pineapple.png",
+  "sprites": {
+    "pineapple1": {
+      "x": 0,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "pineapple2": {
+      "x": 24,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "pineapple3": {
+      "x": 48,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "pineapple4": {
+      "x": 72,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "pineapple5": {
+      "x": 96,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "pineapple6": {
+      "x": 120,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    }
+  }
+}

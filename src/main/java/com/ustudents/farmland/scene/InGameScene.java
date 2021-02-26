@@ -165,7 +165,7 @@ public class InGameScene extends Scene {
 
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
         int playerMoney = player.money;
-        for(Item item : Farmland.get().getItemDatabase().values()){
+        for(Item item : Farmland.get().getResourceDatabase().values()){
             if(ImGui.button(item.name) && playerMoney>=item.value){
                 player.money = playerMoney-item.value;
                 player.addToInventory(item);

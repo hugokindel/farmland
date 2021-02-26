@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Enclos",
+    "id": "fence",
+    "value" : 10,
+    "maintenanceCost" : 0,
+    "initLevel" : 0,
+    "actualLevel" : 0,
+    "maxLevel" : 0,
+    "texture": "fence.json",
+    "sprites" :[
+      "fence1"
+    ],
+    "initValue": 50
+  },
+  {
+    "name": "Champ",
+    "id": "crop",
+    "value" : 10,
+    "maintenanceCost" : 0,
+    "initLevel" : 0,
+    "actualLevel" : 0,
+    "maxLevel" : 0,
+    "texture": "crop.json",
+    "sprites" :[
+      "crop1"
+    ],
+    "initValue": 50
+  }
+]

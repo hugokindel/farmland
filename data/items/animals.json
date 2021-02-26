@@ -1,0 +1,77 @@
+[
+  {
+    "name": "Poulet",
+    "id": "chicken",
+    "value" : 10,
+    "numberOfTurnsToReachMaturity": 5,
+    "texture": "chicken.json",
+    "sprites" :[
+      "chicken1",
+      "chicken2",
+      "chicken3",
+      "chicken4",
+      "chicken1"
+    ],
+    "initValue": 50
+  },
+  {
+    "name": "Vache",
+    "id": "cow",
+    "value" : 10,
+    "numberOfTurnsToReachMaturity": 5,
+    "texture": "cow.json",
+    "sprites" :[
+      "cow1",
+      "cow2",
+      "cow3",
+      "cow4",
+      "cow1"
+    ],
+    "initValue": 50
+  },
+  {
+    "name": "Chevre",
+    "id": "goat",
+    "value" : 10,
+    "numberOfTurnsToReachMaturity": 5,
+    "texture": "goat.json",
+    "sprites" :[
+      "goat1",
+      "goat2",
+      "goat3",
+      "goat4",
+      "goat1"
+    ],
+    "initValue": 50
+  },
+  {
+    "name": "Cochon",
+    "id": "pig",
+    "value" : 10,
+    "numberOfTurnsToReachMaturity": 5,
+    "texture": "pig.json",
+    "sprites" :[
+      "pig1",
+      "pig2",
+      "pig3",
+      "pig4",
+      "pig1"
+    ],
+    "initValue": 50
+  },
+  {
+    "name": "Mouton",
+    "id": "sheep",
+    "value" : 10,
+    "numberOfTurnsToReachMaturity": 5,
+    "texture": "sheep.json",
+    "sprites" :[
+      "sheep1",
+      "sheep2",
+      "sheep3",
+      "sheep4",
+      "sheep1"
+    ],
+    "initValue": 50
+  }
+]

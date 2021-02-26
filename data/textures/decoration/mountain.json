@@ -1,0 +1,17 @@
+{
+  "path": "decoration/mountain.png",
+  "sprites": {
+    "mountain1": {
+      "x": 0,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    },
+    "mountain2": {
+      "x": 24,
+      "y": 0,
+      "z": 24,
+      "w": 24
+    }
+  }
+}
