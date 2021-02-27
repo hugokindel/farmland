@@ -181,6 +181,12 @@ public class InGameScene extends Scene {
         Set<String> uniqueItems = playerInventory.keySet();
         for(String item: uniqueItems){
             ImGui.text(item + " x" + playerInventory.get(item));
+
+            ImGui.sameLine();
+
+            if (ImGui.button("Sélectionner")) {
+                Farmland.get().getCurrentSave().selectedItemID = item;
+            }
         }
     }
 
