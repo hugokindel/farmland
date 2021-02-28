@@ -3,13 +3,16 @@ package com.ustudents.farmland;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
+import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
+import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.scene.menus.MainMenu;
 
 import java.io.File;
+import java.net.DatagramPacket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,8 @@ public class Farmland extends Game {
     private Map<String, Item> itemDatabase;
 
     private Map<String, SaveGame> saveGames;
+
+    private Map<String, Object> serverConfig;
 
     public String saveId;
 
@@ -38,6 +43,26 @@ public class Farmland extends Game {
     @Override
     protected void destroy() {
         saveSavedGames();
+    }
+
+    @Override
+    public void onServerStarted() {
+        if (new File("server.json").exists()) {
+            serverConfig = JsonReader.readMap("server.json");
+        } else {
+            serverConfig = new HashMap<>();
+            serverConfig.put("serverName", "Local server");
+        }
+    }
+
+    @Override
+    public void onServerRequestReceived(Map<String, Object> json, DatagramPacket packet) {
+
+    }
+
+    @Override
+    public void onServerDestroyed() {
+        JsonWriter.writeToFile("server.json", serverConfig);
     }
 
     private void loadItemDatabases() {

@@ -340,6 +340,10 @@ public class Json {
         }
     }
 
+    public static String minify(String json) {
+        return json.replace("\n", "").replace("\t", "").replace(" ", "");
+    }
+
     /**
      * Adds an object to a map.
      *

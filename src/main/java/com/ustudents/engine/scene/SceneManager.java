@@ -96,7 +96,10 @@ public class SceneManager {
     /** Destroys the scene. */
     public void destroy() {
         if (scenes.size() > currentSceneIndex) {
-            getCurrentScene().getSpritebatch().destroy();
+            if (getCurrentScene().getSpritebatch() != null) {
+                getCurrentScene().getSpritebatch().destroy();
+            }
+
             getCurrentScene().destroy();
 
             if (Game.isDebugging()) {
@@ -166,6 +169,10 @@ public class SceneManager {
 
     /** @return the current scene. */
     public Scene getCurrentScene() {
+        if (scenes.isEmpty()) {
+            return null;
+        }
+
         return scenes.get(currentSceneIndex);
     }
 

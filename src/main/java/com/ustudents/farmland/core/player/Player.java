@@ -1,6 +1,5 @@
 package com.ustudents.farmland.core.player;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.farmland.core.item.Item;
@@ -30,6 +29,8 @@ public class Player {
 
     @JsonSerializable
     public Map<String, Integer> inventory;
+
+    public String ipAddress;
 
     public Player() {
         this.inventory = new HashMap<>();

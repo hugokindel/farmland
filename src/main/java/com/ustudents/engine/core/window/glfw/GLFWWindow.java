@@ -6,6 +6,7 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
 import com.ustudents.engine.core.window.events.*;
+import com.ustudents.engine.graphic.RenderTarget;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
@@ -38,6 +39,8 @@ public class GLFWWindow extends EmptyWindow {
     private long windowHandle;
 
     private String glslVersion;
+
+    private RenderTarget renderTarget;
 
     @Override
     public void initialize(String name, Vector2i size, boolean vsync) {
@@ -88,7 +91,7 @@ public class GLFWWindow extends EmptyWindow {
         setVsync(vsync);
 
         GL.createCapabilities();
-        glClearColor(0.7647f, 0.7411f, 0.6901f, 1.0f);
+        //glClearColor(0.7647f, 0.7411f, 0.6901f, 1.0f);
 
         if (Game.isDebugging()) {
             Out.printlnDebug("OpenGL version: " + glGetString(GL_VERSION));
@@ -102,7 +105,25 @@ public class GLFWWindow extends EmptyWindow {
     }
 
     @Override
+    public void clearBuffer() {
+        if (renderTarget != null) {
+            renderTarget.bind();
+
+            glClearColor(0.7647f, 0.7411f, 0.6901f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
+    }
+
+    @Override
+    public void swapBuffer() {
+        if (renderTarget != null) {
+            renderTarget.unbind();
+        }
+    }
+
+    @Override
     public void clear() {
+        glClearColor(0.7647f, 0.7411f, 0.6901f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
@@ -113,6 +134,10 @@ public class GLFWWindow extends EmptyWindow {
 
     @Override
     public void destroy() {
+        if (renderTarget != null) {
+            renderTarget.destroy();
+        }
+
         glfwFreeCallbacks(windowHandle);
         glfwDestroyWindow(windowHandle);
         glfwTerminate();
@@ -253,7 +278,7 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetMouseButtonCallback(windowHandle, new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                if (Farmland.get().isImGuiEnabled() && (Farmland.get().isImGuiToolsEnabled() || SceneManager.getScene().isForceImGuiEnabled())) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
                     final ImGuiIO io = ImGui.getIO();
 
                     if (io.getWantCaptureMouse()) {
@@ -275,7 +300,7 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetScrollCallback(windowHandle, new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
-                if (Farmland.get().isImGuiEnabled() && (Farmland.get().isImGuiToolsEnabled() || SceneManager.getScene().isForceImGuiEnabled())) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
                     final ImGuiIO io = ImGui.getIO();
 
                     if (io.getWantCaptureMouse()) {
@@ -286,5 +311,19 @@ public class GLFWWindow extends EmptyWindow {
                 scrollMoved.dispatch(new ScrollMovedEvent(new Vector2f((float)xoffset, (float)yoffset)));
             }
         });
+    }
+
+    @Override
+    public void renderToBuffer() {
+        renderTarget = new RenderTarget();
+    }
+
+    @Override
+    public int getTexture() {
+        if (renderTarget == null) {
+            return -1;
+        }
+
+        return renderTarget.getTextureHandle();
     }
 }
