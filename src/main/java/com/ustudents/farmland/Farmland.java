@@ -4,16 +4,22 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.network.Packet;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.scene.menus.MainMenu;
+import org.joml.Vector2i;
 
 import java.io.File;
 import java.net.DatagramPacket;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +43,12 @@ public class Farmland extends Game {
         loadItemDatabases();
         loadSavedGames();
 
+        if (getNetMode() == NetMode.DedicatedServer) {
+            if (saveGames.containsKey("save-server.json")) {
+                saveId = "save-server.json";
+            }
+        }
+
         sceneManager.changeScene(new MainMenu());
     }
 
@@ -56,8 +68,23 @@ public class Farmland extends Game {
     }
 
     @Override
-    public void onServerRequestReceived(Map<String, Object> json, DatagramPacket packet) {
+    public Packet onServerHandleRequest(Packet packet) {
+        Out.println("Farmland handle");
 
+        Packet answer = new Packet(new LinkedHashMap<>(), packet.address, packet.datagram);
+
+        if (packet.data.get("command").equals("loadWorld")) {
+            if (getCurrentSave() == null) {
+                SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), "Forx", "Forx's village", Color.RED, new Vector2i(16, 16), System.currentTimeMillis(), 0);
+                saveGame.path = "save-server.json";
+                saveGames.put("save-server.json", saveGame);
+                saveId = "save-server.json";
+            }
+            answer.data.put("world", Json.serialize(getCurrentSave()));
+            return answer;
+        }
+
+        return null;
     }
 
     @Override
@@ -115,7 +142,7 @@ public class Farmland extends Game {
                 SaveGame saveGame = Json.deserialize(path, SaveGame.class);
                 assert saveGame != null;
                 saveGame.path = path.replace(Resources.getSavesDirectoryName() + "/", "");
-                saveGames.put(saveGame.name, saveGame);
+                saveGames.put(saveGame.path, saveGame);
 
             }
         }

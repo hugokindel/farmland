@@ -340,8 +340,11 @@ public class Json {
         }
     }
 
+    // TODO: Minify
     public static String minify(String json) {
-        return json.replace("\n", "").replace("\t", "").replace(" ", "");
+        // Does not handle between strings ""
+        //return json.replace("\n", "").replace("\t", "").replace(" ", "");
+        return json;
     }
 
     /**

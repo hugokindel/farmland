@@ -4,6 +4,7 @@ data/players/
 data/settings.json
 data/saves/
 imgui.ini
+server.json
 *.log
 
 # macOS

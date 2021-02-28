@@ -18,10 +18,7 @@ import com.ustudents.engine.graphic.imgui.ImGuiTools;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.InputSystemType;
 import com.ustudents.engine.input.Key;
-import com.ustudents.engine.network.Client;
-import com.ustudents.engine.network.NetMode;
-import com.ustudents.engine.network.ServerThread;
-import com.ustudents.engine.network.ServerCliThread;
+import com.ustudents.engine.network.*;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
@@ -337,6 +334,11 @@ public abstract class Game extends Runnable {
         return Client.clientId != -1;
     }
 
+    public void disconnectFromServer() {
+        Client.commandDisconnect();
+        Client.closeSocket();
+    }
+
     public void disableTools() {
         forceDisableTools = true;
     }
@@ -374,8 +376,8 @@ public abstract class Game extends Runnable {
 
     }
 
-    public void onServerRequestReceived(Map<String, Object> json, DatagramPacket packet) {
-
+    public Packet onServerHandleRequest(Packet packet) {
+        return null;
     }
 
     public void onServerDestroyed() {
@@ -527,9 +529,8 @@ public abstract class Game extends Runnable {
 
     /** Destroy everything. */
     public void destroyInternals() {
-        if (Client.isSocketBound()) {
-            Client.commandDisconnect();
-            Client.closeSocket();
+        if (Client.isConnectedToServer()) {
+            disconnectFromServer();
         }
 
         try {
