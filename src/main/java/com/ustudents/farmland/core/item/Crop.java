@@ -11,6 +11,7 @@ public class Crop extends Item {
     @JsonSerializable
     public Integer numberOfTurnsToGrow;
 
+    @JsonSerializableConstructor
     @Override
     public void deserialize(Map<String, Object> json) {
         this.spritesheet = Resources.loadSpritesheet("crops/" + super.texture);
