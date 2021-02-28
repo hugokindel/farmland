@@ -59,8 +59,8 @@ public class Farmland extends Game {
 
     @Override
     public void onServerStarted() {
-        if (new File("server.json").exists()) {
-            serverConfig = JsonReader.readMap("server.json");
+        if (new File(Resources.getDataDirectory() + "/server.json").exists()) {
+            serverConfig = JsonReader.readMap(Resources.getDataDirectory() + "/server.json");
         } else {
             serverConfig = new HashMap<>();
             serverConfig.put("serverName", "Local server");
@@ -89,7 +89,7 @@ public class Farmland extends Game {
 
     @Override
     public void onServerDestroyed() {
-        JsonWriter.writeToFile("server.json", serverConfig);
+        JsonWriter.writeToFile(Resources.getDataDirectory() + "/server.json", serverConfig);
     }
 
     private void loadItemDatabases() {
