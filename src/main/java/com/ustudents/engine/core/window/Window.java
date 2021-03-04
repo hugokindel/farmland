@@ -1,36 +1,10 @@
 package com.ustudents.engine.core.window;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.audio.empty.EmptySound;
-import com.ustudents.engine.audio.openal.ALSound;
-import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
-import com.ustudents.engine.core.window.events.*;
 import com.ustudents.engine.core.window.glfw.GLFWWindow;
-import com.ustudents.engine.scene.SceneManager;
-import com.ustudents.farmland.Farmland;
-import imgui.ImGui;
-import imgui.ImGuiIO;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.util.Objects;
-
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL32.*;
-import static org.lwjgl.stb.STBImage.stbi_load;
-import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
     EmptyWindow windowManager;
@@ -46,6 +20,14 @@ public class Window {
         }
 
         windowManager.initialize(name, size, vsync);
+    }
+
+    public void clearBuffer() {
+        windowManager.clearBuffer();
+    }
+
+    public void swapBuffer() {
+        windowManager.swapBuffer();
     }
 
     public void clear() {
@@ -106,6 +88,14 @@ public class Window {
 
     public void changeIcon(String filePath) {
         windowManager.changeIcon(filePath);
+    }
+
+    public void renderToTarget() {
+        windowManager.renderToBuffer();
+    }
+
+    public int getTexture() {
+       return windowManager.getTexture();
     }
 
     public EventDispatcher getSizeChanged() {

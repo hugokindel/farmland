@@ -43,7 +43,7 @@ public abstract class Scene {
      * @param sceneManager The scene manager.
      */
      void create(SceneManager sceneManager) {
-         Vector2i size = Farmland.get().getWindow().getSize();
+         Vector2i size = Game.get().getWindow().getSize();
 
          this.registry = SceneManager.get().getRegistry();
          this.sceneManager = sceneManager;

@@ -10,7 +10,6 @@ import com.ustudents.engine.core.window.events.ScrollMovedEvent;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;
-import com.ustudents.farmland.Farmland;
 import org.joml.*;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -99,7 +98,7 @@ public class Camera {
         if (type == Type.World) {
             viewProjectionMatrix.setOrtho2D(-aspect, aspect, -1, 1).mul(viewMatrix);
         } else {
-            Vector2i size = Farmland.get().getWindow().getSize();
+            Vector2i size = Game.get().getWindow().getSize();
             viewProjectionMatrix.identity().setOrtho2D(0, size.x, -size.y, 0);
         }
 
@@ -109,7 +108,7 @@ public class Camera {
         viewProjectionMatrix.getScale(currentScale);
         zoom = currentScale.y;
 
-        Vector2i windowSize = Farmland.get().getWindow().getSize();
+        Vector2i windowSize = Game.get().getWindow().getSize();
         position = screenCoordToWorldCoord(new Vector2f((float)windowSize.x / 2, (float)windowSize.y / 2));
 
         rotation = viewProjectionMatrix.getRotation( new AxisAngle4f()).z;
@@ -264,7 +263,7 @@ public class Camera {
 
     public Vector2f screenCoordToWorldCoord(Vector2f screenCoord) {
         Vector3f value = new Vector3f();
-        Vector2i windowSize = Farmland.get().getWindow().getSize();
+        Vector2i windowSize = Game.get().getWindow().getSize();
         viewProjectionMatrix.unproject(new Vector3f(screenCoord.x, windowSize.y - screenCoord.y, 0),
                 new int[] {0, 0, windowSize.x, windowSize.y}, value);
         return new Vector2f(value.x, value.y);
@@ -275,7 +274,7 @@ public class Camera {
             return worldCoord;
         } else {
             Vector3f value = new Vector3f();
-            Vector2i windowSize = Farmland.get().getWindow().getSize();
+            Vector2i windowSize = Game.get().getWindow().getSize();
             viewProjectionMatrix.project(new Vector3f(worldCoord.x, worldCoord.y, 0),
                     new int[] {0, 0, windowSize.x, windowSize.y}, value);
             return new Vector2f((float)windowSize.x / 2 + value.x, value.y - (float)windowSize.y / 2);
@@ -312,7 +311,7 @@ public class Camera {
         Window.get().getCursorMoved().add((dataType, data) -> {
             if (inputEnabled) {
                 CursorMovedEvent eventData = (CursorMovedEvent) data;
-                moveToMousePosition(new Vector2f((int) eventData.position.x, Farmland.get().getWindow().getSize().y - (int) eventData.position.y));
+                moveToMousePosition(new Vector2f((int) eventData.position.x, Game.get().getWindow().getSize().y - (int) eventData.position.y));
             }
         });
 

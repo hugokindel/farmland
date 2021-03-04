@@ -1,6 +1,8 @@
 package com.ustudents.farmland.core;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
@@ -81,8 +83,8 @@ public class SaveGame {
 
             for (int y = 0; y < mapSize.y; y++) {
                 Vector2f spriteRegion = new Vector2f(
-                        24 * random.generateInRange(1, cellBackground.getWidth() / 24),
-                        24 * random.generateInRange(1, cellBackground.getHeight() / 24));
+                        24 * random.generateInRange(1, 120 / 24),
+                        24 * random.generateInRange(1, 120 / 24));
                 Sprite sprite = new Sprite(cellBackground,
                         new Vector4f(spriteRegion.x, spriteRegion.y, 24, 24));
                 Vector4f viewRectangle = new Vector4f(
@@ -122,6 +124,10 @@ public class SaveGame {
 
         File f = new File(Resources.getSavesDirectoryName());
         this.path = "save-" + f.list().length + ".json";
+
+        if (Game.isDebugging()) {
+            Out.printlnDebug("Savegame created.");
+        }
     }
 
     public void endTurn() {

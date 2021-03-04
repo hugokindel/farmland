@@ -96,6 +96,9 @@ public class InGameScene extends Scene {
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
             Farmland.get().saveId = null;
+            if (getGame().isConnectedToServer()) {
+                getGame().disconnectFromServer();
+            }
             changeScene(new MainMenu());
         });
         buttonData2.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Left);

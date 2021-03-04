@@ -18,13 +18,17 @@ public class ImGuiManager {
     /** The ImGui OpenGL 3.X implementation. */
     private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
 
-    public void initialize(long windowHandle, String glslVersion) {
+    public void initialize(long windowHandle, String glslVersion, boolean enableDocking) {
         ImGui.createContext();
 
         final ImGuiIO io = ImGui.getIO();
         io.setIniFilename(null);
         io.addConfigFlags(ImGuiConfigFlags.NavEnableKeyboard);
-        //io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
+
+        if (enableDocking) {
+            io.addConfigFlags(ImGuiConfigFlags.DockingEnable);
+        }
+
         io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
         io.setConfigViewportsNoTaskBarIcon(true);
         imGuiGlfw.init(windowHandle, true);

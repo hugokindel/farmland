@@ -340,6 +340,13 @@ public class Json {
         }
     }
 
+    // TODO: Minify
+    public static String minify(String json) {
+        // Does not handle between strings ""
+        //return json.replace("\n", "").replace("\t", "").replace(" ", "");
+        return json;
+    }
+
     /**
      * Adds an object to a map.
      *

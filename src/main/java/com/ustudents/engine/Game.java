@@ -18,7 +18,7 @@ import com.ustudents.engine.graphic.imgui.ImGuiTools;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.InputSystemType;
 import com.ustudents.engine.input.Key;
-import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.network.*;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
@@ -27,7 +27,9 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL33;
 
+import java.net.DatagramPacket;
 import java.util.Arrays;
+import java.util.Map;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
@@ -69,11 +71,11 @@ public abstract class Game extends Runnable {
 
     /** Option to force to disable any custom cursors. */
     @Option(names = "--listen", description = "Launches this instance in listen server mode.")
-    protected boolean listenMode = false;
+    protected boolean listenServerEnabled = false;
 
     /** Option to force to disable any custom cursors. */
     @Option(names = "--server", description = "Launches this instance in dedicated server mode.")
-    protected boolean serverMode = false;
+    protected boolean dedicatedServerEnabled = false;
 
     /** The window. */
     protected final Window window = new Window();
@@ -114,8 +116,16 @@ public abstract class Game extends Runnable {
     /** Custom cursor texture. */
     protected Texture cursorTexture;
 
+    protected boolean enableDocking;
+
+    protected ServerThread serverThread;
+
+    protected ServerCliThread serverCliThread;
+
     /** The game instance. */
     private static Game game;
+
+    private boolean forceDisableTools;
 
     /** Class constructor. */
     public Game() {
@@ -136,7 +146,7 @@ public abstract class Game extends Runnable {
             instanceName = getClass().getAnnotation(Command.class).name();
         }
 
-        Out.start(args, false, false);
+        Out.start(args, false, true);
 
         if (!readArguments(args, getClass())) {
             return 1;
@@ -148,7 +158,7 @@ public abstract class Game extends Runnable {
             noImGui = true;
         }
 
-        if (serverMode) {
+        if (dedicatedServerEnabled) {
             noImGui = true;
             forceNoInput = true;
             forceNoRender = true;
@@ -156,9 +166,11 @@ public abstract class Game extends Runnable {
         }
 
         if (!showHelp && !showVersion) {
-            initializeInternals(args);
-            startGameLoop();
-            destroyInternals();
+            if (preLoadCondition(args)) {
+                initializeInternals(args);
+                startGameLoop();
+                destroyInternals();
+            }
         }
 
         Out.end();
@@ -268,6 +280,10 @@ public abstract class Game extends Runnable {
         return vsync;
     }
 
+    public boolean shouldQuit() {
+        return window.shouldQuit() || shouldQuit;
+    }
+
     /**
      * Changes the V-Sync state.
      *
@@ -296,19 +312,39 @@ public abstract class Game extends Runnable {
     }
 
     public NetMode getNetMode() {
-        return serverMode ? NetMode.DedicatedServer : (listenMode ? NetMode.ListenServer : NetMode.Client);
+        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : Client.clientId != -1 ? NetMode.Client : NetMode.Standalone);
     }
 
     public boolean canRender() {
-        return !serverMode && !forceNoRender;
+        return !dedicatedServerEnabled && !forceNoRender;
     }
 
+    // if true Dedicated Server, Listen Server, Standalone, false Client
     public boolean hasAuthority() {
-        return serverMode || listenMode;
+        return dedicatedServerEnabled || listenServerEnabled || Client.clientId == -1;
     }
 
+    // if true Listen Server, Client, Standalone, false Dedicated Server
     public boolean isLocallyControlled() {
-        return !serverMode;
+        return !dedicatedServerEnabled;
+    }
+
+    // if true Client, false Standalone
+    public boolean isConnectedToServer() {
+        return Client.clientId != -1;
+    }
+
+    public void disconnectFromServer() {
+        Client.commandDisconnect();
+        Client.closeSocket();
+    }
+
+    public void disableTools() {
+        forceDisableTools = true;
+    }
+
+    protected boolean preLoadCondition(String[] args) {
+        return true;
     }
 
     /** Initialize the game. */
@@ -326,17 +362,30 @@ public abstract class Game extends Runnable {
 
     }
 
+    /** Renders ImGui content. */
+    protected void renderImGui() {
+
+    }
+
     /** Destroys the game's data. */
     protected void destroy() {
 
     }
 
+    public void onServerStarted() {
+
+    }
+
+    public Packet onServerHandleRequest(Packet packet) {
+        return null;
+    }
+
+    public void onServerDestroyed() {
+
+    }
+
     /** Initialize everything. */
-    private void initializeInternals(String[] args) {
-        Out.clear();
-
-        Out.println("Launched in dedicated server mode.");
-
+    public void initializeInternals(String[] args) {
         if (isDebugging()) {
             Out.printlnDebug("Initializing...");
         }
@@ -362,11 +411,19 @@ public abstract class Game extends Runnable {
             Resources.loadDefaultResources();
 
             if (!noImGui) {
-                imGuiManager.initialize(window.getHandle(), ((GLFWWindow)window.getWindow()).getGlslVersion());
+                imGuiManager.initialize(window.getHandle(), ((GLFWWindow)window.getWindow()).getGlslVersion(), enableDocking);
             }
 
             imGuiTools.initialize(sceneManager);
             debugTools.initialize();
+        }
+
+        if (getNetMode() == NetMode.DedicatedServer) {
+            serverThread = new ServerThread();
+            serverThread.start();
+
+            serverCliThread = new ServerCliThread();
+            serverCliThread.start();
         }
 
         initialize();
@@ -379,10 +436,10 @@ public abstract class Game extends Runnable {
     }
 
     /** Starts the game loop. */
-    private void startGameLoop() {
+    public void startGameLoop() {
         window.pollEvents();
 
-        while (!window.shouldQuit() && !shouldQuit) {
+        while (!shouldQuit()) {
             sceneManager.startFrame();
             updateInternal();
 
@@ -400,12 +457,16 @@ public abstract class Game extends Runnable {
         timer.update();
 
         if (Input.isKeyPressed(Key.F1)) {
-            imGuiToolsEnabled = !imGuiToolsEnabled;
-            window.actualizeCursorType();
+            if (!forceDisableTools) {
+                imGuiToolsEnabled = !imGuiToolsEnabled;
+                window.actualizeCursorType();
+            }
         }
 
         if (Input.isKeyPressed(Key.F2)) {
-            debugToolsEnabled = !debugToolsEnabled;
+            if (!forceDisableTools) {
+                debugToolsEnabled = !debugToolsEnabled;
+            }
         }
 
         float dt = timer.getDeltaTime();
@@ -416,48 +477,74 @@ public abstract class Game extends Runnable {
 
     /** Renders the game. */
     private void renderInternal() {
-        Spritebatch spritebatch = sceneManager.getCurrentScene().getSpritebatch();
-
         timer.render();
         window.clear();
+
+        window.clearBuffer();
 
         if (shouldResize) {
             resizeViewportAndCameras();
         }
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene().isForceImGuiEnabled())) {
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
             imGuiManager.startFrame();
         }
 
         sceneManager.render();
         render();
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene().isForceImGuiEnabled())) {
+        window.swapBuffer();
+
+        if (!noImGui && (imGuiToolsEnabled || (SceneManager.getScene() != null && SceneManager.getScene().isForceImGuiEnabled()))) {
             sceneManager.renderImGui();
+        }
+
+        if (!noImGui) {
+            renderImGui();
         }
 
         if (!noImGui && imGuiToolsEnabled) {
             imGuiTools.renderImGui();
         }
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene().isForceImGuiEnabled())) {
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
             imGuiManager.endFrame();
         }
 
-        if (noImGui || (!isImGuiToolsEnabled() && !SceneManager.getScene().isForceImGuiEnabled()) && sceneManager.getCurrentScene() != null &&
-                cursorTexture != null && Input.getMousePos() != null) {
-            spritebatch.begin(sceneManager.getCurrentScene().getCursorCamera());
-            spritebatch.drawTexture(new Spritebatch.TextureData(cursorTexture, Input.getMousePos()) {{
-                scale = new Vector2f(2.0f, 2.0f);
-            }});
-            spritebatch.end();
+        if (sceneManager.getCurrentScene() != null) {
+            Spritebatch spritebatch = sceneManager.getCurrentScene().getSpritebatch();
+
+            if (noImGui || (!isImGuiToolsEnabled() && !SceneManager.getScene().isForceImGuiEnabled()) && sceneManager.getCurrentScene() != null &&
+                    cursorTexture != null && Input.getMousePos() != null) {
+                spritebatch.begin(sceneManager.getCurrentScene().getCursorCamera());
+                spritebatch.drawTexture(new Spritebatch.TextureData(cursorTexture, Input.getMousePos()) {{
+                    scale = new Vector2f(2.0f, 2.0f);
+                }});
+                spritebatch.end();
+            }
         }
 
         window.swap();
     }
 
     /** Destroy everything. */
-    private void destroyInternals() {
+    public void destroyInternals() {
+        if (Client.isConnectedToServer()) {
+            disconnectFromServer();
+        }
+
+        try {
+            if (serverCliThread != null && serverCliThread.isAlive()) {
+                serverCliThread.join();
+            }
+            if (serverThread != null && serverThread.isAlive()) {
+                ServerThread.closeSocket();
+                serverThread.join();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         destroy();
 
         if (isDebugging()) {
