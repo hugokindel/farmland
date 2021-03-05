@@ -49,8 +49,8 @@ public class ServersListMenu extends MenuScene {
                         SaveGame saveGame = Json.deserialize((Map<String, Object>)answer.get("world"), SaveGame.class);
                         assert saveGame != null;
                         saveGame.path = "save-server.json";
-                        Farmland.get().getSaveGames().put(saveGame.path, saveGame);
-                        Farmland.get().saveId = saveGame.path;
+                        Farmland.get().getSaveGames().put(saveGame.name, saveGame);
+                        Farmland.get().saveId = saveGame.name;
                         changeScene(new InGameScene());
 
                         break;

@@ -142,7 +142,7 @@ public class Farmland extends Game {
                 SaveGame saveGame = Json.deserialize(path, SaveGame.class);
                 assert saveGame != null;
                 saveGame.path = path.replace(Resources.getSavesDirectoryName() + "/", "");
-                saveGames.put(saveGame.path, saveGame);
+                saveGames.put(saveGame.name, saveGame);
 
             }
         }
@@ -222,7 +222,7 @@ public class Farmland extends Game {
         return saveGames;
     }
 
-    public SaveGame getSaveGame(String id) {
+    public SaveGame getSaveGameWithId(String id) {
         for (SaveGame save : saveGames.values()) {
             if (save.path.replace(".json", "").equals(id)) {
                 return save;

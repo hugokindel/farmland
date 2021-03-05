@@ -39,7 +39,7 @@ public class ServerThread extends Thread {
                 }
             }
         } catch (Exception e) {
-            if (!e.getMessage().toLowerCase().contains("socket closed")) {
+            if (!e.getMessage().toLowerCase().contains("socket\" is null") && !e.getMessage().toLowerCase().contains("socket closed")) {
                 e.printStackTrace();
             }
         }
@@ -60,7 +60,7 @@ public class ServerThread extends Thread {
 
     public static void closeSocket() {
         try {
-            if (socket.isBound()) {
+            if (socket != null && socket.isBound()) {
                 socket.close();
                 socket = null;
             }
@@ -93,7 +93,9 @@ public class ServerThread extends Thread {
 
             return received;
         } catch (Exception e) {
-            e.printStackTrace();
+            if (!e.getMessage().toLowerCase().contains("socket closed")) {
+                e.printStackTrace();
+            }
         }
 
         return null;
