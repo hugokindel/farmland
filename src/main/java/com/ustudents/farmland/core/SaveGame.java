@@ -2,6 +2,7 @@ package com.ustudents.farmland.core;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
@@ -34,6 +35,12 @@ public class SaveGame {
     public Integer turnTimePassed;
 
     @JsonSerializable
+    public Integer mapWidth;
+
+    @JsonSerializable
+    public Integer mapHeight;
+
+    @JsonSerializable
     public Long seed;
 
     @JsonSerializable
@@ -57,12 +64,13 @@ public class SaveGame {
     }
 
     public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
+        mapWidth = mapSize.x;
+        mapHeight = mapSize.y;
         this.seed = seed;
 
         if (this.seed == null) {
             this.seed = System.currentTimeMillis();
         }
-
         SeedRandom random = new SeedRandom(this.seed);
 
         this.turn = 0;

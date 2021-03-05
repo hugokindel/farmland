@@ -1,6 +1,7 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
@@ -19,6 +20,7 @@ import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.menus.MainMenu;
+import com.ustudents.farmland.scene.menus.ResultMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.type.ImBoolean;
@@ -195,6 +197,26 @@ public class InGameScene extends Scene {
             Farmland.get().getCurrentSave().itemsTurn= new ArrayList<>();
         }
         getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
+
+        Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+        if(currentPlayer.money == 0){
+            Farmland.get().getCurrentSave().players.remove(currentPlayer);
+
+            if (getGame().isConnectedToServer()) {
+                getGame().disconnectFromServer();
+            }
+            ResultMenu resultMenu = new ResultMenu();
+            resultMenu.currentPlayer = currentPlayer;
+            resultMenu.currentSave = Farmland.get().getCurrentSave();
+            Farmland.get().saveId = null;
+            changeScene(resultMenu);
+        }else if(currentPlayer.money == 1000){
+            ResultMenu resultMenu = new ResultMenu();
+            resultMenu.currentPlayer = currentPlayer;
+            resultMenu.currentSave = Farmland.get().getCurrentSave();
+            resultMenu.isWin = true;
+            Farmland.get().saveId = null;
+        }
     }
 
     public void onSecondElapsed(int secondsElapsed) {

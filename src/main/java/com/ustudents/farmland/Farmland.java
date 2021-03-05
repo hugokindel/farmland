@@ -240,6 +240,10 @@ public class Farmland extends Game {
         return saveGames.get(saveId);
     }
 
+    public void setCurrentSave(SaveGame saveGame){
+        saveGames.put(saveId,saveGame);
+    }
+
     public Item getItem(String id) {
         return itemDatabase.get(id);
     }
