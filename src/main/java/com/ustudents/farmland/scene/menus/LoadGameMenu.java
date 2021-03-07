@@ -24,7 +24,7 @@ public class LoadGameMenu extends MenuScene {
             i++;
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, false, false, true);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false,false,false, false, true);
 
         super.initialize();
     }

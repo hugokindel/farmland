@@ -21,6 +21,9 @@ public abstract class MenuScene extends Scene {
     private String[] buttonNames;
     private String[] buttonIds;
     private EventListener[] eventListeners;
+    boolean gameTitle;
+    boolean gameResult;
+    boolean isWin;
     boolean canGoToMainMenu;
     boolean canQuit;
     boolean canGoBack;
@@ -31,10 +34,13 @@ public abstract class MenuScene extends Scene {
         this.eventListeners = new EventListener[0];
     }
 
-    public void initializeMenu(String[] buttonNames, String[] buttonIds, EventListener[] eventListeners, boolean canGoToMainMenu, boolean canQuit, boolean canGoBack) {
+    public void initializeMenu(String[] buttonNames, String[] buttonIds, EventListener[] eventListeners, boolean gameTitle, boolean gameResult, boolean isWin,boolean canGoToMainMenu, boolean canQuit, boolean canGoBack) {
         this.buttonNames = buttonNames;
         this.buttonIds = buttonIds;
         this.eventListeners = eventListeners;
+        this.gameResult = gameResult;
+        this.gameTitle = gameTitle;
+        this.isWin = isWin;
         this.canGoToMainMenu = canGoToMainMenu;
         this.canQuit = canQuit;
         this.canGoBack = canGoBack;
@@ -68,15 +74,30 @@ public abstract class MenuScene extends Scene {
     public void initializeGui() {
         GuiBuilder guiBuilder = new GuiBuilder();
 
-        Texture titleTexture = Resources.loadTexture("ui/farmland_title.png");
+        if (gameTitle){
 
-        GuiBuilder.ImageData imageData = new GuiBuilder.ImageData(titleTexture);
-        imageData.id = "titleImage";
-        imageData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
-        imageData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
-        imageData.scale = new Vector2f(1.5f, 1.5f);
-        imageData.position.y = 50;
-        guiBuilder.addImage(imageData);
+            Texture titleTexture = Resources.loadTexture("ui/farmland_title.png");
+            GuiBuilder.ImageData imageData = new GuiBuilder.ImageData(titleTexture);
+            imageData.id = "titleImage";
+            imageData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+            imageData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+            imageData.scale = new Vector2f(1.5f, 1.5f);
+            imageData.position.y = 50;
+            guiBuilder.addImage(imageData);
+        }
+
+        if (gameResult){
+            String resultPath = (isWin)?"ui/victory.png":"ui/defeat.png";
+            Texture resultTexture = Resources.loadTexture(resultPath);
+            GuiBuilder.ImageData imageData = new GuiBuilder.ImageData(resultTexture);
+            imageData.id = "resultImage";
+            imageData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+            imageData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+            imageData.scale = new Vector2f(7f, 7f);
+            imageData.position.y = 7;
+            guiBuilder.addImage(imageData);
+        }
+
 
         int i;
         for (i = 0; i < buttonNames.length; i++) {

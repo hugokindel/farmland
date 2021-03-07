@@ -30,11 +30,12 @@ public class ResultMenu extends MenuScene {
         String[] buttonIds;
         EventListener[] eventListeners;
 
-        if (isWin){
+        /*if (isWin){
             Texture titleTexture = Resources.loadTexture("");
         }else{
-            Texture titleTexture = Resources.loadTexture("");
-        }
+
+        }*/
+
 
         buttonNames = new String[]{"Rejouer","Menu Principal"};
         buttonIds = new String[]{"Rejouer","Menu Principal"};
@@ -61,7 +62,7 @@ public class ResultMenu extends MenuScene {
                 }
             };
         }
-        initializeMenu(buttonNames, buttonIds, eventListeners, false, false, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, false, true,isWin,false, false, false);
 
         super.initialize();
     }

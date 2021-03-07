@@ -44,7 +44,7 @@ public class NewGameMenu extends MenuScene {
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, false, false, true);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false,false,false, false, true);
 
         super.initialize();
     }
