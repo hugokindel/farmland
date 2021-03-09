@@ -35,6 +35,17 @@ public class ResultMenu extends MenuScene {
         }else{
 
         }*/
+        GuiBuilder guiBuilder = new GuiBuilder();
+
+        String resultPath = (isWin)?"ui/victory.png":"ui/defeat.png";
+        Texture resultTexture = Resources.loadTexture(resultPath);
+        GuiBuilder.ImageData imageData = new GuiBuilder.ImageData(resultTexture);
+        imageData.id = "resultImage";
+        imageData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+        imageData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+        imageData.scale = new Vector2f(7f, 7f);
+        imageData.position.y = 7;
+        guiBuilder.addImage(imageData);
 
 
         buttonNames = new String[]{"Rejouer","Menu Principal"};
@@ -62,7 +73,8 @@ public class ResultMenu extends MenuScene {
                 }
             };
         }
-        initializeMenu(buttonNames, buttonIds, eventListeners, false, true,isWin,false, false, false);
+
+        initializeMenu(buttonNames, buttonIds, eventListeners, false, false, false, false);
 
         super.initialize();
     }
@@ -71,8 +83,10 @@ public class ResultMenu extends MenuScene {
      * Allow to remove an outdated game saved.
      */
     private void removeSavedGame(){
+        String filePath = Resources.getSavesDirectoryName() + "/" + this.currentSave.path;
+        if(!new File(filePath).exists())return;
         try{
-            Files.delete(Path.of(Resources.getSavesDirectoryName() + "/" + this.currentSave.path));
+            Files.delete(Path.of(filePath));
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -22,8 +22,6 @@ public abstract class MenuScene extends Scene {
     private String[] buttonIds;
     private EventListener[] eventListeners;
     boolean gameTitle;
-    boolean gameResult;
-    boolean isWin;
     boolean canGoToMainMenu;
     boolean canQuit;
     boolean canGoBack;
@@ -34,13 +32,11 @@ public abstract class MenuScene extends Scene {
         this.eventListeners = new EventListener[0];
     }
 
-    public void initializeMenu(String[] buttonNames, String[] buttonIds, EventListener[] eventListeners, boolean gameTitle, boolean gameResult, boolean isWin,boolean canGoToMainMenu, boolean canQuit, boolean canGoBack) {
+    public void initializeMenu(String[] buttonNames, String[] buttonIds, EventListener[] eventListeners, boolean gameTitle, boolean canGoToMainMenu, boolean canQuit, boolean canGoBack) {
         this.buttonNames = buttonNames;
         this.buttonIds = buttonIds;
         this.eventListeners = eventListeners;
-        this.gameResult = gameResult;
         this.gameTitle = gameTitle;
-        this.isWin = isWin;
         this.canGoToMainMenu = canGoToMainMenu;
         this.canQuit = canQuit;
         this.canGoBack = canGoBack;
@@ -86,7 +82,7 @@ public abstract class MenuScene extends Scene {
             guiBuilder.addImage(imageData);
         }
 
-        if (gameResult){
+        /*if (gameResult){
             String resultPath = (isWin)?"ui/victory.png":"ui/defeat.png";
             Texture resultTexture = Resources.loadTexture(resultPath);
             GuiBuilder.ImageData imageData = new GuiBuilder.ImageData(resultTexture);
@@ -96,7 +92,7 @@ public abstract class MenuScene extends Scene {
             imageData.scale = new Vector2f(7f, 7f);
             imageData.position.y = 7;
             guiBuilder.addImage(imageData);
-        }
+        }*/
 
 
         int i;

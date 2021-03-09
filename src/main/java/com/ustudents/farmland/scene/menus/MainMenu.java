@@ -36,7 +36,7 @@ public class MainMenu extends MenuScene {
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, true, false,false,false, true, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, true, false);
 
         super.initialize();
     }
