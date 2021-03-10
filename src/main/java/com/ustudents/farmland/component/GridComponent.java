@@ -1,5 +1,6 @@
 package com.ustudents.farmland.component;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.*;
@@ -158,6 +159,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 Farmland.get().getCurrentSave().selectedItemID != null) {
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(Farmland.get().getCurrentSave().selectedItemID);
             Farmland.get().getCurrentSave().getCurrentPlayer().deleteFromInventory(Farmland.get().getItemDatabase().get(Farmland.get().getCurrentSave().selectedItemID));
+            Farmland.get().getCurrentSave().selectedItemID = null;
         }
     }
 
