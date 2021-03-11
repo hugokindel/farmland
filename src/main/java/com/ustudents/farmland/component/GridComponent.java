@@ -1,6 +1,7 @@
 package com.ustudents.farmland.component;
 
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.*;
@@ -37,6 +38,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     @Viewable
     public List<List<Cell>> cells;
+
+    public EventDispatcher onItemUsed = new EventDispatcher();
 
     private Vector2i currentSelectedCell;
 
@@ -143,24 +146,28 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
             updateCurrentSelectedCell();
         }
 
+        if (selectionCursorEnabled && currentSelectedCell.x != -1 &&
+                !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
+                Input.isMousePressed(MouseButton.Left) &&
+                cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
+                Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null
+                && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).itemId == null) {
+            Out.println("add item");
+            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID);
+            if (Farmland.get().getCurrentSave().getCurrentPlayer().deleteFromInventory(Farmland.get().getItemDatabase().get(Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID))) {
+                Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID = null;
+            }
+            onItemUsed.dispatch();
+        }
+
         if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
                 !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
                 Farmland.get().getCurrentSave().currentPlayerId == 0) {
+            Out.println("set owned");
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
-        }
-
-        if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
-                !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
-                Input.isMousePressed(MouseButton.Right) &&
-                cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
-                Farmland.get().getCurrentSave().selectedItemID != null
-                && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).itemId == null) {
-            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(Farmland.get().getCurrentSave().selectedItemID);
-            Farmland.get().getCurrentSave().getCurrentPlayer().deleteFromInventory(Farmland.get().getItemDatabase().get(Farmland.get().getCurrentSave().selectedItemID));
-            Farmland.get().getCurrentSave().selectedItemID = null;
         }
     }
 
@@ -181,6 +188,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     public void render(Spritebatch spritebatch, RendererComponent rendererComponent,
                        TransformComponent transformComponent) {
         renderBackground(spritebatch, rendererComponent, transformComponent);
+        renderItems(spritebatch, rendererComponent, transformComponent);
         renderCells(spritebatch, rendererComponent, transformComponent);
 
         if (selectionCursorEnabled && currentSelectedCell.x != -1) {
@@ -238,6 +246,28 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         }
     }
 
+    private void renderItems(Spritebatch spritebatch, RendererComponent rendererComponent,
+                             TransformComponent transformComponent) {
+        for (int x = 0; x < gridSize.x; x++) {
+            for (int y = 0; y < gridSize.y; y++) {
+                Cell cell = cells.get(x).get(y);
+
+                if (cell.hasItem()) {
+                    Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
+                            Farmland.get().getItemDatabase().get(cell.itemId).spritesheet.getSprite(cell.itemId + "1"),
+                            new Vector2f(
+                                    transformComponent.position.x + gridBackgroundSideSize.x +
+                                            x * cellSize.x,
+                                    transformComponent.position.y + gridBackgroundSideSize.y +
+                                            y * cellSize.y));
+                    spriteData.zIndex = rendererComponent.zIndex + 2;
+
+                    spritebatch.drawSprite(spriteData);
+                }
+            }
+        }
+    }
+
     private void renderSelectionCursor(Spritebatch spritebatch, RendererComponent rendererComponent,
                                        TransformComponent transformComponent) {
         Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
@@ -247,7 +277,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                                 currentSelectedCell.x * cellSize.x,
                         transformComponent.position.y + gridBackgroundSideSize.y +
                                 currentSelectedCell.y * cellSize.y));
-        spriteData.zIndex = rendererComponent.zIndex + 3;
+        spriteData.zIndex = rendererComponent.zIndex + 4;
 
         spritebatch.drawSprite(spriteData);
     }
@@ -274,7 +304,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                             transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
                             transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
             spriteData.tint = Farmland.get().getCurrentSave().players.get(ownderId).color;
-            spriteData.zIndex = rendererComponent.zIndex + 2;
+            spriteData.zIndex = rendererComponent.zIndex + 3;
 
             spritebatch.drawSprite(spriteData);
         }

@@ -22,6 +22,10 @@ public class Input {
         inputManager.initialize();
     }
 
+    public static void update(float dt) {
+        inputManager.update(dt);
+    }
+
     public static boolean isKeyDown(int key) {
         return inputManager.isKeyDown(key);
     }
@@ -43,15 +47,15 @@ public class Input {
     }
 
     public static boolean isMouseUp(int key) {
-        return inputManager.isMouseDown(key);
+        return inputManager.isMouseUp(key);
     }
 
     public static boolean isMousePressed(int button) {
-        return inputManager.isMouseDown(button);
+        return inputManager.isMousePressed(button);
     }
 
     public static boolean isMouseRelease(int button) {
-        return inputManager.isMouseDown(button);
+        return inputManager.isMouseRelease(button);
     }
 
     public static int getScroll() {

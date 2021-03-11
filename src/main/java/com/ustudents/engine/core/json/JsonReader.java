@@ -1,5 +1,6 @@
 package com.ustudents.engine.core.json;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.utility.Pair;
 import com.ustudents.engine.core.json.exception.JSonCannotParseException;
 
@@ -186,6 +187,7 @@ public class JsonReader {
      */
     private Pair<String, Object> parseMapElement() throws JSonCannotParseException, IOException {
         String identifier = parseString();
+
         check(currentCharacter, ':');
         Object value = parseValue();
 
@@ -334,9 +336,6 @@ public class JsonReader {
 
         do {
             Object element = parseValue();
-            if (element == null) {
-                break;
-            }
             elements.add(element);
             check(currentCharacter, ']', ',');
         } while (!is(currentCharacter, ']'));
@@ -437,7 +436,7 @@ public class JsonReader {
      */
     private void check(char c, Object... objects) throws JSonCannotParseException {
         if (!is(c, objects)) {
-            throw new JSonCannotParseException("Unexpected character '" + c + "' instead of '" + Arrays.toString(objects) + "'!");
+            throw new JSonCannotParseException("Unexpected character '" + c + "' instead of '" + Arrays.toString(objects) + "' at line " + currentLine + "!");
         }
     }
 

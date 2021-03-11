@@ -48,4 +48,8 @@ public class Cell {
     public boolean isOwnedByCurrentPlayer() {
         return ownerId == 0;
     }
+
+    public boolean hasItem() {
+        return itemId != null;
+    }
 }

@@ -15,6 +15,9 @@ public class Animal extends Item {
     @JsonSerializableConstructor
     @Override
     public void deserialize(Map<String, Object> json) {
-        this.spritesheet = Resources.loadSpritesheet("animals/" + super.texture);
+        if (!texture.startsWith("animals/")) {
+            texture = "animals/" + texture;
+        }
+        this.spritesheet = Resources.loadSpritesheet(texture);
     }
 }

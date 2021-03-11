@@ -339,7 +339,7 @@ public class Resources {
     static void unloadFont(String filePath, int fontSize, boolean removeFromList) {
         if (fonts.containsKey(filePath) && fonts.get(filePath).containsKey(fontSize)) {
             if (Game.isDebugging()) {
-                Out.printlnDebug("Font unloaded: " + getFontsDirectory() + "/" + filePath + "");
+                Out.printlnDebug("Font unloaded (size " + fontSize + "px): " + getFontsDirectory() + "/" + filePath + "");
             }
 
             fonts.get(filePath).get(fontSize).destroy();
