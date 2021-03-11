@@ -412,6 +412,7 @@ public abstract class Game extends Runnable {
 
         sceneManager.update(dt);
         update(dt);
+        Input.update(dt);
     }
 
     /** Renders the game. */

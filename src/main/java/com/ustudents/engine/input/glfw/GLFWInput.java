@@ -16,9 +16,13 @@ import java.util.Arrays;
 public class GLFWInput extends EmptyInput {
     private int[] keyStates;
 
+    private int[] keyPressedStates;
+
     private boolean[] keys;
 
     private int[] mouseStates;
+
+    private int[] mousePressedStates;
 
     private boolean[] mouseButtons;
 
@@ -31,8 +35,10 @@ public class GLFWInput extends EmptyInput {
     @Override
     public void initialize() {
         keyStates = new int[GLFW.GLFW_KEY_LAST];
+        keyPressedStates = new int[GLFW.GLFW_KEY_LAST];
         keys = new boolean[GLFW.GLFW_KEY_LAST];
         mouseStates = new int[GLFW.GLFW_MOUSE_BUTTON_LAST];
+        mousePressedStates = new int[GLFW.GLFW_MOUSE_BUTTON_LAST];
         mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
         mousePos = new Vector2f();
         mousePosInWorld = new Vector2f();
@@ -40,6 +46,12 @@ public class GLFWInput extends EmptyInput {
 
         setupCallbacks();
         resetKeyAndButton();
+    }
+
+    @Override
+    public void update(float dt) {
+        Arrays.fill(keyPressedStates, -1);
+        Arrays.fill(mousePressedStates, -1);
     }
 
     @Override
@@ -54,26 +66,12 @@ public class GLFWInput extends EmptyInput {
 
     @Override
     public boolean isKeyPressed(int key) {
-        boolean releaseKey = false;
-
-        if (keyStates[key] == GLFW.GLFW_PRESS) {
-            releaseKey = true;
-            keyStates[key] = -1;
-        }
-
-        return releaseKey;
+        return keyPressedStates[key] == GLFW.GLFW_PRESS;
     }
 
     @Override
     public boolean isKeyReleased(int key) {
-        boolean releaseKey = false;
-
-        if (keyStates[key] == GLFW.GLFW_RELEASE){
-            releaseKey = true;
-            keyStates[key] = -1;
-        }
-
-        return releaseKey;
+        return keyPressedStates[key] == GLFW.GLFW_RELEASE;
     }
 
     @Override
@@ -88,26 +86,12 @@ public class GLFWInput extends EmptyInput {
 
     @Override
     public boolean isMousePressed(int button) {
-        boolean releaseKey = false;
-
-        if (mouseStates[button] == GLFW.GLFW_PRESS) {
-            releaseKey = true;
-            mouseStates[button] = -1;
-        }
-
-        return releaseKey;
+        return mousePressedStates[button] == GLFW.GLFW_PRESS;
     }
 
     @Override
     public boolean isMouseRelease(int button) {
-        boolean releaseKey = false;
-
-        if (mouseStates[button] == GLFW.GLFW_RELEASE) {
-            releaseKey = true;
-            mouseStates[button] = -1;
-        }
-
-        return releaseKey;
+        return mousePressedStates[button] == GLFW.GLFW_RELEASE;
     }
 
     @Override
@@ -148,6 +132,7 @@ public class GLFWInput extends EmptyInput {
             KeyStateChangedEvent eventData = (KeyStateChangedEvent) data;
             keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
             keyStates[eventData.key] = eventData.action;
+            keyPressedStates[eventData.key] = eventData.action;
         });
 
         Window.get().getCursorMoved().add((dataType, data) -> {
@@ -162,6 +147,7 @@ public class GLFWInput extends EmptyInput {
             MouseButtonStateChangedEvent eventData = (MouseButtonStateChangedEvent) data;
             mouseButtons[eventData.button] = (eventData.action != GLFW.GLFW_RELEASE);
             mouseStates[eventData.button] = eventData.action;
+            mousePressedStates[eventData.button] = eventData.action;
         });
 
         Window.get().getScrollMoved().add((dataType, data) -> {
@@ -173,5 +159,7 @@ public class GLFWInput extends EmptyInput {
     private void resetKeyAndButton() {
         Arrays.fill(keyStates, -1);
         Arrays.fill(mouseStates, -1);
+        Arrays.fill(keyPressedStates, -1);
+        Arrays.fill(mousePressedStates, -1);
     }
 }
