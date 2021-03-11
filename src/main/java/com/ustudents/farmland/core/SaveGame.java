@@ -59,6 +59,8 @@ public class SaveGame {
 
     public EventDispatcher turnEnded = new EventDispatcher();
 
+    public String selectedItemID;
+
     public SaveGame() {
         this.itemsTurn = new ArrayList<>();
     }
@@ -73,6 +75,7 @@ public class SaveGame {
         }
         SeedRandom random = new SeedRandom(this.seed);
 
+        this.selectedItemID = null;
         this.turn = 0;
         this.turnTimePassed = 0;
         this.currentPlayerId = 0;
@@ -85,7 +88,7 @@ public class SaveGame {
         this.cells = new ArrayList<>();
 
         Texture cellBackground = Resources.loadTexture("map/grass.png");
-        
+
         for (int x = 0; x < mapSize.x; x++) {
             this.cells.add(new ArrayList<>());
 

@@ -1,5 +1,6 @@
 package com.ustudents.farmland.component;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.*;
@@ -150,6 +151,17 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 Farmland.get().getCurrentSave().currentPlayerId == 0) {
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
         }
+
+        if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
+                !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
+                Input.isMousePressed(MouseButton.Right) &&
+                cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
+                Farmland.get().getCurrentSave().selectedItemID != null
+                && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).itemId == null) {
+            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(Farmland.get().getCurrentSave().selectedItemID);
+            Farmland.get().getCurrentSave().getCurrentPlayer().deleteFromInventory(Farmland.get().getItemDatabase().get(Farmland.get().getCurrentSave().selectedItemID));
+            Farmland.get().getCurrentSave().selectedItemID = null;
+        }
     }
 
     public void updateCurrentSelectedCell() {
@@ -194,9 +206,9 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
         return (x < gridSize.x - 1 && cells.get(x + 1).get(y).isOwnedByCurrentPlayer()) ||
-               (x > 0 && cells.get(x - 1).get(y).isOwnedByCurrentPlayer()) ||
-               (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwnedByCurrentPlayer()) ||
-               (y > 0 && cells.get(x).get(y - 1).isOwnedByCurrentPlayer());
+                (x > 0 && cells.get(x - 1).get(y).isOwnedByCurrentPlayer()) ||
+                (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwnedByCurrentPlayer()) ||
+                (y > 0 && cells.get(x).get(y - 1).isOwnedByCurrentPlayer());
     }
 
     private void renderBackground(Spritebatch spritebatch, RendererComponent rendererComponent,
@@ -241,7 +253,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     }
 
     private void renderTerritory(Spritebatch spritebatch, RendererComponent rendererComponent,
-                                       TransformComponent transformComponent) {
+                                 TransformComponent transformComponent) {
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
                 if (cellIsOwned(x, y)) {

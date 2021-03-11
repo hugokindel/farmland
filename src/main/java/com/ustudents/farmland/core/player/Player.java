@@ -52,4 +52,15 @@ public class Player {
             inventory.put(item.id, Integer.parseInt(test) + 1);
         }
     }
+
+    public void deleteFromInventory(Item item) {
+        if (inventory.containsKey(item.id)) {
+            if (inventory.get(item.id) >= 2) {
+                inventory.put(item.id, inventory.get(item.id) - 1);
+            } else {
+                inventory.remove(item.id);
+            }
+        }
+    }
+
 }
