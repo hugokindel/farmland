@@ -110,22 +110,30 @@ Apparition du gameplay et du jeu en multijoueur.
 
 ### Semaine 5 (jusqu'au 12 mars)
 
-- Synchronisation multijoueur entre les différents joueur (KINDEL Hugo)
+- Attribuer des ressources sur les grilles de la carte (JAUROYON Maxime) **[FAIT]**
 
-- Attribuer des ressources sur les grilles de la carte (JAUROYON Maxime)
+- IA basique de robot (Capable de finir un tour) (PAULAS VICTOR Francis) 
 
-- Faire grandir les ressources à chaque tour (JAUROYON Maxime)
+- Ecran de game over si l'argent du joueur passe en négatif (LE CORRE Léo) **[FAIT]**
 
-- IA basique de robot (PAULAS VICTOR Francis)
-
-- Continuation du travail sur le système économique (LE CORRE Léo et PAULAS VICTOR Francis)
-
-- Ecran de game over si l'argent du joueur passe en négatif (LE CORRE Léo)
-
-- Ecran de victoire si l'argent du joueur dépasse une certaine somme (LE CORRE Léo)
+- Ecran de victoire si l'argent du joueur dépasse une certaine somme (LE CORRE Léo) **[FAIT]**
 
 ### Semaine 6 (jusqu'au 19 mars)
 
-- Gagner de l'argent à chaque tour et payer pour chaque propriété possédé
+ (Semaine des partiels)
+
+### Semaine 7 (jusqu'au 26 mars)
+
+- Continuation du travail sur le système économique (LE CORRE Léo et PAULAS VICTOR Francis)
+
+- Faire grandir les ressources à chaque tour (JAUROYON Maxime)
+
+- Le joueurs qui exécute le code ne doit pas pouvoir jouer les tours du bot
 
 - Finir le système de tour (= avoir quelque chose de réellement jouable)
+
+- Gagner de l'argent à chaque tour et payer pour chaque propriété possédé
+
+### Semaine 8 (jusqu'au 2 avril)
+
+- Synchronisation multijoueur entre les différents joueur (KINDEL Hugo)
