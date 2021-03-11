@@ -2,7 +2,7 @@
   {
     "name": "Poulet",
     "id": "chicken",
-    "value" : 10,
+    "value" : 500,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "chicken.json",
     "sprites" :[

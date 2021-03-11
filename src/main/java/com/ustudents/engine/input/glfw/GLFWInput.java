@@ -138,7 +138,7 @@ public class GLFWInput extends EmptyInput {
         Window.get().getCursorMoved().add((dataType, data) -> {
             CursorMovedEvent eventData = (CursorMovedEvent) data;
             mousePos = new Vector2f(eventData.position.x, eventData.position.y);
-            if (SceneManager.getScene().getWorldCamera() != null) {
+            if (SceneManager.getScene() != null && SceneManager.getScene().getWorldCamera() != null) {
                 mousePosInWorld = SceneManager.getScene().getWorldCamera().screenCoordToWorldCoord(mousePos);
             }
         });

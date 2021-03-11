@@ -1,6 +1,9 @@
 package com.ustudents.farmland.core;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.In;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
@@ -32,6 +35,12 @@ public class SaveGame {
     public Integer turnTimePassed;
 
     @JsonSerializable
+    public Integer mapWidth;
+
+    @JsonSerializable
+    public Integer mapHeight;
+
+    @JsonSerializable
     public Long seed;
 
     @JsonSerializable
@@ -55,12 +64,13 @@ public class SaveGame {
     }
 
     public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
+        mapWidth = mapSize.x;
+        mapHeight = mapSize.y;
         this.seed = seed;
 
         if (this.seed == null) {
             this.seed = System.currentTimeMillis();
         }
-
         SeedRandom random = new SeedRandom(this.seed);
 
         this.turn = 0;
@@ -81,8 +91,8 @@ public class SaveGame {
 
             for (int y = 0; y < mapSize.y; y++) {
                 Vector2f spriteRegion = new Vector2f(
-                        24 * random.generateInRange(1, cellBackground.getWidth() / 24),
-                        24 * random.generateInRange(1, cellBackground.getHeight() / 24));
+                        24 * random.generateInRange(1, 120 / 24),
+                        24 * random.generateInRange(1, 120 / 24));
                 Sprite sprite = new Sprite(cellBackground,
                         new Vector4f(spriteRegion.x, spriteRegion.y, 24, 24));
                 Vector4f viewRectangle = new Vector4f(
@@ -122,6 +132,10 @@ public class SaveGame {
 
         File f = new File(Resources.getSavesDirectoryName());
         this.path = "save-" + f.list().length + ".json";
+
+        if (Game.isDebugging()) {
+            Out.printlnDebug("Savegame created.");
+        }
     }
 
     public void endTurn() {

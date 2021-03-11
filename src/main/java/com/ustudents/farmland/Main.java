@@ -1,5 +1,7 @@
 package com.ustudents.farmland;
 
+import java.util.Scanner;
+
 /** This is main class of the program. */
 public class Main {
     /** Start of the program. */

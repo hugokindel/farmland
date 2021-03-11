@@ -2,7 +2,10 @@ package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.core.window.Window;
 import com.ustudents.farmland.Farmland;
+import imgui.ImGui;
+import imgui.ImVec2;
 
 public class MainMenu extends MenuScene {
     @Override
@@ -33,7 +36,7 @@ public class MainMenu extends MenuScene {
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, false, true, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, true, false);
 
         super.initialize();
     }

@@ -3,15 +3,23 @@ package com.ustudents.farmland;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
+import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
+import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.network.Packet;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.scene.menus.MainMenu;
+import org.joml.Vector2i;
 
 import java.io.File;
+import java.net.DatagramPacket;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +31,8 @@ public class Farmland extends Game {
 
     private Map<String, SaveGame> saveGames;
 
+    private Map<String, Object> serverConfig;
+
     public String saveId;
 
     @Override
@@ -33,12 +43,53 @@ public class Farmland extends Game {
         loadItemDatabases();
         loadSavedGames();
 
+        if (getNetMode() == NetMode.DedicatedServer) {
+            if (saveGames.containsKey("save-server.json")) {
+                saveId = "save-server.json";
+            }
+        }
+
         sceneManager.changeScene(new MainMenu());
     }
 
     @Override
     protected void destroy() {
         saveSavedGames();
+    }
+
+    @Override
+    public void onServerStarted() {
+        if (new File(Resources.getDataDirectory() + "/server.json").exists()) {
+            serverConfig = JsonReader.readMap(Resources.getDataDirectory() + "/server.json");
+        } else {
+            serverConfig = new HashMap<>();
+            serverConfig.put("serverName", "Local server");
+        }
+    }
+
+    @Override
+    public Packet onServerHandleRequest(Packet packet) {
+        Out.println("Farmland handle");
+
+        Packet answer = new Packet(new LinkedHashMap<>(), packet.address, packet.datagram);
+
+        if (packet.data.get("command").equals("loadWorld")) {
+            if (getCurrentSave() == null) {
+                SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), "Forx", "Forx's village", Color.RED, new Vector2i(16, 16), System.currentTimeMillis(), 0);
+                saveGame.path = "save-server.json";
+                saveGames.put("save-server.json", saveGame);
+                saveId = "save-server.json";
+            }
+            answer.data.put("world", Json.serialize(getCurrentSave()));
+            return answer;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void onServerDestroyed() {
+        JsonWriter.writeToFile(Resources.getDataDirectory() + "/server.json", serverConfig);
     }
 
     private void loadItemDatabases() {
@@ -174,7 +225,7 @@ public class Farmland extends Game {
         return saveGames;
     }
 
-    public SaveGame getSaveGame(String id) {
+    public SaveGame getSaveGameWithId(String id) {
         for (SaveGame save : saveGames.values()) {
             if (save.path.replace(".json", "").equals(id)) {
                 return save;
@@ -190,6 +241,10 @@ public class Farmland extends Game {
         }
 
         return saveGames.get(saveId);
+    }
+
+    public void setCurrentSave(SaveGame saveGame){
+        saveGames.put(saveId,saveGame);
     }
 
     public Item getItem(String id) {

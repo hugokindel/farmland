@@ -86,6 +86,10 @@ tasks {
     }
 }
 
+val run by tasks.getting(JavaExec::class) {
+    standardInput = System.`in`
+}
+
 // Gradle has an issue supporting unicode within Powershell or cmd.exe,
 // you need to use `chcp 65001` to enable unicode characters
 // (this is not an issue in distributed builds, only within gradle commands output).

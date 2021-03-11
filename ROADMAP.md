@@ -64,40 +64,68 @@ Amélioration du moteur et début du développement du jeu.
 	- Possibilité de changer les informations dans un menu
 	- Afficher les informations à l'écran lors de la scène de jeu
 
-- Amélioration du système d'entrée (PAULAS VICTOR Francis)
+- Amélioration du système d'entrée (PAULAS VICTOR Francis) **[FAIT]**
 	- Refactorisation d'une partie du code
 	- Ajout de constante pour chaque touche pour rendre la vérification d'entrée plus lisible
 	
-- Amélioration du système de caméra (KINDEL Hugo)
+- Amélioration du système de caméra (KINDEL Hugo) **[FAIT]**
 	- Refactorisation d'une partie du code
 	- Possibilité d'obtenir une position du monde à partir de la position du curseur sur l'écran (World Coord -> Screen Coord)
-	
 
 ### Semaine 3 (jusqu'au 26 février)
 
-Continuation du développement du jeu pour faire apparaître une base de gameplay (+ améliorations du moteur).
+Continuation du développement du jeu pour faire apparaître une base de gameplay (+ améliorations du moteur)
 
 - Système audio (LE CORRE Léo) **[FAIT]**
 	- Lire des musiques/effets sonores
 
-- Création d'un système simple d'interface graphique (KINDEL Hugo) **[WIP]**
+- Création d'un système simple d'interface graphique (KINDEL Hugo) **[FAIT]**
+  	- Texte
 	- Bouton
 	- Curseur
 
-- Création d'un système économique (LE CORRE Léo et PAULAS VICTOR Francis) **[WIP]**
+- Création d'un début de système économique (LE CORRE Léo et PAULAS VICTOR Francis) **[FAIT]**
 
-- Mise en place d'un système de tour (PAULAS VICTOR Francis et JAUROYON Maxime) **[WIP]**
+- Mise en place d'un système de tour (PAULAS VICTOR Francis et JAUROYON Maxime) **[FAIT]**
 
-- Continuation du système de niveau (JAUROYON Maxime) **[WIP]**
-	- Possibilité d'ajouter des éléments (ressources, ...) sur la carte en cliquant avec la souris.
-	- Refactorisation du code pour une base plus saine et mieux lié au reste des systèmes.
+- Continuation du système de niveau (JAUROYON Maxime) **[FAIT]**
+	- Refactorisation du code pour une base plus saine et mieux lié au reste des systèmes
 	
+- Mettre en place un système de sauvegarde pour enregistrer les cartes de jeux et les objets placés (KINDEL Hugo) **[FAIT]**
 
+### Semaine 4 (jusqu'au 5 mars)
 
-### Semaine 4 (jusqu'au 4 mars)
+Apparition du gameplay et du jeu en multijoueur.
 
-- Refactorisation de certaine partie du moteur pour rendre le code plus lisible et mieux documenté (KINDEL Hugo)
+- Refactorisation de certaine partie du moteur pour rendre le code plus lisible et mieux documenté (KINDEL Hugo et LE CORRE Léo) **[FAIT]**
 
-- Mise en place du marché
+- Mise en place du marché et amélioration du système économique (PAULAS VICTOR Francis et LE CORRE Léo) **[FAIT]**
+	- Payer lorsque l'on achète des ressources
 
-- Mise en place du tour d'un robot
+- Mise en place d'une base de donnée de ressources (JAUROYON Maxime) **[FAIT]**
+
+- Amélioration des menus (toute l'équipe) **[FAIT]**
+
+- Création des bases du système multijoueur (KINDEL Hugo) **[FAIT]**
+
+### Semaine 5 (jusqu'au 12 mars)
+
+- Synchronisation multijoueur entre les différents joueur (KINDEL Hugo)
+
+- Attribuer des ressources sur les grilles de la carte (JAUROYON Maxime)
+
+- Faire grandir les ressources à chaque tour (JAUROYON Maxime)
+
+- IA basique de robot (PAULAS VICTOR Francis)
+
+- Continuation du travail sur le système économique (LE CORRE Léo et PAULAS VICTOR Francis)
+
+- Ecran de game over si l'argent du joueur passe en négatif (LE CORRE Léo)
+
+- Ecran de victoire si l'argent du joueur dépasse une certaine somme (LE CORRE Léo)
+
+### Semaine 6 (jusqu'au 19 mars)
+
+- Gagner de l'argent à chaque tour et payer pour chaque propriété possédé
+
+- Finir le système de tour (= avoir quelque chose de réellement jouable)

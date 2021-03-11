@@ -19,6 +19,14 @@ public class EmptyWindow {
 
     }
 
+    public void clearBuffer() {
+
+    }
+
+    public void swapBuffer() {
+
+    }
+
     public void clear() {
 
     }
@@ -77,5 +85,13 @@ public class EmptyWindow {
 
     public void changeIcon(String filePath) {
 
+    }
+
+    public void renderToBuffer() {
+
+    }
+
+    public int getTexture() {
+        return -1;
     }
 }
