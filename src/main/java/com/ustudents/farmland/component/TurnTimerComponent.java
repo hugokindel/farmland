@@ -41,9 +41,8 @@ public class TurnTimerComponent extends BehaviourComponent {
     public void update(float dt) {
         time += dt;
         skipturn += dt;
-        System.out.println(Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot"));
 
-        if (skipturn >= 1 && Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+        if (skipturn >= 1 && Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
             skipturn = 0;
             Farmland.get().getCurrentSave().endTurn();
         }

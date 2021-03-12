@@ -30,11 +30,6 @@ public class ResultMenu extends MenuScene {
         String[] buttonIds;
         EventListener[] eventListeners;
 
-        /*if (isWin){
-            Texture titleTexture = Resources.loadTexture("");
-        }else{
-
-        }*/
         GuiBuilder guiBuilder = new GuiBuilder();
 
         String resultPath = (isWin)?"ui/victory.png":"ui/defeat.png";

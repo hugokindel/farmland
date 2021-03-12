@@ -248,6 +248,7 @@ public class InGameScene extends Scene {
             resultMenu.currentSave = Farmland.get().getCurrentSave();
             resultMenu.isWin = true;
             Farmland.get().saveId = null;
+            changeScene(resultMenu);
         }
     }
 
