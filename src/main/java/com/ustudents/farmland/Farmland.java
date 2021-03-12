@@ -140,9 +140,12 @@ public class Farmland extends Game {
             if (file.isFile()) {
                 String path = file.getPath().replace("\\", "/");
                 SaveGame saveGame = Json.deserialize(path, SaveGame.class);
-                assert saveGame != null;
-                saveGame.path = path.replace(Resources.getSavesDirectoryName() + "/", "");
-                saveGames.put(saveGame.name, saveGame);
+                if (saveGame != null) {
+                    saveGame.path = path.replace(Resources.getSavesDirectoryName() + "/", "");
+                    saveGames.put(saveGame.name, saveGame);
+                } else {
+                    Out.printlnError("Cannot load savegame: " + path);
+                }
 
             }
         }
@@ -238,6 +241,10 @@ public class Farmland extends Game {
         }
 
         return saveGames.get(saveId);
+    }
+
+    public void setCurrentSave(SaveGame saveGame){
+        saveGames.put(saveId,saveGame);
     }
 
     public Item getItem(String id) {

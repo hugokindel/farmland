@@ -13,7 +13,7 @@ public class Cell {
     public Integer ownerId;
 
     @JsonSerializable
-    public Integer itemId;
+    public String itemId;
 
     // TODO: Change
     @JsonSerializable(necessary = false)
@@ -23,21 +23,21 @@ public class Cell {
         this.sprite = null;
         this.viewRectangle = null;
         this.ownerId = -1;
-        this.itemId = -1;
+        this.itemId = null;
     }
 
     public Cell(Sprite sprite, Vector4f viewRectangle) {
         this.sprite = sprite;
         this.viewRectangle = viewRectangle;
         this.ownerId = -1;
-        this.itemId = -1;
+        this.itemId = null;
     }
 
     public void setOwned(boolean owned, int ownerId) {
         this.ownerId = ownerId;
     }
 
-    public void setItem(Integer item) {
+    public void setItem(String item) {
         this.itemId = item;
     }
 
@@ -47,5 +47,9 @@ public class Cell {
 
     public boolean isOwnedByCurrentPlayer() {
         return ownerId == 0;
+    }
+
+    public boolean hasItem() {
+        return itemId != null;
     }
 }

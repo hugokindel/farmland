@@ -8,6 +8,10 @@ public class EmptyInput {
 
     }
 
+    public void update(float dt) {
+
+    }
+
     public boolean isKeyDown(int key) {
         return false;
     }

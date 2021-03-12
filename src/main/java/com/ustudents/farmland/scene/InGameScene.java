@@ -1,6 +1,8 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
@@ -19,6 +21,7 @@ import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.menus.MainMenu;
+import com.ustudents.farmland.scene.menus.ResultMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.type.ImBoolean;
@@ -62,6 +65,12 @@ public class InGameScene extends Scene {
         grid.addComponent(new WorldRendererComponent());
         grid.addComponent(new GridComponent(new Vector2i(Farmland.get().getCurrentSave().cells.size(), Farmland.get().getCurrentSave().cells.get(0).size()), new Vector2i(24, 24), gridBackground, cellBackground, selectionCursor, territoryTexture));
         grid.addComponent(new TurnTimerComponent(SaveGame.timePerTurn));
+        grid.getComponent(GridComponent.class).onItemUsed.add(new EventListener() {
+            @Override
+            public void onReceived(Class<?> dataType, Object data) {
+                onSelectedItemChanged();
+            }
+        });
 
         Entity player = createEntityWithName("player");
         player.addComponent(new PlayerMovementComponent(500.0f));
@@ -131,6 +140,15 @@ public class InGameScene extends Scene {
         textData.position = new Vector2f(0, 75);
         textData.color = Color.BLACK;
         guiBuilder.addText(textData);
+
+        String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
+        GuiBuilder.TextData textData2 = new GuiBuilder.TextData(Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID == null ? "" : "Sélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().inventory.get(selectedId) + ")");
+        textData2.id = "selectedLabel";
+        textData2.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        textData2.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        textData2.position = new Vector2f(10, 10);
+        textData2.color = Color.BLACK;
+        guiBuilder.addText(textData2);
     }
 
     public void initializeGameplay() {
@@ -180,10 +198,22 @@ public class InGameScene extends Scene {
     }
 
     private void makeListOfPlayerItem(){
+        if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null && ImGui.button("Désélectionner")) {
+            Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID = null;
+            onSelectedItemChanged();
+        }
+
         Map<String,Integer> playerInventory = Farmland.get().getCurrentSave().getCurrentPlayer().inventory;
         Set<String> uniqueItems = playerInventory.keySet();
         for(String item: uniqueItems){
             ImGui.text(item + " x" + playerInventory.get(item));
+
+            ImGui.sameLine();
+
+            if (ImGui.button("Sélectionner")) {
+                Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID = item;
+                onSelectedItemChanged();
+            }
         }
     }
 
@@ -195,6 +225,35 @@ public class InGameScene extends Scene {
             Farmland.get().getCurrentSave().itemsTurn= new ArrayList<>();
         }
         getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
+
+        Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+        if(currentPlayer.money == 0){
+            Farmland.get().getCurrentSave().players.remove(currentPlayer);
+
+            if (getGame().isConnectedToServer()) {
+                getGame().disconnectFromServer();
+            }
+            ResultMenu resultMenu = new ResultMenu();
+            resultMenu.currentPlayer = currentPlayer;
+            resultMenu.currentSave = Farmland.get().getCurrentSave();
+            Farmland.get().saveId = null;
+            changeScene(resultMenu);
+        }else if(currentPlayer.money == 1000){
+            ResultMenu resultMenu = new ResultMenu();
+            resultMenu.currentPlayer = currentPlayer;
+            resultMenu.currentSave = Farmland.get().getCurrentSave();
+            resultMenu.isWin = true;
+            Farmland.get().saveId = null;
+        }
+    }
+
+    public void onSelectedItemChanged() {
+        if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
+            String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
+            getEntityByName("selectedLabel").getComponent(TextComponent.class).setText("Sélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().inventory.get(selectedId) + ")");
+        } else {
+            getEntityByName("selectedLabel").getComponent(TextComponent.class).setText("");
+        }
     }
 
     public void onSecondElapsed(int secondsElapsed) {
