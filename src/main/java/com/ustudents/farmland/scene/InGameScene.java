@@ -93,7 +93,9 @@ public class InGameScene extends Scene {
         buttonData1.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData1.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData1.position = new Vector2f(-220, -12);
-        guiBuilder.addButton(buttonData1);
+        if (!Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+            guiBuilder.addButton(buttonData1);
+        }
 
         GuiBuilder.ButtonData buttonData3 = new GuiBuilder.ButtonData("Marché", (dataType, data) -> {
             showMarket.set(!showMarket.get());
@@ -101,7 +103,9 @@ public class InGameScene extends Scene {
         buttonData3.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData3.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData3.position = new Vector2f(-400, -10);
-        guiBuilder.addButton(buttonData3);
+        if (!Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+            guiBuilder.addButton(buttonData3);
+        }
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
             Farmland.get().saveId = null;

@@ -18,6 +18,8 @@ public class TurnTimerComponent extends BehaviourComponent {
 
     public float timePerTurn;
 
+    public float skipturn;
+
     public EventDispatcher secondElapsed = new EventDispatcher(SecondElapsed.class);
 
     public TurnTimerComponent(float timePerTurn) {
@@ -27,6 +29,7 @@ public class TurnTimerComponent extends BehaviourComponent {
     @Override
     public void initialize() {
         time = Farmland.get().getCurrentSave().turnTimePassed;
+        skipturn = 0;
 
         Farmland.get().getCurrentSave().turnEnded.add((dataType, data) -> {
             time = 0;
@@ -37,6 +40,13 @@ public class TurnTimerComponent extends BehaviourComponent {
     @Override
     public void update(float dt) {
         time += dt;
+        skipturn += dt;
+        System.out.println(Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot"));
+
+        if (skipturn >= 1 && Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+            skipturn = 0;
+            Farmland.get().getCurrentSave().endTurn();
+        }
 
         if (time >= timePerTurn) {
             time = 0;
