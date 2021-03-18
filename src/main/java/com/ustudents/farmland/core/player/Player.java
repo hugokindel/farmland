@@ -6,6 +6,7 @@ import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import org.joml.Vector2f;
 
@@ -110,5 +111,31 @@ public class Player {
     public void setMoney(Integer money) {
         this.money = money;
         moneyChanged.dispatch();
+    }
+
+    public List<Cell> getOwnedCells() {
+        List<Cell> cells = new ArrayList<>();
+
+        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+
+                if (cell.ownerId.equals(getId())) {
+                    cells.add(cell);
+                }
+            }
+        }
+
+        return cells;
+    }
+
+    public Integer getId() {
+        for (int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
+            if (Farmland.get().getCurrentSave().players.get(i).name.equals(name)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

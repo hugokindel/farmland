@@ -156,7 +156,6 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 Farmland.get().getCurrentSave().players.get(0).selectedItemID != null
                 && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
-            Out.println("add item");
             Item currentItem = Farmland.get().getCurrentSave().players.get(0).getCurrentItemFromInventory();
             Item clone = Item.clone(currentItem);
             assert clone != null;
@@ -174,8 +173,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
                 Farmland.get().getCurrentSave().currentPlayerId == 0) {
-            Out.println("set owned");
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
+            Farmland.get().getCurrentSave().players.get(0).setMoney(Farmland.get().getCurrentSave().players.get(0).money - 25);
         }
     }
 
@@ -262,7 +261,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
                 if (cell.hasItem()) {
                     Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
-                            Farmland.get().getItemDatabase().get(cell.item.id).spritesheet.getSprite(cell.item.id + "1"),
+                            cell.item.getSprite(),
                             new Vector2f(
                                     transformComponent.position.x + gridBackgroundSideSize.x +
                                             x * cellSize.x,

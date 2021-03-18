@@ -33,6 +33,7 @@ public class TurnTimerComponent extends BehaviourComponent {
 
         Farmland.get().getCurrentSave().turnEnded.add((dataType, data) -> {
             time = 0;
+            skipturn = 0;
             setTimeElapsed(0);
         });
     }
@@ -49,6 +50,7 @@ public class TurnTimerComponent extends BehaviourComponent {
 
         if (time >= timePerTurn) {
             time = 0;
+            skipturn = 0;
 
             if (Farmland.get().getCurrentSave() != null) {
                 Farmland.get().getCurrentSave().endTurn();

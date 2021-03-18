@@ -123,7 +123,11 @@ public class Json {
                 Object value = mapToSearch.get(path[path.length - 1]);
 
                 if (field.getType().isAnnotationPresent(JsonSerializable.class)) {
-                    field.set(object, deserialize((Map<String, Object>)value, field.getType()));
+                    if ((Map<String, Object>)value == null) {
+                        field.set(object, null);
+                    } else {
+                        field.set(object, deserialize((Map<String, Object>)value, field.getType()));
+                    }
                     continue;
                 } else if (field.getType().isAssignableFrom(List.class)) {
                     if (listExtraction(field, value, object)) {

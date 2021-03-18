@@ -4,6 +4,7 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.core.json.annotation.JsonSerializableType;
+import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Spritesheet;
 
 import java.util.Map;
@@ -61,5 +62,17 @@ public class Item {
         }
 
         return null;
+    }
+
+    public void endTurn() {
+
+    }
+
+    public Sprite getSprite() {
+        return spritesheet.getSprite(id + "1");
+    }
+
+    public boolean shouldBeDestroyed() {
+        return false;
     }
 }

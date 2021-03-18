@@ -17,6 +17,7 @@ import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.component.PlayerMovementComponent;
 import com.ustudents.farmland.component.TurnTimerComponent;
 import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.menus.MainMenu;
@@ -232,6 +233,20 @@ public class InGameScene extends Scene {
             Farmland.get().getCurrentSave().itemsTurn= new ArrayList<>();
         }
         getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
+
+        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+                if (cell.hasItem()) {
+                    cell.item.endTurn();
+                }
+                if (cell.item != null && cell.item.shouldBeDestroyed()) {
+                    Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
+                    player.setMoney(player.money + (int)((cell.item.value) * 1.5f));
+                    cell.item = null;
+                }
+            }
+        }
 
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
         if(currentPlayer.money == 0){
