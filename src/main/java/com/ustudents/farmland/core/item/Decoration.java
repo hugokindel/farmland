@@ -17,4 +17,10 @@ public class Decoration extends Item {
         }
         this.spritesheet = Resources.loadSpritesheet(texture);
     }
+
+    public static Decoration clone(Decoration decoration) {
+        Decoration result = new Decoration();
+        result.takeValuesFrom(decoration);
+        return result;
+    }
 }

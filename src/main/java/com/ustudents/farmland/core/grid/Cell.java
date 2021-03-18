@@ -2,6 +2,7 @@ package com.ustudents.farmland.core.grid;
 
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Sprite;
+import com.ustudents.farmland.core.item.Item;
 import org.joml.Vector4f;
 
 @JsonSerializable
@@ -13,7 +14,7 @@ public class Cell {
     public Integer ownerId;
 
     @JsonSerializable
-    public String itemId;
+    public Item item;
 
     // TODO: Change
     @JsonSerializable(necessary = false)
@@ -23,22 +24,22 @@ public class Cell {
         this.sprite = null;
         this.viewRectangle = null;
         this.ownerId = -1;
-        this.itemId = null;
+        this.item = null;
     }
 
     public Cell(Sprite sprite, Vector4f viewRectangle) {
         this.sprite = sprite;
         this.viewRectangle = viewRectangle;
         this.ownerId = -1;
-        this.itemId = null;
+        this.item = null;
     }
 
     public void setOwned(boolean owned, int ownerId) {
         this.ownerId = ownerId;
     }
 
-    public void setItem(String item) {
-        this.itemId = item;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public boolean isOwned() {
@@ -50,6 +51,6 @@ public class Cell {
     }
 
     public boolean hasItem() {
-        return itemId != null;
+        return item != null;
     }
 }

@@ -8,7 +8,6 @@ import java.util.Map;
 
 @JsonSerializable
 public class Animal extends Item {
-
     @JsonSerializable
     public Integer numberOfTurnsToReachMaturity;
 
@@ -19,5 +18,12 @@ public class Animal extends Item {
             texture = "animals/" + texture;
         }
         this.spritesheet = Resources.loadSpritesheet(texture);
+    }
+
+    public static Animal clone(Animal animal) {
+        Animal result = new Animal();
+        result.takeValuesFrom(animal);
+        result.numberOfTurnsToReachMaturity = animal.numberOfTurnsToReachMaturity;
+        return result;
     }
 }

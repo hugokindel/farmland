@@ -239,7 +239,11 @@ public class Json {
                 field.setAccessible(true);
 
                 if (field.getType().isAnnotationPresent(JsonSerializable.class)) {
-                    addToMap(json, path, serialize(field.get(object)));
+                    if (field.get(object) == null) {
+                        addToMap(json, path, null);
+                    } else {
+                        addToMap(json, path, serialize(field.get(object)));
+                    }
                 } else {
                     addToMap(json, path, field.get(object));
                 }

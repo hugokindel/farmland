@@ -19,4 +19,11 @@ public class Crop extends Item {
         }
         this.spritesheet = Resources.loadSpritesheet(texture);
     }
+
+    public static Crop clone(Crop crop) {
+        Crop result = new Crop();
+        result.takeValuesFrom(crop);
+        result.numberOfTurnsToGrow = crop.numberOfTurnsToGrow;
+        return result;
+    }
 }

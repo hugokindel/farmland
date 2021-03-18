@@ -13,6 +13,10 @@ import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
+import com.ustudents.farmland.core.item.Animal;
+import com.ustudents.farmland.core.item.Decoration;
+import com.ustudents.farmland.core.item.Item;
+import com.ustudents.farmland.core.item.Property;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -150,12 +154,16 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
                 cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
-                Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null
-                && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).itemId == null) {
+                Farmland.get().getCurrentSave().players.get(0).selectedItemID != null
+                && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
             Out.println("add item");
-            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID);
-            if (Farmland.get().getCurrentSave().getCurrentPlayer().deleteFromInventory(Farmland.get().getItemDatabase().get(Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID))) {
-                Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID = null;
+            Item currentItem = Farmland.get().getCurrentSave().players.get(0).getCurrentItemFromInventory();
+            Item clone = Item.clone(currentItem);
+            assert clone != null;
+            clone.quantity = 1;
+            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(clone);
+            if (Farmland.get().getCurrentSave().players.get(0).deleteFromInventory(currentItem)) {
+                Farmland.get().getCurrentSave().players.get(0).selectedItemID = null;
             }
             onItemUsed.dispatch();
         }
@@ -254,7 +262,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
                 if (cell.hasItem()) {
                     Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
-                            Farmland.get().getItemDatabase().get(cell.itemId).spritesheet.getSprite(cell.itemId + "1"),
+                            Farmland.get().getItemDatabase().get(cell.item.id).spritesheet.getSprite(cell.item.id + "1"),
                             new Vector2f(
                                     transformComponent.position.x + gridBackgroundSideSize.x +
                                             x * cellSize.x,
