@@ -191,7 +191,7 @@ public class InGameScene extends Scene {
     }
 
     private void ImGuiBuyingItem(){
-        ImGui.text("Buying Item : \n\n");
+        ImGui.text("Objets en magasin : \n\n");
 
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
         int playerMoney = player.money;
@@ -202,7 +202,7 @@ public class InGameScene extends Scene {
                 Farmland.get().getCurrentSave().itemsTurn.add(item);
             }
             ImGui.sameLine();
-            ImGui.text("Price : " + item.value);
+            ImGui.text("Prix : " + item.value);
         }
     }
 
@@ -244,16 +244,18 @@ public class InGameScene extends Scene {
         }
         getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
 
-        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
-                if (cell.hasItem()) {
-                    cell.item.endTurn();
-                }
-                if (cell.item != null && cell.item.shouldBeDestroyed()) {
-                    Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
-                    player.setMoney(player.money + (int)((cell.item.value) * 1.5f));
-                    cell.item = null;
+        if (Farmland.get().getCurrentSave().getCurrentPlayer().getId() == 0) {
+            for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+                for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                    Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+                    if (cell.hasItem()) {
+                        cell.item.endTurn();
+                    }
+                    if (cell.item != null && cell.item.shouldBeDestroyed()) {
+                        Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
+                        player.setMoney(player.money + (int)((cell.item.value) * 1.5f));
+                        cell.item = null;
+                    }
                 }
             }
         }
