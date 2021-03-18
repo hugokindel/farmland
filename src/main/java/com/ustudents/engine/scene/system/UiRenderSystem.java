@@ -21,7 +21,9 @@ public class UiRenderSystem extends RenderSystem {
         spritebatch.begin(SceneManager.getScene().getUiCamera());
 
         for (Entity entity : getEntities()) {
-            renderElement(spritebatch, entity, UiRendererComponent.class);
+            if (entity.isEnabled()) {
+                renderElement(spritebatch, entity, UiRendererComponent.class);
+            }
         }
 
         spritebatch.end();

@@ -48,6 +48,12 @@ public class InGameScene extends Scene {
         initializeGui();
         initializeGameplay();
         economicComponent = new EconomicComponent();
+
+        if (Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+            getEntityByName("endTurnButton").setEnabled(false);
+            getEntityByName("inventoryButton").setEnabled(false);
+            getEntityByName("marketButton").setEnabled(false);
+        }
     }
 
     public void initializeEntities() {
@@ -78,6 +84,7 @@ public class InGameScene extends Scene {
         GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Finir le tour", (dataType, data) -> {
             Farmland.get().getCurrentSave().endTurn();
         });
+        buttonData.id = "endTurnButton";
         buttonData.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData.position = new Vector2f(-10, -10);
@@ -86,22 +93,20 @@ public class InGameScene extends Scene {
         GuiBuilder.ButtonData buttonData1 = new GuiBuilder.ButtonData("Inventaire", (dataType, data) -> {
             showInventory.set(!showInventory.get());
         });
+        buttonData1.id = "inventoryButton";
         buttonData1.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData1.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData1.position = new Vector2f(-220, -12);
-        if (!Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
-            guiBuilder.addButton(buttonData1);
-        }
+        guiBuilder.addButton(buttonData1);
 
         GuiBuilder.ButtonData buttonData3 = new GuiBuilder.ButtonData("Marché", (dataType, data) -> {
             showMarket.set(!showMarket.get());
         });
+        buttonData3.id = "marketButton";
         buttonData3.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData3.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData3.position = new Vector2f(-400, -10);
-        if (!Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
-            guiBuilder.addButton(buttonData3);
-        }
+        guiBuilder.addButton(buttonData3);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
             Farmland.get().saveId = null;
@@ -209,19 +214,24 @@ public class InGameScene extends Scene {
 
         Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getCurrentSave()).getCurrentPlayer().inventory;
         Set<String> uniqueItems = playerInventory.keySet();
-        for(String item : uniqueItems){
-            ImGui.text(playerInventory.get(item).name + " (x" + playerInventory.get(item).quantity + ")");
 
-            ImGui.sameLine();
+        if (uniqueItems.isEmpty()) {
+            ImGui.text("Votre inventaire est vide !");
+        } else {
+            for(String item : uniqueItems){
+                ImGui.text(playerInventory.get(item).name + " (x" + playerInventory.get(item).quantity + ")");
 
-            ImGui.pushID(item);
+                ImGui.sameLine();
 
-            if (ImGui.button("Sélectionner")) {
-                Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID = item;
-                onSelectedItemOrMoneyChanged();
+                ImGui.pushID(item);
+
+                if (ImGui.button("Sélectionner")) {
+                    Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID = item;
+                    onSelectedItemOrMoneyChanged();
+                }
+
+                ImGui.popID();
             }
-
-            ImGui.popID();
         }
     }
 
@@ -267,6 +277,16 @@ public class InGameScene extends Scene {
             resultMenu.isWin = true;
             Farmland.get().saveId = null;
             changeScene(resultMenu);
+        }
+
+        if (currentPlayer.getId() != 0) {
+            getEntityByName("endTurnButton").setEnabled(false);
+            getEntityByName("inventoryButton").setEnabled(false);
+            getEntityByName("marketButton").setEnabled(false);
+        } else {
+            getEntityByName("endTurnButton").setEnabled(true);
+            getEntityByName("inventoryButton").setEnabled(true);
+            getEntityByName("marketButton").setEnabled(true);
         }
     }
 

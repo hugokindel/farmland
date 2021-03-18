@@ -200,6 +200,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
         if (selectionCursorEnabled && currentSelectedCell.x != -1) {
             renderSelectionCursor(spritebatch, rendererComponent, transformComponent);
+            renderSelectedItem(spritebatch, rendererComponent, transformComponent);
         }
 
         if (selectionCursorEnabled && showTypeOfTerritory) {
@@ -287,6 +288,28 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         spriteData.zIndex = rendererComponent.zIndex + 4;
 
         spritebatch.drawSprite(spriteData);
+    }
+
+    private void renderSelectedItem(Spritebatch spritebatch, RendererComponent rendererComponent,
+                                    TransformComponent transformComponent) {
+        if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().players.get(0).selectedItemID != null) {
+            Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
+                    Farmland.get().getItem(Farmland.get().getCurrentSave().players.get(0).selectedItemID).getSprite(),
+                    new Vector2f(
+                            transformComponent.position.x + gridBackgroundSideSize.x +
+                                    currentSelectedCell.x * cellSize.x,
+                            transformComponent.position.y + gridBackgroundSideSize.y +
+                                    currentSelectedCell.y * cellSize.y));
+            spriteData.zIndex = rendererComponent.zIndex + 5;
+
+            if (cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
+                spriteData.tint = Color.GREEN;
+            } else {
+                spriteData.tint = Color.RED;
+            }
+
+            spritebatch.drawSprite(spriteData);
+        }
     }
 
     private void renderTerritory(Spritebatch spritebatch, RendererComponent rendererComponent,

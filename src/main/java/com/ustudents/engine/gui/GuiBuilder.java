@@ -16,6 +16,7 @@ import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.w3c.dom.Text;
 
 public class GuiBuilder {
     public static class TextData {
@@ -47,6 +48,19 @@ public class GuiBuilder {
             this.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
             this.color = Color.WHITE;
             this.applyGlobalScaling = true;
+        }
+
+        public static TextData copy(TextData data) {
+            TextData textData = new TextData(data.text);
+            textData.id = data.id;
+            textData.position = data.position;
+            textData.scale = data.scale;
+            textData.font = data.font;
+            textData.origin = data.origin;
+            textData.anchor = data.anchor;
+            textData.color = data.color;
+            textData.applyGlobalScaling = data.applyGlobalScaling;
+            return textData;
         }
     }
 
@@ -181,6 +195,11 @@ public class GuiBuilder {
             text.addComponent(new UiRendererComponent());
             TextComponent textComponent = text.addComponent(new TextComponent(data.text, data.font));
             textComponent.color = data.color;
+            textComponent.textChanged.add((dataType, unused) -> {
+                TextData textData = TextData.copy(data);
+                textData.text = textComponent.text;
+                textPosition(textData, transformComponent);
+            });
         } else {
             Entity text = currentWindow.entity.createChildWithName(data.id);
             TransformComponent transformComponent = createScaledComponent(data.scale, data.applyGlobalScaling);
@@ -228,6 +247,20 @@ public class GuiBuilder {
         WindowContainer copy = WindowContainer.copy(currentWindow, currentWindow.contentData);
         windowPosition(copy.content, copy.data, transformComponent);
         Window.get().getSizeChanged().add((dataType, windowData) -> windowPosition(copy.content, copy.data, transformComponent));
+
+        TextComponent textComponent = copy.content.getComponent(TextComponent.class);
+
+        Entity windowEntity = currentWindow.entity;
+        copy.content.getComponent(TextComponent.class).textChanged.add(new EventListener() {
+            @Override
+            public void onReceived(Class<?> dataType, Object datas) {
+                TextData textData = TextData.copy(copy.contentData);
+                textData.text = copy.content.getComponent(TextComponent.class).text;
+                copy.contentData = textData;
+                windowEntity.getComponent(NineSlicedSpriteComponent.class).setSize(copy.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale));
+                windowPosition(copy.content, copy.data, transformComponent);
+            }
+        });
         currentWindow.entity.addComponent(transformComponent);
         currentWindow.entity.addComponent(new UiRendererComponent());
         currentWindow.entity.addComponent(new NineSlicedSpriteComponent(nineSlicedSprite, currentWindow.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale)));
@@ -236,6 +269,9 @@ public class GuiBuilder {
         currentWindow.content.getComponent(UiRendererComponent.class).zIndex++;
         contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y);
         Window.get().getSizeChanged().add((dataType, windowData) -> contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y));
+        textComponent.textChanged.add((dataType, unused) -> {
+            contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y);
+        });
 
         currentWindow = null;
     }

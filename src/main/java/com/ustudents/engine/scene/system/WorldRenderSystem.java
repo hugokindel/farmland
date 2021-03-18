@@ -21,7 +21,9 @@ public class WorldRenderSystem extends RenderSystem {
         spritebatch.begin(SceneManager.getScene().getWorldCamera());
 
         for (Entity entity : getEntities()) {
-            renderElement(spritebatch, entity, WorldRendererComponent.class);
+            if (entity.isEnabled()) {
+                renderElement(spritebatch, entity, WorldRendererComponent.class);
+            }
         }
 
         spritebatch.end();

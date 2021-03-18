@@ -23,6 +23,9 @@ public class Crop extends Item {
             texture = "crops/" + texture;
         }
         this.spritesheet = Resources.loadSpritesheet(texture);
+        if (currentTurn == 0) {
+            currentTurn = 1;
+        }
     }
 
     public static Crop clone(Crop crop) {

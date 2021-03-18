@@ -1,5 +1,6 @@
 package com.ustudents.engine.scene.component.gui;
 
+import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.scene.ecs.Component;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.RenderableComponent;
@@ -32,6 +33,8 @@ public class TextComponent extends Component implements RenderableComponent {
     @Viewable
     private Vector2f origin;
 
+    public EventDispatcher textChanged = new EventDispatcher();
+
     /**
      * Class constructor.
      *
@@ -53,6 +56,7 @@ public class TextComponent extends Component implements RenderableComponent {
     public void setText(String text) {
         this.text = text;
         calculateTextSize();
+        textChanged.dispatch();
     }
 
     public void setFont(Font font) {
