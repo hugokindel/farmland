@@ -153,6 +153,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         if (selectionCursorEnabled && currentSelectedCell.x != -1 &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
+                Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
                 cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 Farmland.get().getCurrentSave().players.get(0).selectedItemID != null
                 && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
@@ -170,6 +171,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
+                Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
                 !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
                 Farmland.get().getCurrentSave().currentPlayerId == 0) {
@@ -200,7 +202,10 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
         if (selectionCursorEnabled && currentSelectedCell.x != -1) {
             renderSelectionCursor(spritebatch, rendererComponent, transformComponent);
-            renderSelectedItem(spritebatch, rendererComponent, transformComponent);
+
+            if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
+                renderSelectedItem(spritebatch, rendererComponent, transformComponent);
+            }
         }
 
         if (selectionCursorEnabled && showTypeOfTerritory) {

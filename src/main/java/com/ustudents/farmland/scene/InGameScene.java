@@ -244,17 +244,18 @@ public class InGameScene extends Scene {
         }
         getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
 
-        if (Farmland.get().getCurrentSave().getCurrentPlayer().getId() == 0) {
+        if (Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
             for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
                 for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
                     Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
-                    if (cell.hasItem()) {
+                    if (cell.hasItem()/* && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(cell.ownerId)*/) {
                         cell.item.endTurn();
-                    }
-                    if (cell.item != null && cell.item.shouldBeDestroyed()) {
-                        Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
-                        player.setMoney(player.money + (int)((cell.item.value) * 1.5f));
-                        cell.item = null;
+
+                        if (cell.item.shouldBeDestroyed()) {
+                            Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
+                            player.setMoney(player.money + (int)((cell.item.value) * 1.5f));
+                            cell.item = null;
+                        }
                     }
                 }
             }

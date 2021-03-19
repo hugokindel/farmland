@@ -190,11 +190,15 @@ public class GuiBuilder {
             Entity text = canvas.createChildWithName(data.id);
             TransformComponent transformComponent = createScaledComponent(data.scale, data.applyGlobalScaling);
             textPosition(data, transformComponent);
-            Window.get().getSizeChanged().add((dataType, windowData) -> textPosition(data, transformComponent));
             text.addComponent(transformComponent);
             text.addComponent(new UiRendererComponent());
             TextComponent textComponent = text.addComponent(new TextComponent(data.text, data.font));
             textComponent.color = data.color;
+            Window.get().getSizeChanged().add((dataType, windowData) -> {
+                TextData textData = TextData.copy(data);
+                textData.text = textComponent.text;
+                textPosition(textData, transformComponent);
+            });
             textComponent.textChanged.add((dataType, unused) -> {
                 TextData textData = TextData.copy(data);
                 textData.text = textComponent.text;
@@ -246,20 +250,22 @@ public class GuiBuilder {
         TransformComponent transformComponent = createScaledComponent(currentWindow.data.scale, true);
         WindowContainer copy = WindowContainer.copy(currentWindow, currentWindow.contentData);
         windowPosition(copy.content, copy.data, transformComponent);
-        Window.get().getSizeChanged().add((dataType, windowData) -> windowPosition(copy.content, copy.data, transformComponent));
-
         TextComponent textComponent = copy.content.getComponent(TextComponent.class);
 
         Entity windowEntity = currentWindow.entity;
-        copy.content.getComponent(TextComponent.class).textChanged.add(new EventListener() {
-            @Override
-            public void onReceived(Class<?> dataType, Object datas) {
-                TextData textData = TextData.copy(copy.contentData);
-                textData.text = copy.content.getComponent(TextComponent.class).text;
-                copy.contentData = textData;
-                windowEntity.getComponent(NineSlicedSpriteComponent.class).setSize(copy.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale));
-                windowPosition(copy.content, copy.data, transformComponent);
-            }
+        Window.get().getSizeChanged().add((dataType, windowData) -> {
+            TextData textData = TextData.copy(copy.contentData);
+            textData.text = copy.content.getComponent(TextComponent.class).text;
+            copy.contentData = textData;
+            windowEntity.getComponent(NineSlicedSpriteComponent.class).setSize(copy.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale));
+            windowPosition(copy.content, copy.data, transformComponent);
+        });
+        copy.content.getComponent(TextComponent.class).textChanged.add((dataType, datas) -> {
+            TextData textData = TextData.copy(copy.contentData);
+            textData.text = copy.content.getComponent(TextComponent.class).text;
+            copy.contentData = textData;
+            windowEntity.getComponent(NineSlicedSpriteComponent.class).setSize(copy.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale));
+            windowPosition(copy.content, copy.data, transformComponent);
         });
         currentWindow.entity.addComponent(transformComponent);
         currentWindow.entity.addComponent(new UiRendererComponent());
@@ -269,9 +275,7 @@ public class GuiBuilder {
         currentWindow.content.getComponent(UiRendererComponent.class).zIndex++;
         contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y);
         Window.get().getSizeChanged().add((dataType, windowData) -> contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y));
-        textComponent.textChanged.add((dataType, unused) -> {
-            contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y);
-        });
+        textComponent.textChanged.add((dataType, unused) -> contentTransform.position = new Vector2f(transformComponent.position.x + 5 * transformComponent.scale.x, transformComponent.position.y + 5 * transformComponent.scale.y));
 
         currentWindow = null;
     }

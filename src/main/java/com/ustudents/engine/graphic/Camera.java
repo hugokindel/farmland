@@ -155,17 +155,19 @@ public class Camera {
     }
 
     public void zoom(float scale) {
-        Vector3f currentScale = new Vector3f();
-        viewProjectionMatrix.getScale(currentScale);
+        if (mousePosition != null) {
+            Vector3f currentScale = new Vector3f();
+            viewProjectionMatrix.getScale(currentScale);
 
-        if ((currentScale.y > maximalZoom && scale == 1.1f) || (currentScale.y < minimalZoom && scale == 1.0f / 1.1f)) {
-            return;
+            if ((currentScale.y > maximalZoom && scale == 1.1f) || (currentScale.y < minimalZoom && scale == 1.0f / 1.1f)) {
+                return;
+            }
+
+            Vector2f ndc = getNormalizedDeviceCoordinates(mousePosition);
+            viewMatrix.translateLocal(-ndc.x, -ndc.y).scaleLocal(scale, scale).translateLocal(ndc.x, ndc.y);
+
+            update();
         }
-
-        Vector2f ndc = getNormalizedDeviceCoordinates(mousePosition);
-        viewMatrix.translateLocal(-ndc.x, -ndc.y).scaleLocal(scale, scale).translateLocal(ndc.x, ndc.y);
-
-        update();
     }
 
     public void onMouseDown(int button) {
