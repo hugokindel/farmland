@@ -136,9 +136,9 @@ Semaine de partiel (peu de travail effectué), amélioration du gameplay.
 
 - Gagner de l'argent à chaque tour et payer pour chaque propriété possédé (JAUROYON Maxime)
 
-- Système de troupeau pour les animaux (peut-être ?)
-
 - Synchronisation complète multijoueur entre les différents joueur en local (KINDEL Hugo)
+
+- Mise à niveau de la taille de certaines ressources (ex: les animaux) qui dépasse de leur case
 
 ### Semaine 8 (jusqu'au 2 avril)
 
@@ -147,3 +147,5 @@ Semaine de partiel (peu de travail effectué), amélioration du gameplay.
 - Amélioration de certaines parties de l'interface graphique (refactor de certains code)
 
 - Possibilité de placer des décorations
+
+- Système de troupeau pour les animaux (peut-être ?)
