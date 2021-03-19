@@ -120,20 +120,30 @@ Apparition du gameplay et du jeu en multijoueur.
 
 ### Semaine 6 (jusqu'au 19 mars)
 
- (Semaine des partiels)
+Semaine de partiel (peu de travail effectué), amélioration du gameplay.
+
+- Faire grandir les ressources à chaque tour (JAUROYON Maxime) **[FAIT]**
+
+- Possibilité pour le bot de réaliser des actions (acheter du terrain, acheter et poser des ressources) (PAULAS VICTOR Francis) **[FAIT]**
+
+- Amélioration de certaines parties de l'interface graphique (LE CORRE Léo) **[FAIT]**
+
+- Tester le projet pour fixer des bugs et avancer le code réseau (KINDEL Hugo) **[FAIT]**
 
 ### Semaine 7 (jusqu'au 26 mars)
 
 - Continuation du travail sur le système économique (LE CORRE Léo et PAULAS VICTOR Francis)
 
-- Faire grandir les ressources à chaque tour (JAUROYON Maxime)
+- Gagner de l'argent à chaque tour et payer pour chaque propriété possédé (JAUROYON Maxime)
 
-- Le joueurs qui exécute le code ne doit pas pouvoir jouer les tours du bot
+- Système de troupeau pour les animaux (peut-être ?)
 
-- Finir le système de tour (= avoir quelque chose de réellement jouable)
-
-- Gagner de l'argent à chaque tour et payer pour chaque propriété possédé
+- Synchronisation complète multijoueur entre les différents joueur en local (KINDEL Hugo)
 
 ### Semaine 8 (jusqu'au 2 avril)
 
-- Synchronisation multijoueur entre les différents joueur (KINDEL Hugo)
+- Synchronisation complète multijoueur entre les différents joueur en ligne (KINDEL Hugo)
+
+- Amélioration de certaines parties de l'interface graphique (refactor de certains code)
+
+- Possibilité de placer des décorations
