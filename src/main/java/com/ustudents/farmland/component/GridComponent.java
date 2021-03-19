@@ -154,7 +154,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
                 Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
-                cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
+                cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).ownerId.equals(0) &&
                 Farmland.get().getCurrentSave().players.get(0).selectedItemID != null
                 && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
             Item currentItem = Farmland.get().getCurrentSave().players.get(0).getCurrentItemFromInventory();
@@ -307,7 +307,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                                     currentSelectedCell.y * cellSize.y));
             spriteData.zIndex = rendererComponent.zIndex + 5;
 
-            if (cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
+            if (cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem() && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).ownerId.equals(0)) {
                 spriteData.tint = Color.GREEN;
             } else {
                 spriteData.tint = Color.RED;

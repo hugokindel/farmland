@@ -286,12 +286,32 @@ public class InGameScene extends Scene {
             getEntityByName("endTurnButton").setEnabled(false);
             getEntityByName("inventoryButton").setEnabled(false);
             getEntityByName("marketButton").setEnabled(false);
+            if (showMarket.get()) {
+                shoulsShowBackMarket = true;
+            }
+            if (showInventory.get()) {
+                shouldShowBackInventory = true;
+            }
+            showInventory.set(false);
+            showMarket.set(false);
         } else {
             getEntityByName("endTurnButton").setEnabled(true);
             getEntityByName("inventoryButton").setEnabled(true);
             getEntityByName("marketButton").setEnabled(true);
+            if (shouldShowBackInventory) {
+                showInventory.set(true);
+                shouldShowBackInventory = false;
+            }
+            if (shoulsShowBackMarket) {
+                showMarket.set(true);
+                shoulsShowBackMarket = false;
+            }
         }
     }
+
+    public boolean shouldShowBackInventory = false;
+
+    public boolean shoulsShowBackMarket = false;
 
     public void onSelectedItemOrMoneyChanged() {
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
