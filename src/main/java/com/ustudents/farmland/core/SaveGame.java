@@ -131,11 +131,25 @@ public class SaveGame {
         }
 
         File f = new File(Resources.getSavesDirectoryName());
-        this.path = "save-" + f.list().length + ".json";
+        this.path = "save-" + (getMaxSavedGamesId() + 1) + ".json";
 
         if (Game.isDebugging()) {
             Out.printlnDebug("Savegame created.");
         }
+    }
+
+    private int getMaxSavedGamesId(){
+        File savedDir = new File(Resources.getSavesDirectoryName());
+        File[] list = savedDir.listFiles();
+        int max = -1;
+        assert list != null;
+        for (File file : list) {
+            String tmp = file.getName().substring(5, 6);
+            int fileId = Integer.parseInt(tmp);
+            if (fileId > max)
+                max = fileId;
+        }
+        return max;
     }
 
     public void endTurn() {

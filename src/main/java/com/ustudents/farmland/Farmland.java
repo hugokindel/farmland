@@ -18,10 +18,7 @@ import org.joml.Vector2i;
 
 import java.io.File;
 import java.net.DatagramPacket;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /** The main class of the project. */
 @Command(name = "farmland", version = "0.0.1", description = "A management game about farming.")
@@ -40,6 +37,7 @@ public class Farmland extends Game {
         changeIcon("ui/farmland_logo.png");
         changeCursor("ui/cursor.png");
 
+        clearUselessSavedGames();
         loadItemDatabases();
         loadSavedGames();
 
@@ -92,7 +90,7 @@ public class Farmland extends Game {
         JsonWriter.writeToFile(Resources.getDataDirectory() + "/server.json", serverConfig);
     }
 
-    private void loadItemDatabases() {
+    public void loadItemDatabases() {
         itemDatabase = new HashMap<>();
 
         List<Object> listOfCrops = JsonReader.readArray(Resources.getItemsDirectoryName() + "/crops.json");
@@ -154,6 +152,29 @@ public class Farmland extends Game {
     public void saveSavedGames() {
         for (SaveGame saveGame : saveGames.values()) {
             Json.serialize(Resources.getSavesDirectoryName() + "/" + saveGame.path, saveGame);
+        }
+    }
+
+    private void clearUselessSavedGames(){
+        File savedDir = new File(Resources.getSavesDirectoryName());
+        File[] list = savedDir.listFiles();
+        List<File> toDelete = new ArrayList<>();
+        assert list != null;
+        for(int i = list.length-1; i > 0 ; i--){
+            Map<String,Object> json = JsonReader.readMap(list[i].getPath());
+            assert json != null;
+            for(int j = i-1; j >= 0 ; j--){
+                Map<String,Object> jsonTwo = JsonReader.readMap(list[j].getPath());
+                assert jsonTwo != null;
+                if(json.get("name").equals(jsonTwo.get("name"))){
+                    toDelete.add(list[j]);
+                }
+            }
+        }
+        while(!toDelete.isEmpty()){
+            File file = toDelete.get(0);
+            file.delete();
+            toDelete.remove(0);
         }
     }
 

@@ -174,9 +174,11 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
                 !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
-                Farmland.get().getCurrentSave().currentPlayerId == 0) {
+                Farmland.get().getCurrentSave().currentPlayerId == 0
+                && Farmland.get().getCurrentSave().players.get(0).money >= 25) {
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
-            Farmland.get().getCurrentSave().players.get(0).setMoney(Farmland.get().getCurrentSave().players.get(0).money - 25);
+            int takeMoney = Farmland.get().getCurrentSave().players.get(0).money - 25;
+            Farmland.get().getCurrentSave().players.get(0).setMoney(Math.max(takeMoney, 0));
         }
     }
 

@@ -48,7 +48,9 @@ public class ResultMenu extends MenuScene {
 
         eventListeners = new EventListener[buttonNames.length];
 
+        Farmland.get().loadItemDatabases();
         removeSavedGame();
+
 
         for (int i = 0; i < buttonNames.length; i++) {
             int j = i;
