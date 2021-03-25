@@ -31,6 +31,9 @@ public class Player {
     public Integer money;
 
     @JsonSerializable
+    public String typeOfPlayer;
+
+    @JsonSerializable
     public Color color;
 
     @JsonSerializable
@@ -50,11 +53,12 @@ public class Player {
         this.inventory = new HashMap<>();
     }
 
-    public Player(String name, String villageName, Color color) {
+    public Player(String name, String villageName, Color color, String typeOfPlayer) {
         this.name = name;
         this.village = new Village(villageName);
         this.color = color;
         this.money = 500;
+        this.typeOfPlayer = typeOfPlayer;
         this.inventory = new HashMap<>();
     }
 
@@ -96,6 +100,15 @@ public class Player {
             }
         }
         return false;
+    }
+
+    public boolean deleteFromInventory(List<Item> list){
+        for(Item item: list){
+            if(!deleteFromInventory(item)){
+                return false;
+            }
+        }
+        return true;
     }
 
     public Item getItemFromInventory(String id) {

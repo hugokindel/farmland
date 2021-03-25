@@ -37,7 +37,7 @@ public class Farmland extends Game {
         changeIcon("ui/farmland_logo.png");
         changeCursor("ui/cursor.png");
 
-        clearUselessSavedGames();
+        //clearUselessSavedGames();
         loadItemDatabases();
         loadSavedGames();
 
@@ -149,33 +149,31 @@ public class Farmland extends Game {
         }
     }
 
-    public void saveSavedGames() {
+    public void saveSavedGames(){
         for (SaveGame saveGame : saveGames.values()) {
             Json.serialize(Resources.getSavesDirectoryName() + "/" + saveGame.path, saveGame);
         }
+        Farmland.get().clearUselessSavedGames();
     }
 
-    private void clearUselessSavedGames(){
+    public void clearUselessSavedGames(){
         File savedDir = new File(Resources.getSavesDirectoryName());
         File[] list = savedDir.listFiles();
-        List<File> toDelete = new ArrayList<>();
+        File toDelete = null;
         assert list != null;
-        for(int i = list.length-1; i > 0 ; i--){
+        for(int i = list.length-1; toDelete == null && i > 0 ; i--){
             Map<String,Object> json = JsonReader.readMap(list[i].getPath());
             assert json != null;
-            for(int j = i-1; j >= 0 ; j--){
+            for(int j = i-1; toDelete == null && j >= 0 ; j--){
                 Map<String,Object> jsonTwo = JsonReader.readMap(list[j].getPath());
                 assert jsonTwo != null;
                 if(json.get("name").equals(jsonTwo.get("name"))){
-                    toDelete.add(list[j]);
+                    toDelete = list[j];
                 }
             }
         }
-        while(!toDelete.isEmpty()){
-            File file = toDelete.get(0);
-            file.delete();
-            toDelete.remove(0);
-        }
+        if(toDelete!= null)
+            toDelete.delete();
     }
 
     public Map<String, Item> getItemDatabase() {
