@@ -7,6 +7,7 @@ import com.ustudents.engine.audio.openal.ALSoundManager;
 
 public class SoundManager {
     private EmptySoundManager soundManager;
+    private boolean noSound;
 
     public SoundManager() {
         switch (Game.get().getSoundSystemType()) {
@@ -29,10 +30,12 @@ public class SoundManager {
 
     public void play(EmptySoundSource source) {
         soundManager.play(source);
+        noSound = false;
     }
 
     public void stopAll() {
         soundManager.stopAll();
+        noSound = true;
     }
 
     public void removeAll() {
@@ -42,6 +45,8 @@ public class SoundManager {
     public static SoundManager get() {
         return Game.get().getSoundManager();
     }
+
+    public boolean getNoSound(){return noSound;}
 
     public EmptySoundManager getSoundManager() {
         return soundManager;

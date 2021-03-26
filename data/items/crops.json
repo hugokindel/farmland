@@ -13,7 +13,7 @@
 			"tomato5",
 			"tomato6"
 		],
-		"initValue": 50
+		"initValue": 10
 	},
 	{
 		"name": "Fraise",
@@ -29,7 +29,7 @@
 			"strawberry5",
 			"strawberry6"
 		],
-		"initValue": 50
+		"initValue": 10
 	},
 	{
 		"name": "Mais",
@@ -45,7 +45,7 @@
 			"corn5",
 			"corn6"
 		],
-		"initValue": 50
+		"initValue": 10
 	},
 	{
 		"name": "Raisins",
@@ -61,7 +61,7 @@
 			"grapes5",
 			"grapes6"
 		],
-		"initValue": 50
+		"initValue": 10
 	},
 	{
 		"name": "Orange",
@@ -77,7 +77,7 @@
 			"orange5",
 			"orange6"
 		],
-		"initValue": 50
+		"initValue": 10
 	},
 	{
 		"name": "Ananas",
@@ -93,7 +93,7 @@
 			"pineapple5",
 			"pineapple6"
 		],
-		"initValue": 50
+		"initValue": 10
 	},
 	{
 		"name": "Radis",
@@ -109,7 +109,7 @@
 			"shuttle5",
 			"shuttle6"
 		],
-		"initValue": 50
+		"initValue": 10
 	},
 	{
 		"name": "Pasteque",
@@ -125,6 +125,6 @@
 			"watermelon5",
 			"watermelon6"
 		],
-		"initValue": 50
+		"initValue": 10
 	}
 ]

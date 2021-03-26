@@ -31,6 +31,9 @@ public class Player {
     public Integer money;
 
     @JsonSerializable
+    public String typeOfPlayer;
+
+    @JsonSerializable
     public Color color;
 
     @JsonSerializable
@@ -40,28 +43,35 @@ public class Player {
     public String selectedItemID;
 
     @JsonSerializable
-    public Map<String, Item> inventory;
+    public Map<String, Item> buyInventory;
+
+    @JsonSerializable
+    public Map<String, Item> sellInventory;
 
     public String ipAddress;
 
     public EventDispatcher moneyChanged = new EventDispatcher();
 
     public Player() {
-        this.inventory = new HashMap<>();
+        this.buyInventory = new HashMap<>();
+        this.sellInventory = new HashMap<>();
     }
 
-    public Player(String name, String villageName, Color color) {
+    public Player(String name, String villageName, Color color, String typeOfPlayer) {
         this.name = name;
         this.village = new Village(villageName);
         this.color = color;
         this.money = 500;
-        this.inventory = new HashMap<>();
+        this.typeOfPlayer = typeOfPlayer;
+        this.buyInventory = new HashMap<>();
+        this.sellInventory = new HashMap<>();
     }
 
     @JsonSerializableConstructor
     public void deserialize() {
         Map<String, Item> realInventory = new HashMap<>();
-        for (Map.Entry<String, Item> elements : inventory.entrySet()) {
+        Map<String, Item> realSellInventory = new HashMap<>();
+        for (Map.Entry<String, Item> elements : buyInventory.entrySet()) {
             Map<String, Object> value = ((Map<String, Object>)((Object)elements.getValue()));
             Item item = Farmland.get().getItem((String)value.get("id"));
             if (item instanceof Animal) {
@@ -74,37 +84,69 @@ public class Player {
                 realInventory.put(elements.getKey(), Json.deserialize(value, Property.class));
             }
         }
-        inventory = realInventory;
+        buyInventory = realInventory;
+        sellInventory = realSellInventory;
     }
 
-    public void addToInventory(Item item) {
-        if (!inventory.containsKey(item.id)) {
-            inventory.put(item.id, Item.clone(item));
+    public void addToInventory(Item item, String name) {
+        if(name.equals("Buy")){
+            if (!buyInventory.containsKey(item.id)) {
+                buyInventory.put(item.id, Item.clone(item));
+            }
+
+            buyInventory.get(item.id).quantity++;
+        }else{
+            if (!sellInventory.containsKey(item.id)) {
+                sellInventory.put(item.id, Item.clone(item));
+            }
+
+            sellInventory.get(item.id).quantity++;
         }
 
-        inventory.get(item.id).quantity++;
     }
 
-    public boolean deleteFromInventory(Item item) {
-        if (inventory.containsKey(item.id)) {
-            if (inventory.get(item.id).quantity >= 2) {
-                inventory.get(item.id).quantity--;
-                return false;
-            } else {
-                inventory.remove(item.id);
-                return true;
+    public boolean deleteFromInventory(Item item, String name) {
+        if(name.equals("Buy")){
+            if (buyInventory.containsKey(item.id)) {
+                if (buyInventory.get(item.id).quantity >= 2) {
+                    buyInventory.get(item.id).quantity--;
+                    return false;
+                } else {
+                    buyInventory.remove(item.id);
+                    return true;
+                }
+            }
+
+        }else{
+            if (sellInventory.containsKey(item.id)) {
+                if (sellInventory.get(item.id).quantity >= 2) {
+                    sellInventory.get(item.id).quantity--;
+                    return false;
+                } else {
+                    sellInventory.remove(item.id);
+                    return true;
+                }
             }
         }
         return false;
     }
 
+    public boolean deleteFromInventory(List<Item> list, String name){
+        for(Item item: list){
+            if(!deleteFromInventory(item, name)){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public Item getItemFromInventory(String id) {
-        return inventory.getOrDefault(id, null);
+        return buyInventory.getOrDefault(id, null);
     }
 
     public Item getCurrentItemFromInventory() {
         if (selectedItemID != null) {
-            return inventory.get(selectedItemID);
+            return buyInventory.get(selectedItemID);
         } else {
             return null;
         }

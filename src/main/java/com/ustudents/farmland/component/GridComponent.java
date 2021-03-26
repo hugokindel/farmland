@@ -13,10 +13,8 @@ import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
-import com.ustudents.farmland.core.item.Animal;
-import com.ustudents.farmland.core.item.Decoration;
-import com.ustudents.farmland.core.item.Item;
-import com.ustudents.farmland.core.item.Property;
+import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.player.Player;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -162,7 +160,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
             assert clone != null;
             clone.quantity = 1;
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(clone);
-            if (Farmland.get().getCurrentSave().players.get(0).deleteFromInventory(currentItem)) {
+            if (Farmland.get().getCurrentSave().players.get(0).deleteFromInventory(currentItem, "Buy")) {
                 Farmland.get().getCurrentSave().players.get(0).selectedItemID = null;
             }
             onItemUsed.dispatch();
@@ -174,9 +172,11 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
                 !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
-                Farmland.get().getCurrentSave().currentPlayerId == 0) {
+                Farmland.get().getCurrentSave().currentPlayerId == 0
+                && Farmland.get().getCurrentSave().players.get(0).money >= 25) {
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
-            Farmland.get().getCurrentSave().players.get(0).setMoney(Farmland.get().getCurrentSave().players.get(0).money - 25);
+            int takeMoney = Farmland.get().getCurrentSave().players.get(0).money - 25;
+            Farmland.get().getCurrentSave().players.get(0).setMoney(Math.max(takeMoney, 0));
         }
     }
 

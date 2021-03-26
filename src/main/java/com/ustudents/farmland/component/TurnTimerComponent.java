@@ -1,5 +1,6 @@
 package com.ustudents.farmland.component;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
@@ -77,6 +78,8 @@ public class TurnTimerComponent extends BehaviourComponent {
     }
 
     private void setTimeElapsed(int seconds) {
+        if(Farmland.get().getCurrentSave() == null)
+            return;
         Farmland.get().getCurrentSave().turnTimePassed = seconds;
         secondElapsed.dispatch(new SecondElapsed(Farmland.get().getCurrentSave().turnTimePassed));
     }

@@ -9,6 +9,7 @@ import com.ustudents.farmland.core.item.Crop;
 import com.ustudents.farmland.core.item.Item;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Bot {
@@ -23,6 +24,22 @@ public class Bot {
         } else if (action == 1) {
             addItem(random);
         }
+
+        maintenanceCost();
+    }
+
+    public static void maintenanceCost(){
+        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+
+                if (cell.isOwnedByCurrentPlayer()){
+                    Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+                    player.setMoney(player.money - 1);
+                }
+            }
+        }
+
     }
 
     public static void buyLand(SeedRandom random) {
@@ -50,7 +67,8 @@ public class Bot {
                 return;
             }
 
-            List<Item> items = Farmland.get().getItemDatabase().values().stream().filter(j -> j instanceof Crop).collect(Collectors.toList());
+            List<Item> items = Farmland.get().getResourceDatabase().values().stream().filter(Objects::nonNull).collect(Collectors.toList());
+            //List<Item> items = Farmland.get().getItemDatabase().values().stream().filter(j -> j instanceof Crop).collect(Collectors.toList());
             Item item = items.get(random.generateInRange(0, items.size() - 1));
 
             if (player.money < item.value) {

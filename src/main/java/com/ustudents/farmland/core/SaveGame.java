@@ -78,7 +78,7 @@ public class SaveGame {
         this.currentPlayerId = 0;
         this.name = name;
         this.players = new ArrayList<>();
-        this.players.add(new Player(playerName, playerVillageName, playerColor));
+        this.players.add(new Player(playerName, playerVillageName, playerColor,"Humain"));
         this.players.get(0).village.position = new Vector2f(5 + (mapSize.x / 2) * 24, 5 + (mapSize.y / 2) * 24);
         this.itemsTurn = new ArrayList<>();
 
@@ -121,7 +121,7 @@ public class SaveGame {
         usedLocations.add(new Vector2i(mapSize.x / 2 - 1, mapSize.y / 2 - 1));
 
         for (int i = 0; i < numberOfBots; i++) {
-            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors)));
+            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors), "Robot"));
             Vector2i villagePosition = generateMapLocation(random, usedLocations);
             this.players.get(i + 1).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
             this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i + 1);
@@ -131,11 +131,25 @@ public class SaveGame {
         }
 
         File f = new File(Resources.getSavesDirectoryName());
-        this.path = "save-" + f.list().length + ".json";
+        this.path = "save-" + (getMaxSavedGamesId() + 1) + ".json";
 
         if (Game.isDebugging()) {
             Out.printlnDebug("Savegame created.");
         }
+    }
+
+    private int getMaxSavedGamesId(){
+        File savedDir = new File(Resources.getSavesDirectoryName());
+        File[] list = savedDir.listFiles();
+        int max = -1;
+        assert list != null;
+        for (File file : list) {
+            String tmp = file.getName().substring(5, 6);
+            int fileId = Integer.parseInt(tmp);
+            if (fileId > max)
+                max = fileId;
+        }
+        return max;
     }
 
     public void endTurn() {
@@ -200,5 +214,14 @@ public class SaveGame {
                 return position;
             }
         }
+    }
+
+    public boolean containOnlyBot(){
+        for(Player player: players){
+            if(player.typeOfPlayer.contains("Humain")){
+                return (player.money == 0 || player.money >= 1000);
+            }
+        }
+        return true;
     }
 }

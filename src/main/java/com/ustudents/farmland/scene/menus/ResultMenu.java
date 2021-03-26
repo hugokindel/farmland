@@ -48,7 +48,9 @@ public class ResultMenu extends MenuScene {
 
         eventListeners = new EventListener[buttonNames.length];
 
+        Farmland.get().loadItemDatabases();
         removeSavedGame();
+
 
         for (int i = 0; i < buttonNames.length; i++) {
             int j = i;
@@ -58,6 +60,7 @@ public class ResultMenu extends MenuScene {
                     Vector2i vector = new Vector2i(this.currentSave.mapWidth,this.currentSave.mapHeight);
                     Farmland.get().saveId = currentSave.name;
                     Farmland.get().setCurrentSave(new SaveGame(this.currentSave.name, player.name, player.village.name, player.color, vector, this.currentSave.seed, this.currentSave.players.size()-1));
+                    Farmland.get().saveSavedGames();
                     changeScene(new InGameScene());
                 }else{
                     Farmland.get().getSaveGames().remove(currentSave.name);
