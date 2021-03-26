@@ -3,6 +3,7 @@ package com.ustudents.farmland.core.item;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
+import com.ustudents.engine.graphic.Sprite;
 
 import java.util.Map;
 
@@ -11,6 +12,9 @@ public class Animal extends Item {
     @JsonSerializable
     public Integer numberOfTurnsToReachMaturity;
 
+    @JsonSerializable(necessary = false)
+    public Integer currentTurn = 1;
+
     @JsonSerializableConstructor
     @Override
     public void deserialize(Map<String, Object> json) {
@@ -18,6 +22,9 @@ public class Animal extends Item {
             texture = "animals/" + texture;
         }
         this.spritesheet = Resources.loadSpritesheet(texture);
+        if (currentTurn == 0) {
+            currentTurn = 1;
+        }
     }
 
     public static Animal clone(Animal animal) {
@@ -26,4 +33,20 @@ public class Animal extends Item {
         result.numberOfTurnsToReachMaturity = animal.numberOfTurnsToReachMaturity;
         return result;
     }
+
+    @Override
+    public void endTurn() {
+        currentTurn++;
+    }
+
+    @Override
+    public Sprite getSprite() {
+        return spritesheet.getSprite(id + (currentTurn > 4 ? (currentTurn % 5) + 1 : currentTurn));
+    }
+
+    @Override
+    public boolean shouldBeDestroyed() {
+        return currentTurn > numberOfTurnsToReachMaturity;
+    }
+
 }

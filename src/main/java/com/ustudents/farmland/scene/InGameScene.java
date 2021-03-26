@@ -306,6 +306,12 @@ public class InGameScene extends Scene {
             for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
                 for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
                     Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+
+                    if (cell.isOwnedByCurrentPlayer()){
+                        Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
+                        player.setMoney(player.money - 1);
+                    }
+
                     if (cell.hasItem()/* && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(cell.ownerId)*/) {
                         cell.item.endTurn();
 
