@@ -20,6 +20,7 @@ import org.joml.Vector4f;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @JsonSerializable
@@ -58,6 +59,8 @@ public class SaveGame {
 
     public Boolean startWithBots;
 
+    public List<Integer> deadPlayers;
+
     public String path;
 
     public EventDispatcher turnEnded = new EventDispatcher();
@@ -76,6 +79,7 @@ public class SaveGame {
         }
         SeedRandom random = new SeedRandom(this.seed);
 
+        this.deadPlayers = new LinkedList<>();
         this.startWithBots = numberOfBots > 0;
         this.turn = 0;
         this.turnTimePassed = 0;
@@ -168,7 +172,7 @@ public class SaveGame {
     }
 
     public Player getCurrentPlayer() {
-        return players.size() > currentPlayerId ? players.get(currentPlayerId) : null;
+        return deadPlayers.contains(currentPlayerId) ? null : players.get(currentPlayerId);
     }
 
     private Color generateColor(SeedRandom random, List<Color> usedColors) {

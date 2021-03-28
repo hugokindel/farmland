@@ -333,65 +333,67 @@ public class InGameScene extends Scene {
 
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
 
-
-        if(Farmland.get().getCurrentSave().PlayerMeetCondition()){
-            Player human = null;
-            for(Player player: Farmland.get().getCurrentSave().players){
-                if(player.typeOfPlayer.contains("Humain")){
-                    human = player;
-                }
-            }
-            if (getGame().isConnectedToServer()) {
-                getGame().disconnectFromServer();
-            }
-            ResultMenu resultMenu = new ResultMenu();
-            resultMenu.currentPlayer = human;
-            resultMenu.currentSave = Farmland.get().getCurrentSave();
-            if(human != null){
-                resultMenu.isWin = human.money >= 1000;
-            }
-            Farmland.get().saveId = null;
-            changeScene(resultMenu);
-        } else if (Farmland.get().getCurrentSave().BotMeetCondition()){
-            int numberOfBots = 0;
-            for(int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
-                Player player = Farmland.get().getCurrentSave().players.get(i);
-                if(player.typeOfPlayer.contains("Robot")){
-                    numberOfBots += 1;
-                    if (player.money >= 1000){
-                        ResultMenu resultMenu = new ResultMenu();
-                        resultMenu.currentPlayer = currentPlayer;
-                        resultMenu.currentSave = Farmland.get().getCurrentSave();
-                        resultMenu.isWin = false;
-                        Farmland.get().saveId = null;
-                        changeScene(resultMenu);
-                    } else if (player.money <= 0) {
-                        numberOfBots -= 1;
-                        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-                            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
-
-                                if (cell.isOwned() && cell.ownerId.equals(player.getId())){
-                                    cell.setItem(null);
-                                    cell.setOwned(false,-1);
-                                }
-                            }
-                        }
-
-                        List<Player> pl = Farmland.get().getCurrentSave().players;
-                        pl.remove(player);
-                        Farmland.get().getCurrentSave().players = pl;
+        if (currentPlayer != null) {
+            if (Farmland.get().getCurrentSave().PlayerMeetCondition()) {
+                Player human = null;
+                for (Player player : Farmland.get().getCurrentSave().players) {
+                    if (player.typeOfPlayer.contains("Humain")) {
+                        human = player;
                     }
                 }
-            }
-
-            if (numberOfBots == 0 && Farmland.get().getCurrentSave().startWithBots) {
+                if (getGame().isConnectedToServer()) {
+                    getGame().disconnectFromServer();
+                }
                 ResultMenu resultMenu = new ResultMenu();
-                resultMenu.currentPlayer = currentPlayer;
+                resultMenu.currentPlayer = human;
                 resultMenu.currentSave = Farmland.get().getCurrentSave();
-                resultMenu.isWin = true;
+                if (human != null) {
+                    resultMenu.isWin = human.money >= 1000;
+                }
                 Farmland.get().saveId = null;
                 changeScene(resultMenu);
+            } else if (Farmland.get().getCurrentSave().BotMeetCondition()) {
+                int numberOfBots = 0;
+                for (int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
+                    Player player = Farmland.get().getCurrentSave().players.get(i);
+                    if (player.typeOfPlayer.contains("Robot")) {
+                        numberOfBots += 1;
+                        if (player.money >= 1000) {
+                            ResultMenu resultMenu = new ResultMenu();
+                            resultMenu.currentPlayer = currentPlayer;
+                            resultMenu.currentSave = Farmland.get().getCurrentSave();
+                            resultMenu.isWin = false;
+                            Farmland.get().saveId = null;
+                            changeScene(resultMenu);
+                        } else if (player.money <= 0) {
+                            numberOfBots -= 1;
+                            for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+                                for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                                    Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+
+                                    if (cell.isOwned() && cell.ownerId.equals(player.getId())) {
+                                        cell.setItem(null);
+                                        cell.setOwned(false, -1);
+                                    }
+                                }
+                            }
+
+                            Farmland.get().getCurrentSave().deadPlayers.add(player.getId());
+                            List<Player> pl = Farmland.get().getCurrentSave().players;
+                            pl.remove(player);
+                            Farmland.get().getCurrentSave().players = pl;
+                        }
+                    }
+                }
+
+                if (numberOfBots == 0 && Farmland.get().getCurrentSave().startWithBots) {
+                    ResultMenu resultMenu = new ResultMenu();
+                    resultMenu.currentPlayer = currentPlayer;
+                    resultMenu.currentSave = Farmland.get().getCurrentSave();
+                    resultMenu.isWin = true;
+                    Farmland.get().saveId = null;
+                    changeScene(resultMenu);
+                }
             }
         }
 
