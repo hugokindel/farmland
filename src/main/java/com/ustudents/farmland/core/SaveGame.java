@@ -10,6 +10,7 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.utility.SeedRandom;
+import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
@@ -167,7 +168,7 @@ public class SaveGame {
     }
 
     public Player getCurrentPlayer() {
-        return players.get(currentPlayerId);
+        return players.size() > currentPlayerId ? players.get(currentPlayerId) : null;
     }
 
     private Color generateColor(SeedRandom random, List<Color> usedColors) {

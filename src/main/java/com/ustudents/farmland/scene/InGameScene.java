@@ -331,7 +331,7 @@ public class InGameScene extends Scene {
             }
         }
 
-        Player currentPlayer = Farmland.get().getCurrentSave().players.size() > Farmland.get().getCurrentSave().currentPlayerId ? Farmland.get().getCurrentSave().getCurrentPlayer() : null;
+        Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
 
 
         if(Farmland.get().getCurrentSave().containOnlyBot()){
