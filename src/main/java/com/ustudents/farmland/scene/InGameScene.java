@@ -20,6 +20,7 @@ import com.ustudents.farmland.component.TurnTimerComponent;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.player.Bot;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import com.ustudents.farmland.scene.menus.ResultMenu;
@@ -86,7 +87,7 @@ public class InGameScene extends Scene {
         GuiBuilder guiBuilder = new GuiBuilder();
 
         GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Finir le tour", (dataType, data) -> {
-                Farmland.get().getCurrentSave().endTurn();
+            Farmland.get().getCurrentSave().endTurn();
         });
         buttonData.id = "endTurnButton";
         buttonData.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
@@ -345,10 +346,38 @@ public class InGameScene extends Scene {
             ResultMenu resultMenu = new ResultMenu();
             resultMenu.currentPlayer = human;
             resultMenu.currentSave = Farmland.get().getCurrentSave();
-            if(human.money >= 1000)
-                resultMenu.isWin = true;
+            if(human != null){
+                resultMenu.isWin = human.money >= 1000;
+            }
             Farmland.get().saveId = null;
             changeScene(resultMenu);
+        } else {
+            boolean BotsAlive = false;
+            for(int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
+                Player player = Farmland.get().getCurrentSave().players.get(i);
+                if(player.typeOfPlayer.contains("Robot")){
+                    BotsAlive = true;
+                    if (player.money >= 1000){
+                        ResultMenu resultMenu = new ResultMenu();
+                        resultMenu.currentPlayer = currentPlayer;
+                        resultMenu.currentSave = Farmland.get().getCurrentSave();
+                        resultMenu.isWin = false;
+                        Farmland.get().saveId = null;
+                        changeScene(resultMenu);
+                    } else if (player.money <= 0) {
+                        Farmland.get().getCurrentSave().players.remove(player);
+                    }
+                }
+            }
+
+            if (!BotsAlive && Farmland.get().getCurrentSave().startWithBots) {
+                ResultMenu resultMenu = new ResultMenu();
+                resultMenu.currentPlayer = currentPlayer;
+                resultMenu.currentSave = Farmland.get().getCurrentSave();
+                resultMenu.isWin = true;
+                Farmland.get().saveId = null;
+                changeScene(resultMenu);
+            }
         }
 
         if (currentPlayer.getId() != 0) {

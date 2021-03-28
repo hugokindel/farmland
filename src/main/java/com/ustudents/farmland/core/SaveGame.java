@@ -55,6 +55,8 @@ public class SaveGame {
     @JsonSerializable
     public List<List<Cell>> cells;
 
+    public Boolean startWithBots;
+
     public String path;
 
     public EventDispatcher turnEnded = new EventDispatcher();
@@ -73,6 +75,7 @@ public class SaveGame {
         }
         SeedRandom random = new SeedRandom(this.seed);
 
+        this.startWithBots = numberOfBots > 0;
         this.turn = 0;
         this.turnTimePassed = 0;
         this.currentPlayerId = 0;
@@ -219,7 +222,7 @@ public class SaveGame {
     public boolean containOnlyBot(){
         for(Player player: players){
             if(player.typeOfPlayer.contains("Humain")){
-                return (player.money == 0 || player.money >= 1000);
+                return (player.money <= 0 || player.money >= 1000);
             }
         }
         return true;
