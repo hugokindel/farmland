@@ -294,132 +294,134 @@ public class InGameScene extends Scene {
     }
 
     public void onTurnEnded() {
-
-        if(Farmland.get().getCurrentSave().turn%2 == 0){
-            economicComponent.changeValueOfRessource();
-            economicComponent.lastItemTurn = new ArrayList<>();
-            economicComponent.lastItemTurn.addAll(Farmland.get().getCurrentSave().itemsTurn);
-            Farmland.get().getCurrentSave().itemsTurn= new ArrayList<>();
-        }
-        getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
-
-        if (Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
-            for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-                for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                    Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
-
-                    if (cell.isOwnedByCurrentPlayer()){
-                        Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
-                        player.setMoney(player.money - 1);
-                    }
-
-                    if (cell.hasItem()/* && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(cell.ownerId)*/) {
-                        cell.item.endTurn();
-
-                        if (cell.item.shouldBeDestroyed()) {
-                            Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
-                            //player.setMoney(player.money + (int)((cell.item.value) * 1.5f));
-                            boolean check = player.sellInventory.containsKey(cell.item.id);
-                            player.addToInventory(cell.item, "Sell");
-                            if(!check){
-                                player.deleteFromInventory(cell.item, "Sell");
-                            }
-                            cell.item = null;
-                        }
-                    }
-                }
-            }
-        }
-
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
 
-        if (currentPlayer != null) {
-            if (Farmland.get().getCurrentSave().PlayerMeetCondition()) {
-                Player human = null;
-                for (Player player : Farmland.get().getCurrentSave().players) {
-                    if (player.typeOfPlayer.contains("Humain")) {
-                        human = player;
-                    }
-                }
-                if (getGame().isConnectedToServer()) {
-                    getGame().disconnectFromServer();
-                }
-                ResultMenu resultMenu = new ResultMenu();
-                resultMenu.currentPlayer = human;
-                resultMenu.currentSave = Farmland.get().getCurrentSave();
-                if (human != null) {
-                    resultMenu.isWin = human.money >= 1000;
-                }
-                Farmland.get().saveId = null;
-                changeScene(resultMenu);
-            } else if (Farmland.get().getCurrentSave().BotMeetCondition()) {
-                int numberOfBots = 0;
-                for (int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
-                    Player player = Farmland.get().getCurrentSave().players.get(i);
-                    if (player.typeOfPlayer.contains("Robot")) {
-                        numberOfBots += 1;
-                        if (player.money >= 1000) {
-                            ResultMenu resultMenu = new ResultMenu();
-                            resultMenu.currentPlayer = currentPlayer;
-                            resultMenu.currentSave = Farmland.get().getCurrentSave();
-                            resultMenu.isWin = false;
-                            Farmland.get().saveId = null;
-                            changeScene(resultMenu);
-                        } else if (player.money <= 0) {
-                            numberOfBots -= 1;
-                            for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-                                for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                                    Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+            if(Farmland.get().getCurrentSave().turn%2 == 0){
+                economicComponent.changeValueOfRessource();
+                economicComponent.lastItemTurn = new ArrayList<>();
+                economicComponent.lastItemTurn.addAll(Farmland.get().getCurrentSave().itemsTurn);
+                Farmland.get().getCurrentSave().itemsTurn= new ArrayList<>();
+            }
+            getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
 
-                                    if (cell.isOwned() && cell.ownerId.equals(player.getId())) {
-                                        cell.setItem(null);
-                                        cell.setOwned(false, -1);
-                                    }
+            if (Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
+                for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+                    for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                        Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+
+                        if (cell.isOwnedByCurrentPlayer()){
+                            Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
+                            player.setMoney(player.money - 1);
+                        }
+
+                        if (cell.hasItem()/* && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(cell.ownerId)*/) {
+                            cell.item.endTurn();
+
+                            if (cell.item.shouldBeDestroyed()) {
+                                Player player = Farmland.get().getCurrentSave().players.get(cell.ownerId);
+                                //player.setMoney(player.money + (int)((cell.item.value) * 1.5f));
+                                boolean check = player.sellInventory.containsKey(cell.item.id);
+                                player.addToInventory(cell.item, "Sell");
+                                if(!check){
+                                    player.deleteFromInventory(cell.item, "Sell");
                                 }
+                                cell.item = null;
                             }
-
-                            Farmland.get().getCurrentSave().deadPlayers.add(player.getId());
-                            List<Player> pl = Farmland.get().getCurrentSave().players;
-                            pl.remove(player);
-                            Farmland.get().getCurrentSave().players = pl;
                         }
                     }
                 }
+                onCompletedTurnEnd();
+            }
 
-                if (numberOfBots == 0 && Farmland.get().getCurrentSave().startWithBots) {
-                    ResultMenu resultMenu = new ResultMenu();
-                    resultMenu.currentPlayer = currentPlayer;
-                    resultMenu.currentSave = Farmland.get().getCurrentSave();
-                    resultMenu.isWin = true;
-                    Farmland.get().saveId = null;
-                    changeScene(resultMenu);
+            if (currentPlayer.getId() != 0) {
+                getEntityByName("endTurnButton").setEnabled(false);
+                getEntityByName("inventoryButton").setEnabled(false);
+                getEntityByName("marketButton").setEnabled(false);
+                if (showMarket.get()) {
+                    shoulsShowBackMarket = true;
+                }
+                if (showInventory.get()) {
+                    shouldShowBackInventory = true;
+                }
+                showInventory.set(false);
+                showMarket.set(false);
+            } else {
+                getEntityByName("endTurnButton").setEnabled(true);
+                getEntityByName("inventoryButton").setEnabled(true);
+                getEntityByName("marketButton").setEnabled(true);
+                if (shouldShowBackInventory) {
+                    showInventory.set(true);
+                    shouldShowBackInventory = false;
+                }
+                if (shoulsShowBackMarket) {
+                    showMarket.set(true);
+                    shoulsShowBackMarket = false;
                 }
             }
-        }
+    }
 
-        if (currentPlayer.getId() != 0) {
-            getEntityByName("endTurnButton").setEnabled(false);
-            getEntityByName("inventoryButton").setEnabled(false);
-            getEntityByName("marketButton").setEnabled(false);
-            if (showMarket.get()) {
-                shoulsShowBackMarket = true;
+    public void onCompletedTurnEnd(){
+        Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        if (Farmland.get().getCurrentSave().PlayerMeetCondition()) {
+            Player human = null;
+            for (Player player : Farmland.get().getCurrentSave().players) {
+                if (player.typeOfPlayer.contains("Humain") ) {
+                    human = player;
+                }
             }
-            if (showInventory.get()) {
-                shouldShowBackInventory = true;
+            if (getGame().isConnectedToServer()) {
+                getGame().disconnectFromServer();
             }
-            showInventory.set(false);
-            showMarket.set(false);
-        } else {
-            getEntityByName("endTurnButton").setEnabled(true);
-            getEntityByName("inventoryButton").setEnabled(true);
-            getEntityByName("marketButton").setEnabled(true);
-            if (shouldShowBackInventory) {
-                showInventory.set(true);
-                shouldShowBackInventory = false;
+            ResultMenu resultMenu = new ResultMenu();
+            resultMenu.currentPlayer = human;
+            resultMenu.currentSave = Farmland.get().getCurrentSave();
+            if (human != null) {
+                resultMenu.isWin = human.money >= 1000;
             }
-            if (shoulsShowBackMarket) {
-                showMarket.set(true);
-                shoulsShowBackMarket = false;
+            Farmland.get().saveId = null;
+            changeScene(resultMenu);
+        } else if (Farmland.get().getCurrentSave().BotMeetCondition()) {
+            int numberOfBots = 0;
+            for (int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
+                Player player = Farmland.get().getCurrentSave().players.get(i);
+                if (player.typeOfPlayer.contains("Robot") && !Farmland.get().getCurrentSave().deadPlayers.contains(player.getId())) {
+                    numberOfBots += 1;
+                    if (player.money >= 1000) {
+                        ResultMenu resultMenu = new ResultMenu();
+                        resultMenu.currentPlayer = currentPlayer;
+                        resultMenu.currentSave = Farmland.get().getCurrentSave();
+                        resultMenu.isWin = false;
+                        Farmland.get().saveId = null;
+                        changeScene(resultMenu);
+                    } else if (player.money <= 0) {
+                        numberOfBots -= 1;
+                        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+                            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+
+                                if (cell.isOwned() && cell.ownerId.equals(player.getId())) {
+                                    cell.setItem(null);
+                                    cell.setOwned(false, -1);
+                                }
+                            }
+                        }
+
+                        Farmland.get().getCurrentSave().deadPlayers.add(player.getId());
+                        /**List<Player> pl = Farmland.get().getCurrentSave().players;
+                         pl.remove(player);
+                         Farmland.get().getCurrentSave().players = pl;*/
+                    }
+                }
+            }
+
+            if (numberOfBots == 0 && Farmland.get().getCurrentSave().startWithBots) {
+                ResultMenu resultMenu = new ResultMenu();
+                resultMenu.currentPlayer = currentPlayer;
+                resultMenu.currentSave = Farmland.get().getCurrentSave();
+                resultMenu.isWin = true;
+                Farmland.get().saveId = null;
+                changeScene(resultMenu);
             }
         }
     }

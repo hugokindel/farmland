@@ -172,7 +172,7 @@ public class SaveGame {
     }
 
     public Player getCurrentPlayer() {
-        return deadPlayers.contains(currentPlayerId) ? null : players.get(currentPlayerId);
+        return players.get(currentPlayerId);
     }
 
     private Color generateColor(SeedRandom random, List<Color> usedColors) {
@@ -235,7 +235,7 @@ public class SaveGame {
 
     public boolean BotMeetCondition(){
         for(Player player: players){
-            if(player.typeOfPlayer.contains("Robot")){
+            if(player.typeOfPlayer.contains("Robot") && !Farmland.get().getCurrentSave().deadPlayers.contains(player.getId())){
                 if (player.money <= 0 || player.money >= 1000){
                     return true;
                 }
