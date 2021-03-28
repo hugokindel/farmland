@@ -331,7 +331,8 @@ public class InGameScene extends Scene {
             }
         }
 
-        Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player currentPlayer = Farmland.get().getCurrentSave().players.size() > Farmland.get().getCurrentSave().currentPlayerId ? Farmland.get().getCurrentSave().getCurrentPlayer() : null;
+
 
         if(Farmland.get().getCurrentSave().containOnlyBot()){
             Player human = null;
@@ -352,11 +353,11 @@ public class InGameScene extends Scene {
             Farmland.get().saveId = null;
             changeScene(resultMenu);
         } else {
-            boolean BotsAlive = false;
+            int numberOfBots = 0;
             for(int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
                 Player player = Farmland.get().getCurrentSave().players.get(i);
                 if(player.typeOfPlayer.contains("Robot")){
-                    BotsAlive = true;
+                    numberOfBots += 1;
                     if (player.money >= 1000){
                         ResultMenu resultMenu = new ResultMenu();
                         resultMenu.currentPlayer = currentPlayer;
@@ -365,12 +366,26 @@ public class InGameScene extends Scene {
                         Farmland.get().saveId = null;
                         changeScene(resultMenu);
                     } else if (player.money <= 0) {
-                        Farmland.get().getCurrentSave().players.remove(player);
+                        numberOfBots -= 1;
+                        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+                            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+
+                                if (cell.isOwned() && cell.ownerId.equals(player.getId())){
+                                    cell.setItem(null);
+                                    cell.setOwned(false,-1);
+                                }
+                            }
+                        }
+
+                        List<Player> pl = Farmland.get().getCurrentSave().players;
+                        pl.remove(player);
+                        Farmland.get().getCurrentSave().players = pl;
                     }
                 }
             }
 
-            if (!BotsAlive && Farmland.get().getCurrentSave().startWithBots) {
+            if (numberOfBots==0 && Farmland.get().getCurrentSave().startWithBots) {
                 ResultMenu resultMenu = new ResultMenu();
                 resultMenu.currentPlayer = currentPlayer;
                 resultMenu.currentSave = Farmland.get().getCurrentSave();
