@@ -302,7 +302,9 @@ public class InGameScene extends Scene {
                 economicComponent.lastItemTurn.addAll(Farmland.get().getCurrentSave().itemsTurn);
                 Farmland.get().getCurrentSave().itemsTurn= new ArrayList<>();
             }
-            getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
+            if (!Farmland.get().getCurrentSave().deadPlayers.contains(currentPlayer.getId())) {
+                getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
+            }
 
             if (Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
                 for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
@@ -364,6 +366,7 @@ public class InGameScene extends Scene {
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
 
         if (Farmland.get().getCurrentSave().PlayerMeetCondition()) {
+
             Player human = null;
             for (Player player : Farmland.get().getCurrentSave().players) {
                 if (player.typeOfPlayer.contains("Humain") ) {
@@ -381,12 +384,17 @@ public class InGameScene extends Scene {
             }
             Farmland.get().saveId = null;
             changeScene(resultMenu);
+
         } else if (Farmland.get().getCurrentSave().BotMeetCondition()) {
+
             int numberOfBots = 0;
+
             for (int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
                 Player player = Farmland.get().getCurrentSave().players.get(i);
+
                 if (player.typeOfPlayer.contains("Robot") && !Farmland.get().getCurrentSave().deadPlayers.contains(player.getId())) {
                     numberOfBots += 1;
+
                     if (player.money >= 1000) {
                         ResultMenu resultMenu = new ResultMenu();
                         resultMenu.currentPlayer = currentPlayer;
@@ -408,9 +416,6 @@ public class InGameScene extends Scene {
                         }
 
                         Farmland.get().getCurrentSave().deadPlayers.add(player.getId());
-                        /**List<Player> pl = Farmland.get().getCurrentSave().players;
-                         pl.remove(player);
-                         Farmland.get().getCurrentSave().players = pl;*/
                     }
                 }
             }
