@@ -334,7 +334,7 @@ public class InGameScene extends Scene {
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
 
 
-        if(Farmland.get().getCurrentSave().containOnlyBot()){
+        if(Farmland.get().getCurrentSave().PlayerMeetCondition()){
             Player human = null;
             for(Player player: Farmland.get().getCurrentSave().players){
                 if(player.typeOfPlayer.contains("Humain")){
@@ -352,7 +352,7 @@ public class InGameScene extends Scene {
             }
             Farmland.get().saveId = null;
             changeScene(resultMenu);
-        } else {
+        } else if (Farmland.get().getCurrentSave().BotMeetCondition()){
             int numberOfBots = 0;
             for(int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
                 Player player = Farmland.get().getCurrentSave().players.get(i);
@@ -385,7 +385,7 @@ public class InGameScene extends Scene {
                 }
             }
 
-            if (numberOfBots==0 && Farmland.get().getCurrentSave().startWithBots) {
+            if (numberOfBots == 0 && Farmland.get().getCurrentSave().startWithBots) {
                 ResultMenu resultMenu = new ResultMenu();
                 resultMenu.currentPlayer = currentPlayer;
                 resultMenu.currentSave = Farmland.get().getCurrentSave();

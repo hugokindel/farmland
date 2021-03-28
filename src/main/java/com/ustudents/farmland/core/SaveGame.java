@@ -220,7 +220,7 @@ public class SaveGame {
         }
     }
 
-    public boolean containOnlyBot(){
+    public boolean PlayerMeetCondition(){
         for(Player player: players){
             if(player.typeOfPlayer.contains("Humain")){
                 return (player.money <= 0 || player.money >= 1000);
@@ -228,4 +228,16 @@ public class SaveGame {
         }
         return true;
     }
+
+    public boolean BotMeetCondition(){
+        for(Player player: players){
+            if(player.typeOfPlayer.contains("Robot")){
+                if (player.money <= 0 || player.money >= 1000){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
