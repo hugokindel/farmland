@@ -164,6 +164,22 @@ public class InGameScene extends Scene {
         textData2.color = Color.BLACK;
 
         guiBuilder.addText(textData2);
+
+
+        List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getCurrentSave().players);
+        String leaderBoard = "LeaderBoard : ";
+        for (Player player : leaderBoardList) {
+            leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getCurrentSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
+        }
+        GuiBuilder.TextData textData3 = new GuiBuilder.TextData(leaderBoard);
+        textData3.id = "LeaderBoardLabel";
+        textData3.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
+        textData3.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
+        textData3.position = new Vector2f(-20, 10);
+        textData3.color = Color.BLACK;
+
+        guiBuilder.addText(textData3);
+
     }
 
     public void initializeGameplay() {
@@ -332,7 +348,9 @@ public class InGameScene extends Scene {
                         }
                     }
                 }
-                onCompletedTurnEnd();
+                if (!onCompletedTurnEnd()){
+                    leaderBoardUpdate();
+                }
             }
 
             if (currentPlayer.getId() != 0) {
@@ -362,7 +380,7 @@ public class InGameScene extends Scene {
             }
     }
 
-    public void onCompletedTurnEnd(){
+    public boolean onCompletedTurnEnd(){
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
 
         if (Farmland.get().getCurrentSave().PlayerMeetCondition()) {
@@ -384,6 +402,7 @@ public class InGameScene extends Scene {
             }
             Farmland.get().saveId = null;
             changeScene(resultMenu);
+            return true;
 
         } else if (Farmland.get().getCurrentSave().BotMeetCondition()) {
 
@@ -402,6 +421,7 @@ public class InGameScene extends Scene {
                         resultMenu.isWin = false;
                         Farmland.get().saveId = null;
                         changeScene(resultMenu);
+                        return true;
                     } else if (player.money <= 0) {
                         numberOfBots -= 1;
                         for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
@@ -427,13 +447,46 @@ public class InGameScene extends Scene {
                 resultMenu.isWin = true;
                 Farmland.get().saveId = null;
                 changeScene(resultMenu);
+                return true;
             }
         }
+        return false;
     }
 
     public boolean shouldShowBackInventory = false;
 
     public boolean shoulsShowBackMarket = false;
+
+    public List<Player> leaderBoardMaker(List<Player> list){
+        Player[] tmp = new Player[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            tmp[i] = list.get(i);
+        }
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = i; j > 0; j--){
+                if (Farmland.get().getCurrentSave().deadPlayers.contains(tmp[j].getId()) || tmp[j-1].money > tmp[j].money){
+                    Player tmpP = tmp[j-1];
+                    tmp[j-1] = tmp[j];
+                    tmp[j] = tmpP;
+                }
+            }
+        }
+        List<Player> res = new ArrayList<>();
+        for (int i = tmp.length-1; i >= 0 ; i--){
+            res.add(tmp[i]);
+        }
+        return res;
+    }
+
+
+    public void leaderBoardUpdate(){
+        List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getCurrentSave().players);
+        String leaderBoard = "LeaderBoard : ";
+        for (Player player : leaderBoardList) {
+            leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getCurrentSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
+        }
+        getEntityByName("LeaderBoardLabel").getComponent(TextComponent.class).setText(leaderBoard);
+    }
 
     public void onSelectedItemOrMoneyChanged() {
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
