@@ -41,6 +41,8 @@ public class InGameScene extends Scene {
 
     public boolean sellMenu;
 
+    public boolean caravanMenu;
+
     @Override
     public void initialize() {
         forceImGui = true;
@@ -222,7 +224,7 @@ public class InGameScene extends Scene {
         }
 
         if (showCaravan.get()) {
-            ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
+            ImGuiUtils.setNextWindowWithSizeCentered(600, 300, ImGuiCond.Appearing);
 
             ImGui.begin("Caravanes", showCaravan);
             ImGui.text("Votre argent : " + Farmland.get().getCurrentSave().getCurrentPlayer().money + "\n\n");
@@ -232,50 +234,64 @@ public class InGameScene extends Scene {
     }
 
     private void ImGuiBuyingCaravan(){
+        if(ImGui.button("Envoie")){
+            caravanMenu = false;
+        }
+        ImGui.sameLine();
+        if(ImGui.button("Reception")){
+            caravanMenu = true;
+        }
+
         Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getCurrentSave()).getCurrentPlayer().sellInventory;
         Set<String> uniqueItems = playerInventory.keySet();
 
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
         int playerMoney = player.money;
 
-        if (uniqueItems.isEmpty()) {
-            ImGui.text("Pas de Ressources a envoyé !");
-        } else {
-            ImGui.text("Caravanes a envoyé : \n\n");
+        if (!caravanMenu) {
+            if (uniqueItems.isEmpty()) {
+                ImGui.text("Pas de Ressources a envoyé !");
+            } else {
+                ImGui.text("Caravanes a envoyé : \n\n");
 
-            //List<Item> toDelete = new ArrayList<>();
+                for (String item : uniqueItems) {
+                    int currentQuantity = playerInventory.get(item).quantity;
+                    if (currentQuantity > 1) {
 
-            for(String item : uniqueItems) {
-                int currentQuantity = playerInventory.get(item).quantity;
-                if (currentQuantity > 1) {
-
-                    int sellValueOfCaravan = (int) ((playerInventory.get(item).value * 1.25) * currentQuantity / 2);
-                    int travelTime = 4;
-                    int travelPrice = 10;
-                    if (ImGui.button("Envoyé") && playerInventory.get(item) != null) {
-                        player.setMoney(playerMoney - travelPrice);
-                        player.caravans.add(new Pair<>(travelTime, sellValueOfCaravan));
-                        for (int i = 0; i < currentQuantity / 2; i++) {
-                            //toDelete.add(playerInventory.get(item));
-                            player.deleteFromInventory(playerInventory.get(item), "Caravan");
+                        int sellValueOfCaravan = (int) ((playerInventory.get(item).value * 1.25) * currentQuantity / 2);
+                        int travelTime = 4;
+                        int travelPrice = 10;
+                        if (ImGui.button("Envoyé") && playerInventory.get(item) != null) {
+                            player.setMoney(playerMoney - travelPrice);
+                            player.caravans.add(new Pair<>(travelTime, sellValueOfCaravan));
+                            for (int i = 0; i < currentQuantity / 2; i++) {
+                                player.deleteFromInventory(playerInventory.get(item), "Caravan");
+                            }
                         }
-                        //player.deleteFromInventory(toDelete, "Caravan");
-                        //toDelete.clear();
-                    }
-                    ImGui.sameLine();
-                    if (playerInventory.get(item) == null) {
-                        ImGui.text("  Plus de caravanes");
+                        ImGui.sameLine();
+                        if (playerInventory.get(item) == null) {
+                            ImGui.text("  Plus de caravanes");
+                        } else {
+                            ImGui.text(playerInventory.get(item).name + " x" + currentQuantity / 2);
+                        }
+                        ImGui.sameLine();
+                        ImGui.text("Prix de vente : " + sellValueOfCaravan + " / Temps estimé :  " + travelTime + " / Prix du trajet : " + travelPrice);
                     } else {
-                        ImGui.text(playerInventory.get(item).name + " x" + currentQuantity/2);
+                        ImGui.text("Pas assez de " + playerInventory.get(item).name + " a envoyé");
                     }
-                    ImGui.sameLine();
-                    ImGui.text("Prix de vente : " + sellValueOfCaravan + " / Temps estimé :  " + travelTime + " / Prix du trajet : " + travelPrice);
-                } else {
-                    ImGui.text("Pas assez de " + playerInventory.get(item).name + " a envoyé");
                 }
             }
+        } else {
+            if (player.caravans.isEmpty()){
+                ImGui.text(" Vous ne possedez pas de caravanes ");
+            } else {
+                ImGui.text(" Parcour de vos caravanes : \n\n");
 
-            //player.deleteFromInventory(toDelete, "Caravan");
+                for (int i = 0; i < player.caravans.size() ; i++){
+                    Pair<Integer,Integer> caravan = player.caravans.get(i);
+                    ImGui.text("Caravane pour " + caravan.getObject2() + " pieces : " + caravan.getObject1() + " tours restants");
+                }
+            }
         }
     }
 
@@ -571,19 +587,18 @@ public class InGameScene extends Scene {
     public void checkCaravan(){
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
         if (!currentPlayer.caravans.isEmpty()){
-            List<Integer> toDelete = new ArrayList<>();
+            List<Pair<Integer,Integer>> toDelete = new ArrayList<>();
 
             for (int i = 0; i < currentPlayer.caravans.size() ; i++){
                 Pair<Integer,Integer> caravan = currentPlayer.caravans.get(i);
                 caravan.setObject1(caravan.getObject1() - 1);
                 if (caravan.getObject1() == 0){
                     currentPlayer.setMoney(currentPlayer.money + caravan.getObject2());
-                    toDelete.add(i);
+                    toDelete.add(currentPlayer.caravans.get(i));
                 }
             }
-            for (Integer integer : toDelete) {
-                currentPlayer.caravans.remove(integer);
-            }
+            
+            currentPlayer.caravans.removeAll(toDelete);
         }
     }
 
