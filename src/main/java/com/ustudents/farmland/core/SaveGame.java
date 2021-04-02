@@ -10,6 +10,7 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.utility.SeedRandom;
+import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
@@ -19,6 +20,7 @@ import org.joml.Vector4f;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @JsonSerializable
@@ -55,6 +57,10 @@ public class SaveGame {
     @JsonSerializable
     public List<List<Cell>> cells;
 
+    public Boolean startWithBots;
+
+    public List<Integer> deadPlayers;
+
     public String path;
 
     public EventDispatcher turnEnded = new EventDispatcher();
@@ -73,6 +79,8 @@ public class SaveGame {
         }
         SeedRandom random = new SeedRandom(this.seed);
 
+        this.deadPlayers = new LinkedList<>();
+        this.startWithBots = numberOfBots > 0;
         this.turn = 0;
         this.turnTimePassed = 0;
         this.currentPlayerId = 0;
@@ -216,12 +224,24 @@ public class SaveGame {
         }
     }
 
-    public boolean containOnlyBot(){
+    public boolean PlayerMeetCondition(){
         for(Player player: players){
             if(player.typeOfPlayer.contains("Humain")){
-                return (player.money == 0 || player.money >= 1000);
+                return (player.money <= 0 || player.money >= 1000);
             }
         }
         return true;
     }
+
+    public boolean BotMeetCondition(){
+        for(Player player: players){
+            if(player.typeOfPlayer.contains("Robot") && !Farmland.get().getCurrentSave().deadPlayers.contains(player.getId())){
+                if (player.money <= 0 || player.money >= 1000){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
