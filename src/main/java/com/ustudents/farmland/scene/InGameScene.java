@@ -1,8 +1,6 @@
 package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
@@ -12,6 +10,7 @@ import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.utility.DateUtil;
+import com.ustudents.engine.utility.Pair;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.EconomicComponent;
 import com.ustudents.farmland.component.GridComponent;
@@ -20,7 +19,6 @@ import com.ustudents.farmland.component.TurnTimerComponent;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
-import com.ustudents.farmland.core.player.Bot;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import com.ustudents.farmland.scene.menus.ResultMenu;
@@ -29,7 +27,6 @@ import imgui.flag.ImGuiCond;
 import imgui.type.ImBoolean;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.lwjgl.system.CallbackI;
 
 import java.util.*;
 
@@ -37,6 +34,8 @@ public class InGameScene extends Scene {
     public ImBoolean showInventory;
 
     public ImBoolean showMarket;
+
+    public ImBoolean showCaravan;
 
     public EconomicComponent economicComponent;
 
@@ -48,6 +47,7 @@ public class InGameScene extends Scene {
 
         showInventory = new ImBoolean(false);
         showMarket = new ImBoolean(false);
+        showCaravan = new ImBoolean(false);
 
         initializeEntities();
         initializeGui();
@@ -58,6 +58,7 @@ public class InGameScene extends Scene {
             getEntityByName("endTurnButton").setEnabled(false);
             getEntityByName("inventoryButton").setEnabled(false);
             getEntityByName("marketButton").setEnabled(false);
+            getEntityByName("caravanButton").setEnabled(false);
         }
     }
 
@@ -112,6 +113,15 @@ public class InGameScene extends Scene {
         buttonData3.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData3.position = new Vector2f(-400, -10);
         guiBuilder.addButton(buttonData3);
+
+        GuiBuilder.ButtonData buttonDataC = new GuiBuilder.ButtonData("Caravanes", (dataType, data) -> {
+            showCaravan.set(!showCaravan.get());
+        });
+        buttonDataC.id = "caravanButton";
+        buttonDataC.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        buttonDataC.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        buttonDataC.position = new Vector2f(-540, -10);
+        guiBuilder.addButton(buttonDataC);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
             Farmland.get().saveId = null;
@@ -209,6 +219,63 @@ public class InGameScene extends Scene {
             ImGui.text("Votre argent : " + Farmland.get().getCurrentSave().getCurrentPlayer().money + "\n\n");
             ImGuiBuyingItem();
             ImGui.end();
+        }
+
+        if (showCaravan.get()) {
+            ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
+
+            ImGui.begin("Caravanes", showCaravan);
+            ImGui.text("Votre argent : " + Farmland.get().getCurrentSave().getCurrentPlayer().money + "\n\n");
+            ImGuiBuyingCaravan();
+            ImGui.end();
+        }
+    }
+
+    private void ImGuiBuyingCaravan(){
+        Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getCurrentSave()).getCurrentPlayer().sellInventory;
+        Set<String> uniqueItems = playerInventory.keySet();
+
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        int playerMoney = player.money;
+
+        if (uniqueItems.isEmpty()) {
+            ImGui.text("Pas de Ressources a envoyé !");
+        } else {
+            ImGui.text("Caravanes a envoyé : \n\n");
+
+            //List<Item> toDelete = new ArrayList<>();
+
+            for(String item : uniqueItems) {
+                int currentQuantity = playerInventory.get(item).quantity;
+                if (currentQuantity > 1) {
+
+                    int sellValueOfCaravan = (int) ((playerInventory.get(item).value * 1.25) * currentQuantity / 2);
+                    int travelTime = 4;
+                    int travelPrice = 10;
+                    if (ImGui.button("Envoyé") && playerInventory.get(item) != null) {
+                        player.setMoney(playerMoney - travelPrice);
+                        player.caravans.add(new Pair<>(travelTime, sellValueOfCaravan));
+                        for (int i = 0; i < currentQuantity / 2; i++) {
+                            //toDelete.add(playerInventory.get(item));
+                            player.deleteFromInventory(playerInventory.get(item), "Caravan");
+                        }
+                        //player.deleteFromInventory(toDelete, "Caravan");
+                        //toDelete.clear();
+                    }
+                    ImGui.sameLine();
+                    if (playerInventory.get(item) == null) {
+                        ImGui.text("  Plus de caravanes");
+                    } else {
+                        ImGui.text(playerInventory.get(item).name + " x" + currentQuantity/2);
+                    }
+                    ImGui.sameLine();
+                    ImGui.text("Prix de vente : " + sellValueOfCaravan + " / Temps estimé :  " + travelTime + " / Prix du trajet : " + travelPrice);
+                } else {
+                    ImGui.text("Pas assez de " + playerInventory.get(item).name + " a envoyé");
+                }
+            }
+
+            //player.deleteFromInventory(toDelete, "Caravan");
         }
     }
 
@@ -323,6 +390,7 @@ public class InGameScene extends Scene {
             }
 
             if (Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
+                checkCaravan();
                 for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
                     for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
                         Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
@@ -357,25 +425,35 @@ public class InGameScene extends Scene {
                 getEntityByName("endTurnButton").setEnabled(false);
                 getEntityByName("inventoryButton").setEnabled(false);
                 getEntityByName("marketButton").setEnabled(false);
+                getEntityByName("caravanButton").setEnabled(false);
                 if (showMarket.get()) {
-                    shoulsShowBackMarket = true;
+                    shouldShowBackMarket = true;
                 }
                 if (showInventory.get()) {
                     shouldShowBackInventory = true;
                 }
+                if (showCaravan.get()) {
+                    shouldShowBackCaravan = true;
+                }
                 showInventory.set(false);
                 showMarket.set(false);
+                showCaravan.set(false);
             } else {
                 getEntityByName("endTurnButton").setEnabled(true);
                 getEntityByName("inventoryButton").setEnabled(true);
                 getEntityByName("marketButton").setEnabled(true);
+                getEntityByName("caravanButton").setEnabled(true);
                 if (shouldShowBackInventory) {
                     showInventory.set(true);
                     shouldShowBackInventory = false;
                 }
-                if (shoulsShowBackMarket) {
+                if (shouldShowBackMarket) {
                     showMarket.set(true);
-                    shoulsShowBackMarket = false;
+                    shouldShowBackMarket = false;
+                }
+                if (shouldShowBackCaravan) {
+                    showCaravan.set(true);
+                    shouldShowBackCaravan = false;
                 }
             }
     }
@@ -455,7 +533,9 @@ public class InGameScene extends Scene {
 
     public boolean shouldShowBackInventory = false;
 
-    public boolean shoulsShowBackMarket = false;
+    public boolean shouldShowBackMarket = false;
+
+    public boolean shouldShowBackCaravan = false;
 
     public List<Player> leaderBoardMaker(List<Player> list){
         Player[] tmp = new Player[list.size()];
@@ -486,6 +566,25 @@ public class InGameScene extends Scene {
             leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getCurrentSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
         }
         getEntityByName("LeaderBoardLabel").getComponent(TextComponent.class).setText(leaderBoard);
+    }
+
+    public void checkCaravan(){
+        Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+        if (!currentPlayer.caravans.isEmpty()){
+            List<Integer> toDelete = new ArrayList<>();
+
+            for (int i = 0; i < currentPlayer.caravans.size() ; i++){
+                Pair<Integer,Integer> caravan = currentPlayer.caravans.get(i);
+                caravan.setObject1(caravan.getObject1() - 1);
+                if (caravan.getObject1() == 0){
+                    currentPlayer.setMoney(currentPlayer.money + caravan.getObject2());
+                    toDelete.add(i);
+                }
+            }
+            for (Integer integer : toDelete) {
+                currentPlayer.caravans.remove(integer);
+            }
+        }
     }
 
     public void onSelectedItemOrMoneyChanged() {

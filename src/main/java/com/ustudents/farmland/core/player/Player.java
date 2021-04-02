@@ -5,6 +5,7 @@ import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.utility.Pair;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
@@ -50,6 +51,8 @@ public class Player {
 
     public String ipAddress;
 
+    public List<Pair<Integer,Integer>> caravans;
+
     public EventDispatcher moneyChanged = new EventDispatcher();
 
     public Player() {
@@ -65,6 +68,7 @@ public class Player {
         this.typeOfPlayer = typeOfPlayer;
         this.buyInventory = new HashMap<>();
         this.sellInventory = new HashMap<>();
+        this.caravans = new ArrayList<>();
     }
 
     @JsonSerializableConstructor
