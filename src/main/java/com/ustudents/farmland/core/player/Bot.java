@@ -21,8 +21,10 @@ public class Bot {
 
         if (action == 0) {
             buyLand(random);
-        } else if (action == 1) {
-            addItem(random);
+        } else {
+            for (int i = 0; i < action ; i++){
+                addItem(random);
+            }
         }
 
         maintenanceCost();
@@ -30,6 +32,7 @@ public class Bot {
 
     public static int makeChoice(){
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        int c = 0;
 
         for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
             for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
@@ -37,12 +40,12 @@ public class Bot {
 
                 if (cell.isOwned() && cell.ownerId.equals(player.getId())){
                     if (!cell.hasItem()){
-                        return 1;
+                        c++;
                     }
                 }
             }
         }
-        return 0;
+        return c;
     }
 
     public static void maintenanceCost(){
