@@ -20,7 +20,7 @@ public class MultiplayerMenu extends MenuScene {
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, false, false, true);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, true);
 
         super.initialize();
     }

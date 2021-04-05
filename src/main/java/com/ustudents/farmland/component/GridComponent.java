@@ -1,5 +1,7 @@
 package com.ustudents.farmland.component;
 
+import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.*;
@@ -11,6 +13,8 @@ import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
+import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.player.Player;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -36,6 +40,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     @Viewable
     public List<List<Cell>> cells;
+
+    public EventDispatcher onItemUsed = new EventDispatcher();
 
     private Vector2i currentSelectedCell;
 
@@ -142,13 +148,35 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
             updateCurrentSelectedCell();
         }
 
+        if (selectionCursorEnabled && currentSelectedCell.x != -1 &&
+                !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
+                Input.isMousePressed(MouseButton.Left) &&
+                Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
+                cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).ownerId.equals(0) &&
+                Farmland.get().getCurrentSave().players.get(0).selectedItemID != null
+                && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
+            Item currentItem = Farmland.get().getCurrentSave().players.get(0).getCurrentItemFromInventory();
+            Item clone = Item.clone(currentItem);
+            assert clone != null;
+            clone.quantity = 1;
+            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(clone);
+            if (Farmland.get().getCurrentSave().players.get(0).deleteFromInventory(currentItem, "Buy")) {
+                Farmland.get().getCurrentSave().players.get(0).selectedItemID = null;
+            }
+            onItemUsed.dispatch();
+        }
+
         if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
+                Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
                 !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
-                Farmland.get().getCurrentSave().currentPlayerId == 0) {
+                Farmland.get().getCurrentSave().currentPlayerId == 0
+                && Farmland.get().getCurrentSave().players.get(0).money >= 25) {
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
+            int takeMoney = Farmland.get().getCurrentSave().players.get(0).money - 25;
+            Farmland.get().getCurrentSave().players.get(0).setMoney(Math.max(takeMoney, 0));
         }
     }
 
@@ -169,10 +197,15 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     public void render(Spritebatch spritebatch, RendererComponent rendererComponent,
                        TransformComponent transformComponent) {
         renderBackground(spritebatch, rendererComponent, transformComponent);
+        renderItems(spritebatch, rendererComponent, transformComponent);
         renderCells(spritebatch, rendererComponent, transformComponent);
 
         if (selectionCursorEnabled && currentSelectedCell.x != -1) {
             renderSelectionCursor(spritebatch, rendererComponent, transformComponent);
+
+            if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
+                renderSelectedItem(spritebatch, rendererComponent, transformComponent);
+            }
         }
 
         if (selectionCursorEnabled && showTypeOfTerritory) {
@@ -194,9 +227,9 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
         return (x < gridSize.x - 1 && cells.get(x + 1).get(y).isOwnedByCurrentPlayer()) ||
-               (x > 0 && cells.get(x - 1).get(y).isOwnedByCurrentPlayer()) ||
-               (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwnedByCurrentPlayer()) ||
-               (y > 0 && cells.get(x).get(y - 1).isOwnedByCurrentPlayer());
+                (x > 0 && cells.get(x - 1).get(y).isOwnedByCurrentPlayer()) ||
+                (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwnedByCurrentPlayer()) ||
+                (y > 0 && cells.get(x).get(y - 1).isOwnedByCurrentPlayer());
     }
 
     private void renderBackground(Spritebatch spritebatch, RendererComponent rendererComponent,
@@ -226,6 +259,28 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         }
     }
 
+    private void renderItems(Spritebatch spritebatch, RendererComponent rendererComponent,
+                             TransformComponent transformComponent) {
+        for (int x = 0; x < gridSize.x; x++) {
+            for (int y = 0; y < gridSize.y; y++) {
+                Cell cell = cells.get(x).get(y);
+
+                if (cell.hasItem()) {
+                    Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
+                            cell.item.getSprite(),
+                            new Vector2f(
+                                    transformComponent.position.x + gridBackgroundSideSize.x +
+                                            x * cellSize.x,
+                                    transformComponent.position.y + gridBackgroundSideSize.y +
+                                            y * cellSize.y));
+                    spriteData.zIndex = rendererComponent.zIndex + 2;
+
+                    spritebatch.drawSprite(spriteData);
+                }
+            }
+        }
+    }
+
     private void renderSelectionCursor(Spritebatch spritebatch, RendererComponent rendererComponent,
                                        TransformComponent transformComponent) {
         Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
@@ -235,13 +290,35 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                                 currentSelectedCell.x * cellSize.x,
                         transformComponent.position.y + gridBackgroundSideSize.y +
                                 currentSelectedCell.y * cellSize.y));
-        spriteData.zIndex = rendererComponent.zIndex + 3;
+        spriteData.zIndex = rendererComponent.zIndex + 4;
 
         spritebatch.drawSprite(spriteData);
     }
 
+    private void renderSelectedItem(Spritebatch spritebatch, RendererComponent rendererComponent,
+                                    TransformComponent transformComponent) {
+        if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().players.get(0).selectedItemID != null) {
+            Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
+                    Farmland.get().getItem(Farmland.get().getCurrentSave().players.get(0).selectedItemID).getSprite(),
+                    new Vector2f(
+                            transformComponent.position.x + gridBackgroundSideSize.x +
+                                    currentSelectedCell.x * cellSize.x,
+                            transformComponent.position.y + gridBackgroundSideSize.y +
+                                    currentSelectedCell.y * cellSize.y));
+            spriteData.zIndex = rendererComponent.zIndex + 5;
+
+            if (cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem() && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).ownerId.equals(0)) {
+                spriteData.tint = Color.GREEN;
+            } else {
+                spriteData.tint = Color.RED;
+            }
+
+            spritebatch.drawSprite(spriteData);
+        }
+    }
+
     private void renderTerritory(Spritebatch spritebatch, RendererComponent rendererComponent,
-                                       TransformComponent transformComponent) {
+                                 TransformComponent transformComponent) {
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
                 if (cellIsOwned(x, y)) {
@@ -262,7 +339,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                             transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
                             transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
             spriteData.tint = Farmland.get().getCurrentSave().players.get(ownderId).color;
-            spriteData.zIndex = rendererComponent.zIndex + 2;
+            spriteData.zIndex = rendererComponent.zIndex + 3;
 
             spritebatch.drawSprite(spriteData);
         }

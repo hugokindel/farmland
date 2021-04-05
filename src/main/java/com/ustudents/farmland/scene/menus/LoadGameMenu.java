@@ -18,13 +18,13 @@ public class LoadGameMenu extends MenuScene {
             buttonNames[i] = save.name;
             buttonIds[i] = save.path.replace(".json", "") + "Button";
             eventListeners[i] = (dataType, data) -> {
-                Farmland.get().saveId = Farmland.get().getSaveGame(buttonIds[j].replace("Button", "")).name;
+                Farmland.get().saveId = Farmland.get().getSaveGameWithId(buttonIds[j].replace("Button", "")).name;
                 changeScene(new InGameScene());
             };
             i++;
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, false, false, true);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, true);
 
         super.initialize();
     }

@@ -30,8 +30,10 @@ public class EconomicComponent {
     private int countItemPerList(Item item,List<Item> list){
         int count = 0;
         for (Item item1: list){
-            if(item.getClass().getName().equals(item1.getClass().getName())){
-                count++;
+            if (item != null && item1 != null) {
+                if(item.getClass().getName().equals(item1.getClass().getName())){
+                    count++;
+                }
             }
         }
         return count;
@@ -44,10 +46,12 @@ public class EconomicComponent {
         List<Item> itemsTurn = Farmland.get().getCurrentSave().itemsTurn;
         Set<Item> setItemTurn = new HashSet<>(itemsTurn);
         for(Item item:setItemTurn){
-            int lastItemSell = countItemPerList(item,lastItemTurn);
-            int turnItemSell = countItemPerList(item,itemsTurn);
-            int res = knowTheDifferenceBetweenTurn(turnItemSell,lastItemSell);
-            if(item.value + res >= item.initValue) item.value += res;
+            if (item != null) {
+                int lastItemSell = countItemPerList(item,lastItemTurn);
+                int turnItemSell = countItemPerList(item,itemsTurn);
+                int res = knowTheDifferenceBetweenTurn(turnItemSell,lastItemSell);
+                if(item.value + res >= item.initValue) item.value += res;
+            }
         }
     }
 }

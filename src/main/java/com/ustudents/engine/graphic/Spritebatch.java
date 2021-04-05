@@ -892,7 +892,11 @@ public class Spritebatch {
         // TODO: Remove '- 1f' ?
         Vector2f realPosition = new Vector2f(debugPosition.x, debugPosition.y + realFont.getAscentHeight() - realFont.getDescentHeight() - 1f);
 
+        int lineNumber = 0;
+
         for (String line : lines) {
+            lineNumber++;
+
             for (int i = 0; i < line.length(); i++) {
                 char c = line.charAt(i);
 
@@ -916,7 +920,11 @@ public class Spritebatch {
                 }
             }
 
-            realPosition = new Vector2f(textRenderer.position.x, realPosition.y + realFont.getLineHeight(line) + realFont.getLineSpacing());
+            if (line.trim().isEmpty()) {
+                realPosition = new Vector2f(textRenderer.position.x, realPosition.y + realFont.getLineHeight("A") + realFont.getLineSpacing());
+            } else {
+                realPosition = new Vector2f(textRenderer.position.x, realPosition.y + realFont.getLineHeight(line) + realFont.getLineSpacing());
+            }
         }
 
         if (Game.get().isDebugToolsEnabled() && Game.get().getDebugTools().isTextBoxEnabled()) {

@@ -123,7 +123,11 @@ public class Json {
                 Object value = mapToSearch.get(path[path.length - 1]);
 
                 if (field.getType().isAnnotationPresent(JsonSerializable.class)) {
-                    field.set(object, deserialize((Map<String, Object>)value, field.getType()));
+                    if ((Map<String, Object>)value == null) {
+                        field.set(object, null);
+                    } else {
+                        field.set(object, deserialize((Map<String, Object>)value, field.getType()));
+                    }
                     continue;
                 } else if (field.getType().isAssignableFrom(List.class)) {
                     if (listExtraction(field, value, object)) {
@@ -162,7 +166,11 @@ public class Json {
                List<Object> list = new ArrayList<>();
 
                for (Object element : (List<Object>) value) {
-                   list.add(deserialize((Map<String, Object>) element, Class.forName(tType.getTypeName())));
+                   if (element == null) {
+                       list.add(null);
+                   } else {
+                       list.add(deserialize((Map<String, Object>) element, Class.forName(tType.getTypeName())));
+                   }
                }
 
                field.set(object, list);
@@ -176,7 +184,11 @@ public class Json {
                    list.add(new ArrayList<>());
 
                    for (Object realElement : (List<Object>)element) {
-                       ((List<Object>)list.get(i)).add(deserialize((Map<String, Object>) realElement, Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>'))));
+                       if (realElement == null) {
+                           ((List<Object>)list.get(i)).add(null);
+                       } else {
+                           ((List<Object>)list.get(i)).add(deserialize((Map<String, Object>) realElement, Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>'))));
+                       }
                    }
                    i++;
                }
@@ -231,7 +243,11 @@ public class Json {
                 field.setAccessible(true);
 
                 if (field.getType().isAnnotationPresent(JsonSerializable.class)) {
-                    addToMap(json, path, serialize(field.get(object)));
+                    if (field.get(object) == null) {
+                        addToMap(json, path, null);
+                    } else {
+                        addToMap(json, path, serialize(field.get(object)));
+                    }
                 } else {
                     addToMap(json, path, field.get(object));
                 }

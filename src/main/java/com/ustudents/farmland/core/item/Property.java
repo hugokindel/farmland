@@ -24,6 +24,19 @@ public class Property extends Item {
     @JsonSerializableConstructor
     @Override
     public void deserialize(Map<String, Object> json) {
-        this.spritesheet = Resources.loadSpritesheet("property/" + super.texture);
+        if (!texture.startsWith("property/")) {
+            texture = "property/" + super.texture;
+        }
+        this.spritesheet = Resources.loadSpritesheet(texture);
+    }
+
+    public static Property clone(Property property) {
+        Property result = new Property();
+        result.takeValuesFrom(property);
+        result.maintenanceCost = property.maintenanceCost;
+        result.initLevel = property.initLevel;
+        result.actualLevel = property.actualLevel;
+        result.maxLevel = property.maxLevel;
+        return result;
     }
 }
