@@ -117,7 +117,11 @@ public class SceneManager {
                 if (addLastToTypeStack) {
                     lastScenesType.add(scenes.get(currentSceneIndex - 1).getClass());
                 }
-                scenes.get(currentSceneIndex - 1).getSpritebatch().destroy();
+
+                if (scenes.get(currentSceneIndex - 1).getSpritebatch() != null) {
+                    scenes.get(currentSceneIndex - 1).getSpritebatch().destroy();
+                }
+
                 scenes.get(currentSceneIndex - 1).destroy();
                 registry.clearRegistry();
                 registry.addAllKeptEntitiesToSystemCheck();

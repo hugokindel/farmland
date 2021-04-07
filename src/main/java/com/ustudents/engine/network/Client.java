@@ -5,6 +5,8 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.engine.graphic.Color;
+import com.ustudents.farmland.Farmland;
 
 import java.io.ByteArrayInputStream;
 import java.net.DatagramPacket;
@@ -19,6 +21,8 @@ import java.util.Objects;
 
 public class Client {
     public static int clientId = -1;
+
+    public static int playerId = -1;
 
     public static DatagramSocket socket;
 
@@ -45,8 +49,8 @@ public class Client {
         }
     }
 
-    public static boolean commandExists() {
-        return request("exists", 100) != null;
+    public static Map<String, Object> commandExists() {
+        return request("exists", 100);
     }
 
     public static void commandConnect() {
@@ -54,8 +58,59 @@ public class Client {
         clientId = ((Long)answer.get("clientId")).intValue();
     }
 
+    public static boolean commandPlayerExists(int playerId) {
+        Map<String, Object> json = new LinkedHashMap<>();
+        json.put("command", "playerExists");
+        json.put("playerId", playerId);
+        Map<String, Object> result = request(json);
+        return (Boolean)result.get("exists");
+    }
+
+    public static boolean commandAddPlayer(int playerId, String name, String villageName, Color color) {
+        Map<String, Object> json = new LinkedHashMap<>();
+        json.put("command", "addPlayer");
+        json.put("playerId", playerId);
+        json.put("name", name);
+        json.put("villageName", villageName);
+        json.put("color", color);
+        Map<String, Object> result = request(json);
+        return (Boolean)result.get("success");
+    }
+
+    public static void commandBuy(String item) {
+        Map<String, Object> json = new LinkedHashMap<>();
+        json.put("command", "buy");
+        json.put("item", item);
+        send(json);
+    }
+
+    public static boolean commandCanPlay() {
+        return (Boolean)request("canPlay").get("success");
+    }
+
     public static void commandDisconnect() {
-        request("disconnect");
+        if (Farmland.get().isConnectedToServer()) {
+            if (Farmland.get().thread != null && Farmland.get().thread.isAlive()) {
+                ClientUpdatorThread.shouldStop = true;
+                try {
+                    Farmland.get().thread.join();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            request("disconnect");
+            Out.println("Disconnected from server");
+            clientId = -1;
+        }
+    }
+
+    public static void send(Map<String, Object> json) {
+        try {
+            Packet request = new Packet(json, InetAddress.getByName("localhost"), null);
+            send(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void send(Packet packet) {
@@ -129,7 +184,7 @@ public class Client {
 
             return received;
         } catch (Exception e) {
-            if (!e.getMessage().contains("timed out")) {
+            if (!e.getMessage().contains("timed out") && !e.getMessage().contains("socket closed")) {
                 e.printStackTrace();
             }
         }
@@ -147,8 +202,7 @@ public class Client {
         }
 
         try {
-            Packet request = new Packet(json, InetAddress.getByName("localhost"), null);
-            send(request);
+            send(json);
             Packet answer = receive(timeout);
             if (answer != null) {
                 return answer.data;

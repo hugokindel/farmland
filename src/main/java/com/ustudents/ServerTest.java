@@ -1,0 +1,82 @@
+package com.ustudents;
+
+import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.network.net2.Client;
+import com.ustudents.engine.network.net2.Server;
+import com.ustudents.engine.network.net2.messages.Message;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class ServerTest {
+    private static final AtomicInteger received = new AtomicInteger(0);
+
+    public static class PrintMessage extends Message {
+        public PrintMessage() {
+
+        }
+
+        public PrintMessage(String message) {
+            getPayload().put("message", message);
+        }
+
+        @Override
+        public void process() {
+            Out.println(getPayload().getOrDefault("message", "Empty message"));
+            received.incrementAndGet();
+        }
+    }
+
+    public static void main(String[] args) {
+        Out.start(args, true, true);
+
+        Server server = new Server();
+        Client client = new Client();
+
+        server.start();
+        client.start();
+
+        client.blockUntilConnectedToServer();
+
+        try {
+            //server.send(new PrintMessage(Files.readString(Path.of("test.txt"))));
+            //client.send(new PrintMessage(Files.readString(Path.of("test.txt"))));
+            server.send(new PrintMessage("Hello Client!"));
+            client.send(new PrintMessage("Hello Server!"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //client.send(new PrintMessage("Hello Server!"));
+
+        while (received.get() < 2) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        /*client.send(new PrintMessage("Hello Server!"));
+
+        while (received.get() < 2) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+
+        client.stop();
+        server.stop();
+
+        Out.end();
+    }
+}

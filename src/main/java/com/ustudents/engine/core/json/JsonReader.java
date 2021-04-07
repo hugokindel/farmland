@@ -75,7 +75,9 @@ public class JsonReader {
         reader = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
         currentColumn = 1;
         currentLine = 1;
-        next();
+        if (next() != '{') {
+            throw new IOException();
+        }
     }
 
     /**
@@ -127,6 +129,13 @@ public class JsonReader {
         }
 
         return null;
+    }
+
+    public static Map<String, Object> readMapThatThrow(InputStream file) throws Exception {
+        JsonReader reader = new JsonReader(file);
+        Map<String, Object> map = reader.parseMap();
+        reader.reader.close();
+        return map;
     }
 
     /**

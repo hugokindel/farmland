@@ -31,6 +31,8 @@ import java.net.DatagramPacket;
 import java.util.Arrays;
 import java.util.Map;
 
+import static org.lwjgl.glfw.GLFW.glfwInit;
+
 /** The main class of the project. */
 public abstract class Game extends Runnable {
     /** Option to disable ANSI codes. */
@@ -386,6 +388,8 @@ public abstract class Game extends Runnable {
 
     /** Initialize everything. */
     public void initializeInternals(String[] args) {
+        Thread.currentThread().setName("MainThread");
+
         if (isDebugging()) {
             Out.printlnDebug("Initializing...");
         }
@@ -402,6 +406,14 @@ public abstract class Game extends Runnable {
                 new Vector2i(1280, 720),
                 vsync
         );
+
+        if (getNetMode() == NetMode.DedicatedServer) {
+            if (!glfwInit()) {
+                String errorMessage = "Unable to initialize glfw!";
+                Out.printlnError(errorMessage);
+                throw new IllegalStateException(errorMessage);
+            }
+        }
 
         Input.initialize();
 
@@ -440,16 +452,37 @@ public abstract class Game extends Runnable {
         window.pollEvents();
 
         while (!shouldQuit()) {
-            sceneManager.startFrame();
-            updateInternal();
-
-            if (canRender()) {
-                renderInternal();
+            if (getNetMode() == NetMode.DedicatedServer) {
+                long lastTime = System.nanoTime();
+                final double ns = 1000000000.0 / 128.0;
+                double delta = 0;
+                while(!shouldQuit) {
+                    long now = System.nanoTime();
+                    delta += (now - lastTime) / ns;
+                    lastTime = now;
+                    while(delta >= 1){
+                        sceneManager.startFrame();
+                        updateInternal();
+                        timer.render();
+                        sceneManager.endFrame();
+                        window.pollEvents();
+                        delta--;
+                    }
+                }
+            } else {
+                sceneManager.startFrame();
+                updateInternal();
+                if (canRender()) {
+                    renderInternal();
+                }
+                sceneManager.endFrame();
+                window.pollEvents();
             }
-
-            sceneManager.endFrame();
-            window.pollEvents();
         }
+    }
+
+    public static boolean isMainThread() {
+        return Thread.currentThread().getName().equals("FarmlandMainThread");
     }
 
     /** Updates the game logic. */

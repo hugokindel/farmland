@@ -50,7 +50,7 @@ public class GLFWWindow extends EmptyWindow {
 
         GLFWErrorCallback.createPrint(System.err).set();
 
-        if ( !glfwInit() ) {
+        if (!glfwInit()) {
             String errorMessage = "Unable to initialize glfw!";
             Out.printlnError(errorMessage);
             throw new IllegalStateException(errorMessage);

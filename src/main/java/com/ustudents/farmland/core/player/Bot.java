@@ -86,7 +86,7 @@ public class Bot {
             if (!cells.isEmpty()) {
                 Cell cellWanted = cells.get(random.generateInRange(0, cells.size() - 1));
                 cellWanted.setItem(clone);
-                Farmland.get().getSceneManager().getCurrentScene().getEntityByName("map").getComponent(GridComponent.class).onItemUsed.dispatch();
+                Farmland.get().getSceneManager().getCurrentScene().getEntityByName("grid").getComponent(GridComponent.class).onItemUsed.dispatch();
                 break;
             } else {
                 i++;

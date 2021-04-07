@@ -22,7 +22,7 @@ public class DeleteGameMenu extends MenuScene{
             buttonNames[i] = save.name;
             buttonIds[i] = save.path.replace(".json", "") + "Button";
             eventListeners[i] = (dataType, data) -> {
-                Farmland.get().saveId = Farmland.get().getSaveGameWithId(buttonIds[j].replace("Button", "")).name;
+                Farmland.get().loadSave(Farmland.get().getSaveGameWithId(buttonIds[j].replace("Button", "")).name);
                 try {
                     Files.delete(Path.of(Resources.getSavesDirectoryName() + "/" + save.path));
                 }catch (Exception e){

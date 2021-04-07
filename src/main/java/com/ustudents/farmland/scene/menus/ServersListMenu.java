@@ -17,14 +17,15 @@ public class ServersListMenu extends MenuScene {
     public void initialize() {
         boolean localServerExists;
 
-        localServerExists = Client.commandExists();
+        Map<String, Object> json = Client.commandExists();
+        localServerExists = json != null;
 
         int i = 0;
         String[] buttonNames;
         String[] buttonIds;
 
         if (localServerExists) {
-            buttonNames = new String[] {"Serveur local", "Recharger"};
+            buttonNames = new String[] {(String)json.get("name") + " (" + ((Map<String,Object>)json.get("connected")).size() + "/" + json.get("capacity") + ")", "Recharger"};
             buttonIds = new String[] {"localButton", "reloadButton"};
         } else {
             buttonNames = new String[] {"Recharger"};
@@ -45,13 +46,7 @@ public class ServersListMenu extends MenuScene {
 
                         Out.println("Connected to server with ID: " + Client.clientId);
 
-                        Map<String, Object> answer = Client.request("loadWorld");
-                        SaveGame saveGame = Json.deserialize((Map<String, Object>)answer.get("world"), SaveGame.class);
-                        assert saveGame != null;
-                        saveGame.path = "save-server.json";
-                        Farmland.get().getSaveGames().put(saveGame.name, saveGame);
-                        Farmland.get().saveId = saveGame.name;
-                        changeScene(new InGameScene());
+                        changeScene(new ServerWaitingRoomMenu());
 
                         break;
                     case "reloadButton":

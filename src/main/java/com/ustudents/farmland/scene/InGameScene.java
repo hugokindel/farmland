@@ -4,6 +4,9 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.network.Client;
+import com.ustudents.engine.network.ClientUpdatorThread;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
@@ -44,6 +47,12 @@ public class InGameScene extends Scene {
 
     @Override
     public void initialize() {
+        if (Farmland.get().isConnectedToServer()) {
+            Farmland.get().thread = new ClientUpdatorThread();
+            Farmland.get().thread.start();
+            Farmland.get().getCurrentSave().localPlayerId = Client.playerId;
+        }
+
         forceImGui = true;
 
         showInventory = new ImBoolean(false);
@@ -54,7 +63,7 @@ public class InGameScene extends Scene {
         initializeGameplay();
         economicComponent = new EconomicComponent();
 
-        if (Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+        if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(Farmland.get().getCurrentSave().getLocalPlayer().getId())) {
             getEntityByName("endTurnButton").setEnabled(false);
             getEntityByName("inventoryButton").setEnabled(false);
             getEntityByName("marketButton").setEnabled(false);
@@ -71,13 +80,16 @@ public class InGameScene extends Scene {
         AnimatedSprite selectionCursor = new AnimatedSprite(Resources.loadSpritesheet("ui/map_cell_cursor.json"));
         Spritesheet territoryTexture = Resources.loadSpritesheet("ui/map_territory_indicator_white.json");
 
-        Entity grid = createEntityWithName("map");
+        Entity grid = createEntityWithName("grid");
         grid.addComponent(new TransformComponent());
         grid.addComponent(new WorldRendererComponent());
         grid.addComponent(new GridComponent(new Vector2i(Farmland.get().getCurrentSave().cells.size(), Farmland.get().getCurrentSave().cells.get(0).size()), new Vector2i(24, 24), gridBackground, cellBackground, selectionCursor, territoryTexture));
         grid.addComponent(new TurnTimerComponent(SaveGame.timePerTurn));
         grid.getComponent(GridComponent.class).onItemUsed.add((dataType, data) -> onSelectedItemOrMoneyChanged());
-        Farmland.get().getCurrentSave().players.get(0).moneyChanged.add((dataType, data) -> onSelectedItemOrMoneyChanged());
+
+        if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
+            Farmland.get().getCurrentSave().players.get(Farmland.get().getCurrentSave().getLocalPlayer().getId()).moneyChanged.add((dataType, data) -> onSelectedItemOrMoneyChanged());
+        }
 
         Entity player = createEntityWithName("player");
         player.addComponent(new PlayerMovementComponent(500.0f));
@@ -114,7 +126,7 @@ public class InGameScene extends Scene {
         guiBuilder.addButton(buttonData3);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
-            Farmland.get().saveId = null;
+            Farmland.get().unloadSave();
             if (getGame().isConnectedToServer()) {
                 getGame().disconnectFromServer();
             }
@@ -184,7 +196,7 @@ public class InGameScene extends Scene {
 
     public void initializeGameplay() {
         Farmland.get().getCurrentSave().turnEnded.add((dataType, data) -> onTurnEnded());
-        getEntityByName("map").getComponent(TurnTimerComponent.class).secondElapsed.add(((dataType, data) -> onSecondElapsed(((TurnTimerComponent.SecondElapsed)data).numberOfSecondElapsed)));
+        getEntityByName("grid").getComponent(TurnTimerComponent.class).secondElapsed.add(((dataType, data) -> onSecondElapsed(((TurnTimerComponent.SecondElapsed)data).numberOfSecondElapsed)));
     }
 
     @Override
@@ -261,9 +273,14 @@ public class InGameScene extends Scene {
 
             for(Item item : Farmland.get().getResourceDatabase().values()){
                 if(ImGui.button(nickNameItem(item)) && playerMoney>=item.value){
-                    player.setMoney(playerMoney-item.value);
-                    player.addToInventory(item, "Buy");
-                    Farmland.get().getCurrentSave().itemsTurn.add(item);
+                    if (Farmland.get().isConnectedToServer()) {
+                        Client.commandBuy(item.id);
+                    } else {
+                        // TODO: BUY
+                        player.setMoney(playerMoney-item.value);
+                        player.addToInventory(item, "Buy");
+                        Farmland.get().getCurrentSave().itemsTurn.add(item);
+                    }
                 }
                 ImGui.sameLine();
                 ImGui.text("Prix d'achat : " + item.value);
@@ -310,6 +327,8 @@ public class InGameScene extends Scene {
     }
 
     public void onTurnEnded() {
+        Out.println("Turn end");
+
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
 
             if(Farmland.get().getCurrentSave().turn%2 == 0){
@@ -353,7 +372,8 @@ public class InGameScene extends Scene {
                 }
             }
 
-            if (currentPlayer.getId() != 0) {
+        if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
+            if (!currentPlayer.getId().equals(Farmland.get().getCurrentSave().getLocalPlayer().getId())) {
                 getEntityByName("endTurnButton").setEnabled(false);
                 getEntityByName("inventoryButton").setEnabled(false);
                 getEntityByName("marketButton").setEnabled(false);
@@ -378,6 +398,7 @@ public class InGameScene extends Scene {
                     shoulsShowBackMarket = false;
                 }
             }
+        }
     }
 
     public boolean onCompletedTurnEnd(){
@@ -400,7 +421,7 @@ public class InGameScene extends Scene {
             if (human != null) {
                 resultMenu.isWin = human.money >= 1000;
             }
-            Farmland.get().saveId = null;
+            Farmland.get().unloadSave();
             changeScene(resultMenu);
             return true;
 
@@ -419,7 +440,7 @@ public class InGameScene extends Scene {
                         resultMenu.currentPlayer = currentPlayer;
                         resultMenu.currentSave = Farmland.get().getCurrentSave();
                         resultMenu.isWin = false;
-                        Farmland.get().saveId = null;
+                        Farmland.get().unloadSave();
                         changeScene(resultMenu);
                         return true;
                     } else if (player.money <= 0) {
@@ -445,7 +466,7 @@ public class InGameScene extends Scene {
                 resultMenu.currentPlayer = currentPlayer;
                 resultMenu.currentSave = Farmland.get().getCurrentSave();
                 resultMenu.isWin = true;
-                Farmland.get().saveId = null;
+                Farmland.get().unloadSave();
                 changeScene(resultMenu);
                 return true;
             }
@@ -499,5 +520,17 @@ public class InGameScene extends Scene {
 
     public void onSecondElapsed(int secondsElapsed) {
         getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText("Temps restant: " + DateUtil.secondsToText(SaveGame.timePerTurn - secondsElapsed));
+    }
+
+    @Override
+    public void update(float dt) {
+        if (Farmland.get().isConnectedToServer()) {
+            SaveGame saveGame = ClientUpdatorThread.checkForUpdate();
+            if (saveGame != null) {
+                int time = saveGame.turnTimePassed > Farmland.get().getCurrentSave().turnTimePassed ? saveGame.turnTimePassed : Farmland.get().getCurrentSave().turnTimePassed;
+                Farmland.get().saveGames.put(Farmland.get().saveId, saveGame);
+                Farmland.get().getCurrentSave().turnTimePassed = time;
+            }
+        }
     }
 }

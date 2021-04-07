@@ -9,8 +9,10 @@ import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.network.ClientUpdatorThread;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.network.Packet;
+import com.ustudents.engine.network.ServerThread;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.scene.menus.MainMenu;
@@ -24,13 +26,15 @@ import java.util.*;
 @Command(name = "farmland", version = "0.0.1", description = "A management game about farming.")
 @SuppressWarnings("unchecked")
 public class Farmland extends Game {
-    private Map<String, Item> itemDatabase;
+    public Map<String, Item> itemDatabase;
 
-    private Map<String, SaveGame> saveGames;
+    public Map<String, SaveGame> saveGames;
 
-    private Map<String, Object> serverConfig;
+    public Map<String, Object> serverConfig;
 
     public String saveId;
+
+    public ClientUpdatorThread thread;
 
     @Override
     protected void initialize() {
@@ -43,7 +47,16 @@ public class Farmland extends Game {
 
         if (getNetMode() == NetMode.DedicatedServer) {
             if (saveGames.containsKey("save-server.json")) {
-                saveId = "save-server.json";
+                loadSave("save-server.json", -1);
+            } else {
+                SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), new Vector2i(16, 16), System.currentTimeMillis(), ((Long)serverConfig.get("numberBots")).intValue());
+                saveGame.path = "save-server.json";
+                saveGame.maxNumberPlayers = ((Long)serverConfig.get("maxNumberPlayers")).intValue();
+                for (int i = 0; i < saveGame.maxNumberPlayers; i++) {
+                    saveGame.addPlayer("TEMP", "TEMP", Color.RED);
+                }
+                saveGames.put("save-server.json", saveGame);
+                loadSave("save-server.json", -1);
             }
         }
 
@@ -62,6 +75,8 @@ public class Farmland extends Game {
         } else {
             serverConfig = new HashMap<>();
             serverConfig.put("serverName", "Local server");
+            serverConfig.put("maxNumberPlayers", 2L);
+            serverConfig.put("numberBots", 4L);
         }
     }
 
@@ -72,13 +87,30 @@ public class Farmland extends Game {
         Packet answer = new Packet(new LinkedHashMap<>(), packet.address, packet.datagram);
 
         if (packet.data.get("command").equals("loadWorld")) {
-            if (getCurrentSave() == null) {
-                SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), "Forx", "Forx's village", Color.RED, new Vector2i(16, 16), System.currentTimeMillis(), 0);
-                saveGame.path = "save-server.json";
-                saveGames.put("save-server.json", saveGame);
-                saveId = "save-server.json";
-            }
             answer.data.put("world", Json.serialize(getCurrentSave()));
+            return answer;
+        } else if (packet.data.get("command").equals("buy")) {
+            Item item = Farmland.get().getItem((String)packet.data.get("item"));
+            Out.println("Client " + packet.data.get("from") + ", bought " + Farmland.get().getItem((String)packet.data.get("item")).name + " (x1)");
+            // TODO: BUY FUNCTION
+            getCurrentSave().getCurrentPlayer().setMoney(getCurrentSave().getCurrentPlayer().money - item.value);
+            getCurrentSave().getCurrentPlayer().addToInventory(item, "Buy");
+            Farmland.get().getCurrentSave().itemsTurn.add(item);
+        } else if (packet.data.get("command").equals("playerExists")) {
+            int playerId = ((Long)packet.data.get("playerId")).intValue();
+            if (getCurrentSave().players.size() > playerId && getCurrentSave().players.get(playerId).typeOfPlayer.equals("Humain") && !getCurrentSave().players.get(playerId).name.equals("TEMP")) {
+                answer.data.put("exists", Boolean.TRUE);
+            } else {
+                answer.data.put("exists", Boolean.FALSE);
+            }
+            return answer;
+        } else if (packet.data.get("command").equals("addPlayer")) {
+            int playerId = ((Long)packet.data.get("playerId")).intValue();
+            getCurrentSave().players.get(playerId).name = (String)packet.data.get("name");
+            getCurrentSave().players.get(playerId).village.name = (String)packet.data.get("villageName");
+            getCurrentSave().players.get(playerId).color = Json.deserialize((Map<String,Object>)packet.data.get("color"), Color.class);
+            ServerThread.loadedPlayers.put(String.valueOf((Long)packet.data.get("from")), playerId);
+            answer.data.put("success", Boolean.TRUE);
             return answer;
         }
 
@@ -264,6 +296,21 @@ public class Farmland extends Game {
 
     public void setCurrentSave(SaveGame saveGame){
         saveGames.put(saveId,saveGame);
+        Farmland.get().getCurrentSave().localPlayerId = 0;
+    }
+
+    public void loadSave(String saveId) {
+        Farmland.get().saveId = saveId;
+        Farmland.get().getCurrentSave().localPlayerId = 0;
+    }
+
+    public void loadSave(String saveId, Integer playerId) {
+        Farmland.get().saveId = saveId;
+        Farmland.get().getCurrentSave().localPlayerId = playerId;
+    }
+
+    public void unloadSave() {
+        Farmland.get().saveId = null;
     }
 
     public Item getItem(String id) {

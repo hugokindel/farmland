@@ -1,6 +1,7 @@
 package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
@@ -70,9 +71,20 @@ public class Texture {
     @JsonSerializableConstructor
     public void deserialize() {
         if (Game.get().canRender()) {
-            loadTexture(getTexturesDirectory() + "/" + path);
-            handle = createTexture();
+            Texture texture = Resources.getTexture(path);
+
+            if (texture != null) {
+                this.data = texture.data;
+                this.width = texture.width;
+                this.height = texture.height;
+                this.numberOfComponents = texture.numberOfComponents;
+                this.handle = texture.handle;
+            } else if (Game.isMainThread()) {
+                loadTexture(getTexturesDirectory() + "/" + path);
+                handle = createTexture();
+            }
         }
+
         destroyed = false;
     }
 

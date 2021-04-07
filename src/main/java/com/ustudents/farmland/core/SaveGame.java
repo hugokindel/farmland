@@ -6,9 +6,11 @@ import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
+import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Texture;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
@@ -57,6 +59,11 @@ public class SaveGame {
     @JsonSerializable
     public List<List<Cell>> cells;
 
+    @JsonSerializable
+    public Integer maxNumberPlayers;
+
+    public Integer localPlayerId;
+
     public Boolean startWithBots;
 
     public List<Integer> deadPlayers;
@@ -65,11 +72,13 @@ public class SaveGame {
 
     public EventDispatcher turnEnded = new EventDispatcher();
 
+    public SeedRandom random;
+
     public SaveGame() {
         this.itemsTurn = new ArrayList<>();
     }
 
-    public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
+    public SaveGame(String name, Vector2i mapSize, Long seed, int numberOfBots) {
         mapWidth = mapSize.x;
         mapHeight = mapSize.y;
         this.seed = seed;
@@ -81,13 +90,12 @@ public class SaveGame {
 
         this.deadPlayers = new LinkedList<>();
         this.startWithBots = numberOfBots > 0;
+        this.maxNumberPlayers = 1;
         this.turn = 0;
         this.turnTimePassed = 0;
         this.currentPlayerId = 0;
         this.name = name;
         this.players = new ArrayList<>();
-        this.players.add(new Player(playerName, playerVillageName, playerColor,"Humain"));
-        this.players.get(0).village.position = new Vector2f(5 + (mapSize.x / 2) * 24, 5 + (mapSize.y / 2) * 24);
         this.itemsTurn = new ArrayList<>();
 
         this.cells = new ArrayList<>();
@@ -109,33 +117,21 @@ public class SaveGame {
                         5 + x * 24 + 24,
                         5 + y * 24 + 24);
 
-                Cell cell = new Cell(sprite, viewRectangle);
-
-                if ((x == mapSize.x / 2 && y == mapSize.y / 2) ||
-                        (x == mapSize.x / 2 - 1 && y == mapSize.y / 2) ||
-                        (x == mapSize.x / 2 && y == mapSize.y / 2 - 1) ||
-                        (x == mapSize.x / 2 - 1 && y == mapSize.y / 2 - 1)) {
-                    cell.setOwned(true, 0);
-                }
-
-                cells.get(x).add(cell);
+                cells.get(x).add(new Cell(sprite, viewRectangle));
             }
         }
 
         List<Color> usedColors = new ArrayList<>();
-        usedColors.add(playerColor);
-
         List<Vector2i> usedLocations = new ArrayList<>();
         usedLocations.add(new Vector2i(mapSize.x / 2 - 1, mapSize.y / 2 - 1));
-
         for (int i = 0; i < numberOfBots; i++) {
             this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors), "Robot"));
             Vector2i villagePosition = generateMapLocation(random, usedLocations);
-            this.players.get(i + 1).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
-            this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i + 1);
-            this.cells.get(villagePosition.x + 1).get(villagePosition.y).setOwned(true, i + 1);
-            this.cells.get(villagePosition.x).get(villagePosition.y + 1).setOwned(true, i + 1);
-            this.cells.get(villagePosition.x + 1).get(villagePosition.y + 1).setOwned(true, i + 1);
+            this.players.get(i).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
+            this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i);
+            this.cells.get(villagePosition.x + 1).get(villagePosition.y).setOwned(true, i);
+            this.cells.get(villagePosition.x).get(villagePosition.y + 1).setOwned(true, i);
+            this.cells.get(villagePosition.x + 1).get(villagePosition.y + 1).setOwned(true, i);
         }
 
         File f = new File(Resources.getSavesDirectoryName());
@@ -146,29 +142,57 @@ public class SaveGame {
         }
     }
 
-    private int getMaxSavedGamesId(){
+    public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
+        this(name, mapSize, seed, numberOfBots);
+        addPlayer(playerName, playerVillageName, playerColor);
+    }
+
+    @JsonSerializableConstructor
+    public void deserialize() {
+        random = new SeedRandom(this.seed);
+        deadPlayers = new ArrayList<>();
+    }
+
+    public void addPlayer(String playerName, String playerVillageName, Color playerColor) {
+        int playerId = getAvailableHumanId();
+        this.players.add(playerId, new Player(playerName, playerVillageName, playerColor,"Humain"));
+        Vector2i villagePosition = generateMapLocation(random, getUsedLocations());
+        this.players.get(playerId).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
+        this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, playerId);
+        this.cells.get(villagePosition.x + 1).get(villagePosition.y).setOwned(true, playerId);
+        this.cells.get(villagePosition.x).get(villagePosition.y + 1).setOwned(true, playerId);
+        this.cells.get(villagePosition.x + 1).get(villagePosition.y + 1).setOwned(true, playerId);
+    }
+
+    private int getMaxSavedGamesId() {
         File savedDir = new File(Resources.getSavesDirectoryName());
         File[] list = savedDir.listFiles();
         int max = -1;
         assert list != null;
         for (File file : list) {
             String tmp = file.getName().substring(5, 6);
-            int fileId = Integer.parseInt(tmp);
-            if (fileId > max)
-                max = fileId;
+
+            if (Character.isDigit(tmp.charAt(0))) {
+                int fileId = Integer.parseInt(tmp);
+                if (fileId > max) {
+                    max = fileId;
+                }
+            }
         }
         return max;
     }
 
     public void endTurn() {
-        if (currentPlayerId == players.size() - 1) {
-            turn++;
-            currentPlayerId = 0;
-        } else {
-            currentPlayerId++;
-        }
+        if (Farmland.get().getNetMode() == NetMode.Standalone || Farmland.get().getNetMode() == NetMode.DedicatedServer) {
+            if (currentPlayerId == players.size() - 1) {
+                turn++;
+                currentPlayerId = 0;
+            } else {
+                currentPlayerId++;
+            }
 
-        turnEnded.dispatch();
+            turnEnded.dispatch();
+        }
     }
 
     public Player getCurrentPlayer() {
@@ -244,4 +268,57 @@ public class SaveGame {
         return false;
     }
 
+    public Player getLocalPlayer() {
+        return players.get(localPlayerId);
+    }
+
+    public List<Color> getUsedColors() {
+        List<Color> colors = new ArrayList<>();
+
+        for (Player player : players) {
+            if (!colors.contains(player.color)) {
+                colors.add(player.color);
+            }
+        }
+
+        return colors;
+    }
+
+    public List<Vector2i> getUsedLocations() {
+        List<Vector2i> locations = new ArrayList<>();
+
+        for (Player player : players) {
+            if (player.village.position != null) {
+                Vector2i villagePosition = new Vector2i(((int)player.village.position.x - 5) / 24, ((int)player.village.position.y - 5) / 24);
+
+                if (!locations.contains(villagePosition)) {
+                    locations.add(villagePosition);
+                }
+            }
+        }
+
+        return locations;
+    }
+
+    private int getAvailableHumanId() {
+        int i = 0;
+
+        for (Player player : players) {
+            if (player.typeOfPlayer.equals("Humain")) {
+                i++;
+            }
+        }
+
+        for (int x = 0; x < cells.size(); x++) {
+            for (int y = 0; y < cells.get(x).size(); y++) {
+                Cell cell = cells.get(x).get(y);
+
+                if (cell.isOwnedByBot(this)) {
+                    cell.ownerId++;
+                }
+            }
+        }
+
+        return i;
+    }
 }

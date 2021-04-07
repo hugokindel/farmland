@@ -5,6 +5,7 @@ import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.*;
 import org.joml.Vector4f;
 
@@ -70,7 +71,19 @@ public class Cell {
     }
 
     public boolean isOwnedByCurrentPlayer() {
-        return ownerId == 0;
+        return Farmland.get().getCurrentSave() != null && ownerId.equals(Farmland.get().getCurrentSave().currentPlayerId);
+    }
+
+    public boolean isOwnedByLocalPlayer() {
+        return Farmland.get().getCurrentSave() != null && ownerId.equals(Farmland.get().getCurrentSave().localPlayerId);
+    }
+
+    public boolean isOwnedByBot() {
+        return Farmland.get().getCurrentSave() != null && isOwned() && Farmland.get().getCurrentSave().players.get(ownerId).typeOfPlayer.equals("Robot");
+    }
+
+    public boolean isOwnedByBot(SaveGame saveGame) {
+        return saveGame != null && isOwned() && saveGame.players.get(ownerId).typeOfPlayer.equals("Robot");
     }
 
     public boolean hasItem() {

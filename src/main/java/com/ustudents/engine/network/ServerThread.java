@@ -5,6 +5,7 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.farmland.Farmland;
 
 import java.io.ByteArrayInputStream;
 import java.net.DatagramPacket;
@@ -20,15 +21,19 @@ public class ServerThread extends Thread {
 
     public static DatagramSocket socket;
 
+    public static int numberOfClientsConnected;
+
+    public static Map<String, Integer> loadedPlayers = new HashMap<>();
+
     @Override
     public void run() {
         try {
             createSocket();
 
             Game.get().onServerStarted();
-            Out.println("Server initialized.");
+            Out.println("Server thread initialized.");
 
-            while(socket.isBound())
+            while(socket != null && socket.isBound())
             {
                 Packet request = receive();
                 if (request != null) {
@@ -47,7 +52,7 @@ public class ServerThread extends Thread {
         closeSocket();
 
         Game.get().onServerDestroyed();
-        Out.println("Server destroyed.");
+        Out.println("Server thread destroyed.");
     }
 
     private static void createSocket() {
@@ -142,12 +147,35 @@ public class ServerThread extends Thread {
         }
 
         if (packet.data.get("command").equals("exists")) {
+            answer.data.put("usage", numberOfClientsConnected);
+            answer.data.put("capacity", ((Long) Farmland.get().serverConfig.get("maxNumberPlayers")).intValue());
+            answer.data.put("connected", loadedPlayers);
+            answer.data.put("connectedSize", loadedPlayers.size());
+            answer.data.put("name", (String)Farmland.get().serverConfig.get("serverName"));
             return answer;
         } else if (packet.data.get("command").equals("connect")) {
-            answer.data.put("clientId", getFreeId());
+            int id = getFreeId();
+            Out.println("Client " + id + " connected");
+            answer.data.put("clientId", id);
+            numberOfClientsConnected++;
             return answer;
         } else if (packet.data.get("command").equals("disconnect")) {
-            freeIds.add(((Long)packet.data.get("from")).intValue());
+            int id = ((Long)packet.data.get("from")).intValue();
+            Out.println("Client " + id + " disconnected");
+            freeIds.add(id);
+            numberOfClientsConnected--;
+            if (loadedPlayers.containsKey(String.valueOf(id))) {
+                Farmland.get().getCurrentSave().players.get(loadedPlayers.get(String.valueOf(id))).typeOfPlayer = "Robot";
+                Farmland.get().getCurrentSave().players.get(loadedPlayers.get(String.valueOf(id))).name += " (Robot)";
+                loadedPlayers.remove(String.valueOf(id));
+            }
+            return answer;
+        } else if (packet.data.get("command").equals("canPlay")) {
+            if (loadedPlayers.size() == Farmland.get().getCurrentSave().maxNumberPlayers) {
+                answer.data.put("success", Boolean.TRUE);
+            } else {
+                answer.data.put("success", Boolean.FALSE);
+            }
             return answer;
         }
 
