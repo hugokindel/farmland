@@ -2,7 +2,6 @@ package com.ustudents.farmland.core;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
@@ -10,7 +9,7 @@ import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Texture;
-import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.network.net2.NetMode;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;

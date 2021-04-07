@@ -2,11 +2,10 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.network.Client;
 import com.ustudents.engine.network.ClientUpdatorThread;
-import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.network.net2.NetMode;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
@@ -23,7 +22,6 @@ import com.ustudents.farmland.component.TurnTimerComponent;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
-import com.ustudents.farmland.core.player.Bot;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import com.ustudents.farmland.scene.menus.ResultMenu;
@@ -32,7 +30,6 @@ import imgui.flag.ImGuiCond;
 import imgui.type.ImBoolean;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.lwjgl.system.CallbackI;
 
 import java.util.*;
 

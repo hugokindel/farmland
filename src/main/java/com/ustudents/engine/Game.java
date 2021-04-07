@@ -19,6 +19,7 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.InputSystemType;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.network.*;
+import com.ustudents.engine.network.net2.NetMode;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
@@ -27,9 +28,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL33;
 
-import java.net.DatagramPacket;
 import java.util.Arrays;
-import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 

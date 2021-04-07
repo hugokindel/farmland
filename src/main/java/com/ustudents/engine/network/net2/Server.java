@@ -1,7 +1,9 @@
 package com.ustudents.engine.network.net2;
 
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.network.net2.messages.AliveMessage;
 import com.ustudents.engine.network.net2.messages.ConnectMessage;
+import com.ustudents.engine.network.net2.messages.DisconnectMessage;
 import com.ustudents.engine.network.net2.messages.Message;
 
 import java.net.InetSocketAddress;
@@ -39,15 +41,22 @@ public class Server extends Controller {
     }
 
     @Override
-    public void receive(Message message) {
+    public boolean receive(Message message) {
         if (message instanceof ConnectMessage) {
             message.setSenderId(getFreeId());
             clientsAddresses.put(message.getSenderId(), message.senderAddress);
-            Message answer = new ConnectMessage();
-            answer.setReceiverId(message.getSenderId());
-            send(message.getSenderId(), answer);
+            respond(new ConnectMessage(), message);
             Out.printlnInfo("Client " + message.getSenderId() + " connected");
+        } else if (message instanceof AliveMessage) {
+            respond(new AliveMessage(), message);
+            return false;
+        } else if (message instanceof DisconnectMessage) {
+            freeIds.add(message.getSenderId());
+            clientsAddresses.remove(message.getSenderId());
+            Out.printlnInfo("Client " + message.getSenderId() + " disconnected");
         }
+
+        return true;
     }
 
     public void send(int clientId, Message message) {
@@ -87,6 +96,10 @@ public class Server extends Controller {
     @Override
     public Type getType() {
         return Type.Server;
+    }
+
+    public int getNumberOfClients() {
+        return clientsAddresses.size();
     }
 
     protected int getFreeId() {

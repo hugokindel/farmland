@@ -3,14 +3,13 @@ package com.ustudents.farmland;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
-import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.ClientUpdatorThread;
-import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.network.net2.NetMode;
 import com.ustudents.engine.network.Packet;
 import com.ustudents.engine.network.ServerThread;
 import com.ustudents.farmland.core.SaveGame;
@@ -19,7 +18,6 @@ import com.ustudents.farmland.scene.menus.MainMenu;
 import org.joml.Vector2i;
 
 import java.io.File;
-import java.net.DatagramPacket;
 import java.util.*;
 
 /** The main class of the project. */

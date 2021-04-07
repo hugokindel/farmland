@@ -1,13 +1,10 @@
-// TODO: RELIABILITY
-// TODO: ADD MAIN THREAD RECEIVING OPTION ?
-
 package com.ustudents.engine.network.net2;
 
-import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.engine.network.net2.messages.AliveMessage;
 import com.ustudents.engine.network.net2.messages.Message;
 import com.ustudents.engine.network.net2.messages.PackMessage;
 import com.ustudents.engine.network.net2.messages.ReceivedMessage;
@@ -39,7 +36,7 @@ public abstract class Controller {
 
     public static final int DEFAULT_MESSAGE_SENDER_SIZE = 65507;
 
-    public static final int DEFAULT_MESSAGE_SEND_TIMEOUT = 500;
+    public static final int DEFAULT_MESSAGE_SEND_TIMEOUT = 1000;
 
     protected DatagramSocket socket;
 
@@ -55,7 +52,9 @@ public abstract class Controller {
 
     protected List<Pair<Message, Integer>> reliableMessageIdsToSend = new CopyOnWriteArrayList<>();
 
-    protected Queue<Message> messagesToSend = new ConcurrentLinkedDeque<>();
+    protected List<Long> reliableAndOrderedMessageIds = new CopyOnWriteArrayList<>();
+
+    protected Queue<Pair<Message, Boolean>> messagesToSend = new ConcurrentLinkedDeque<>();
 
     protected List<byte[]> partsAvailable = new CopyOnWriteArrayList<>();
 
@@ -69,12 +68,26 @@ public abstract class Controller {
         internalStop();
     }
 
-    abstract public void receive(Message message);
+    abstract public boolean receive(Message message);
+
+    public void aliveStateChanged() {
+
+    }
 
     abstract public Type getType();
 
     public void send(Message message) {
-        messagesToSend.add(message);
+        send(message, false);
+    }
+
+    public void send(Message message, boolean force) {
+        messagesToSend.add(new Pair<>(message, force));
+    }
+
+    public void respond(Message response, Message request) {
+        response.setReceiverId(request.getSenderId());
+        response.receiverAddress = request.senderAddress;
+        send(response);
     }
 
     protected Long getNewMessageId() {
@@ -210,6 +223,7 @@ public abstract class Controller {
                     }
 
                     reliableMessageIdsToSend.remove(getMessageAwaitingForReturn(((ReceivedMessage)message).getReceivedId()));
+                    reliableAndOrderedMessageIds.remove(((ReceivedMessage)message).getReceivedId());
                 } else {
                     if (getType() == Type.Server) {
                         if (senderId == -1) {
@@ -225,11 +239,12 @@ public abstract class Controller {
                         Message backMessage = new ReceivedMessage(message.getId());
                         backMessage.receiverAddress = message.senderAddress;
                         backMessage.setReceiverId(message.getSenderId());
-                        send(backMessage);
+                        internalSend(backMessage, true, true);
                     }
 
-                    receive(message);
-                    message.process();
+                    if (receive(message)) {
+                        message.process();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -300,14 +315,15 @@ public abstract class Controller {
                         }
 
                         if (message.getReliability() != Message.Reliability.Unreliable) {
-                            /*Message backMessage = new ReceivedMessage(message.getId());
+                            Message backMessage = new ReceivedMessage(message.getId());
                             backMessage.receiverAddress = message.senderAddress;
                             backMessage.setReceiverId(message.getSenderId());
-                            send(backMessage);*/
+                            internalSend(backMessage, true, true);
                         }
 
-                        receive(message);
-                        message.process();
+                        if (receive(message)) {
+                            message.process();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -318,7 +334,17 @@ public abstract class Controller {
         }
     }
 
-    private boolean internalSend(Message message, boolean setId, boolean forceUnreliable) {
+    private boolean internalSend(Message message, boolean setId, boolean forceSend) {
+        if (!forceSend) {
+            while (!reliableAndOrderedMessageIds.isEmpty()) {
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         if (message.receiverAddress == null) {
             Out.println("No recipient");
             return false;
@@ -348,6 +374,7 @@ public abstract class Controller {
                 DatagramPacket packet = new DatagramPacket(pack, pack.length, message.receiverAddress);
 
                 if (socket == null || socket.isClosed()) {
+                    Out.printlnError("Socket already closed");
                     return false;
                 }
 
@@ -359,15 +386,20 @@ public abstract class Controller {
                     return false;
                 }
             }
+
+            if ((message.getReliability() == Message.Reliability.Reliable || message.getReliability() == Message.Reliability.OrderedAndReliable) && getMessageAwaitingForReturn(message.getId()) == null) {
+                reliableMessageIdsToSend.add(new Pair<>(message, 0));
+            }
+
+            if (message.getReliability() == Message.Reliability.OrderedAndReliable && !reliableAndOrderedMessageIds.contains(message.getId())) {
+                reliableAndOrderedMessageIds.add(message.getId());
+            }
         } else {
             DatagramPacket packet = new DatagramPacket(data, data.length, message.receiverAddress);
 
             if (socket == null || socket.isClosed()) {
+                Out.printlnError("Socket already closed");
                 return false;
-            }
-
-            if ((message.getReliability() == Message.Reliability.Reliable || message.getReliability() == Message.Reliability.OrderedAndReliable) && getMessageAwaitingForReturn(message.getId()) == null) {
-                reliableMessageIdsToSend.add(new Pair<>(message, 0));
             }
 
             try {
@@ -375,6 +407,14 @@ public abstract class Controller {
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
+            }
+
+            if ((message.getReliability() == Message.Reliability.Reliable || message.getReliability() == Message.Reliability.OrderedAndReliable) && getMessageAwaitingForReturn(message.getId()) == null) {
+                reliableMessageIdsToSend.add(new Pair<>(message, 0));
+            }
+
+            if (message.getReliability() == Message.Reliability.OrderedAndReliable && !reliableAndOrderedMessageIds.contains(message.getId())) {
+                reliableAndOrderedMessageIds.add(message.getId());
             }
 
             if (message instanceof ReceivedMessage) {
@@ -411,10 +451,6 @@ public abstract class Controller {
         return ret;
     }
 
-    private static byte[] unpackPack(byte[] data) {
-        return Arrays.copyOfRange(data, 1, data.length - 1);
-    }
-
     private Pair<Message, Integer> getMessageAwaitingForReturn(Long id) {
         for (Pair<Message, Integer> element : reliableMessageIdsToSend) {
             if (element.getObject1().getId().equals(id)) {
@@ -439,7 +475,8 @@ public abstract class Controller {
 
             while (!isSocketClosed()) {
                 if (!messagesToSend.isEmpty()) {
-                    if (!internalSend(messagesToSend.poll(), true, false)) {
+                    Pair<Message, Boolean> message = messagesToSend.poll();
+                    if (!internalSend(message.getObject1(), true, message.getObject2())) {
                         Out.printlnWarning("Error while sending packet.");
                     }
                 }
@@ -502,13 +539,17 @@ public abstract class Controller {
 
                 for (Pair<Message, Integer> element : copy) {
                     if (element.getObject2() >= DEFAULT_MESSAGE_SEND_TIMEOUT) {
-                        if (getType() == Type.Server) {
-                            Out.printlnInfo("Resending unreceived message " + element.getObject1().getId() + " from server");
+                        if (element.getObject1() instanceof AliveMessage) {
+                            aliveStateChanged();
                         } else {
-                            Out.printlnInfo("Resending unreceived message " + element.getObject1().getId() + " from client");
+                            if (getType() == Type.Server) {
+                                Out.printlnInfo("Resending unreceived message " + element.getObject1().getId() + " from server");
+                            } else {
+                                Out.printlnInfo("Resending unreceived message " + element.getObject1().getId() + " from client");
+                            }
+                            internalSend(element.getObject1(), false, true);
+                            element.setObject2(0);
                         }
-                        send(element.getObject1());
-                        element.setObject2(0);
                     } else {
                         element.setObject2(element.getObject2() + 10);
                     }

@@ -1,8 +1,7 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.network.net2.NetMode;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.*;
@@ -15,7 +14,6 @@ import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
-import com.ustudents.farmland.core.player.Player;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
