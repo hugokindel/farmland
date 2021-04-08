@@ -331,7 +331,7 @@ public class InGameScene extends Scene {
                         int sellValueOfCaravan = (int) (((playerInventory.get(item).value + researchBonus) * 1.25) * currentQuantity / 2);
                         int travelTime = 4;
                         int travelPrice = 10;
-                        if (ImGui.button("Envoyé " + "[" + travelPrice + "]") && playerInventory.get(item) != null) {
+                        if (ImGui.button("Envoyé " + playerInventory.get(item).name + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
                             player.setMoney(playerMoney - travelPrice);
                             player.caravans.add(new Pair<>(travelTime, sellValueOfCaravan));
                             for (int i = 0; i < currentQuantity / 2; i++) {
