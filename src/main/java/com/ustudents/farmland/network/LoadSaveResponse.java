@@ -17,18 +17,18 @@ public class LoadSaveResponse extends Message {
     }
 
     public LoadSaveResponse(SaveGame saveGame) {
-        getPayload().put("save", Json.serialize(saveGame));
+        getPayload().put("save", saveGame);
     }
 
     public SaveGame getSave() {
-        return Json.deserialize((Map<String, Object>)getPayload().get("save"), SaveGame.class);
+        return Json.deserialize((Map<String, Object>) getPayload().get("save"), SaveGame.class);
     }
 
     @Override
     public void process() {
         updatedSaveGame = getSave();
         updatedSaveGame.path = "save-server.json";
-        updatedSaveGame.localPlayerId = Farmland.get().clientPlayerId;
+        updatedSaveGame.localPlayerId = Farmland.get().clientPlayerId.get();
     }
 
     public static SaveGame getUpdatedSaveGame() {

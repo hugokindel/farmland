@@ -15,7 +15,7 @@ public class PlayerExistsRequest extends Message {
     }
 
     public int getPlayerId() {
-        return ((Long)getPayload().get("playerId")).intValue();
+        return ((Long) getPayload().get("playerId")).intValue();
     }
 
     @Override

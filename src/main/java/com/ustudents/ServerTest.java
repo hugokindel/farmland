@@ -23,6 +23,14 @@ public class ServerTest {
             }
         }
 
+        while (ClientServerTest.received.get() < 1) {
+            try {
+                Thread.sleep(25);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         while (server.getNumberOfClients() >= 1) {
             try {
                 Thread.sleep(25);

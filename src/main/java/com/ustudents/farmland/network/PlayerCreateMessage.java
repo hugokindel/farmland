@@ -23,19 +23,19 @@ public class PlayerCreateMessage extends Message {
     }
 
     public int getPlayerId() {
-        return ((Long)getPayload().get("playerId")).intValue();
+        return ((Long) getPayload().get("playerId")).intValue();
     }
 
     public String getPlayerName() {
-        return (String)getPayload().get("playerName");
+        return (String) getPayload().get("playerName");
     }
 
     public String getVillageName() {
-        return (String)getPayload().get("villageName");
+        return (String) getPayload().get("villageName");
     }
 
     public Color getBannerColor() {
-        return Json.deserialize((Map<String, Object>)getPayload().get("bannerColor"), Color.class);
+        return Json.deserialize((Map<String, Object>) getPayload().get("bannerColor"), Color.class);
     }
 
     @Override

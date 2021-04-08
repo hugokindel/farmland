@@ -6,8 +6,6 @@ import com.ustudents.engine.network.Client;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClientTest {
-    private static final AtomicInteger received = new AtomicInteger(0);
-
     public static void main(String[] args) {
         Out.start(args, true, true);
 
@@ -17,6 +15,14 @@ public class ClientTest {
 
         if (client.isServerAlive()) {
             client.blockUntilConnectedToServer();
+        }
+
+        client.send(new ClientServerTest.PrintMessage("Hello Server!"));
+
+        try {
+            Thread.sleep(25);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         client.stop();

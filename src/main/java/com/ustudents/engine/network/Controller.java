@@ -236,7 +236,7 @@ public abstract class Controller {
             Long id = (Long)json.get("id");
             Integer senderId = json.get("senderId") == null ? -1 : ((Long)json.get("senderId")).intValue();
             Integer receiverId = json.get("receiverId") == null ? -1 : ((Long)json.get("receiverId")).intValue();
-            String payload = (String)json.get("encodedPayload");
+            Map<String, Object> payload = (Map<String, Object>)json.get("payload");
             String type = (String)json.get("type");
 
             try {
@@ -246,7 +246,7 @@ public abstract class Controller {
                 message.setId(id);
                 message.setSenderId(senderId);
                 message.setReceiverId(receiverId);
-                message.setEncodedPayload(payload);
+                message.setPayload(payload);
                 message.senderAddress = new InetSocketAddress(packet.getAddress(), packet.getPort());
 
                 if (message instanceof PackMessage) {
@@ -338,17 +338,18 @@ public abstract class Controller {
                     Long id = (Long)json.get("id");
                     Integer senderId = json.get("senderId") == null ? -1 : ((Long)json.get("senderId")).intValue();
                     Integer receiverId = json.get("receiverId") == null ? -1 : ((Long)json.get("receiverId")).intValue();
-                    String payload = (String)json.get("encodedPayload");
+                    Map<String, Object> payload = (Map<String, Object>)json.get("payload");
                     String type = (String)json.get("type");
 
                     try {
                         Class classType = Class.forName(type);
+
                         Message message = (Message)classType.getConstructors()[0].newInstance();
 
                         message.setId(id);
                         message.setSenderId(senderId);
                         message.setReceiverId(receiverId);
-                        message.setEncodedPayload(payload);
+                        message.setPayload(payload);
                         message.senderAddress = new InetSocketAddress(packet.getAddress(), packet.getPort());
 
                         if (getType() == Type.Server) {
@@ -406,7 +407,6 @@ public abstract class Controller {
             message.setId(getNewMessageId());
         }
 
-        message.setEncodedPayload(JsonWriter.writeToString(message.getPayload()));
         message.setType(message.getClass().getName());
         byte[] data = Json.minify(Objects.requireNonNull(JsonWriter.writeToString(Json.serialize(message)))).getBytes(StandardCharsets.UTF_8);
 
@@ -418,7 +418,7 @@ public abstract class Controller {
             packMessage.setSenderId(message.getSenderId());
             packMessage.receiverAddress = message.receiverAddress;
             packMessage.senderAddress = message.senderAddress;
-            internalSend(packMessage, true, false);
+            internalSend(packMessage, true, true);
 
             byte[][] packedData = packData(data, DEFAULT_MESSAGE_SENDER_SIZE, numberOfParts);
 
@@ -497,7 +497,7 @@ public abstract class Controller {
             ret[i] = new byte[bytes.length + 1];
             ret[i][0] = 'P';
             System.arraycopy(bytes, 0, ret[i], 1, bytes.length);
-            start += size;
+            start += size - 1;
         }
 
         return ret;

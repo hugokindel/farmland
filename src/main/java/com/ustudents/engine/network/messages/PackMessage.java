@@ -10,7 +10,7 @@ public class PackMessage extends Message {
     }
 
     public int getNumberOfParts() {
-        return ((Long)getPayload().get("numberOfParts")).intValue();
+        return ((Long) getPayload().get("numberOfParts")).intValue();
     }
 
     @Override

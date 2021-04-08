@@ -46,10 +46,10 @@ public class InGameScene extends Scene {
     @Override
     public void initialize() {
         if (Farmland.get().getNetMode() == NetMode.Standalone) {
-            Farmland.get().clientPlayerId = 0;
+            Farmland.get().clientPlayerId.set(0);
         }
 
-        Farmland.get().getCurrentSave().localPlayerId = Farmland.get().clientPlayerId;
+        Farmland.get().getCurrentSave().localPlayerId = Farmland.get().clientPlayerId.get();
 
         forceImGui = true;
 

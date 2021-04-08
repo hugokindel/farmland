@@ -40,7 +40,7 @@ public class ServerWaitingRoomMenu extends MenuScene {
 
                     if (Farmland.get().getClient().request(new PlayerExistsRequest(player), PlayerExistsResponse.class).exists()) {
                         Farmland.get().getClient().send(new PlayerAddMessage(player));
-                        Farmland.get().clientPlayerId = player;
+                        Farmland.get().clientPlayerId.set(player);
                         changeScene(new ServerWaitingPlayersMenu());
                     } else {
                         changeScene(new ServerNewPlayerMenu(player));

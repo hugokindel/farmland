@@ -19,17 +19,17 @@ public class GameInformationsResponse extends Message {
     }
 
     public String getName() {
-        return (String)getPayload().get("name");
+        return (String) getPayload().get("name");
     }
 
     public int getCapacity() {
-        return ((Long)getPayload().get("capacity")).intValue();
+        return ((Long) getPayload().get("capacity")).intValue();
     }
 
     public List<Integer> getConnectedPlayerIds() {
         List<Integer> list = new ArrayList<>();
 
-        for (Long element : ((List<Long>)getPayload().get("connectedPlayerIds"))) {
+        for (Long element : ((List<Long>) getPayload().get("connectedPlayerIds"))) {
             if (element != null) {
                 list.add(element.intValue());
             }

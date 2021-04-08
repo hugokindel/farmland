@@ -31,16 +31,13 @@ public class Message {
     protected Integer receiverId;
 
     @JsonSerializable
-    protected String encodedPayload;
+    protected Map<String, Object> payload;
 
     @JsonSerializable
     protected String type;
 
-    private Map<String, Object> payload;
-
     public Message() {
         payload = new LinkedHashMap<>();
-        encodedPayload = "";
     }
 
     public Integer getSenderId() {
@@ -75,23 +72,11 @@ public class Message {
         this.type = type;
     }
 
-    public void setEncodedPayload(String encodedPayload) {
-        this.encodedPayload = encodedPayload;
-    }
-
-    public int getEncodedPayloadLength() {
-        return encodedPayload.length();
-    }
-
-    public String getEncodedPayload() {
-        return encodedPayload;
+    public void setPayload(Map<String, Object> payload) {
+        this.payload = payload;
     }
 
     public Map<String, Object> getPayload() {
-        if (payload.isEmpty() && !encodedPayload.isEmpty()) {
-            payload = JsonReader.readMap(new ByteArrayInputStream(encodedPayload.getBytes(StandardCharsets.UTF_8)));
-        }
-
         return payload;
     }
 
@@ -111,8 +96,7 @@ public class Message {
                 ", id=" + id +
                 ", senderId=" + senderId +
                 ", receiverId=" + receiverId +
-                ", payload='" + encodedPayload + '\'' +
-                ", decodedPayload=" + payload +
+                ", payload='" + payload + '\'' +
                 '}';
     }
 }

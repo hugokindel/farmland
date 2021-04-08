@@ -10,7 +10,7 @@ public class ReceivedMessage extends Message {
     }
 
     public long getReceivedId() {
-        return (Long)getPayload().get("receivedId");
+        return (Long) getPayload().get("receivedId");
     }
 
     @Override

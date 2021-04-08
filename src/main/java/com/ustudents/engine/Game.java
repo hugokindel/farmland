@@ -427,9 +427,14 @@ public abstract class Game extends Runnable {
         if (getNetMode() == NetMode.DedicatedServer) {
             server.start(true);
             onServerStarted();
+            Out.println("Waiting for world initialization...");
         }
 
         initialize();
+
+        if (getNetMode() == NetMode.DedicatedServer) {
+            Out.println("World initialized.");
+        }
 
         window.show(true);
 

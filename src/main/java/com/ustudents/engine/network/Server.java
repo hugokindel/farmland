@@ -47,7 +47,7 @@ public class Server extends Controller {
             return false;
         }
 
-        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+        if (Game.get() != null && Game.get().getNetMode() == NetMode.DedicatedServer) {
             cliInteractionThread = new Thread(new CliInteractionRunnable());
             cliInteractionThread.setName("ServerCliInteraction");
             cliInteractionThread.start();
@@ -60,7 +60,7 @@ public class Server extends Controller {
 
     @Override
     public void stop() {
-        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+        if (Game.get() != null && Game.get().getNetMode() == NetMode.DedicatedServer) {
             try {
                 if (cliInteractionThread != null && cliInteractionThread.isAlive()) {
                     cliInteractionThread.join(1000);

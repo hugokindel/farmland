@@ -19,7 +19,9 @@ import org.joml.Vector2i;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /** The main class of the project. */
 @Command(name = "farmland", version = "0.0.1", description = "A management game about farming.")
@@ -33,9 +35,9 @@ public class Farmland extends Game {
 
     public String saveId;
 
-    public Map<Integer, Integer> serverPlayerIdPerClientId = new HashMap<>();
+    public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
 
-    public int clientPlayerId = -1;
+    public AtomicInteger clientPlayerId = new AtomicInteger(-1);
 
     public AtomicBoolean allPlayersPresents = new AtomicBoolean(false);
 

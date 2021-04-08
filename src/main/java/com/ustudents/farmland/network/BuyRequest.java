@@ -17,7 +17,7 @@ public class BuyRequest extends Message {
     }
 
     public String getItemId() {
-        return (String)getPayload().get("item");
+        return (String) getPayload().get("item");
     }
 
     public Item getItem() {

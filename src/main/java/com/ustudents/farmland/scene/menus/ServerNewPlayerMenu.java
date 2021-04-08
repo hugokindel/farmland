@@ -74,7 +74,7 @@ public class ServerNewPlayerMenu extends MenuScene {
 
             if (errors.isEmpty()) {
                 Farmland.get().getClient().send(new PlayerCreateMessage(playerId, playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3])));
-                Farmland.get().clientPlayerId = playerId;
+                Farmland.get().clientPlayerId.set(playerId);
                 changeScene(new ServerWaitingPlayersMenu());
             }
         }

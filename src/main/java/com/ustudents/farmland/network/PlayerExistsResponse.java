@@ -13,6 +13,6 @@ public class PlayerExistsResponse extends Message {
     }
 
     public boolean exists() {
-        return (Boolean)getPayload().get("exists");
+        return (Boolean) getPayload().get("exists");
     }
 }

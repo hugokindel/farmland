@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ClientServerTest {
-    private static final AtomicInteger received = new AtomicInteger(0);
+    public static final AtomicInteger received = new AtomicInteger(0);
 
     public static class PrintMessage extends Message {
         public PrintMessage() {
