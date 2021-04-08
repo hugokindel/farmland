@@ -5,11 +5,13 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.network.Server;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.scene.menus.MainMenu;
@@ -79,6 +81,8 @@ public class Farmland extends Game {
             serverConfig.put("maxNumberPlayers", 2L);
             serverConfig.put("numberBots", 4L);
         }
+
+        server.onClientDisconnected.add((dataType, data) -> serverPlayerIdPerClientId.remove(data.clientId));
     }
 
     @Override

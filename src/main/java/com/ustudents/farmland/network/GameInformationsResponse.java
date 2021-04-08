@@ -29,9 +29,9 @@ public class GameInformationsResponse extends Message {
     public List<Integer> getConnectedPlayerIds() {
         List<Integer> list = new ArrayList<>();
 
-        for (Integer element : ((List<Integer>)getPayload().get("connectedPlayerIds"))) {
+        for (Long element : ((List<Long>)getPayload().get("connectedPlayerIds"))) {
             if (element != null) {
-                list.add(element);
+                list.add(element.intValue());
             }
         }
 

@@ -30,6 +30,6 @@ public class PlayerExistsRequest extends Message {
             exists = true;
         }
 
-        Farmland.get().getClient().send(new PlayerExistsResponse(exists));
+        Farmland.get().getServer().respond(new PlayerExistsResponse(exists), this);
     }
 }

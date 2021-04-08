@@ -10,12 +10,12 @@ import java.util.Map;
 
 // PROCESSED ON SERVER
 @SuppressWarnings("unchecked")
-public class PlayerAddRequest extends Message {
-    public PlayerAddRequest() {
+public class PlayerCreateMessage extends Message {
+    public PlayerCreateMessage() {
 
     }
 
-    public PlayerAddRequest(int playerId, String playerName, String villageName, Color bannerColor) {
+    public PlayerCreateMessage(int playerId, String playerName, String villageName, Color bannerColor) {
         getPayload().put("playerId", playerId);
         getPayload().put("playerName", playerName);
         getPayload().put("villageName", villageName);
@@ -46,10 +46,9 @@ public class PlayerAddRequest extends Message {
         currentSave.players.get(playerId).name = getPlayerName();
         currentSave.players.get(playerId).village.name = getVillageName();
         currentSave.players.get(playerId).color = getBannerColor();
-        Farmland.get().setPlayerIdForClientId(getSenderId(), playerId);
 
-        if (Farmland.get().serverPlayerIdPerClientId.size() == currentSave.maxNumberPlayers) {
-            Farmland.get().getServer().broadcast(new PlayerAllPresentsMessage());
-        }
+        PlayerAddMessage message = new PlayerAddMessage(playerId);
+        message.setSenderId(getSenderId());
+        message.process();
     }
 }

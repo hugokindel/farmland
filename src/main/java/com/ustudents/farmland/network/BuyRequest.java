@@ -36,5 +36,7 @@ public class BuyRequest extends Message {
         currentSave.getCurrentPlayer().setMoney(currentSave.getCurrentPlayer().money - item.value);
         currentSave.getCurrentPlayer().addToInventory(item, "Buy");
         Farmland.get().getCurrentSave().itemsTurn.add(item);
+
+        Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getCurrentSave()));
     }
 }

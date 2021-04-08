@@ -3,18 +3,12 @@ package com.ustudents.farmland.scene.menus;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
-import com.ustudents.engine.network.Client;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
-import com.ustudents.farmland.network.PlayerAddRequest;
-import com.ustudents.farmland.scene.InGameScene;
+import com.ustudents.farmland.network.PlayerCreateMessage;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
-import imgui.flag.ImGuiDataType;
-import imgui.type.ImLong;
 import imgui.type.ImString;
-import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +73,7 @@ public class ServerNewPlayerMenu extends MenuScene {
             }
 
             if (errors.isEmpty()) {
-                Farmland.get().getClient().send(new PlayerAddRequest(playerId, playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3])));
+                Farmland.get().getClient().send(new PlayerCreateMessage(playerId, playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3])));
                 Farmland.get().clientPlayerId = playerId;
                 changeScene(new ServerWaitingPlayersMenu());
             }

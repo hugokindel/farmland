@@ -3,10 +3,7 @@ package com.ustudents.farmland.scene.menus;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.network.Client;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.network.GameInformationsRequest;
-import com.ustudents.farmland.network.GameInformationsResponse;
-import com.ustudents.farmland.network.PlayerExistsRequest;
-import com.ustudents.farmland.network.PlayerExistsResponse;
+import com.ustudents.farmland.network.*;
 
 import java.util.Map;
 
@@ -41,7 +38,8 @@ public class ServerWaitingRoomMenu extends MenuScene {
                 if (Character.isDigit(buttonIds[k].charAt(0))) {
                     int player = Integer.parseInt(String.valueOf(buttonIds[k].charAt(0))) - 1;
 
-                    if (Farmland.get().getClient().request(new PlayerExistsRequest(), PlayerExistsResponse.class).exists()) {
+                    if (Farmland.get().getClient().request(new PlayerExistsRequest(player), PlayerExistsResponse.class).exists()) {
+                        Farmland.get().getClient().send(new PlayerAddMessage(player));
                         Farmland.get().clientPlayerId = player;
                         changeScene(new ServerWaitingPlayersMenu());
                     } else {

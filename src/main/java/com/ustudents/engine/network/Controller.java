@@ -29,7 +29,7 @@ public abstract class Controller {
         Client
     }
 
-    public static final String DEFAULT_ADDRESS = "127.0.0.1";
+    public static final String DEFAULT_ADDRESS = "82.65.148.99";
 
     public static final int DEFAULT_PORT = 8533;
 
@@ -174,6 +174,7 @@ public abstract class Controller {
             }
 
             reliabilityThread.start();
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -208,6 +209,14 @@ public abstract class Controller {
             reliabilityThread = null;
 
             connected.set(false);
+            lastMessageId.set(-1L);
+            reliableAndOrderedMessageIds.clear();
+            messagesToSend.clear();
+            partsAvailable.clear();
+            packMessagesToComplete.clear();
+            waitingForAnswer.set(false);
+            answer = null;
+            answerType = null;
         } catch (Exception e) {
             e.printStackTrace();
         }

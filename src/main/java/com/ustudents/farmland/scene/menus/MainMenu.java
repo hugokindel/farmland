@@ -12,8 +12,6 @@ public class MainMenu extends MenuScene {
             Farmland.get().unloadSave();
         }
 
-        Farmland.get().saveId = null;
-
         String[] buttonNames = {"Solo", "Multijoueur", "Paramètres", "Crédits"};
         String[] buttonIds = {"singleplayerButton", "multiplayerButton", "settingsButton", "creditsButton"};
         EventListener[] eventListeners = new EventListener[buttonNames.length];
@@ -46,7 +44,7 @@ public class MainMenu extends MenuScene {
     @Override
     public void update(float dt) {
         if (Farmland.get().getNetMode() == NetMode.DedicatedServer) {
-            if (Farmland.get().getCurrentSave() != null && Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getCurrentSave().maxNumberPlayers) {
+            if (Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getCurrentSave().maxNumberPlayers) {
                 changeScene(new InGameScene());
             }
         }

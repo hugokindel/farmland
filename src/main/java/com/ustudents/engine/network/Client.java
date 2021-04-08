@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Client extends Controller {
     protected InetSocketAddress serverAddress = new InetSocketAddress(DEFAULT_ADDRESS, DEFAULT_PORT);
 
-    protected int clientId = -1;
+    protected int clientId;
 
     protected AtomicBoolean searchingForServer = new AtomicBoolean(false);
 
@@ -55,12 +55,17 @@ public class Client extends Controller {
         if (connected.get()) {
             disconnect();
 
+            clientId = -1;
+            searchingForServer.set(false);
+            serverFound.set(false);
+
             try {
                 Thread.sleep(10);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
         super.stop();
     }
 

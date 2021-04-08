@@ -2,15 +2,26 @@ package com.ustudents.engine.network;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.Event;
+import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.network.messages.AliveMessage;
 import com.ustudents.engine.network.messages.DisconnectMessage;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.engine.network.messages.ConnectMessage;
+import org.joml.Vector2i;
 
 import java.net.InetSocketAddress;
 import java.util.*;
 
 public class Server extends Controller {
+    public static class ClientDisconnected extends Event {
+        public int clientId;
+
+        public ClientDisconnected(int clientId) {
+            this.clientId = clientId;
+        }
+    }
+
     public static int lastClientId = 0;
 
     public static Deque<Integer> freeIds = new ArrayDeque<>();
@@ -18,6 +29,8 @@ public class Server extends Controller {
     protected Map<Integer, InetSocketAddress> clientsAddresses = new HashMap<>();
 
     protected Thread cliInteractionThread;
+
+    public EventDispatcher<ClientDisconnected> onClientDisconnected = new EventDispatcher<>();
 
     @Override
     public boolean start() {
@@ -76,6 +89,7 @@ public class Server extends Controller {
             freeIds.add(message.getSenderId());
             clientsAddresses.remove(message.getSenderId());
             Out.printlnInfo("Client " + message.getSenderId() + " disconnected");
+            onClientDisconnected.dispatch(new ClientDisconnected(message.getSenderId()));
         }
 
         return true;
@@ -87,6 +101,7 @@ public class Server extends Controller {
             return;
         }
 
+        message.receiverAddress = clientsAddresses.get(clientId);
         message.setReceiverId(clientId);
 
         send(message);
