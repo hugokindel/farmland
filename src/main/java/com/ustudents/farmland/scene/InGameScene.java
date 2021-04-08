@@ -2,6 +2,8 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.scene.component.graphics.TextureComponent;
+import com.ustudents.engine.scene.ecs.Component;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
@@ -92,6 +94,25 @@ public class InGameScene extends Scene {
 
     public void initializeGui() {
         GuiBuilder guiBuilder = new GuiBuilder();
+
+        Texture frameTexture = Resources.loadTexture("ui/frame.png");
+        GuiBuilder.ImageData imageDataFrame = new GuiBuilder.ImageData(frameTexture);
+        imageDataFrame.id = "FrameImage";
+        imageDataFrame.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        imageDataFrame.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        imageDataFrame.scale = new Vector2f(3f, 3f);
+        imageDataFrame.position.y = 30;
+        guiBuilder.addImage(imageDataFrame);
+
+        Texture playerTexture = Resources.loadTexture("ui/player.png");
+        GuiBuilder.ImageData imageDataPlayer = new GuiBuilder.ImageData(playerTexture);
+        imageDataPlayer.id = "PlayerImage";
+        imageDataPlayer.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        imageDataPlayer.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        imageDataPlayer.scale = new Vector2f(3f, 3f);
+        imageDataPlayer.position.y = 56;
+        imageDataPlayer.position.x = 27;
+        guiBuilder.addImage(imageDataPlayer);
 
         GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Finir le tour", (dataType, data) -> {
             Farmland.get().getCurrentSave().endTurn();
@@ -260,7 +281,7 @@ public class InGameScene extends Scene {
 
         ImGui.text("Recherches : \n\n");
         // FarmerResearch
-        if (ImGui.button("Améliorer " + "[" + player.farmerResearch.getObject1() + "]") && player.money > player.farmerResearch.getObject1()){
+        if (ImGui.button("Améliorer Fermier " + "[" + player.farmerResearch.getObject1() + "]") && player.money > player.farmerResearch.getObject1()){
             player.setMoney(player.money - player.farmerResearch.getObject1());
             player.farmerResearch.setObject1(player.farmerResearch.getObject1() + 10);
             player.farmerResearch.setObject2(player.farmerResearch.getObject2() + 1);
@@ -269,7 +290,7 @@ public class InGameScene extends Scene {
         ImGui.sameLine();
         ImGui.text(" Fermier niveau : " + player.farmerResearch.getObject2() + " bonus de revente : " + player.farmerResearch.getObject3());
         // BreederReasearch
-        if (ImGui.button("Améliorer " + "[" + player.breederResearch.getObject1() + "]") && player.money > player.breederResearch.getObject1()){
+        if (ImGui.button("Améliorer Eleveur " + "[" + player.breederResearch.getObject1() + "]") && player.money > player.breederResearch.getObject1()){
             player.setMoney(player.money - player.breederResearch.getObject1());
             player.breederResearch.setObject1(player.breederResearch.getObject1() + 10);
             player.breederResearch.setObject2(player.breederResearch.getObject2() + 1);
@@ -530,7 +551,45 @@ public class InGameScene extends Scene {
                 showResearch.set(true);
                 shouldShowBackResearch = false;
             }
+            checkPlayerFrame();
         }
+    }
+
+    public void checkPlayerFrame(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        int bl = player.breederResearch.getObject2();
+        int fl = player.farmerResearch.getObject2();
+
+        if (bl > 4){
+
+            if (fl > 4){
+                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2breeder2.png");
+            } else if (fl > 2){
+                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmerbreeder2.png");
+            } else {
+                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/breeder2.png");
+            }
+
+        } else if (bl > 2){
+
+            if (fl > 4){
+                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2breeder.png");
+            } else if (fl > 2){
+                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmerbreeder.png");
+            } else {
+                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/breeder.png");
+            }
+
+        } else if (fl > 4){
+
+            getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2.png");
+
+        } else if (fl > 2){
+
+            getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer.png");
+
+        }
+
     }
 
     public boolean onCompletedTurnEnd(){
