@@ -206,7 +206,7 @@ public class Player {
     }
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
-        Vector2i gridSize = Farmland.get().getSceneManager().getCurrentScene().getEntityByName("map").getComponent(GridComponent.class).gridSize;
+        Vector2i gridSize = Farmland.get().getSceneManager().getCurrentScene().getEntityByName("grid").getComponent(GridComponent.class).gridSize;
         return ((x < gridSize.x - 1 && Farmland.get().getCurrentSave().cells.get(x + 1).get(y).ownerId.equals(getId()))) ||
                 (x > 0 && Farmland.get().getCurrentSave().cells.get(x - 1).get(y).ownerId.equals(getId())) ||
                 (y < gridSize.y - 1 && Farmland.get().getCurrentSave().cells.get(x).get(y + 1).ownerId.equals(getId())) ||

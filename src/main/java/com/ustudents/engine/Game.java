@@ -19,7 +19,7 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.InputSystemType;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.network.*;
-import com.ustudents.engine.network.net2.NetMode;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
@@ -119,9 +119,9 @@ public abstract class Game extends Runnable {
 
     protected boolean enableDocking;
 
-    protected ServerThread serverThread;
+    protected Client client = new Client();
 
-    protected ServerCliThread serverCliThread;
+    protected Server server = new Server();
 
     /** The game instance. */
     private static Game game;
@@ -313,7 +313,7 @@ public abstract class Game extends Runnable {
     }
 
     public NetMode getNetMode() {
-        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : Client.clientId != -1 ? NetMode.Client : NetMode.Standalone);
+        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : client.isConnected() ? NetMode.Client : NetMode.Standalone);
     }
 
     public boolean canRender() {
@@ -322,7 +322,7 @@ public abstract class Game extends Runnable {
 
     // if true Dedicated Server, Listen Server, Standalone, false Client
     public boolean hasAuthority() {
-        return dedicatedServerEnabled || listenServerEnabled || Client.clientId == -1;
+        return dedicatedServerEnabled || listenServerEnabled || !client.isConnected();
     }
 
     // if true Listen Server, Client, Standalone, false Dedicated Server
@@ -332,12 +332,11 @@ public abstract class Game extends Runnable {
 
     // if true Client, false Standalone
     public boolean isConnectedToServer() {
-        return Client.clientId != -1;
+        return client.isConnected();
     }
 
     public void disconnectFromServer() {
-        Client.commandDisconnect();
-        Client.closeSocket();
+        client.stop();
     }
 
     public void disableTools() {
@@ -375,10 +374,6 @@ public abstract class Game extends Runnable {
 
     public void onServerStarted() {
 
-    }
-
-    public Packet onServerHandleRequest(Packet packet) {
-        return null;
     }
 
     public void onServerDestroyed() {
@@ -430,11 +425,8 @@ public abstract class Game extends Runnable {
         }
 
         if (getNetMode() == NetMode.DedicatedServer) {
-            serverThread = new ServerThread();
-            serverThread.start();
-
-            serverCliThread = new ServerCliThread();
-            serverCliThread.start();
+            server.start(true);
+            onServerStarted();
         }
 
         initialize();
@@ -562,17 +554,14 @@ public abstract class Game extends Runnable {
 
     /** Destroy everything. */
     public void destroyInternals() {
-        if (Client.isConnectedToServer()) {
+        if (client.isConnected()) {
             disconnectFromServer();
         }
 
         try {
-            if (serverCliThread != null && serverCliThread.isAlive()) {
-                serverCliThread.join();
-            }
-            if (serverThread != null && serverThread.isAlive()) {
-                ServerThread.closeSocket();
-                serverThread.join();
+            if (server.isConnected()) {
+                server.stop();
+                onServerDestroyed();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -613,5 +602,13 @@ public abstract class Game extends Runnable {
             scene.getUiCamera().resize(size.x, size.y);
             shouldResize = false;
         }
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public Server getServer() {
+        return server;
     }
 }

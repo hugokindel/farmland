@@ -1,8 +1,7 @@
 package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.network.net2.NetMode;
-import com.ustudents.engine.network.ServerThread;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.scene.InGameScene;
 
@@ -47,7 +46,7 @@ public class MainMenu extends MenuScene {
     @Override
     public void update(float dt) {
         if (Farmland.get().getNetMode() == NetMode.DedicatedServer) {
-            if (ServerThread.loadedPlayers.size() == Farmland.get().getCurrentSave().maxNumberPlayers) {
+            if (Farmland.get().getCurrentSave() != null && Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getCurrentSave().maxNumberPlayers) {
                 changeScene(new InGameScene());
             }
         }

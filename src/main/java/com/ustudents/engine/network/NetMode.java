@@ -1,4 +1,4 @@
-package com.ustudents.engine.network.net2;
+package com.ustudents.engine.network;
 
 public enum NetMode {
     Standalone,

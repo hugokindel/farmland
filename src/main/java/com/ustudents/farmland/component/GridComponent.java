@@ -1,7 +1,7 @@
 package com.ustudents.farmland.component;
 
 import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.network.net2.NetMode;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.*;

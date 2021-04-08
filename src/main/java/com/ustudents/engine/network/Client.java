@@ -1,230 +1,140 @@
 package com.ustudents.engine.network;
 
-import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.json.Json;
-import com.ustudents.engine.core.json.JsonReader;
-import com.ustudents.engine.core.json.JsonWriter;
-import com.ustudents.engine.graphic.Color;
-import com.ustudents.farmland.Farmland;
+import com.ustudents.engine.network.messages.AliveMessage;
+import com.ustudents.engine.network.messages.ConnectMessage;
+import com.ustudents.engine.network.messages.DisconnectMessage;
+import com.ustudents.engine.network.messages.Message;
 
-import java.io.ByteArrayInputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Client {
-    public static int clientId = -1;
+public class Client extends Controller {
+    protected InetSocketAddress serverAddress = new InetSocketAddress(DEFAULT_ADDRESS, DEFAULT_PORT);
 
-    public static int playerId = -1;
+    protected int clientId = -1;
 
-    public static DatagramSocket socket;
+    protected AtomicBoolean searchingForServer = new AtomicBoolean(false);
 
-    public static boolean isSocketBound() {
-        return socket != null && socket.isBound();
+    protected AtomicBoolean serverFound = new AtomicBoolean(false);
+
+    public Client() {
+
     }
 
-    public static void createSocket() {
-        try {
-            socket = new DatagramSocket();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public Client(String address, int port) {
+        serverAddress = new InetSocketAddress(address, port);
+    }
+
+    @Override
+    public boolean start() {
+        if (!super.start()) {
+            Out.printlnError("Error while starting client");
+            return false;
+        }
+
+        Out.printlnInfo("Client started");
+
+        return true;
+    }
+
+    public void blockUntilConnectedToServer() {
+        send(new ConnectMessage());
+
+        while (!connected.get()) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public static void closeSocket() {
-        try {
-            if (socket.isBound()) {
-                socket.close();
-                socket = null;
+    @Override
+    public void stop() {
+        if (connected.get()) {
+            disconnect();
+
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        super.stop();
     }
 
-    public static Map<String, Object> commandExists() {
-        return request("exists", 100);
+    @Override
+    public boolean receive(Message message) {
+        if (message instanceof ConnectMessage) {
+            connected.set(true);
+            clientId = message.getReceiverId();
+            Out.printlnInfo("Connected with id " + clientId);
+        } else if (message instanceof AliveMessage) {
+            searchingForServer.set(false);
+            serverFound.set(true);
+        }
+
+        return true;
     }
 
-    public static void commandConnect() {
-        Map<String, Object> answer = request("connect");
-        clientId = ((Long)answer.get("clientId")).intValue();
+    @Override
+    public void send(Message message) {
+        if (message.receiverAddress == null) {
+            message.receiverAddress = serverAddress;
+        }
+
+        message.setReceiverId(0);
+        message.setSenderId(clientId);
+
+        super.send(message);
     }
 
-    public static boolean commandPlayerExists(int playerId) {
-        Map<String, Object> json = new LinkedHashMap<>();
-        json.put("command", "playerExists");
-        json.put("playerId", playerId);
-        Map<String, Object> result = request(json);
-        return (Boolean)result.get("exists");
-    }
-
-    public static boolean commandAddPlayer(int playerId, String name, String villageName, Color color) {
-        Map<String, Object> json = new LinkedHashMap<>();
-        json.put("command", "addPlayer");
-        json.put("playerId", playerId);
-        json.put("name", name);
-        json.put("villageName", villageName);
-        json.put("color", color);
-        Map<String, Object> result = request(json);
-        return (Boolean)result.get("success");
-    }
-
-    public static void commandBuy(String item) {
-        Map<String, Object> json = new LinkedHashMap<>();
-        json.put("command", "buy");
-        json.put("item", item);
-        send(json);
-    }
-
-    public static boolean commandCanPlay() {
-        return (Boolean)request("canPlay").get("success");
-    }
-
-    public static void commandDisconnect() {
-        if (Farmland.get().isConnectedToServer()) {
-            if (Farmland.get().thread != null && Farmland.get().thread.isAlive()) {
-                ClientUpdatorThread.shouldStop = true;
-                try {
-                    Farmland.get().thread.join();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            request("disconnect");
-            Out.println("Disconnected from server");
+    public void disconnect() {
+        if (connected.get()) {
+            send(new DisconnectMessage());
             clientId = -1;
+            connected.set(false);
+            Out.printlnInfo("Disconnected");
         }
     }
 
-    public static void send(Map<String, Object> json) {
-        try {
-            Packet request = new Packet(json, InetAddress.getByName("localhost"), null);
-            send(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    public boolean isServerAlive() {
+        serverFound.set(false);
+        searchingForServer.set(true);
 
-    public static void send(Packet packet) {
-        try {
-            packet.data.put("from", clientId);
-            byte[] data = Json.minify(Objects.requireNonNull(JsonWriter.writeToString(packet.data))).getBytes(StandardCharsets.UTF_8);
-            int numberOfParts = data.length / Network.maximumPacketSize + 1;
+        send(new AliveMessage());
 
-            if (Game.isDebugging()) {
-                Out.printlnDebug("Sending to " + packet.address + " the following data in " + numberOfParts + " part(s): " + packet.data);
-            }
+        int waitTime = 0;
 
-            if (numberOfParts > 1) {
-                Map<String, Object> partsJson = new LinkedHashMap<>();
-                partsJson.put("parts", numberOfParts);
-                ByteBuffer buffer = ByteBuffer.allocate(Network.maximumPacketSize);
-                buffer.put(Json.minify(Objects.requireNonNull(JsonWriter.writeToString(partsJson))).getBytes(StandardCharsets.UTF_8));
-                DatagramPacket datagram = new DatagramPacket(buffer.array(), buffer.capacity(), packet.address, Network.port);
-                socket.send(datagram);
-                for (int i = 0; i < numberOfParts; i++) {
-                    byte[] slice = Arrays.copyOfRange(data, i * Network.maximumPacketSize, (i + 1) * Network.maximumPacketSize);
-                    datagram.setData(slice);
-                    socket.send(datagram);
+        while (searchingForServer.get()) {
+            try {
+                if (waitTime >= 100) {
+                    searchingForServer.set(false);
+                    break;
                 }
-            } else {
-                ByteBuffer buffer = ByteBuffer.allocate(Network.maximumPacketSize);
-                buffer.put(data);
-                DatagramPacket datagram = new DatagramPacket(buffer.array(), buffer.capacity(), packet.address, Network.port);
-                socket.send(datagram);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    public static Packet receive() {
-        return receive(0);
-    }
-
-    public static Packet receive(int timeout) {
-        try {
-            byte[] buffer = new byte[Network.maximumPacketSize];
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
-            if (timeout > 0) {
-                socket.setSoTimeout(timeout);
-            }
-
-            socket.receive(packet);
-
-            if (timeout > 0) {
-                socket.setSoTimeout(0);
-            }
-
-            Packet received = new Packet(JsonReader.readMap(new ByteArrayInputStream(packet.getData())), packet.getAddress(), packet);
-            int numberOfParts = 1;
-
-            if (received.data.containsKey("parts")) {
-                numberOfParts = ((Long)received.data.get("parts")).intValue();
-                StringBuilder reconstitutedPacket = new StringBuilder();
-                for (int i = 0; i < numberOfParts; i++) {
-                    socket.receive(packet);
-                    reconstitutedPacket.append(new String(packet.getData(), StandardCharsets.UTF_8));
-                }
-                received.data = JsonReader.readMap(new ByteArrayInputStream(reconstitutedPacket.toString().getBytes(StandardCharsets.UTF_8)));
-            }
-
-            if (Game.isDebugging()) {
-                Out.printlnDebug("Received from " + received.address + " the following data in " + numberOfParts + " part(s): " + received.data);
-            }
-
-            return received;
-        } catch (Exception e) {
-            if (!e.getMessage().contains("timed out") && !e.getMessage().contains("socket closed")) {
+                Thread.sleep(10);
+                waitTime += 10;
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        return null;
+        return serverFound.get();
     }
 
-    public static Map<String, Object> request(Map<String, Object> json) {
-        return request(json, 0);
+    @Override
+    public Type getType() {
+        return Type.Client;
     }
 
-    public static Map<String, Object> request(Map<String, Object> json, int timeout) {
-        if (!isSocketBound()) {
-            createSocket();
-        }
-
-        try {
-            send(json);
-            Packet answer = receive(timeout);
-            if (answer != null) {
-                return answer.data;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    @Override
+    public void aliveStateChanged() {
+        searchingForServer.set(false);
     }
 
-    public static Map<String, Object> request(String commandName) {
-        return request(commandName, 0);
-    }
-
-    public static Map<String, Object> request(String commandName, int timeout) {
-        Map<String, Object> json = new LinkedHashMap<>();
-        json.put("command", commandName);
-        return request(json, timeout);
-    }
-
-    public static boolean isConnectedToServer() {
-        return isSocketBound() && clientId != -1;
+    public int getClientId() {
+        return clientId;
     }
 }

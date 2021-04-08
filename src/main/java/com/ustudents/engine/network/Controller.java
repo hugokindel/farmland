@@ -1,13 +1,13 @@
-package com.ustudents.engine.network.net2;
+package com.ustudents.engine.network;
 
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
-import com.ustudents.engine.network.net2.messages.AliveMessage;
-import com.ustudents.engine.network.net2.messages.Message;
-import com.ustudents.engine.network.net2.messages.PackMessage;
-import com.ustudents.engine.network.net2.messages.ReceivedMessage;
+import com.ustudents.engine.network.messages.Message;
+import com.ustudents.engine.network.messages.PackMessage;
+import com.ustudents.engine.network.messages.AliveMessage;
+import com.ustudents.engine.network.messages.ReceivedMessage;
 import com.ustudents.engine.utility.Pair;
 
 import java.io.ByteArrayInputStream;
@@ -22,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+@SuppressWarnings("unchecked")
 public abstract class Controller {
     public enum Type {
         Server,
@@ -60,6 +61,12 @@ public abstract class Controller {
 
     protected Queue<PackMessage> packMessagesToComplete = new ConcurrentLinkedDeque<>();
 
+    protected AtomicBoolean waitingForAnswer = new AtomicBoolean(false);
+
+    protected Message answer;
+
+    protected Class answerType;
+
     public boolean start() {
         return internalStart();
     }
@@ -88,6 +95,30 @@ public abstract class Controller {
         response.setReceiverId(request.getSenderId());
         response.receiverAddress = request.senderAddress;
         send(response);
+    }
+
+    public <T extends Message> T request(Message message, Class<T> classType) {
+        send(message);
+
+        waitingForAnswer.set(true);
+        answerType = classType;
+
+        while (waitingForAnswer.get()) {
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Message response = answer;
+        answer = null;
+        answerType = null;
+        return (T)response;
+    }
+
+    public boolean isConnected() {
+        return connected.get();
     }
 
     protected Long getNewMessageId() {
@@ -175,6 +206,8 @@ public abstract class Controller {
             }
 
             reliabilityThread = null;
+
+            connected.set(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -244,6 +277,11 @@ public abstract class Controller {
 
                     if (receive(message)) {
                         message.process();
+                    }
+
+                    if (waitingForAnswer.get() && message.getClass() == answerType) {
+                        answer = message;
+                        waitingForAnswer.set(false);
                     }
                 }
             } catch (Exception e) {
@@ -323,6 +361,11 @@ public abstract class Controller {
 
                         if (receive(message)) {
                             message.process();
+                        }
+
+                        if (waitingForAnswer.get() && message.getClass() == answerType) {
+                            answer = message;
+                            waitingForAnswer.set(false);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -1,4 +1,4 @@
-package com.ustudents.engine.network.net2.messages;
+package com.ustudents.engine.network.messages;
 
 public class PackMessage extends Message {
     public PackMessage() {

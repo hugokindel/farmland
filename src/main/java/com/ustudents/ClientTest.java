@@ -1,7 +1,7 @@
 package com.ustudents;
 
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.network.net2.Client;
+import com.ustudents.engine.network.Client;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

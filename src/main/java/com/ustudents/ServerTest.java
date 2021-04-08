@@ -1,13 +1,8 @@
 package com.ustudents;
 
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.network.net2.Client;
-import com.ustudents.engine.network.net2.Server;
-import com.ustudents.engine.network.net2.messages.Message;
+import com.ustudents.engine.network.Server;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerTest {

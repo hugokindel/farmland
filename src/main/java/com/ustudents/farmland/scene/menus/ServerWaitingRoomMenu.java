@@ -1,14 +1,12 @@
 package com.ustudents.farmland.scene.menus;
 
-import com.ustudents.engine.Game;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.network.Client;
-import com.ustudents.engine.network.ClientUpdatorThread;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
-import com.ustudents.farmland.scene.InGameScene;
+import com.ustudents.farmland.network.GameInformationsRequest;
+import com.ustudents.farmland.network.GameInformationsResponse;
+import com.ustudents.farmland.network.PlayerExistsRequest;
+import com.ustudents.farmland.network.PlayerExistsResponse;
 
 import java.util.Map;
 
@@ -16,13 +14,11 @@ import java.util.Map;
 public class ServerWaitingRoomMenu extends MenuScene {
     @Override
     public void initialize() {
-        boolean localServerExists;
+        boolean localServerExists = Farmland.get().getClient().isServerAlive();
+        GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
 
-        Map<String, Object> json = Client.commandExists();
-        localServerExists = json != null;
-
-        int capacity = ((Long)json.get("capacity")).intValue();
-        int connectedPlayers = ((Long)json.get("connectedSize")).intValue();
+        int capacity = informations.getCapacity();
+        int connectedPlayers = informations.getNumberOfConnectedPlayers();
 
         int i = 0;
         String[] buttonNames = new String[capacity - connectedPlayers];
@@ -30,7 +26,7 @@ public class ServerWaitingRoomMenu extends MenuScene {
 
         int j = 0;
         for (i = 0; i < capacity; i++) {
-            if (!((Map<String,Object>)json.get("connected")).containsKey(String.valueOf(i))) {
+            if (!informations.getConnectedPlayerIds().contains(i)) {
                 buttonNames[j] = "Joueur " + (i + 1);
                 buttonIds[j] = (i + 1) + "Button";
                 j++;
@@ -45,8 +41,8 @@ public class ServerWaitingRoomMenu extends MenuScene {
                 if (Character.isDigit(buttonIds[k].charAt(0))) {
                     int player = Integer.parseInt(String.valueOf(buttonIds[k].charAt(0))) - 1;
 
-                    if (Client.commandPlayerExists(player)) {
-                        Client.playerId = player;
+                    if (Farmland.get().getClient().request(new PlayerExistsRequest(), PlayerExistsResponse.class).exists()) {
+                        Farmland.get().clientPlayerId = player;
                         changeScene(new ServerWaitingPlayersMenu());
                     } else {
                         changeScene(new ServerNewPlayerMenu(player));

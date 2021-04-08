@@ -9,7 +9,7 @@ import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Texture;
-import com.ustudents.engine.network.net2.NetMode;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
@@ -96,6 +96,7 @@ public class SaveGame {
         this.name = name;
         this.players = new ArrayList<>();
         this.itemsTurn = new ArrayList<>();
+        this.random = new SeedRandom(seed);
 
         this.cells = new ArrayList<>();
 

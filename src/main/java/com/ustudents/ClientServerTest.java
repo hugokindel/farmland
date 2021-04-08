@@ -1,9 +1,9 @@
 package com.ustudents;
 
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.network.net2.Client;
-import com.ustudents.engine.network.net2.Server;
-import com.ustudents.engine.network.net2.messages.Message;
+import com.ustudents.engine.network.Client;
+import com.ustudents.engine.network.Server;
+import com.ustudents.engine.network.messages.Message;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

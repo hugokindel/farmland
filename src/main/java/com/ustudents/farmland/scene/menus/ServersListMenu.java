@@ -7,6 +7,8 @@ import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.network.Client;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.network.GameInformationsRequest;
+import com.ustudents.farmland.network.GameInformationsResponse;
 import com.ustudents.farmland.scene.InGameScene;
 
 import java.util.Map;
@@ -15,17 +17,19 @@ import java.util.Map;
 public class ServersListMenu extends MenuScene {
     @Override
     public void initialize() {
-        boolean localServerExists;
+        if (!Farmland.get().getClient().isConnected()) {
+            Farmland.get().getClient().start();
+        }
 
-        Map<String, Object> json = Client.commandExists();
-        localServerExists = json != null;
+        boolean localServerExists = Farmland.get().getClient().isServerAlive();
 
         int i = 0;
         String[] buttonNames;
         String[] buttonIds;
 
         if (localServerExists) {
-            buttonNames = new String[] {(String)json.get("name") + " (" + ((Map<String,Object>)json.get("connected")).size() + "/" + json.get("capacity") + ")", "Recharger"};
+            GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
+            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", "Recharger"};
             buttonIds = new String[] {"localButton", "reloadButton"};
         } else {
             buttonNames = new String[] {"Recharger"};
@@ -39,12 +43,12 @@ public class ServersListMenu extends MenuScene {
             eventListeners[i] = (dataType, data) -> {
                 switch (buttonIds[j]) {
                     case "localButton":
-                        if (Client.isConnectedToServer()) {
-                            Client.commandDisconnect();
+                        if (Farmland.get().isConnectedToServer()) {
+                            Farmland.get().getClient().disconnect();
                         }
-                        Client.commandConnect();
+                        Farmland.get().getClient().blockUntilConnectedToServer();
 
-                        Out.println("Connected to server with ID: " + Client.clientId);
+                        Out.println("Connected to server with ID: " + Farmland.get().getClient().getClientId());
 
                         changeScene(new ServerWaitingRoomMenu());
 

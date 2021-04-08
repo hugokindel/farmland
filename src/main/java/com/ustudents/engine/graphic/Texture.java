@@ -71,18 +71,13 @@ public class Texture {
     @JsonSerializableConstructor
     public void deserialize() {
         if (Game.get().canRender()) {
-            Texture texture = Resources.getTexture(path);
+            Texture texture = Resources.loadTexture(path);
 
-            if (texture != null) {
-                this.data = texture.data;
-                this.width = texture.width;
-                this.height = texture.height;
-                this.numberOfComponents = texture.numberOfComponents;
-                this.handle = texture.handle;
-            } else if (Game.isMainThread()) {
-                loadTexture(getTexturesDirectory() + "/" + path);
-                handle = createTexture();
-            }
+            this.data = texture.data;
+            this.width = texture.width;
+            this.height = texture.height;
+            this.numberOfComponents = texture.numberOfComponents;
+            this.handle = texture.handle;
         }
 
         destroyed = false;

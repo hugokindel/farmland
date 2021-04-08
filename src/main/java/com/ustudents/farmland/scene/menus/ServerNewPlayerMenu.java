@@ -7,6 +7,7 @@ import com.ustudents.engine.network.Client;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.network.PlayerAddRequest;
 import com.ustudents.farmland.scene.InGameScene;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -78,10 +79,9 @@ public class ServerNewPlayerMenu extends MenuScene {
             }
 
             if (errors.isEmpty()) {
-                if (Client.commandAddPlayer(playerId, playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3]))) {
-                    Client.playerId = playerId;
-                    changeScene(new ServerWaitingPlayersMenu());
-                }
+                Farmland.get().getClient().send(new PlayerAddRequest(playerId, playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3])));
+                Farmland.get().clientPlayerId = playerId;
+                changeScene(new ServerWaitingPlayersMenu());
             }
         }
 

@@ -75,9 +75,7 @@ public class JsonReader {
         reader = new BufferedReader(new InputStreamReader(file, StandardCharsets.UTF_8));
         currentColumn = 1;
         currentLine = 1;
-        if (next() != '{') {
-            throw new IOException();
-        }
+        next();
     }
 
     /**

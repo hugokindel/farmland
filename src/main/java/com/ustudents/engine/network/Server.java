@@ -1,16 +1,14 @@
-package com.ustudents.engine.network.net2;
+package com.ustudents.engine.network;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.network.net2.messages.AliveMessage;
-import com.ustudents.engine.network.net2.messages.ConnectMessage;
-import com.ustudents.engine.network.net2.messages.DisconnectMessage;
-import com.ustudents.engine.network.net2.messages.Message;
+import com.ustudents.engine.network.messages.AliveMessage;
+import com.ustudents.engine.network.messages.DisconnectMessage;
+import com.ustudents.engine.network.messages.Message;
+import com.ustudents.engine.network.messages.ConnectMessage;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Server extends Controller {
     public static int lastClientId = 0;
@@ -19,8 +17,14 @@ public class Server extends Controller {
 
     protected Map<Integer, InetSocketAddress> clientsAddresses = new HashMap<>();
 
+    protected Thread cliInteractionThread;
+
     @Override
     public boolean start() {
+        return start(false);
+    }
+
+    public boolean start(boolean dedicated) {
         if (super.start()) {
             connected.set(true);
         }
@@ -30,6 +34,12 @@ public class Server extends Controller {
             return false;
         }
 
+        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+            cliInteractionThread = new Thread(new CliInteractionRunnable());
+            cliInteractionThread.setName("ServerCliInteraction");
+            cliInteractionThread.start();
+        }
+
         Out.printlnInfo("Server started");
 
         return true;
@@ -37,6 +47,18 @@ public class Server extends Controller {
 
     @Override
     public void stop() {
+        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+            try {
+                if (cliInteractionThread != null && cliInteractionThread.isAlive()) {
+                    cliInteractionThread.join(1000);
+                }
+
+                cliInteractionThread = null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         super.stop();
     }
 
@@ -61,6 +83,7 @@ public class Server extends Controller {
 
     public void send(int clientId, Message message) {
         if (!clientsAddresses.containsKey(clientId)) {
+            Out.printlnError("Cannot find clientId");
             return;
         }
 
@@ -69,11 +92,17 @@ public class Server extends Controller {
         send(message);
     }
 
+    public void send(InetSocketAddress address, Message message) {
+        message.receiverAddress = address;
+
+        send(message);
+    }
+
     @Override
     public void send(Message message) {
-        Integer receiverId = message.getReceiverId();
-
         if (message.receiverAddress == null) {
+            Integer receiverId = message.getReceiverId();
+
             if (clientsAddresses.size() == 1) {
                 receiverId = clientsAddresses.entrySet().stream().findFirst().get().getKey();
             } else if (receiverId == -1 || !clientsAddresses.containsKey(receiverId)) {
@@ -104,5 +133,28 @@ public class Server extends Controller {
 
     protected int getFreeId() {
         return freeIds.isEmpty() ? ++lastClientId : freeIds.pop();
+    }
+
+    protected class CliInteractionRunnable implements Runnable {
+        @Override
+        public void run() {
+            Scanner scanner = new Scanner(System.in);
+
+            Out.println("To stop the server, press 'quit'.");
+
+            while (!Game.get().shouldQuit()) {
+                if (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+
+                    if (line.equals("quit")) {
+                        Out.println("Quit command intercepted.");
+                        Game.get().quit();
+                        break;
+                    }
+                }
+            }
+
+            scanner.close();
+        }
     }
 }

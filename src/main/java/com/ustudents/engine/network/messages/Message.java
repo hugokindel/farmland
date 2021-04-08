@@ -1,4 +1,4 @@
-package com.ustudents.engine.network.net2.messages;
+package com.ustudents.engine.network.messages;
 
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;

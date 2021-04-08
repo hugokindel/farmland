@@ -4,8 +4,7 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.network.Client;
-import com.ustudents.engine.network.ClientUpdatorThread;
-import com.ustudents.engine.network.net2.NetMode;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
@@ -23,6 +22,8 @@ import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Player;
+import com.ustudents.farmland.network.BuyRequest;
+import com.ustudents.farmland.network.LoadSaveResponse;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import com.ustudents.farmland.scene.menus.ResultMenu;
 import imgui.ImGui;
@@ -44,11 +45,11 @@ public class InGameScene extends Scene {
 
     @Override
     public void initialize() {
-        if (Farmland.get().isConnectedToServer()) {
-            Farmland.get().thread = new ClientUpdatorThread();
-            Farmland.get().thread.start();
-            Farmland.get().getCurrentSave().localPlayerId = Client.playerId;
+        if (Farmland.get().getNetMode() == NetMode.Standalone) {
+            Farmland.get().clientPlayerId = 0;
         }
+
+        Farmland.get().getCurrentSave().localPlayerId = Farmland.get().clientPlayerId;
 
         forceImGui = true;
 
@@ -271,7 +272,7 @@ public class InGameScene extends Scene {
             for(Item item : Farmland.get().getResourceDatabase().values()){
                 if(ImGui.button(nickNameItem(item)) && playerMoney>=item.value){
                     if (Farmland.get().isConnectedToServer()) {
-                        Client.commandBuy(item.id);
+                        Farmland.get().getClient().send(new BuyRequest(item.id));
                     } else {
                         // TODO: BUY
                         player.setMoney(playerMoney-item.value);
@@ -522,7 +523,7 @@ public class InGameScene extends Scene {
     @Override
     public void update(float dt) {
         if (Farmland.get().isConnectedToServer()) {
-            SaveGame saveGame = ClientUpdatorThread.checkForUpdate();
+            SaveGame saveGame = LoadSaveResponse.getUpdatedSaveGame();
             if (saveGame != null) {
                 int time = saveGame.turnTimePassed > Farmland.get().getCurrentSave().turnTimePassed ? saveGame.turnTimePassed : Farmland.get().getCurrentSave().turnTimePassed;
                 Farmland.get().saveGames.put(Farmland.get().saveId, saveGame);
