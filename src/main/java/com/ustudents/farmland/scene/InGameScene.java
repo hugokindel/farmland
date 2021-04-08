@@ -102,6 +102,7 @@ public class InGameScene extends Scene {
         imageDataFrame.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         imageDataFrame.scale = new Vector2f(3f, 3f);
         imageDataFrame.position.y = 30;
+        imageDataFrame.position.x = 3;
         guiBuilder.addImage(imageDataFrame);
 
         Texture playerTexture = Resources.loadTexture("ui/player.png");
@@ -111,7 +112,7 @@ public class InGameScene extends Scene {
         imageDataPlayer.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         imageDataPlayer.scale = new Vector2f(3f, 3f);
         imageDataPlayer.position.y = 56;
-        imageDataPlayer.position.x = 27;
+        imageDataPlayer.position.x = 30;
         guiBuilder.addImage(imageDataPlayer);
 
         GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Finir le tour", (dataType, data) -> {
