@@ -1,10 +1,13 @@
 package com.ustudents.farmland.core.player;
 
+import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.utility.Pair;
+import com.ustudents.engine.utility.Triplet;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
@@ -50,6 +53,12 @@ public class Player {
 
     public String ipAddress;
 
+    public List<Pair<Integer,Integer>> caravans;
+
+    public Triplet<Integer,Integer,Integer> farmerResearch;
+
+    public Triplet<Integer,Integer,Integer> breederResearch;
+
     public EventDispatcher moneyChanged = new EventDispatcher();
 
     public Player() {
@@ -65,6 +74,9 @@ public class Player {
         this.typeOfPlayer = typeOfPlayer;
         this.buyInventory = new HashMap<>();
         this.sellInventory = new HashMap<>();
+        this.caravans = new ArrayList<>();
+        this.farmerResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
+        this.breederResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
     }
 
     @JsonSerializableConstructor
