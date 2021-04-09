@@ -126,7 +126,6 @@ public class Server extends Controller {
         return clientDisconnected.get();
     }
 
-
     @Override
     protected Connection findConnectionToSendMessage(Message message) {
         return clients.get(message.getReceiverId());

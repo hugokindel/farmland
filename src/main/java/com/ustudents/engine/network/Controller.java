@@ -120,9 +120,7 @@ public abstract class Controller {
         Map<String, Object> json = JsonReader.readMap(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
 
         Long id = (Long)json.get("id");
-        // TODO: REMOVE ?
         Integer senderId = json.get("senderId") == null ? -1 : ((Long)json.get("senderId")).intValue();
-        // TODO: REMOVE ?
         Integer receiverId = json.get("receiverId") == null ? -1 : ((Long)json.get("receiverId")).intValue();
         Map<String, Object> payload = (Map<String, Object>)json.get("payload");
         String type = (String)json.get("type");
