@@ -99,4 +99,19 @@ public class Message {
                 ", payload='" + payload + '\'' +
                 '}';
     }
+
+    public static Message clone(Message message) {
+        try {
+            Message clone = (Message)message.getClass().getConstructors()[0].newInstance();
+            clone.id = message.id;
+            clone.senderId = message.senderId;
+            clone.receiverId = message.receiverId;
+            clone.payload = new LinkedHashMap<>(message.payload);
+            return clone;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

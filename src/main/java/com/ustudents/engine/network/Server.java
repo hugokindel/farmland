@@ -11,6 +11,7 @@ import com.ustudents.engine.utility.Pair;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
@@ -104,15 +105,8 @@ public class Server extends Controller {
     public void broadcast(Message message) {
         Out.println("broadcast");
         for (Map.Entry<Integer, Connection> client : clients.entrySet()) {
-            send(client.getKey(), message);
+            send(client.getKey(), Objects.requireNonNull(Message.clone(message)));
             Out.println(client.getValue().socket.getPort());
-
-            // TODO: FIND A BETTER WAY
-            try {
-                Thread.sleep(25);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
