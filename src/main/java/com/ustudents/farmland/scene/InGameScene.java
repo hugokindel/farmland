@@ -2,6 +2,7 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.scene.component.graphics.SpriteComponent;
 import com.ustudents.engine.scene.component.graphics.TextureComponent;
 import com.ustudents.engine.scene.ecs.Component;
 import com.ustudents.engine.scene.ecs.Entity;
@@ -103,6 +104,7 @@ public class InGameScene extends Scene {
         imageDataFrame.scale = new Vector2f(3f, 3f);
         imageDataFrame.position.y = 30;
         imageDataFrame.position.x = 3;
+        imageDataFrame.zIndex = 2;
         guiBuilder.addImage(imageDataFrame);
 
         initializeAvatar(guiBuilder);
@@ -620,35 +622,27 @@ public class InGameScene extends Scene {
         int fl = player.farmerResearch.getObject2();
 
         if (bl > 4){
-
             if (fl > 4){
-                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2breeder2.png");
+                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2breeder2.png")));
             } else if (fl > 2){
-                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmerbreeder2.png");
+                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmerbreeder2.png")));
             } else {
-                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/breeder2.png");
+                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/breeder2.png")));
             }
-
         } else if (bl > 2){
-
             if (fl > 4){
-                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2breeder.png");
+                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2breeder.png")));
             } else if (fl > 2){
-                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmerbreeder.png");
+                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmerbreeder.png")));
             } else {
-                getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/breeder.png");
+                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/breeder.png")));
             }
-
         } else if (fl > 4){
-
-            getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2.png");
+            getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2.png")));
 
         } else if (fl > 2){
-
-            getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer.png");
-
+            getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer.png")));
         }
-
     }
 
     public boolean onCompletedTurnEnd(){

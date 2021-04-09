@@ -20,6 +20,11 @@ public class Sprite {
         this.region = null;
     }
 
+    public Sprite(Texture texture) {
+        this.texture = texture;
+        this.region = new Vector4f(0, 0, texture.getWidth(), texture.getHeight());
+    }
+
     public Sprite(Texture texture, Vector4f region) {
         this.texture = texture;
         this.region = region;
