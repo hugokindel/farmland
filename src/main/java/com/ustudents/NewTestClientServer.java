@@ -31,14 +31,17 @@ public class NewTestClientServer {
 
         Server server = new Server();
         Client client = new Client();
+        Client client1 = new Client();
 
         server.start();
         client.start();
+        client1.start();
 
         server.broadcast(new PrintMessage("Hello client!"));
         client.send(new PrintMessage("Hello server!"));
+        client.send(new PrintMessage("Hello server1!"));
 
-        while (received.get() < 2) {
+        while (received.get() < 3) {
             try {
                 Thread.sleep(10);
             } catch (Exception e) {
@@ -46,6 +49,7 @@ public class NewTestClientServer {
             }
         }
 
+        client1.stop();
         client.stop();
         server.stop();
 

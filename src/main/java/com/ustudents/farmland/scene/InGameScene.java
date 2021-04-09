@@ -34,6 +34,7 @@ import org.joml.Vector2i;
 
 import java.util.*;
 
+@SuppressWarnings("unchecked")
 public class InGameScene extends Scene {
     public ImBoolean showInventory;
 
@@ -274,10 +275,7 @@ public class InGameScene extends Scene {
                     if (Farmland.get().isConnectedToServer()) {
                         Farmland.get().getClient().send(new BuyRequest(item.id));
                     } else {
-                        // TODO: BUY
-                        player.setMoney(playerMoney-item.value);
-                        player.addToInventory(item, "Buy");
-                        Farmland.get().getCurrentSave().itemsTurn.add(item);
+                        Farmland.get().getCurrentSave().getCurrentPlayer().buy(item, 1);
                     }
                 }
                 ImGui.sameLine();
@@ -529,6 +527,8 @@ public class InGameScene extends Scene {
                 Farmland.get().saveGames.put(Farmland.get().saveId, saveGame);
                 Farmland.get().getCurrentSave().turnTimePassed = time;
             }
+            onSelectedItemOrMoneyChanged();
+            leaderBoardUpdate();
         }
     }
 }

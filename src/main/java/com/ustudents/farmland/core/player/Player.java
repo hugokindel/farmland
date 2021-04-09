@@ -1,5 +1,6 @@
 package com.ustudents.farmland.core.player;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
@@ -9,6 +10,7 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.network.BuyRequest;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -223,5 +225,17 @@ public class Player {
         }
 
         return -1;
+    }
+
+    public void buy(Item item, int quantity) {
+        if (Game.get().hasAuthority()) {
+            setMoney(money - (item.value * quantity));
+            for (int i = 0; i < quantity; i++) {
+                addToInventory(item, "Buy");
+                Farmland.get().getCurrentSave().itemsTurn.add(item);
+            }
+        } else {
+            Game.get().getClient().send(new BuyRequest(item.id));
+        }
     }
 }

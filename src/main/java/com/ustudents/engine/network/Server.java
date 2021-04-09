@@ -91,6 +91,7 @@ public class Server extends Controller {
         if (message.getReceiverId() == -1) {
             Out.printlnWarning("Can't send message, missing receiver id.");
         } else {
+            Out.println("Send message to client " + message.getReceiverId());
             super.send(message);
         }
     }
@@ -101,8 +102,17 @@ public class Server extends Controller {
     }
 
     public void broadcast(Message message) {
+        Out.println("broadcast");
         for (Map.Entry<Integer, Connection> client : clients.entrySet()) {
             send(client.getKey(), message);
+            Out.println(client.getValue().socket.getPort());
+
+            // TODO: FIND A BETTER WAY
+            try {
+                Thread.sleep(25);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
