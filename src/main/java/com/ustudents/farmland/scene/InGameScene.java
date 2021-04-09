@@ -105,15 +105,7 @@ public class InGameScene extends Scene {
         imageDataFrame.position.x = 3;
         guiBuilder.addImage(imageDataFrame);
 
-        Texture playerTexture = Resources.loadTexture("ui/player.png");
-        GuiBuilder.ImageData imageDataPlayer = new GuiBuilder.ImageData(playerTexture);
-        imageDataPlayer.id = "PlayerImage";
-        imageDataPlayer.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
-        imageDataPlayer.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
-        imageDataPlayer.scale = new Vector2f(3f, 3f);
-        imageDataPlayer.position.y = 56;
-        imageDataPlayer.position.x = 30;
-        guiBuilder.addImage(imageDataPlayer);
+        initializeAvatar(guiBuilder);
 
         GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Finir le tour", (dataType, data) -> {
             Farmland.get().getCurrentSave().endTurn();
@@ -212,6 +204,9 @@ public class InGameScene extends Scene {
 
         guiBuilder.addText(textData2);
 
+        if (Farmland.get().getCurrentSave().deadPlayers == null) {
+            Farmland.get().getCurrentSave().deadPlayers = new ArrayList<>();
+        }
 
         List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getCurrentSave().players);
         String leaderBoard = "LeaderBoard : ";
@@ -227,6 +222,69 @@ public class InGameScene extends Scene {
 
         guiBuilder.addText(textData3);
 
+    }
+
+    public void initializeAvatar(GuiBuilder guiBuilder) {
+        Spritesheet avatarSprites = Resources.loadSpritesheet("ui/player.json");
+
+        GuiBuilder.ImageData base = new GuiBuilder.ImageData(avatarSprites.getSprite("base").getTexture());
+        base.id = "localPlayerAvatarBase";
+        base.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        base.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        base.scale = new Vector2f(3f, 3f);
+        base.position.y = 56;
+        base.position.x = 30;
+        base.region = avatarSprites.getSprite("base").getRegion();
+        base.zIndex = 0;
+        guiBuilder.addImage(base);
+
+        GuiBuilder.ImageData braces = new GuiBuilder.ImageData(avatarSprites.getSprite("layerBraces").getTexture());
+        braces.id = "localPlayerAvatarBraces";
+        braces.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        braces.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        braces.scale = new Vector2f(3f, 3f);
+        braces.position.y = 56;
+        braces.position.x = 30;
+        braces.region = avatarSprites.getSprite("layerBraces").getRegion();
+        braces.zIndex = 1;
+        braces.tint = Farmland.get().getCurrentSave().players.get(0).avatar.bracesColor;
+        guiBuilder.addImage(braces);
+
+        GuiBuilder.ImageData shirt = new GuiBuilder.ImageData(avatarSprites.getSprite("layerShirt").getTexture());
+        shirt.id = "localPlayerAvatarShirt";
+        shirt.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        shirt.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        shirt.scale = new Vector2f(3f, 3f);
+        shirt.position.y = 56;
+        shirt.position.x = 30;
+        shirt.region = avatarSprites.getSprite("layerShirt").getRegion();
+        shirt.zIndex = 1;
+        shirt.tint = Farmland.get().getCurrentSave().players.get(0).avatar.shirtColor;
+        guiBuilder.addImage(shirt);
+
+        GuiBuilder.ImageData hat = new GuiBuilder.ImageData(avatarSprites.getSprite("layerHat").getTexture());
+        hat.id = "localPlayerAvatarHat";
+        hat.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        hat.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        hat.scale = new Vector2f(3f, 3f);
+        hat.position.y = 56;
+        hat.position.x = 30;
+        hat.region = avatarSprites.getSprite("layerHat").getRegion();
+        hat.zIndex = 1;
+        hat.tint = Farmland.get().getCurrentSave().players.get(0).avatar.hatColor;
+        guiBuilder.addImage(hat);
+
+        GuiBuilder.ImageData buttons = new GuiBuilder.ImageData(avatarSprites.getSprite("layerButtons").getTexture());
+        buttons.id = "localPlayerAvatarButtons";
+        buttons.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        buttons.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        buttons.scale = new Vector2f(3f, 3f);
+        buttons.position.y = 56;
+        buttons.position.x = 30;
+        buttons.region = avatarSprites.getSprite("layerButtons").getRegion();
+        buttons.zIndex = 1;
+        buttons.tint = Farmland.get().getCurrentSave().players.get(0).avatar.buttonsColor;
+        guiBuilder.addImage(buttons);
     }
 
     public void initializeGameplay() {

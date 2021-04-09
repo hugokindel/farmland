@@ -3,6 +3,9 @@ package com.ustudents.engine.graphic;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import org.joml.Vector4f;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @JsonSerializable
 public class Color {
     public static final Color CLEAR = new Color(0x00000000);
@@ -43,6 +46,13 @@ public class Color {
         this.g = g;
         this.b = b;
         this.a = a;
+    }
+
+    public Color(float[] color) {
+        this.r = color[0];
+        this.g = color[1];
+        this.b = color[2];
+        this.a = color[3];
     }
 
     public Color(int rgba) {
@@ -105,5 +115,60 @@ public class Color {
                g.floatValue() == color.g.floatValue() &&
                b.floatValue() == color.b.floatValue() &&
                a.floatValue() == color.a.floatValue();
+    }
+
+    // Implementation from: https://css-tricks.com/converting-color-spaces-in-javascript/
+    public ColorHsla toHsla() {
+        float cmin = Math.min(r, Math.min(g, b));
+        float cmax = Math.max(r, Math.min(g, b));
+        float delta = cmax - cmin;
+        float h = 0;
+        float s = 0;
+        float l = 0;
+
+        if (delta == 0) {
+            h = 0;
+        } else if (cmax == r) {
+            h = ((g - b) / delta) % 6;
+        } else if (cmax == g) {
+            h = (b - r) / delta + 2;
+        } else {
+            h = (r - g) / delta + 4;
+        }
+
+        h = Math.round(h * 60);
+
+        if (h < 0) {
+            h += 360;
+        }
+
+        l = (cmax + cmin) / 2;
+
+        s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+
+        s = BigDecimal.valueOf(s * 100).setScale(1, RoundingMode.HALF_UP).floatValue();
+        l = BigDecimal.valueOf(l * 100).setScale(1, RoundingMode.HALF_UP).floatValue();
+
+        return new ColorHsla(h, s / 100, l / 100, a);
+    }
+
+    public Color darken(int percent) {
+        set(toHsla().darken(percent).toRgba());
+        return this;
+    }
+
+    public Color lighten(int percent) {
+        set(toHsla().lighten(percent).toRgba());
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Color{" +
+                "r=" + r +
+                ", g=" + g +
+                ", b=" + b +
+                ", a=" + a +
+                '}';
     }
 }

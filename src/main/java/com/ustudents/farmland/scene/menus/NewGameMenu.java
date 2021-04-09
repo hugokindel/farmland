@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -21,7 +22,11 @@ public class NewGameMenu extends MenuScene {
     ImString saveName = new ImString();
     ImString playerName = new ImString();
     ImString villageName = new ImString();
-    float[] color = {1, 0, 0, 1};
+    float[] bannerColor = {1, 0, 0, 1};
+    float[] bracesColor = {0.7098f, 0.2745f, 0.3921f, 1f};
+    float[] shirtColor = {0.2627f, 0.5607f, 0.4392f, 1f};
+    float[] hatColor = {0.7098f, 0.2745f, 0.3921f, 1f};
+    float[] buttonsColor = {0.9843f, 0.7764f, 0.2117f, 1f};
     int[] size = {16, 16};
     ImLong seed = new ImLong(System.currentTimeMillis());
     List<String> errors = new ArrayList<>();
@@ -51,14 +56,18 @@ public class NewGameMenu extends MenuScene {
 
     @Override
     public void renderImGui() {
-        ImGuiUtils.setNextWindowWithSizeCentered(550, 300, ImGuiCond.Appearing);
+        ImGuiUtils.setNextWindowWithSizeCentered(850, 400, ImGuiCond.Appearing);
         ImGui.begin("Nouvelle partie");
 
         ImGui.text("Entrez les informations de la sauvegarde:");
         ImGui.inputText("Nom de la partie", saveName);
         ImGui.inputText("Votre nom de joueur", playerName);
         ImGui.inputText("Votre nom de village", villageName);
-        ImGui.colorEdit4("Couleur de votre bannière", color);
+        ImGui.colorEdit4("Couleur de votre bannière", bannerColor);
+        ImGui.colorEdit4("Couleur de votre combinaison à bretelles", bracesColor);
+        ImGui.colorEdit4("Couleur de votre chemise", shirtColor);
+        ImGui.colorEdit4("Couleur de votre chapeau", hatColor);
+        ImGui.colorEdit4("Couleur de vos boutons de bretelles", buttonsColor);
         ImGui.inputInt2("Taille de la carte", size);
         ImGui.inputScalar("Graine de la carte", ImGuiDataType.S64, seed);
         ImGui.sliderInt("Nombre de robots", numberOfBots, 0, 3);
@@ -89,7 +98,31 @@ public class NewGameMenu extends MenuScene {
             }
 
             if (errors.isEmpty()) {
-                SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3]), new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0]);
+                checkWhiteBalance(bracesColor);
+                checkWhiteBalance(shirtColor);
+                checkWhiteBalance(hatColor);
+                checkWhiteBalance(buttonsColor);
+
+                Color braces = new Color(bracesColor);
+                Color shirt = new Color(shirtColor);
+                Color hat = new Color(hatColor);
+                Color buttons = new Color(buttonsColor);
+
+                if (isWhite(shirtColor) && isWhite(bracesColor)) {
+                    braces.darken(10);
+                }
+
+                if (isWhite(shirtColor) && isWhite(buttonsColor)) {
+                    buttons.darken(10);
+                }
+
+                if (isWhite(bracesColor) && isWhite(buttonsColor)) {
+                    buttons.darken(10);
+                }
+
+                SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(),
+                        new Color(bannerColor), braces, shirt, hat, buttons,
+                        new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0]);
 
                 Farmland.get().getSaveGames().put(saveGame.name, saveGame);
                 Farmland.get().saveId = saveGame.name;
@@ -105,5 +138,27 @@ public class NewGameMenu extends MenuScene {
         }
 
         ImGui.end();
+    }
+
+    public void checkWhiteBalance(float[] color) {
+        if (color[0] > 0.998f) {
+            color[0] = 1f;
+        }
+
+        if (color[1] > 0.998f) {
+            color[1] = 1f;
+        }
+
+        if (color[2] > 0.998f) {
+            color[2] = 1f;
+        }
+
+        if (color[3] > 0.998f) {
+            color[3] = 1f;
+        }
+    }
+
+    public boolean isWhite(float[] color) {
+        return color[0] == 1f && color[1] == 1f && color[2] == 1f && color[3] == 1f;
     }
 }

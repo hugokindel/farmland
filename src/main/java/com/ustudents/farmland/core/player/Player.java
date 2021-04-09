@@ -1,6 +1,5 @@
 package com.ustudents.farmland.core.player;
 
-import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
@@ -15,7 +14,6 @@ import com.ustudents.farmland.core.item.*;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +35,10 @@ public class Player {
     public String typeOfPlayer;
 
     @JsonSerializable
-    public Color color;
+    public Color bannerColor;
+
+    @JsonSerializable
+    public Avatar avatar;
 
     @JsonSerializable
     public Vector2f position;
@@ -66,10 +67,11 @@ public class Player {
         this.sellInventory = new HashMap<>();
     }
 
-    public Player(String name, String villageName, Color color, String typeOfPlayer) {
+    public Player(String name, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, String typeOfPlayer) {
         this.name = name;
         this.village = new Village(villageName);
-        this.color = color;
+        this.bannerColor = bannerColor;
+        this.avatar = new Avatar(bracesColor, shirtColor, hatColor, buttonColor);
         this.money = 500;
         this.typeOfPlayer = typeOfPlayer;
         this.buyInventory = new HashMap<>();
