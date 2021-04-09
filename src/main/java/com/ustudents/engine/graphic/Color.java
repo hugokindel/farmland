@@ -1,10 +1,8 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import org.joml.Vector4f;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @JsonSerializable
 public class Color {
@@ -119,8 +117,11 @@ public class Color {
 
     // Implementation from: https://css-tricks.com/converting-color-spaces-in-javascript/
     public ColorHsla toHsla() {
+        float r = Math.round(this.r * 255f) / 255f;
+        float g = Math.round(this.g * 255f) / 255f;
+        float b = Math.round(this.b * 255f) / 255f;
         float cmin = Math.min(r, Math.min(g, b));
-        float cmax = Math.max(r, Math.min(g, b));
+        float cmax = Math.max(r, Math.max(g, b));
         float delta = cmax - cmin;
         float h = 0;
         float s = 0;
@@ -143,23 +144,45 @@ public class Color {
         }
 
         l = (cmax + cmin) / 2;
-
         s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
 
-        s = BigDecimal.valueOf(s * 100).setScale(1, RoundingMode.HALF_UP).floatValue();
-        l = BigDecimal.valueOf(l * 100).setScale(1, RoundingMode.HALF_UP).floatValue();
-
-        return new ColorHsla(h, s / 100, l / 100, a);
+        return new ColorHsla(h, s, l, a);
     }
 
-    public Color darken(int percent) {
+    public void darken(int percent) {
         set(toHsla().darken(percent).toRgba());
-        return this;
     }
 
-    public Color lighten(int percent) {
+    public void lighten(int percent) {
         set(toHsla().lighten(percent).toRgba());
-        return this;
+    }
+
+    public void contrast(int percent) {
+        if (isDark()) {
+            lighten(percent);
+        } else {
+            darken(percent);
+        }
+    }
+
+    public boolean isDark() {
+        return getDarkness() > 0.5f;
+    }
+
+    public boolean isLight() {
+        return getDarkness() < 0.5;
+    }
+
+    public float getDarkness() {
+        return 1f - (0.299f * r + 0.587f * g + 0.114f * b);
+    }
+
+    public boolean isCloseTo(Color color) {
+        float r = Math.abs(this.r - color.r);
+        float g = Math.abs(this.g - color.g);
+        float b = Math.abs(this.b - color.b);
+
+        return !(r + g + b > 0.02);
     }
 
     @Override

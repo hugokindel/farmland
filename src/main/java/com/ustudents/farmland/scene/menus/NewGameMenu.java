@@ -98,26 +98,21 @@ public class NewGameMenu extends MenuScene {
             }
 
             if (errors.isEmpty()) {
-                checkWhiteBalance(bracesColor);
-                checkWhiteBalance(shirtColor);
-                checkWhiteBalance(hatColor);
-                checkWhiteBalance(buttonsColor);
-
                 Color braces = new Color(bracesColor);
                 Color shirt = new Color(shirtColor);
                 Color hat = new Color(hatColor);
                 Color buttons = new Color(buttonsColor);
 
-                if (isWhite(shirtColor) && isWhite(bracesColor)) {
-                    braces.darken(10);
+                if (isColorClose(shirtColor, bracesColor)) {
+                    braces.contrast(10);
                 }
 
-                if (isWhite(shirtColor) && isWhite(buttonsColor)) {
-                    buttons.darken(10);
+                if (isColorClose(shirtColor, buttonsColor)) {
+                    buttons.contrast(10);
                 }
 
-                if (isWhite(bracesColor) && isWhite(buttonsColor)) {
-                    buttons.darken(10);
+                if (isColorClose(bracesColor, buttonsColor)) {
+                    buttons.contrast(10);
                 }
 
                 SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(),
@@ -140,25 +135,7 @@ public class NewGameMenu extends MenuScene {
         ImGui.end();
     }
 
-    public void checkWhiteBalance(float[] color) {
-        if (color[0] > 0.998f) {
-            color[0] = 1f;
-        }
-
-        if (color[1] > 0.998f) {
-            color[1] = 1f;
-        }
-
-        if (color[2] > 0.998f) {
-            color[2] = 1f;
-        }
-
-        if (color[3] > 0.998f) {
-            color[3] = 1f;
-        }
-    }
-
-    public boolean isWhite(float[] color) {
-        return color[0] == 1f && color[1] == 1f && color[2] == 1f && color[3] == 1f;
+    public boolean isColorClose(float[] color1, float[] color2) {
+        return new Color(color1).isCloseTo(new Color(color2));
     }
 }

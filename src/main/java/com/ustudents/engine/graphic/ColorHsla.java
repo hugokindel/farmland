@@ -74,6 +74,8 @@ public class ColorHsla {
 
     // Implementation from: https://css-tricks.com/converting-color-spaces-in-javascript/
     public Color toRgba() {
+        float l = Math.round(this.l * 100f) / 100f;
+        float s = Math.round(this.s * 100f) / 100f;
         float c = (1 - Math.abs(2 * l - 1)) * s;
         float x = c * (1 - Math.abs((h / 60) % 2 - 1));
         float m = l - c / 2;
