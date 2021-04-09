@@ -1,8 +1,7 @@
 package com.ustudents;
 
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.network.net3.Client;
-import com.ustudents.engine.network.net3.Server;
+import com.ustudents.engine.network.Client;
 
 public class NewTestClient {
     public static void main(String[] args) {
@@ -10,11 +9,13 @@ public class NewTestClient {
 
         Client client = new Client();
 
-        client.start();
+        if (client.start()) {
+            Out.println("Client started");
 
-        Out.println("client started");
-
-        client.stop();
+            client.stop();
+        } else {
+            Out.println("Server not started");
+        }
 
         Out.end();
     }

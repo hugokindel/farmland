@@ -1,132 +1,53 @@
 package com.ustudents.engine.network;
 
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.network.messages.AliveMessage;
-import com.ustudents.engine.network.messages.ConnectMessage;
 import com.ustudents.engine.network.messages.DisconnectMessage;
 import com.ustudents.engine.network.messages.Message;
+import com.ustudents.engine.utility.Pair;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.net.InetAddress;
+import java.net.Socket;
 
 public class Client extends Controller {
-    protected InetSocketAddress serverAddress = new InetSocketAddress(DEFAULT_ADDRESS, DEFAULT_PORT);
+    private Connection connection;
 
-    protected int clientId;
-
-    protected AtomicBoolean searchingForServer = new AtomicBoolean(false);
-
-    protected AtomicBoolean serverFound = new AtomicBoolean(false);
-
-    public Client() {
-
-    }
-
-    public Client(String address, int port) {
-        serverAddress = new InetSocketAddress(address, port);
-    }
+    private Thread serverReader;
 
     @Override
     public boolean start() {
-        if (!super.start()) {
-            Out.printlnError("Error while starting client");
+        try {
+            Socket socket = new Socket(InetAddress.getByName(Controller.DEFAULT_ADDRESS), Controller.DEFAULT_PORT);
+            connection = new Connection(socket);
+        } catch (Exception e) {
+            if (!e.getMessage().toLowerCase().contains("connection refused")) {
+                e.printStackTrace();
+            }
+
             return false;
         }
 
-        Out.println("Client started");
+        serverReader = runThread("ServerReader", new ServerReaderRunnable());
 
-        return true;
-    }
-
-    public void blockUntilConnectedToServer() {
-        send(new ConnectMessage());
-
-        while (!connected.get()) {
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        return super.start();
     }
 
     @Override
     public void stop() {
-        if (connected.get()) {
-            disconnect();
-
-            clientId = -1;
-            searchingForServer.set(false);
-            serverFound.set(false);
-
-            try {
-                Thread.sleep(10);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            request(new DisconnectMessage());
+            connection.close();
+            connection = null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        serverReader = stopThread(serverReader);
 
         super.stop();
     }
 
     @Override
-    public boolean receive(Message message) {
-        if (message instanceof ConnectMessage) {
-            connected.set(true);
-            clientId = message.getReceiverId();
-            Out.println("Connected with id " + clientId);
-        } else if (message instanceof AliveMessage) {
-            searchingForServer.set(false);
-            serverFound.set(true);
-        }
-
-        return true;
-    }
-
-    @Override
-    public void send(Message message) {
-        if (message.receiverAddress == null) {
-            message.receiverAddress = serverAddress;
-        }
-
-        message.setReceiverId(0);
-        message.setSenderId(clientId);
-
-        super.send(message);
-    }
-
-    public void disconnect() {
-        if (connected.get()) {
-            send(new DisconnectMessage());
-            clientId = -1;
-            connected.set(false);
-            Out.println("Disconnected");
-        }
-    }
-
-    public boolean isServerAlive() {
-        serverFound.set(false);
-        searchingForServer.set(true);
-
-        send(new AliveMessage());
-
-        int waitTime = 0;
-
-        while (searchingForServer.get()) {
-            try {
-                if (waitTime >= 100) {
-                    searchingForServer.set(false);
-                    break;
-                }
-
-                Thread.sleep(10);
-                waitTime += 10;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return serverFound.get();
+    public boolean isAlive() {
+        return connection != null && connection.isAlive();
     }
 
     @Override
@@ -135,11 +56,27 @@ public class Client extends Controller {
     }
 
     @Override
-    public void aliveStateChanged() {
-        searchingForServer.set(false);
+    protected Connection findConnectionToSendMessage(Message message) {
+        return connection;
     }
 
-    public int getClientId() {
-        return clientId;
+    private class ServerReaderRunnable implements Runnable {
+        public ServerReaderRunnable() {
+
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (isAlive()) {
+                    String data = connection.reader.readLine();
+                    messagesToRead.add(new Pair<>(0, data));
+                }
+            } catch (Exception e) {
+                if (isAlive()) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

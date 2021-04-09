@@ -84,7 +84,7 @@ public class Farmland extends Game {
             serverConfig.put("numberBots", 4L);
         }
 
-        server.onClientDisconnected.add((dataType, data) -> serverPlayerIdPerClientId.remove(data.clientId));
+        server.getClientDisconnectedDispatcher().add((dataType, data) -> serverPlayerIdPerClientId.remove(data.clientId));
     }
 
     @Override

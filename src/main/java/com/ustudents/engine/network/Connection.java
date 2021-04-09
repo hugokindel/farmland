@@ -1,4 +1,4 @@
-package com.ustudents.engine.network.net3;
+package com.ustudents.engine.network;
 
 import java.io.*;
 import java.net.Socket;

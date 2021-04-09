@@ -313,7 +313,7 @@ public abstract class Game extends Runnable {
     }
 
     public NetMode getNetMode() {
-        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : client.isConnected() ? NetMode.Client : NetMode.Standalone);
+        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : client.isAlive() ? NetMode.Client : NetMode.Standalone);
     }
 
     public boolean canRender() {
@@ -322,7 +322,7 @@ public abstract class Game extends Runnable {
 
     // if true Dedicated Server, Listen Server, Standalone, false Client
     public boolean hasAuthority() {
-        return dedicatedServerEnabled || listenServerEnabled || !client.isConnected();
+        return dedicatedServerEnabled || listenServerEnabled || !client.isAlive();
     }
 
     // if true Listen Server, Client, Standalone, false Dedicated Server
@@ -332,7 +332,7 @@ public abstract class Game extends Runnable {
 
     // if true Client, false Standalone
     public boolean isConnectedToServer() {
-        return client.isConnected();
+        return client.isAlive();
     }
 
     public void disconnectFromServer() {
@@ -425,7 +425,7 @@ public abstract class Game extends Runnable {
         }
 
         if (getNetMode() == NetMode.DedicatedServer) {
-            server.start(true);
+            server.start();
             onServerStarted();
             Out.println("Waiting for world initialization...");
         }
@@ -559,12 +559,12 @@ public abstract class Game extends Runnable {
 
     /** Destroy everything. */
     public void destroyInternals() {
-        if (client.isConnected()) {
+        if (client.isAlive()) {
             disconnectFromServer();
         }
 
         try {
-            if (server.isConnected()) {
+            if (server.isAlive()) {
                 server.stop();
                 onServerDestroyed();
             }

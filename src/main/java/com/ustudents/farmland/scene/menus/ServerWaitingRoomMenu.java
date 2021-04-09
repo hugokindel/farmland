@@ -11,7 +11,7 @@ import java.util.Map;
 public class ServerWaitingRoomMenu extends MenuScene {
     @Override
     public void initialize() {
-        boolean localServerExists = Farmland.get().getClient().isServerAlive();
+        boolean localServerExists = Farmland.get().getClient().isAlive();
         GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
 
         int capacity = informations.getCapacity();

@@ -17,11 +17,11 @@ import java.util.Map;
 public class ServersListMenu extends MenuScene {
     @Override
     public void initialize() {
-        if (!Farmland.get().getClient().isConnected()) {
+        if (!Farmland.get().getClient().isAlive()) {
             Farmland.get().getClient().start();
         }
 
-        boolean localServerExists = Farmland.get().getClient().isServerAlive();
+        boolean localServerExists = Farmland.get().getClient().isAlive();
 
         int i = 0;
         String[] buttonNames;
@@ -43,12 +43,12 @@ public class ServersListMenu extends MenuScene {
             eventListeners[i] = (dataType, data) -> {
                 switch (buttonIds[j]) {
                     case "localButton":
-                        if (Farmland.get().isConnectedToServer()) {
-                            Farmland.get().getClient().disconnect();
-                        }
-                        Farmland.get().getClient().blockUntilConnectedToServer();
+                        /*if (Farmland.get().isConnectedToServer()) {
+                            Farmland.get().disconnectFromServer();
+                            Farmland.get().getClient().start();
+                        }*/
 
-                        Out.println("Connected to server with ID: " + Farmland.get().getClient().getClientId());
+                        Out.println("Connected to server");
 
                         changeScene(new ServerWaitingRoomMenu());
 
