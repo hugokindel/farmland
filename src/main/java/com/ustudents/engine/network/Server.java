@@ -53,7 +53,7 @@ public class Server extends Controller {
             cliInteractionThread.start();
         }
 
-        Out.printlnInfo("Server started");
+        Out.println("Server started");
 
         return true;
     }
@@ -81,14 +81,14 @@ public class Server extends Controller {
             message.setSenderId(getFreeId());
             clientsAddresses.put(message.getSenderId(), message.senderAddress);
             respond(new ConnectMessage(), message);
-            Out.printlnInfo("Client " + message.getSenderId() + " connected");
+            Out.println("Client " + message.getSenderId() + " connected");
         } else if (message instanceof AliveMessage) {
             respond(new AliveMessage(), message);
             return false;
         } else if (message instanceof DisconnectMessage) {
             freeIds.add(message.getSenderId());
             clientsAddresses.remove(message.getSenderId());
-            Out.printlnInfo("Client " + message.getSenderId() + " disconnected");
+            Out.println("Client " + message.getSenderId() + " disconnected");
             onClientDisconnected.dispatch(new ClientDisconnected(message.getSenderId()));
         }
 

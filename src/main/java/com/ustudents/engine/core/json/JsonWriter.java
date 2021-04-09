@@ -31,6 +31,12 @@ public class JsonWriter {
         file = null;
     }
 
+    boolean newLine = true;
+
+    boolean tab = true;
+
+    boolean space = true;
+
     /**
      * Class constructor.
      *
@@ -90,6 +96,21 @@ public class JsonWriter {
         return null;
     }
 
+    public static String writeToString(Map<String, Object> map, boolean newLine, boolean tab, boolean space) {
+        try {
+            JsonWriter writer = new JsonWriter();
+            writer.newLine = newLine;
+            writer.tab = tab;
+            writer.space = space;
+            writer.writeMap(map);
+            return writer.data;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     /**
      * Writes a list to a string in NJSon format.
      *
@@ -115,10 +136,10 @@ public class JsonWriter {
     private void writeMap(Map<String, Object> map) {
         parentIsArray = false;
 
-        write("{\n", false);
+        write("{" + (newLine ? "\n" : "") + "", false);
 
         String oldPrefix = prefix;
-        prefix += "\t";
+        prefix += "" + (tab ? "\t" : "") + "";
 
         int i = 1;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -128,7 +149,7 @@ public class JsonWriter {
                 write(",", false);
             }
 
-            write("\n", false);
+            write((newLine ? "\n" : ""), false);
 
             i++;
         }
@@ -144,7 +165,7 @@ public class JsonWriter {
      * @param element The element pair (string, object) to write.
      */
     private void writeMapElement(Map.Entry<String, Object> element) {
-        write("\"" + element.getKey() + "\": ");
+        write("\"" + element.getKey() + "\":" + (space ? " " : "") + "");
         writeValue(element.getValue());
     }
 
@@ -159,12 +180,12 @@ public class JsonWriter {
 
         if (beforeParentIsArray) {
             if (!array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
-                write("[\n" + prefix + "\t", false);
+                write("[" + (newLine ? "\n" : "") + prefix + "" + (tab ? "\t" : "") + "", false);
             } else {
                 write("[", false);
             }
         } else {
-            write("[\n", false);
+            write("[" + (newLine ? "\n" : ""), false);
         }
 
         if (!array.isEmpty() && array.get(0) instanceof List) {
@@ -172,12 +193,12 @@ public class JsonWriter {
         }
 
         String oldPrefix = prefix;
-        prefix += "\t";
+        prefix += "" + (tab ? "\t" : "") + "";
 
         int i = 1;
         for (Object object : array) {
             if (beforeParentIsArray && array.get(0) instanceof List) {
-                write("\n", false);
+                write( (newLine ? "\n" : ""), false);
                 write("");
             } else if (!beforeParentIsArray) {
                 write("");
@@ -193,14 +214,14 @@ public class JsonWriter {
 
             if (i != array.size()) {
                 if (beforeParentIsArray && !array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
-                    write(",\n" + prefix, false);
+                    write("," + (newLine ? "\n" : "") + prefix, false);
                 } else {
                     write(",", false);
                 }
             }
 
             if (!beforeParentIsArray) {
-                write("\n", false);
+                write((newLine ? "\n" : "") , false);
             }
 
             i++;
@@ -209,10 +230,10 @@ public class JsonWriter {
         prefix = oldPrefix;
 
         if (beforeParentIsArray && !array.isEmpty() && array.get(0) instanceof List) {
-            write("\n", false);
+            write((newLine ? "\n" : ""), false);
             write("]");
         } else if (beforeParentIsArray && !array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
-            write("\n", false);
+            write((newLine ? "\n" : ""), false);
             write("]");
         } else {
             write("]", !beforeParentIsArray);
@@ -295,11 +316,11 @@ public class JsonWriter {
      * @param value The vector to write.
      */
     private void writeVector2f(Object value) {
-        write("{\n", false);
+        write("{" + (newLine ? "\n" : "") + "", false);
         String oldPrefix = prefix;
-        prefix += "\t";
-        write("\"x\": " + ((Vector2f)value).x + ",\n");
-        write("\"y\": " + ((Vector2f)value).y + "\n");
+        prefix += "" + (tab ? "\t" : "") + "";
+        write("\"x\": " + ((Vector2f)value).x + "," + (newLine ? "\n" : "") + "");
+        write("\"y\": " + ((Vector2f)value).y + "" + (newLine ? "\n" : "") + "");
         prefix = oldPrefix;
         write("}");
     }
@@ -310,12 +331,12 @@ public class JsonWriter {
      * @param value The vector to write.
      */
     private void writeVector3f(Object value) {
-        write("{\n", false);
+        write("{" + (newLine ? "\n" : "") + "", false);
         String oldPrefix = prefix;
-        prefix += "\t";
-        write("\"x\": " + ((Vector3f)value).x + ",\n");
-        write("\"y\": " + ((Vector3f)value).y + ",\n");
-        write("\"z\": " + ((Vector3f)value).z + "\n");
+        prefix += "" + (tab ? "\t" : "") + "";
+        write("\"x\":" + (space ? " " : "") + "" + ((Vector3f)value).x + "," + (newLine ? "\n" : "") + "");
+        write("\"y\":" + (space ? " " : "") + "" + ((Vector3f)value).y + "," + (newLine ? "\n" : "") + "");
+        write("\"z\":" + (space ? " " : "") + "" + ((Vector3f)value).z + "" + (newLine ? "\n" : "") + "");
         prefix = oldPrefix;
         write("}");
     }
@@ -326,13 +347,13 @@ public class JsonWriter {
      * @param value The vector to write.
      */
     private void writeVector4f(Object value) {
-        write("{\n", false);
+        write("{" + (newLine ? "\n" : "") + "", false);
         String oldPrefix = prefix;
-        prefix += "\t";
-        write("\"x\": " + ((Vector4f)value).x + ",\n");
-        write("\"y\": " + ((Vector4f)value).y + ",\n");
-        write("\"z\": " + ((Vector4f)value).z + ",\n");
-        write("\"w\": " + ((Vector4f)value).w + "\n");
+        prefix += "" + (tab ? "\t" : "") + "";
+        write("\"x\":" + (space ? " " : "") + "" + ((Vector4f)value).x + "," + (newLine ? "\n" : "") + "");
+        write("\"y\":" + (space ? " " : "") + "" + ((Vector4f)value).y + "," + (newLine ? "\n" : "") + "");
+        write("\"z\":" + (space ? " " : "") + "" + ((Vector4f)value).z + "," + (newLine ? "\n" : "") + "");
+        write("\"w\":" + (space ? " " : "") + "" + ((Vector4f)value).w + "" + (newLine ? "\n" : "") + "");
         prefix = oldPrefix;
         write("}");
     }
@@ -343,11 +364,11 @@ public class JsonWriter {
      * @param value The vector to write.
      */
     private void writeVector2i(Object value) {
-        write("{\n", false);
+        write("{" + (newLine ? "\n" : "") + "", false);
         String oldPrefix = prefix;
-        prefix += "\t";
-        write("\"x\": " + ((Vector2i)value).x + ",\n");
-        write("\"y\": " + ((Vector2i)value).y + "\n");
+        prefix += "" + (tab ? "\t" : "") + "";
+        write("\"x\":" + (space ? " " : "") + "" + ((Vector2i)value).x + "," + (newLine ? "\n" : "") + "");
+        write("\"y\":" + (space ? " " : "") + "" + ((Vector2i)value).y + "" + (newLine ? "\n" : "") + "");
         prefix = oldPrefix;
         write("}");
     }
@@ -358,12 +379,12 @@ public class JsonWriter {
      * @param value The vector to write.
      */
     private void writeVector3i(Object value) {
-        write("{\n", false);
+        write("{" + (newLine ? "\n" : "") + "", false);
         String oldPrefix = prefix;
-        prefix += "\t";
-        write("\"x\": " + ((Vector3i)value).x + ",\n");
-        write("\"y\": " + ((Vector3i)value).y + ",\n");
-        write("\"z\": " + ((Vector3i)value).z + "\n");
+        prefix += "" + (tab ? "\t" : "") + "";
+        write("\"x\":" + (space ? " " : "") + "" + ((Vector3i)value).x + "," + (newLine ? "\n" : "") + "");
+        write("\"y\":" + (space ? " " : "") + "" + ((Vector3i)value).y + "," + (newLine ? "\n" : "") + "");
+        write("\"z\":" + (space ? " " : "") + "" + ((Vector3i)value).z + "" + (newLine ? "\n" : "") + "");
         prefix = oldPrefix;
         write("}");
     }
@@ -374,13 +395,13 @@ public class JsonWriter {
      * @param value The vector to write.
      */
     private void writeVector4i(Object value) {
-        write("{\n", false);
+        write("{" + (newLine ? "\n" : "") + "", false);
         String oldPrefix = prefix;
-        prefix += "\t";
-        write("\"x\": " + ((Vector4i)value).x + ",\n");
-        write("\"y\": " + ((Vector4i)value).y + ",\n");
-        write("\"z\": " + ((Vector4i)value).z + ",\n");
-        write("\"w\": " + ((Vector4i)value).w + "\n");
+        prefix += "" + (tab ? "\t" : "") + "";
+        write("\"x\":" + (space ? " " : "") + "" + ((Vector4i)value).x + "," + (newLine ? "\n" : "") + "");
+        write("\"y\":" + (space ? " " : "") + "" + ((Vector4i)value).y + "," + (newLine ? "\n" : "") + "");
+        write("\"z\":" + (space ? " " : "") + "" + ((Vector4i)value).z + "," + (newLine ? "\n" : "") + "");
+        write("\"w\":" + (space ? " " : "") + "" + ((Vector4i)value).w + "" + (newLine ? "\n" : "") + "");
         prefix = oldPrefix;
         write("}");
     }
@@ -391,25 +412,25 @@ public class JsonWriter {
      * @param value The matrix to write.
      */
     private void writeMatrix4f(Object value) {
-        write("{\n", false);
+        write("{" + (newLine ? "\n" : "") + "", false);
         String oldPrefix = prefix;
-        prefix += "\t";
-        write("\"m00\": " + ((Matrix4f)value).m00() + ",\n");
-        write("\"m01\": " + ((Matrix4f)value).m01() + ",\n");
-        write("\"m02\": " + ((Matrix4f)value).m02() + ",\n");
-        write("\"m03\": " + ((Matrix4f)value).m03() + ",\n");
-        write("\"m10\": " + ((Matrix4f)value).m10() + ",\n");
-        write("\"m11\": " + ((Matrix4f)value).m11() + ",\n");
-        write("\"m12\": " + ((Matrix4f)value).m12() + ",\n");
-        write("\"m13\": " + ((Matrix4f)value).m13() + ",\n");
-        write("\"m20\": " + ((Matrix4f)value).m20() + ",\n");
-        write("\"m21\": " + ((Matrix4f)value).m21() + ",\n");
-        write("\"m22\": " + ((Matrix4f)value).m22() + ",\n");
-        write("\"m23\": " + ((Matrix4f)value).m23() + ",\n");
-        write("\"m30\": " + ((Matrix4f)value).m30() + ",\n");
-        write("\"m31\": " + ((Matrix4f)value).m31() + ",\n");
-        write("\"m32\": " + ((Matrix4f)value).m32() + ",\n");
-        write("\"m33\": " + ((Matrix4f)value).m33() + "\n");
+        prefix += "" + (tab ? "\t" : "") + "";
+        write("\"m00\":" + (space ? " " : "") + "" + ((Matrix4f)value).m00() + "," + (newLine ? "\n" : "") + "");
+        write("\"m01\":" + (space ? " " : "") + "" + ((Matrix4f)value).m01() + "," + (newLine ? "\n" : "") + "");
+        write("\"m02\":" + (space ? " " : "") + "" + ((Matrix4f)value).m02() + "," + (newLine ? "\n" : "") + "");
+        write("\"m03\":" + (space ? " " : "") + "" + ((Matrix4f)value).m03() + "," + (newLine ? "\n" : "") + "");
+        write("\"m10\":" + (space ? " " : "") + "" + ((Matrix4f)value).m10() + "," + (newLine ? "\n" : "") + "");
+        write("\"m11\":" + (space ? " " : "") + "" + ((Matrix4f)value).m11() + "," + (newLine ? "\n" : "") + "");
+        write("\"m12\":" + (space ? " " : "") + "" + ((Matrix4f)value).m12() + "," + (newLine ? "\n" : "") + "");
+        write("\"m13\":" + (space ? " " : "") + "" + ((Matrix4f)value).m13() + "," + (newLine ? "\n" : "") + "");
+        write("\"m20\":" + (space ? " " : "") + "" + ((Matrix4f)value).m20() + "," + (newLine ? "\n" : "") + "");
+        write("\"m21\":" + (space ? " " : "") + "" + ((Matrix4f)value).m21() + "," + (newLine ? "\n" : "") + "");
+        write("\"m22\":" + (space ? " " : "") + "" + ((Matrix4f)value).m22() + "," + (newLine ? "\n" : "") + "");
+        write("\"m23\":" + (space ? " " : "") + "" + ((Matrix4f)value).m23() + "," + (newLine ? "\n" : "") + "");
+        write("\"m30\":" + (space ? " " : "") + "" + ((Matrix4f)value).m30() + "," + (newLine ? "\n" : "") + "");
+        write("\"m31\":" + (space ? " " : "") + "" + ((Matrix4f)value).m31() + "," + (newLine ? "\n" : "") + "");
+        write("\"m32\":" + (space ? " " : "") + "" + ((Matrix4f)value).m32() + "," + (newLine ? "\n" : "") + "");
+        write("\"m33\":" + (space ? " " : "") + "" + ((Matrix4f)value).m33() + "" + (newLine ? "\n" : "") + "");
         prefix = oldPrefix;
         write("}");
     }

@@ -33,7 +33,7 @@ public class Client extends Controller {
             return false;
         }
 
-        Out.printlnInfo("Client started");
+        Out.println("Client started");
 
         return true;
     }
@@ -74,7 +74,7 @@ public class Client extends Controller {
         if (message instanceof ConnectMessage) {
             connected.set(true);
             clientId = message.getReceiverId();
-            Out.printlnInfo("Connected with id " + clientId);
+            Out.println("Connected with id " + clientId);
         } else if (message instanceof AliveMessage) {
             searchingForServer.set(false);
             serverFound.set(true);
@@ -100,7 +100,7 @@ public class Client extends Controller {
             send(new DisconnectMessage());
             clientId = -1;
             connected.set(false);
-            Out.printlnInfo("Disconnected");
+            Out.println("Disconnected");
         }
     }
 

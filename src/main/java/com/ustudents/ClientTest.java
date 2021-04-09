@@ -3,8 +3,6 @@ package com.ustudents;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.network.Client;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class ClientTest {
     public static void main(String[] args) {
         Out.start(args, true, true);

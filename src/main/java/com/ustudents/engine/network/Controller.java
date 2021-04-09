@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("unchecked")
 public abstract class Controller {
@@ -47,6 +48,8 @@ public abstract class Controller {
 
     protected Thread reliabilityThread;
 
+    protected Thread handlerThread;
+
     protected AtomicBoolean connected = new AtomicBoolean(false);
 
     protected AtomicLong lastMessageId = new AtomicLong(-1L);
@@ -57,15 +60,17 @@ public abstract class Controller {
 
     protected Queue<Pair<Message, Boolean>> messagesToSend = new ConcurrentLinkedDeque<>();
 
+    protected Queue<DatagramPacket> packetsReceived = new ConcurrentLinkedDeque<>();
+
     protected List<byte[]> partsAvailable = new CopyOnWriteArrayList<>();
 
     protected Queue<PackMessage> packMessagesToComplete = new ConcurrentLinkedDeque<>();
 
     protected AtomicBoolean waitingForAnswer = new AtomicBoolean(false);
 
-    protected Message answer;
+    protected AtomicReference<Message> answer = new AtomicReference<>(null);
 
-    protected Class answerType;
+    protected AtomicReference<Class> answerType = new AtomicReference<>(null);
 
     public boolean start() {
         return internalStart();
@@ -101,7 +106,7 @@ public abstract class Controller {
         send(message);
 
         waitingForAnswer.set(true);
-        answerType = classType;
+        answerType.set(classType);
 
         while (waitingForAnswer.get()) {
             try {
@@ -111,7 +116,7 @@ public abstract class Controller {
             }
         }
 
-        Message response = answer;
+        Message response = answer.get();
         answer = null;
         answerType = null;
         return (T)response;
@@ -175,6 +180,15 @@ public abstract class Controller {
 
             reliabilityThread.start();
 
+            handlerThread = new Thread(new MessageHandlerRunnable());
+
+            if (getType() == Type.Server) {
+                handlerThread.setName("ServerNetworkHandler");
+            } else {
+                handlerThread.setName("ClientNetworkHandler");
+            }
+
+            handlerThread.start();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -208,9 +222,16 @@ public abstract class Controller {
 
             reliabilityThread = null;
 
+            if (handlerThread != null && handlerThread.isAlive()) {
+                handlerThread.join(1000);
+            }
+
+            handlerThread = null;
+
             connected.set(false);
             lastMessageId.set(-1L);
             reliableAndOrderedMessageIds.clear();
+            packetsReceived.clear();
             messagesToSend.clear();
             partsAvailable.clear();
             packMessagesToComplete.clear();
@@ -242,7 +263,6 @@ public abstract class Controller {
             try {
                 Class classType = Class.forName(type);
                 Message message = (Message)classType.getConstructors()[0].newInstance();
-
                 message.setId(id);
                 message.setSenderId(senderId);
                 message.setReceiverId(receiverId);
@@ -251,17 +271,17 @@ public abstract class Controller {
 
                 if (message instanceof PackMessage) {
                     if (getType() == Type.Server) {
-                        Out.printlnInfo("Pack message incoming from client " + senderId);
+                        Out.println("Pack message incoming from client " + senderId);
                     } else {
-                        Out.printlnInfo("pack message incoming from server");
+                        Out.println("pack message incoming from server");
                     }
 
                     packMessagesToComplete.add((PackMessage)message);
                 } else if (message instanceof ReceivedMessage) {
                     if (getType() == Type.Server) {
-                        Out.printlnInfo("Received message notification " + message.getId() + " (for " + message.getPayload().get("receivedId") + ") from client " + senderId);
+                        Out.println("Received message notification " + message.getId() + " (for " + message.getPayload().get("receivedId") + ") from client " + senderId);
                     } else {
-                        Out.printlnInfo("Received message notification " + message.getId() + " (for " + message.getPayload().get("receivedId") + ") from server");
+                        Out.println("Received message notification " + message.getId() + " (for " + message.getPayload().get("receivedId") + ") from server");
                     }
 
                     reliableMessageIdsToSend.remove(getMessageAwaitingForReturn(((ReceivedMessage)message).getReceivedId()));
@@ -269,12 +289,12 @@ public abstract class Controller {
                 } else {
                     if (getType() == Type.Server) {
                         if (senderId == -1) {
-                            Out.printlnInfo("Message " + message.getId() + " received from unknown client");
+                            Out.println("Message " + message.getId() + " received from unknown client");
                         } else {
-                            Out.printlnInfo("Message " + message.getId() + " received from client " + senderId);
+                            Out.println("Message " + message.getId() + " received from client " + senderId);
                         }
                     } else {
-                        Out.printlnInfo("Message " + message.getId() + " received from server");
+                        Out.println("Message " + message.getId() + " received from server");
                     }
 
                     if (message.getReliability() != Message.Reliability.Unreliable) {
@@ -288,8 +308,8 @@ public abstract class Controller {
                         message.process();
                     }
 
-                    if (waitingForAnswer.get() && message.getClass() == answerType) {
-                        answer = message;
+                    if (waitingForAnswer.get() && message.getClass() == answerType.get()) {
+                        answer.set(message);
                         waitingForAnswer.set(false);
                     }
                 }
@@ -303,9 +323,9 @@ public abstract class Controller {
             }
 
             if (getType() == Type.Server) {
-                Out.printlnInfo("Pack message's part " + (partsAvailable.size() + 1) + " received from client " + packMessagesToComplete.peek().getSenderId());
+                Out.println("Pack message's part " + (partsAvailable.size() + 1) + " received from client " + packMessagesToComplete.peek().getSenderId());
             } else {
-                Out.printlnInfo("pack message's part " + (partsAvailable.size() + 1) + " received from server");
+                Out.println("pack message's part " + (partsAvailable.size() + 1) + " received from server");
             }
 
             partsAvailable.add(Arrays.copyOf(packet.getData(), packet.getData().length));
@@ -354,12 +374,12 @@ public abstract class Controller {
 
                         if (getType() == Type.Server) {
                             if (senderId == -1) {
-                                Out.printlnInfo("Message received from unknown client");
+                                Out.println("Message received from unknown client");
                             } else {
-                                Out.printlnInfo("Message received from client " + senderId);
+                                Out.println("Message received from client " + senderId);
                             }
                         } else {
-                            Out.printlnInfo("Message received from server");
+                            Out.println("Message received from server");
                         }
 
                         if (message.getReliability() != Message.Reliability.Unreliable) {
@@ -373,8 +393,8 @@ public abstract class Controller {
                             message.process();
                         }
 
-                        if (waitingForAnswer.get() && message.getClass() == answerType) {
-                            answer = message;
+                        if (waitingForAnswer.get() && message.getClass() == answerType.get()) {
+                            answer.set(message);
                             waitingForAnswer.set(false);
                         }
                     } catch (Exception e) {
@@ -426,12 +446,13 @@ public abstract class Controller {
                 DatagramPacket packet = new DatagramPacket(pack, pack.length, message.receiverAddress);
 
                 if (socket == null || socket.isClosed()) {
-                    Out.printlnError("Socket already closed");
+                    Out.printlnWarning("Socket already closed");
                     return false;
                 }
 
                 try {
                     socket.send(packet);
+                    // TOOD: REMOVE
                     Thread.sleep(5);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -450,7 +471,7 @@ public abstract class Controller {
             DatagramPacket packet = new DatagramPacket(data, data.length, message.receiverAddress);
 
             if (socket == null || socket.isClosed()) {
-                Out.printlnError("Socket already closed");
+                Out.printlnWarning("Socket already closed");
                 return false;
             }
 
@@ -471,15 +492,15 @@ public abstract class Controller {
 
             if (message instanceof ReceivedMessage) {
                 if (getType() == Type.Server) {
-                    Out.printlnInfo("Message " + message.getId() + " (for " + message.getPayload().get("receivedId") + ") received notification sent from server");
+                    Out.println("Message " + message.getId() + " (for " + message.getPayload().get("receivedId") + ") received notification sent from server");
                 } else {
-                    Out.printlnInfo("Message " + message.getId() + " (for " + message.getPayload().get("receivedId") + ") received notification sent from client");
+                    Out.println("Message " + message.getId() + " (for " + message.getPayload().get("receivedId") + ") received notification sent from client");
                 }
             } else {
                 if (getType() == Type.Server) {
-                    Out.printlnInfo("Message " + message.getId() + " sent from server");
+                    Out.println("Message " + message.getId() + " sent from server");
                 } else {
-                    Out.printlnInfo("Message " + message.getId() + " sent from client");
+                    Out.println("Message " + message.getId() + " sent from client");
                 }
             }
         }
@@ -516,13 +537,10 @@ public abstract class Controller {
     protected class MessageSenderRunnable implements Runnable {
         @Override
         public void run() {
-            final byte[] data = new byte[DEFAULT_MESSAGE_RECEIVER_SIZE];
-            final DatagramPacket packet = new DatagramPacket(data, data.length);
-
             if (getType() == Type.Server) {
-                Out.printlnInfo("Server sender thread started");
+                Out.println("Server sender thread started");
             } else {
-                Out.printlnInfo("Client sender thread started");
+                Out.println("Client sender thread started");
             }
 
             while (!isSocketClosed()) {
@@ -535,9 +553,9 @@ public abstract class Controller {
             }
 
             if (getType() == Type.Server) {
-                Out.printlnInfo("Server sender thread ended");
+                Out.println("Server sender thread ended");
             } else {
-                Out.printlnInfo("Client sender thread ended");
+                Out.println("Client sender thread ended");
             }
         }
     }
@@ -549,9 +567,9 @@ public abstract class Controller {
             final DatagramPacket packet = new DatagramPacket(data, data.length);
 
             if (getType() == Type.Server) {
-                Out.printlnInfo("Server receiver thread started");
+                Out.println("Server receiver thread started");
             } else {
-                Out.printlnInfo("Client receiver thread started");
+                Out.println("Client receiver thread started");
             }
 
             while(true) {
@@ -561,7 +579,7 @@ public abstract class Controller {
                     }
 
                     socket.receive(packet);
-                    internalReceive(packet);
+                    packetsReceived.add(packet);
                 } catch (Exception e) {
                     if (!isSocketClosed()) {
                         Out.printlnWarning("Error while receiving packet.");
@@ -570,9 +588,38 @@ public abstract class Controller {
             }
 
             if (getType() == Type.Server) {
-                Out.printlnInfo("Server receiver thread ended");
+                Out.println("Server receiver thread ended");
             } else {
-                Out.printlnInfo("Client receiver thread ended");
+                Out.println("Client receiver thread ended");
+            }
+        }
+    }
+
+    protected class MessageHandlerRunnable implements Runnable {
+        @Override
+        public void run() {
+            if (getType() == Type.Server) {
+                Out.println("Server handler thread started");
+            } else {
+                Out.println("Client handler thread started");
+            }
+
+            while (!isSocketClosed()) {
+                if (!packetsReceived.isEmpty()) {
+                    internalReceive(packetsReceived.poll());
+                }
+
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (getType() == Type.Server) {
+                Out.println("Server handler thread ended");
+            } else {
+                Out.println("Client handler thread ended");
             }
         }
     }
@@ -581,9 +628,9 @@ public abstract class Controller {
         @Override
         public void run() {
             if (getType() == Type.Server) {
-                Out.printlnInfo("Server reliability checker thread started");
+                Out.println("Server reliability checker thread started");
             } else {
-                Out.printlnInfo("Client reliability checker thread started");
+                Out.println("Client reliability checker thread started");
             }
 
             while (!isSocketClosed()) {
@@ -595,9 +642,9 @@ public abstract class Controller {
                             aliveStateChanged();
                         } else {
                             if (getType() == Type.Server) {
-                                Out.printlnInfo("Resending unreceived message " + element.getObject1().getId() + " from server");
+                                Out.println("Resending unreceived message " + element.getObject1().getId() + " from server");
                             } else {
-                                Out.printlnInfo("Resending unreceived message " + element.getObject1().getId() + " from client");
+                                Out.println("Resending unreceived message " + element.getObject1().getId() + " from client");
                             }
                             internalSend(element.getObject1(), false, true);
                             element.setObject2(0);
@@ -615,9 +662,9 @@ public abstract class Controller {
             }
 
             if (getType() == Type.Server) {
-                Out.printlnInfo("Server reliability checker thread ended");
+                Out.println("Server reliability checker thread ended");
             } else {
-                Out.printlnInfo("Client reliability checker thread ended");
+                Out.println("Client reliability checker thread ended");
             }
         }
     }
