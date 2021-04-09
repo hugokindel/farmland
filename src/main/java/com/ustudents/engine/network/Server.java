@@ -103,10 +103,8 @@ public class Server extends Controller {
     }
 
     public void broadcast(Message message) {
-        Out.println("broadcast");
         for (Map.Entry<Integer, Connection> client : clients.entrySet()) {
             send(client.getKey(), Objects.requireNonNull(Message.clone(message)));
-            Out.println(client.getValue().socket.getPort());
         }
     }
 

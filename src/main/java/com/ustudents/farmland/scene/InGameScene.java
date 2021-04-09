@@ -162,10 +162,10 @@ public class InGameScene extends Scene {
         textData.color = Color.BLACK;
         guiBuilder.addText(textData);
 
-        String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
-        String text = "Argent: " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
-        if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
-            text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
+        String selectedId = Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID;
+        String text = "Argent: " + Farmland.get().getCurrentSave().getLocalPlayer().money;
+        if (Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID != null) {
+            text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         GuiBuilder.TextData textData2 = new GuiBuilder.TextData(text);
         textData2.id = "selectedLabel";
@@ -507,9 +507,9 @@ public class InGameScene extends Scene {
 
     public void onSelectedItemOrMoneyChanged() {
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
-        String text = "Argent: " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
-        if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
-            text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
+        String text = "Argent: " + Farmland.get().getCurrentSave().getLocalPlayer().money;
+        if (Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID != null) {
+            text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
     }

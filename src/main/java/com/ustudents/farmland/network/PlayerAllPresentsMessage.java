@@ -8,7 +8,6 @@ import com.ustudents.farmland.Farmland;
 public class PlayerAllPresentsMessage extends Message {
     @Override
     public void process() {
-        Out.println("ALL PLAYER PRESENT");
         Farmland.get().allPlayersPresents.set(true);
     }
 }
