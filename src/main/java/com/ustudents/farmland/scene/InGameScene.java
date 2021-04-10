@@ -63,6 +63,8 @@ public class InGameScene extends Scene {
         initializeGui();
         initializeGameplay();
         economicComponent = new EconomicComponent();
+        checkPlayerFrame();
+        moneyUpdate();
 
         if (Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
             getEntityByName("endTurnButton").setEnabled(false);
@@ -104,12 +106,67 @@ public class InGameScene extends Scene {
         imageDataFrame.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         imageDataFrame.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         imageDataFrame.scale = new Vector2f(3f, 3f);
-        imageDataFrame.position.y = 30;
+        imageDataFrame.position.y = 10;
         imageDataFrame.position.x = 3;
         imageDataFrame.zIndex = 2;
         guiBuilder.addImage(imageDataFrame);
 
         initializeAvatar(guiBuilder);
+
+        Texture moneyTexture = Resources.loadTexture("ui/coin3.png");
+        GuiBuilder.ImageData imageDataMoney = new GuiBuilder.ImageData(moneyTexture);
+        imageDataMoney.id = "MoneyImage";
+        imageDataMoney.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        imageDataMoney.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        imageDataMoney.scale = new Vector2f(3f, 3f);
+        imageDataMoney.position.y = 190;
+        imageDataMoney.position.x = 3;
+        imageDataMoney.zIndex = 2;
+        guiBuilder.addImage(imageDataMoney);
+
+        Texture goldTrophyTexture = Resources.loadTexture("ui/goldtrophy.png");
+        GuiBuilder.ImageData imageDataGT = new GuiBuilder.ImageData(goldTrophyTexture);
+        imageDataGT.id = "GTImage";
+        imageDataGT.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
+        imageDataGT.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
+        imageDataGT.scale = new Vector2f(3f, 3f);
+        imageDataGT.position = new Vector2f(-10, 40);
+        imageDataGT.zIndex = 2;
+        guiBuilder.addImage(imageDataGT);
+
+        if (Farmland.get().getCurrentSave().players.size() >= 2) {
+            Texture silverTrophyTexture = Resources.loadTexture("ui/silvertrophy.png");
+            GuiBuilder.ImageData imageDataST = new GuiBuilder.ImageData(silverTrophyTexture);
+            imageDataST.id = "STImage";
+            imageDataST.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
+            imageDataST.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
+            imageDataST.scale = new Vector2f(3f, 3f);
+            imageDataST.position = new Vector2f(-10, 85);
+            imageDataST.zIndex = 2;
+            guiBuilder.addImage(imageDataST);
+        }
+
+        if (Farmland.get().getCurrentSave().players.size() >= 3) {
+            Texture bronzeTrophyTexture = Resources.loadTexture("ui/bronzetrophy.png");
+            GuiBuilder.ImageData imageDataBT = new GuiBuilder.ImageData(bronzeTrophyTexture);
+            imageDataBT.id = "BTImage";
+            imageDataBT.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
+            imageDataBT.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
+            imageDataBT.scale = new Vector2f(3f, 3f);
+            imageDataBT.position = new Vector2f(-10, 130);
+            imageDataBT.zIndex = 2;
+            guiBuilder.addImage(imageDataBT);
+        }
+
+        Texture leaderBoardTexture = Resources.loadTexture("ui/leaderboard.png");
+        GuiBuilder.ImageData imageDataLB = new GuiBuilder.ImageData(leaderBoardTexture);
+        imageDataLB.id = "BTImage";
+        imageDataLB.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
+        imageDataLB.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
+        imageDataLB.scale = new Vector2f(2f, 2f);
+        imageDataLB.position = new Vector2f(-200, -5);
+        imageDataLB.zIndex = 2;
+        guiBuilder.addImage(imageDataLB);
 
         GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Finir le tour", (dataType, data) -> {
             Farmland.get().getCurrentSave().endTurn();
@@ -195,7 +252,7 @@ public class InGameScene extends Scene {
         guiBuilder.addText(textData);
 
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
-        String text = "Argent: " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
+        String text = "    " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
         if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
             text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
         }
@@ -203,7 +260,7 @@ public class InGameScene extends Scene {
         textData2.id = "selectedLabel";
         textData2.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         textData2.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
-        textData2.position = new Vector2f(10, 10);
+        textData2.position = new Vector2f(10, 195);
         textData2.color = Color.BLACK;
 
         guiBuilder.addText(textData2);
@@ -213,7 +270,7 @@ public class InGameScene extends Scene {
         }
 
         List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getCurrentSave().players);
-        String leaderBoard = "LeaderBoard : ";
+        String leaderBoard = "    LeaderBoard";
         for (Player player : leaderBoardList) {
             leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getCurrentSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
         }
@@ -236,8 +293,8 @@ public class InGameScene extends Scene {
         base.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         base.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         base.scale = new Vector2f(3f, 3f);
-        base.position.y = 56;
-        base.position.x = 30;
+        base.position.y = 52;
+        base.position.x = 46;
         base.region = avatarSprites.getSprite("base").getRegion();
         base.zIndex = 0;
         guiBuilder.addImage(base);
@@ -247,8 +304,8 @@ public class InGameScene extends Scene {
         braces.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         braces.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         braces.scale = new Vector2f(3f, 3f);
-        braces.position.y = 56;
-        braces.position.x = 30;
+        braces.position.y = 52;
+        braces.position.x = 46;
         braces.region = avatarSprites.getSprite("layerBraces").getRegion();
         braces.zIndex = 1;
         braces.tint = Farmland.get().getCurrentSave().players.get(0).avatar.bracesColor;
@@ -259,8 +316,8 @@ public class InGameScene extends Scene {
         shirt.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         shirt.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         shirt.scale = new Vector2f(3f, 3f);
-        shirt.position.y = 56;
-        shirt.position.x = 30;
+        shirt.position.y = 52;
+        shirt.position.x = 46;
         shirt.region = avatarSprites.getSprite("layerShirt").getRegion();
         shirt.zIndex = 1;
         shirt.tint = Farmland.get().getCurrentSave().players.get(0).avatar.shirtColor;
@@ -271,8 +328,8 @@ public class InGameScene extends Scene {
         hat.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         hat.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         hat.scale = new Vector2f(3f, 3f);
-        hat.position.y = 56;
-        hat.position.x = 30;
+        hat.position.y = 52;
+        hat.position.x = 46;
         hat.region = avatarSprites.getSprite("layerHat").getRegion();
         hat.zIndex = 1;
         hat.tint = Farmland.get().getCurrentSave().players.get(0).avatar.hatColor;
@@ -283,8 +340,8 @@ public class InGameScene extends Scene {
         buttons.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         buttons.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         buttons.scale = new Vector2f(3f, 3f);
-        buttons.position.y = 56;
-        buttons.position.x = 30;
+        buttons.position.y = 52;
+        buttons.position.x = 46;
         buttons.region = avatarSprites.getSprite("layerButtons").getRegion();
         buttons.zIndex = 1;
         buttons.tint = Farmland.get().getCurrentSave().players.get(0).avatar.buttonsColor;
@@ -396,7 +453,7 @@ public class InGameScene extends Scene {
                         int travelPrice = 10;
                         if (ImGui.button("Envoyé " + playerInventory.get(item).name + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
                             player.setMoney(playerMoney - travelPrice);
-                            player.caravanList.add(new Caravan(sellValueOfCaravan,travelTime,playerInventory.get(item).name));
+                            player.caravanList.add(new Caravan(sellValueOfCaravan,travelTime,item));
                             for (int i = 0; i < currentQuantity / 2; i++) {
                                 player.deleteFromInventory(playerInventory.get(item), "Caravan");
                             }
@@ -422,7 +479,7 @@ public class InGameScene extends Scene {
 
                 for (int i = 0; i < player.caravanList.size() ; i++){
                     Caravan caravan = player.caravanList.get(i);
-                    ImGui.text("Caravane de " + caravan.getProduct() + " pour " + caravan.getReward() + " pieces / arrivée dans " + (caravan.getTotalTurn() - caravan.getTravelTurn()) + " tours");
+                    ImGui.text("Caravane pour " + caravan.getReward() + " pieces / arrivée dans " + (caravan.getTotalTurn() - caravan.getTravelTurn()) + " tours");
                 }
             }
         }
@@ -761,9 +818,9 @@ public class InGameScene extends Scene {
 
     public void leaderBoardUpdate(){
         List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getCurrentSave().players);
-        String leaderBoard = "LeaderBoard : ";
+        String leaderBoard = "    LeaderBoard";
         for (Player player : leaderBoardList) {
-            leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getCurrentSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
+            leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getCurrentSave().deadPlayers.contains(player.getId()) ? "dead" : player.money) + "   ";
         }
         getEntityByName("LeaderBoardLabel").getComponent(TextComponent.class).setText(leaderBoard);
     }
@@ -788,11 +845,26 @@ public class InGameScene extends Scene {
 
     public void onSelectedItemOrMoneyChanged() {
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
-        String text = "Argent: " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
+        String text = "    " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
         if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
             text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
+        moneyUpdate();
+    }
+
+    public void moneyUpdate(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        int playerMoney = player.money;
+        if (playerMoney >= 750){
+            getEntityByName("MoneyImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/coin4.png")));
+        } else if (playerMoney >= 500){
+            getEntityByName("MoneyImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/coin3.png")));
+        } else if (playerMoney >= 250){
+            getEntityByName("MoneyImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/coin2.png")));
+        } else {
+            getEntityByName("MoneyImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/coin.png")));
+        }
     }
 
     public void onSecondElapsed(int secondsElapsed) {

@@ -17,6 +17,10 @@ public class Caravan {
     @JsonSerializable
     public String product;
 
+    public Caravan(){
+        this(0,"nothing");
+    }
+
     public Caravan(Integer r, String p){
         this(r,0,4,p);
     }

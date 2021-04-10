@@ -194,13 +194,19 @@ public class JsonReader {
         return new Pair<>(identifier, value);
     }
 
+    private Object parseValue() throws IOException, JSonCannotParseException {
+        return parseValue(true);
+    }
+
     /**
      * Parses a value, which is any data type supported by Json.
      *
      * @return the value as a Java Object.
      */
-    private Object parseValue() throws IOException, JSonCannotParseException {
-        next();
+    private Object parseValue(boolean goNext) throws IOException, JSonCannotParseException {
+        if (goNext) {
+            next();
+        }
 
         if (is(currentCharacter, '"')) {
             return parseString();
@@ -335,7 +341,11 @@ public class JsonReader {
         List<Object> elements = new ArrayList<>();
 
         do {
-            Object element = parseValue();
+            next();
+            if (is(currentCharacter, ']')) {
+                break;
+            }
+            Object element = parseValue(false);
             elements.add(element);
             check(currentCharacter, ']', ',');
         } while (!is(currentCharacter, ']'));

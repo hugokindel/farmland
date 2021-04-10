@@ -17,6 +17,10 @@ public class Research {
     @JsonSerializable
     public Integer effect;
 
+    public Research(){
+        this("Sans nom");
+    }
+
     public Research(String n){
         this(n,1,10,0);
     }

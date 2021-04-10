@@ -84,6 +84,8 @@ public class Player {
         this.researchList.add(new Research("Eleveur"));
     }
 
+
+    /**
     @JsonSerializableConstructor
     public void deserialize() {
         Map<String, Item> realInventory = new HashMap<>();
@@ -103,7 +105,7 @@ public class Player {
         }
         buyInventory = realInventory;
         sellInventory = realSellInventory;
-    }
+    }*/
 
     public void addToInventory(Item item, String name) {
         if(name.equals("Buy")){
