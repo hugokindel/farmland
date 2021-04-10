@@ -3,7 +3,6 @@ package com.ustudents.farmland.scene;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
-import com.ustudents.engine.network.Client;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
@@ -22,7 +21,7 @@ import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Player;
-import com.ustudents.farmland.network.BuyRequest;
+import com.ustudents.farmland.network.BuyMessage;
 import com.ustudents.farmland.network.LoadSaveResponse;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import com.ustudents.farmland.scene.menus.ResultMenu;
@@ -272,11 +271,7 @@ public class InGameScene extends Scene {
 
             for(Item item : Farmland.get().getResourceDatabase().values()){
                 if(ImGui.button(nickNameItem(item)) && playerMoney>=item.value){
-                    if (Farmland.get().isConnectedToServer()) {
-                        Farmland.get().getClient().send(new BuyRequest(item.id));
-                    } else {
-                        Farmland.get().getCurrentSave().getCurrentPlayer().buy(item, 1);
-                    }
+                    Farmland.get().getCurrentSave().getCurrentPlayer().buy(item, 1);
                 }
                 ImGui.sameLine();
                 ImGui.text("Prix d'achat : " + item.value);
@@ -323,18 +318,14 @@ public class InGameScene extends Scene {
     }
 
     public void onTurnEnded() {
-        Out.println("Turn end");
-
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
 
+        if (Farmland.get().hasAuthority()) {
             if(Farmland.get().getCurrentSave().turn%2 == 0){
                 economicComponent.changeValueOfRessource();
                 economicComponent.lastItemTurn = new ArrayList<>();
                 economicComponent.lastItemTurn.addAll(Farmland.get().getCurrentSave().itemsTurn);
                 Farmland.get().getCurrentSave().itemsTurn= new ArrayList<>();
-            }
-            if (!Farmland.get().getCurrentSave().deadPlayers.contains(currentPlayer.getId())) {
-                getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
             }
 
             if (Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
@@ -367,6 +358,11 @@ public class InGameScene extends Scene {
                     leaderBoardUpdate();
                 }
             }
+        }
+
+        if (!Farmland.get().getCurrentSave().deadPlayers.contains(currentPlayer.getId())) {
+            getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
+        }
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
             if (!currentPlayer.getId().equals(Farmland.get().getCurrentSave().getLocalPlayer().getId())) {
@@ -523,6 +519,11 @@ public class InGameScene extends Scene {
         if (Farmland.get().isConnectedToServer()) {
             SaveGame saveGame = LoadSaveResponse.getUpdatedSaveGame();
             if (saveGame != null) {
+                if (saveGame.turn > Farmland.get().getCurrentSave().turn) {
+                    onTurnEnded();
+                    getEntityByName("grid").getComponent(TurnTimerComponent.class).onTurnEnded();
+                }
+
                 int time = saveGame.turnTimePassed > Farmland.get().getCurrentSave().turnTimePassed ? saveGame.turnTimePassed : Farmland.get().getCurrentSave().turnTimePassed;
                 Farmland.get().saveGames.put(Farmland.get().saveId, saveGame);
                 Farmland.get().getCurrentSave().turnTimePassed = time;

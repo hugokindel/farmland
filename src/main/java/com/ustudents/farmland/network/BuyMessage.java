@@ -7,12 +7,12 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.item.Item;
 
 // PROCESSED ON SERVER
-public class BuyRequest extends Message {
-    public BuyRequest() {
+public class BuyMessage extends Message {
+    public BuyMessage() {
 
     }
 
-    public BuyRequest(String itemId) {
+    public BuyMessage(String itemId) {
         getPayload().put("item", itemId);
     }
 

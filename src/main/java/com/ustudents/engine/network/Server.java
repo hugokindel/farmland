@@ -92,7 +92,9 @@ public class Server extends Controller {
         if (message.getReceiverId() == -1) {
             Out.printlnWarning("Can't send message, missing receiver id.");
         } else {
-            Out.println("Send message to client " + message.getReceiverId());
+            if (Game.isDebugging()) {
+                Out.printlnDebug("Send message to client " + message.getReceiverId());
+            }
             super.send(message);
         }
     }
@@ -155,7 +157,7 @@ public class Server extends Controller {
                     clientThreads.put(clientId, runThread("ClientReader" + clientId, new ClientReaderRunnable(clientId)));
 
                     if (Game.isDebugging()) {
-                        Out.println("New client connected with id " + client);
+                        Out.printlnDebug("New client connected with id " + client);
                     }
                 }
             } catch (Exception e) {
@@ -180,20 +182,20 @@ public class Server extends Controller {
 
                 while (isAlive() && clients.containsKey(clientId) && connection.isAlive()) {
                     if (Game.isDebugging()) {
-                        Out.println("Data received from client " + clientId);
+                        Out.printlnDebug("Data received from client " + clientId);
                     }
 
                     String data = connection.reader.readLine();
                     if (data == null) {
                         if (Game.isDebugging()) {
-                            Out.println("End of stream received from client " + clientId);
+                            Out.printlnDebug("End of stream received from client " + clientId);
                         }
 
                         break;
                     }
 
                     if (Game.isDebugging()) {
-                        Out.println("Data received from client " + clientId + ": " + data);
+                        Out.printlnDebug("Data received from client " + clientId + ": " + data);
                     }
 
                     messagesToRead.add(new Pair<>(clientId, data));

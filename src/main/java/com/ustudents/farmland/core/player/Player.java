@@ -10,11 +10,10 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
-import com.ustudents.farmland.network.BuyRequest;
+import com.ustudents.farmland.network.BuyMessage;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -235,7 +234,7 @@ public class Player {
                 Farmland.get().getCurrentSave().itemsTurn.add(item);
             }
         } else {
-            Game.get().getClient().send(new BuyRequest(item.id));
+            Game.get().getClient().send(new BuyMessage(item.id));
         }
     }
 }

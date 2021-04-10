@@ -15,6 +15,8 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
+import com.ustudents.farmland.network.EndTurnMessage;
+import com.ustudents.farmland.network.LoadSaveResponse;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -183,7 +185,11 @@ public class SaveGame {
     }
 
     public void endTurn() {
-        if (Farmland.get().getNetMode() == NetMode.Standalone || Farmland.get().getNetMode() == NetMode.DedicatedServer) {
+        if (Game.get().hasAuthority()) {
+            if (Game.isDebugging()) {
+                Out.printlnDebug("Turn end");
+            }
+
             if (currentPlayerId == players.size() - 1) {
                 turn++;
                 currentPlayerId = 0;
@@ -192,6 +198,8 @@ public class SaveGame {
             }
 
             turnEnded.dispatch();
+        } else {
+            Game.get().getClient().send(new EndTurnMessage());
         }
     }
 

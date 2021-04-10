@@ -37,7 +37,7 @@ public class Farmland extends Game {
 
     public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
 
-    public AtomicInteger clientPlayerId = new AtomicInteger(-1);
+    public AtomicInteger clientPlayerId = new AtomicInteger(0);
 
     public AtomicBoolean allPlayersPresents = new AtomicBoolean(false);
 
@@ -52,7 +52,7 @@ public class Farmland extends Game {
 
         if (getNetMode() == NetMode.DedicatedServer) {
             if (saveGames.containsKey("save-server.json")) {
-                loadSave("save-server.json", -1);
+                loadSave("save-server.json", 0);
             } else {
                 SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), new Vector2i(16, 16), System.currentTimeMillis(), ((Long)serverConfig.get("numberBots")).intValue());
                 saveGame.path = "save-server.json";
@@ -61,7 +61,7 @@ public class Farmland extends Game {
                     saveGame.addPlayer("TEMP", "TEMP", Color.RED);
                 }
                 saveGames.put("save-server.json", saveGame);
-                loadSave("save-server.json", -1);
+                loadSave("save-server.json", 0);
             }
         }
 
