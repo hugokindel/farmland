@@ -11,6 +11,8 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.system.Caravan;
+import com.ustudents.farmland.core.system.Research;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -54,11 +56,11 @@ public class Player {
 
     public String ipAddress;
 
-    public List<Pair<Integer,Integer>> caravans;
+    @JsonSerializable
+    public List<Caravan> caravanList;
 
-    public Triplet<Integer,Integer,Integer> farmerResearch;
-
-    public Triplet<Integer,Integer,Integer> breederResearch;
+    @JsonSerializable
+    public List<Research> researchList;
 
     public EventDispatcher moneyChanged = new EventDispatcher();
 
@@ -76,9 +78,10 @@ public class Player {
         this.typeOfPlayer = typeOfPlayer;
         this.buyInventory = new HashMap<>();
         this.sellInventory = new HashMap<>();
-        this.caravans = new ArrayList<>();
-        this.farmerResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
-        this.breederResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
+        this.caravanList = new ArrayList<>();
+        this.researchList = new ArrayList<>();
+        this.researchList.add(new Research("Fermier"));
+        this.researchList.add(new Research("Eleveur"));
     }
 
     @JsonSerializableConstructor

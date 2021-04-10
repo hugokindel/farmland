@@ -23,6 +23,8 @@ import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Player;
+import com.ustudents.farmland.core.system.Caravan;
+import com.ustudents.farmland.core.system.Research;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import com.ustudents.farmland.scene.menus.ResultMenu;
 import imgui.ImGui;
@@ -341,24 +343,15 @@ public class InGameScene extends Scene {
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
 
         ImGui.text("Recherches : \n\n");
-        // FarmerResearch
-        if (ImGui.button("Améliorer Fermier " + "[" + player.farmerResearch.getObject1() + "]") && player.money > player.farmerResearch.getObject1()){
-            player.setMoney(player.money - player.farmerResearch.getObject1());
-            player.farmerResearch.setObject1(player.farmerResearch.getObject1() + 10);
-            player.farmerResearch.setObject2(player.farmerResearch.getObject2() + 1);
-            player.farmerResearch.setObject3(player.farmerResearch.getObject3() + 1);
+        for (int i = 0; i < player.researchList.size(); i++){
+            Research research = player.researchList.get(i);
+            if (ImGui.button("Améliorer " + research.getName() + "[" + research.getPrice() + "]") && player.money > research.getPrice()){
+                player.setMoney(player.money - research.getPrice());
+                research.levelUp(10,1);
+            }
+            ImGui.sameLine();
+            ImGui.text( research.getName() + " niveau : " + research.getLevel() + " bonus de revente : " + research.getEffect());
         }
-        ImGui.sameLine();
-        ImGui.text(" Fermier niveau : " + player.farmerResearch.getObject2() + " bonus de revente : " + player.farmerResearch.getObject3());
-        // BreederReasearch
-        if (ImGui.button("Améliorer Eleveur " + "[" + player.breederResearch.getObject1() + "]") && player.money > player.breederResearch.getObject1()){
-            player.setMoney(player.money - player.breederResearch.getObject1());
-            player.breederResearch.setObject1(player.breederResearch.getObject1() + 10);
-            player.breederResearch.setObject2(player.breederResearch.getObject2() + 1);
-            player.breederResearch.setObject3(player.breederResearch.getObject3() + 1);
-        }
-        ImGui.sameLine();
-        ImGui.text(" Eleveur niveau : " + player.breederResearch.getObject2() + " bonus de revente : " + player.breederResearch.getObject3());
     }
 
     private void ImGuiBuyingCaravan(){
@@ -385,15 +378,25 @@ public class InGameScene extends Scene {
                 for (String item : uniqueItems) {
                     int currentQuantity = playerInventory.get(item).quantity;
                     if (currentQuantity > 1) {
+                        int fEffect = 0;
+                        int eEffect = 0;
+                        for (int i = 0; i < player.researchList.size(); i++){
+                            Research re = player.researchList.get(i);
+                            if (re.getName().equals("Fermier")){
+                                fEffect = re.getEffect();
+                            } else if (re.getName().equals("Eleveur")){
+                                eEffect = re.getEffect();
+                            }
+                        }
 
-                        int researchBonus = (playerInventory.get(item) instanceof Crop)? player.farmerResearch.getObject3() : player.breederResearch.getObject3();
+                        int researchBonus = (playerInventory.get(item) instanceof Crop)? fEffect : eEffect;
 
                         int sellValueOfCaravan = (int) (((playerInventory.get(item).value + researchBonus) * 1.25) * currentQuantity / 2);
                         int travelTime = 4;
                         int travelPrice = 10;
                         if (ImGui.button("Envoyé " + playerInventory.get(item).name + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
                             player.setMoney(playerMoney - travelPrice);
-                            player.caravans.add(new Pair<>(travelTime, sellValueOfCaravan));
+                            player.caravanList.add(new Caravan(sellValueOfCaravan,travelTime,playerInventory.get(item).name));
                             for (int i = 0; i < currentQuantity / 2; i++) {
                                 player.deleteFromInventory(playerInventory.get(item), "Caravan");
                             }
@@ -412,14 +415,14 @@ public class InGameScene extends Scene {
                 }
             }
         } else {
-            if (player.caravans.isEmpty()){
-                ImGui.text(" Vous ne possedez pas de caravanes ");
+            if (player.caravanList.isEmpty()){
+                ImGui.text("Vous ne possedez pas de caravanes ");
             } else {
-                ImGui.text(" Parcour de vos caravanes : \n\n");
+                ImGui.text("Parcour de vos caravanes : \n\n");
 
-                for (int i = 0; i < player.caravans.size() ; i++){
-                    Pair<Integer,Integer> caravan = player.caravans.get(i);
-                    ImGui.text("Caravane pour " + caravan.getObject2() + " pieces : " + caravan.getObject1() + " tours restants");
+                for (int i = 0; i < player.caravanList.size() ; i++){
+                    Caravan caravan = player.caravanList.get(i);
+                    ImGui.text("Caravane de " + caravan.getProduct() + " pour " + caravan.getReward() + " pieces / arrivée dans " + (caravan.getTotalTurn() - caravan.getTravelTurn()) + " tours");
                 }
             }
         }
@@ -618,29 +621,37 @@ public class InGameScene extends Scene {
 
     public void checkPlayerFrame(){
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
-        int bl = player.breederResearch.getObject2();
-        int fl = player.farmerResearch.getObject2();
+        int fLevel = 0;
+        int eLevel = 0;
+        for (int i = 0; i < player.researchList.size(); i++){
+            Research re = player.researchList.get(i);
+            if (re.getName().equals("Fermier")){
+                fLevel = re.getLevel();
+            } else if (re.getName().equals("Eleveur")){
+                eLevel = re.getLevel();
+            }
+        }
 
-        if (bl > 4){
-            if (fl > 4){
+        if (eLevel > 4){
+            if (fLevel > 4){
                 getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2breeder2.png")));
-            } else if (fl > 2){
+            } else if (fLevel > 2){
                 getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmerbreeder2.png")));
             } else {
                 getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/breeder2.png")));
             }
-        } else if (bl > 2){
-            if (fl > 4){
+        } else if (eLevel > 2){
+            if (fLevel > 4){
                 getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2breeder.png")));
-            } else if (fl > 2){
+            } else if (fLevel > 2){
                 getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmerbreeder.png")));
             } else {
                 getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/breeder.png")));
             }
-        } else if (fl > 4){
+        } else if (fLevel > 4){
             getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2.png")));
 
-        } else if (fl > 2){
+        } else if (fLevel > 2){
             getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer.png")));
         }
     }
@@ -759,19 +770,19 @@ public class InGameScene extends Scene {
 
     public void checkCaravan(){
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
-        if (!currentPlayer.caravans.isEmpty()){
-            List<Pair<Integer,Integer>> toDelete = new ArrayList<>();
+        if (!currentPlayer.caravanList.isEmpty()){
+            List<Caravan> toDelete = new ArrayList<>();
 
-            for (int i = 0; i < currentPlayer.caravans.size() ; i++){
-                Pair<Integer,Integer> caravan = currentPlayer.caravans.get(i);
-                caravan.setObject1(caravan.getObject1() - 1);
-                if (caravan.getObject1() == 0){
-                    currentPlayer.setMoney(currentPlayer.money + caravan.getObject2());
-                    toDelete.add(currentPlayer.caravans.get(i));
+            for (int i = 0; i < currentPlayer.caravanList.size() ; i++){
+                Caravan caravan = currentPlayer.caravanList.get(i);
+                caravan.turnDone();
+                if (caravan.hasArrived()){
+                    currentPlayer.setMoney(currentPlayer.money + caravan.getReward());
+                    toDelete.add(currentPlayer.caravanList.get(i));
                 }
             }
 
-            currentPlayer.caravans.removeAll(toDelete);
+            currentPlayer.caravanList.removeAll(toDelete);
         }
     }
 
