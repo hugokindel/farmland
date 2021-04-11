@@ -15,6 +15,7 @@ import org.joml.Vector4f;
 
 // TODO: Optimize & refactor
 @Viewable
+@SuppressWarnings("unchecked")
 public class ButtonComponent extends BehaviourComponent implements RenderableComponent {
     @Viewable
     public TextComponent label;

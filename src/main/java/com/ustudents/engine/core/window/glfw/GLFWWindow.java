@@ -29,6 +29,7 @@ import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+@SuppressWarnings("unchecked")
 public class GLFWWindow extends EmptyWindow {
     private String name;
 

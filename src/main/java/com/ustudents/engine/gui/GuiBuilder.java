@@ -18,6 +18,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.w3c.dom.Text;
 
+@SuppressWarnings("unchecked")
 public class GuiBuilder {
     public static class TextData {
         public String text;

@@ -15,6 +15,7 @@ import org.joml.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 // Implementation in part from: https://github.com/JOML-CI/joml-camera/blob/master/src/org/joml/camera/OrthoCameraControl.java
+@SuppressWarnings("unchecked")
 public class Camera {
     public static class PositionChanged extends Event {
         public Vector2f position;

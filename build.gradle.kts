@@ -77,6 +77,7 @@ tasks {
         useJUnitPlatform()
     }
 
+    // Set main class to run.
     jar {
         manifest {
             attributes(
@@ -86,6 +87,7 @@ tasks {
     }
 }
 
+// Changes the standard input (useful because Gradle can hide the input in some cases).
 val run by tasks.getting(JavaExec::class) {
     standardInput = System.`in`
 }

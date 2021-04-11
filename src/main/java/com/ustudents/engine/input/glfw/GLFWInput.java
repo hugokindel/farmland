@@ -13,6 +13,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
 
+@SuppressWarnings("unchecked")
 public class GLFWInput extends EmptyInput {
     private int[] keyStates;
 
