@@ -36,17 +36,17 @@ public class MainMenu extends MenuScene {
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, true, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, true,
+                false);
 
         super.initialize();
     }
 
     @Override
     public void update(float dt) {
-        if (Farmland.get().getNetMode() == NetMode.DedicatedServer) {
-            if (Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getLoadedSave().maxNumberPlayers) {
-                changeScene(new InGameScene());
-            }
+        if (Farmland.get().getNetMode() == NetMode.DedicatedServer &&
+                Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getLoadedSave().maxNumberPlayers) {
+            changeScene(new InGameScene());
         }
     }
 }

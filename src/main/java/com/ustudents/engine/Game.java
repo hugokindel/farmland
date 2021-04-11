@@ -478,7 +478,7 @@ public abstract class Game extends Runnable {
     }
 
     public static boolean isMainThread() {
-        return Thread.currentThread().getName().equals("FarmlandMainThread");
+        return Thread.currentThread().getName().equals("GameMainThread");
     }
 
     /** Updates the game logic. */

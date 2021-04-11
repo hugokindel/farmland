@@ -10,7 +10,6 @@ import com.ustudents.engine.scene.system.UiRenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.scene.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
-import com.ustudents.farmland.Farmland;
 import org.joml.Vector2i;
 
 import java.util.Map;

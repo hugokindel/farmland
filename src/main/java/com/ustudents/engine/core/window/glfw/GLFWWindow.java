@@ -3,12 +3,10 @@ package com.ustudents.engine.core.window.glfw;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
 import com.ustudents.engine.core.window.events.*;
 import com.ustudents.engine.graphic.RenderTarget;
 import com.ustudents.engine.scene.SceneManager;
-import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import org.joml.Vector2f;
@@ -263,14 +261,6 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetKeyCallback(windowHandle, new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                /*if (Farmland.get().isImGuiEnabled() && (Farmland.get().isImGuiToolsEnabled() || SceneManager.getScene().isForceImGuiEnabled())) {
-                    final ImGuiIO io = ImGui.getIO();
-
-                    if (io.getWantCaptureKeyboard()) {
-                        return;
-                    }
-                }*/
-
                 keyStateChanged.dispatch(new KeyStateChangedEvent(key, scancode, action, mods));
             }
         });
