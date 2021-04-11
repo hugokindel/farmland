@@ -21,7 +21,7 @@
     "initLevel" : 0,
     "actualLevel" : 0,
     "maxLevel" : 0,
-    "texture": "crop.json",
+    "texture": "crops.json",
     "sprites" :[
       "crop1"
     ],

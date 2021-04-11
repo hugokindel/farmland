@@ -71,15 +71,15 @@ public class Cell {
     }
 
     public boolean isOwnedByCurrentPlayer() {
-        return Farmland.get().getCurrentSave() != null && ownerId.equals(Farmland.get().getCurrentSave().currentPlayerId);
+        return Farmland.get().getLoadedSave() != null && ownerId.equals(Farmland.get().getLoadedSave().currentPlayerId);
     }
 
     public boolean isOwnedByLocalPlayer() {
-        return Farmland.get().getCurrentSave() != null && ownerId.equals(Farmland.get().getCurrentSave().localPlayerId);
+        return Farmland.get().getLoadedSave() != null && ownerId.equals(Farmland.get().getLoadedSave().localPlayerId);
     }
 
     public boolean isOwnedByBot() {
-        return Farmland.get().getCurrentSave() != null && isOwned() && Farmland.get().getCurrentSave().players.get(ownerId).typeOfPlayer.equals("Robot");
+        return Farmland.get().getLoadedSave() != null && isOwned() && Farmland.get().getLoadedSave().players.get(ownerId).typeOfPlayer.equals("Robot");
     }
 
     public boolean isOwnedByBot(SaveGame saveGame) {

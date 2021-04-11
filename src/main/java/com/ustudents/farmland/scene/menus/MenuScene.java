@@ -53,9 +53,9 @@ public abstract class MenuScene extends Scene {
         getWorldCamera().enableInput(false);
 
         NineSlicedSprite gridBackground = new NineSlicedSprite(Resources.loadSpritesheet("ui/map_background.json"));
-        Texture cellBackground = Resources.loadTexture("map/grass.png");
+        Texture cellBackground = Resources.loadTexture("terrain/grass.png");
         AnimatedSprite selectionCursor = new AnimatedSprite(Resources.loadSpritesheet("ui/map_cell_cursor.json"));
-        Spritesheet territoryTexture = Resources.loadSpritesheet("ui/map_territory_indicator.json");
+        Spritesheet territoryTexture = Resources.loadSpritesheet("ui/map_territory_indicator_white.json");
 
         if (!hasEntityWithName("grid")) {
             Entity grid = createEntityWithName("grid");

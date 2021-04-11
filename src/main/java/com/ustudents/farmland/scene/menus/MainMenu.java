@@ -44,7 +44,7 @@ public class MainMenu extends MenuScene {
     @Override
     public void update(float dt) {
         if (Farmland.get().getNetMode() == NetMode.DedicatedServer) {
-            if (Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getCurrentSave().maxNumberPlayers) {
+            if (Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getLoadedSave().maxNumberPlayers) {
                 changeScene(new InGameScene());
             }
         }

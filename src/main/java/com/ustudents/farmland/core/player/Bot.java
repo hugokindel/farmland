@@ -1,11 +1,9 @@
 package com.ustudents.farmland.core.player;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
-import com.ustudents.farmland.core.item.Crop;
 import com.ustudents.farmland.core.item.Item;
 
 import java.util.List;
@@ -31,12 +29,12 @@ public class Bot {
     }
 
     public static int makeChoice(){
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
         int c = 0;
 
-        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+        for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
 
                 if (cell.isOwned() && cell.ownerId.equals(player.getId())){
                     if (!cell.hasItem()){
@@ -49,11 +47,11 @@ public class Bot {
     }
 
     public static void maintenanceCost(){
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
-        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+        for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
 
                 if (cell.isOwned() && cell.ownerId.equals(player.getId())){
                     player.setMoney(player.money - 1);
@@ -64,7 +62,7 @@ public class Bot {
     }
 
     public static void buyLand(SeedRandom random) {
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         if (player.money < 25) {
             return;
@@ -80,7 +78,7 @@ public class Bot {
     }
 
     public static void addItem(SeedRandom random) {
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         int i = 0;
         while (true) {

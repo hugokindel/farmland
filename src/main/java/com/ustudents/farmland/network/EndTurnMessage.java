@@ -11,8 +11,8 @@ public class EndTurnMessage extends Message {
 
     @Override
     public void process() {
-        Farmland.get().getCurrentSave().endTurn();
+        Farmland.get().getLoadedSave().endTurn();
 
-        Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getCurrentSave()));
+        Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
     }
 }

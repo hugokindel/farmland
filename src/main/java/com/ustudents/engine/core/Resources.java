@@ -29,7 +29,6 @@ public class Resources {
     private static final String texturesDirectoryName = "textures";
     private static final String fontsDirectoryName = "fonts";
     private static final String soundsDirectoryName = "sounds";
-    private static final String itemsDirectoryName = "items";
     private static final String savesDirectoryName = "saves";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
@@ -78,10 +77,6 @@ public class Resources {
 
     public static String getSavesDirectoryName() {
         return createPathIfNeeded(getDataDirectory() + "/" + savesDirectoryName);
-    }
-
-    public static String getItemsDirectoryName(){
-        return createPathIfNeeded(getDataDirectory() + "/" + itemsDirectoryName);
     }
 
     /**

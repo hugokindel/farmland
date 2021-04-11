@@ -1,13 +1,11 @@
 package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Anchor;
 import com.ustudents.engine.graphic.Origin;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.gui.GuiBuilder;
-import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.player.Player;
@@ -48,9 +46,7 @@ public class ResultMenu extends MenuScene {
 
         eventListeners = new EventListener[buttonNames.length];
 
-        Farmland.get().loadItemDatabases();
         removeSavedGame();
-
 
         for (int i = 0; i < buttonNames.length; i++) {
             int j = i;
@@ -59,11 +55,11 @@ public class ResultMenu extends MenuScene {
                     Player player = currentPlayer;
                     Vector2i vector = new Vector2i(this.currentSave.mapWidth,this.currentSave.mapHeight);
                     Farmland.get().loadSave(currentSave.name);
-                    Farmland.get().setCurrentSave(new SaveGame(this.currentSave.name, player.name, player.village.name, player.color, vector, this.currentSave.seed, this.currentSave.players.size()-1));
-                    Farmland.get().saveSavedGames();
+                    Farmland.get().replaceSave(new SaveGame(this.currentSave.name, player.name, player.village.name, player.color, vector, this.currentSave.seed, this.currentSave.players.size()-1));
+                    Farmland.get().writeAllSaves();
                     changeScene(new InGameScene());
                 }else{
-                    Farmland.get().getSaveGames().remove(currentSave.name);
+                    Farmland.get().getSaves().remove(currentSave.name);
                     if (getGame().isConnectedToServer()) {
                         getGame().disconnectFromServer();
                     }

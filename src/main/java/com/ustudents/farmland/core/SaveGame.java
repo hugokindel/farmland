@@ -9,14 +9,12 @@ import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Texture;
-import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.EndTurnMessage;
-import com.ustudents.farmland.network.LoadSaveResponse;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -103,7 +101,7 @@ public class SaveGame {
 
         this.cells = new ArrayList<>();
 
-        Texture cellBackground = Resources.loadTexture("map/grass.png");
+        Texture cellBackground = Resources.loadTexture("terrain/grass.png");
 
         for (int x = 0; x < mapSize.x; x++) {
             this.cells.add(new ArrayList<>());
@@ -268,7 +266,7 @@ public class SaveGame {
 
     public boolean BotMeetCondition(){
         for(Player player: players){
-            if(player.typeOfPlayer.contains("Robot") && !Farmland.get().getCurrentSave().deadPlayers.contains(player.getId())){
+            if(player.typeOfPlayer.contains("Robot") && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())){
                 if (player.money <= 0 || player.money >= 1000){
                     return true;
                 }

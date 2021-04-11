@@ -41,7 +41,7 @@ public class PlayerCreateMessage extends Message {
     @Override
     public void process() {
         int playerId = getPlayerId();
-        SaveGame currentSave = Farmland.get().getCurrentSave();
+        SaveGame currentSave = Farmland.get().getLoadedSave();
 
         currentSave.players.get(playerId).name = getPlayerName();
         currentSave.players.get(playerId).village.name = getVillageName();

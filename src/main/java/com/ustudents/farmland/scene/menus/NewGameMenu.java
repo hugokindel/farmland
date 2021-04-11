@@ -91,9 +91,9 @@ public class NewGameMenu extends MenuScene {
             if (errors.isEmpty()) {
                 SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3]), new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0]);
 
-                Farmland.get().getSaveGames().put(saveGame.name, saveGame);
+                Farmland.get().getSaves().put(saveGame.name, saveGame);
                 Farmland.get().loadSave(saveGame.name);
-                Farmland.get().saveSavedGames();
+                Farmland.get().writeAllSaves();
 
                 SceneManager.get().getTypeOfLastScene();
                 changeScene(new InGameScene());

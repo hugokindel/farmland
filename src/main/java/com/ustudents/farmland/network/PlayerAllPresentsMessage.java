@@ -1,6 +1,5 @@
 package com.ustudents.farmland.network;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 
@@ -8,6 +7,6 @@ import com.ustudents.farmland.Farmland;
 public class PlayerAllPresentsMessage extends Message {
     @Override
     public void process() {
-        Farmland.get().allPlayersPresents.set(true);
+        Farmland.get().clientAllPlayersPresents.set(true);
     }
 }

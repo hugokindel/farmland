@@ -72,6 +72,14 @@ public class Item {
         return spritesheet.getSprite(id + "1");
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public Item get() {
+        return this;
+    }
+
     public boolean shouldBeDestroyed() {
         return false;
     }

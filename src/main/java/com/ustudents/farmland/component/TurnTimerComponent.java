@@ -1,6 +1,5 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
@@ -33,11 +32,11 @@ public class TurnTimerComponent extends BehaviourComponent {
 
     @Override
     public void initialize() {
-        time = Farmland.get().getCurrentSave().turnTimePassed;
+        time = Farmland.get().getLoadedSave().turnTimePassed;
         skipturn = 0;
         skipmadepart1 = false;
 
-        Farmland.get().getCurrentSave().turnEnded.add((dataType, data) -> {
+        Farmland.get().getLoadedSave().turnEnded.add((dataType, data) -> {
             onTurnEnded();
         });
     }
@@ -47,23 +46,23 @@ public class TurnTimerComponent extends BehaviourComponent {
         time += dt;
         skipturn += dt;
 
-        if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
+        if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
             Bot.playTurn();
             skipmadepart1 = true;
         }
 
-        if (skipturn >= 2f && skipmadepart1 && Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
-            Farmland.get().getCurrentSave().endTurn();
+        if (skipturn >= 2f && skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
+            Farmland.get().getLoadedSave().endTurn();
         }
 
         if (time >= timePerTurn) {
-            if (Farmland.get().getCurrentSave() != null) {
-                Farmland.get().getCurrentSave().endTurn();
+            if (Farmland.get().getLoadedSave() != null) {
+                Farmland.get().getLoadedSave().endTurn();
             }
 
             setTimeElapsed(0);
-        } else if (Farmland.get().getCurrentSave() != null && time >= Farmland.get().getCurrentSave().turnTimePassed + 1) {
-            setTimeElapsed(Farmland.get().getCurrentSave().turnTimePassed + 1);
+        } else if (Farmland.get().getLoadedSave() != null && time >= Farmland.get().getLoadedSave().turnTimePassed + 1) {
+            setTimeElapsed(Farmland.get().getLoadedSave().turnTimePassed + 1);
         }
     }
 
@@ -83,9 +82,9 @@ public class TurnTimerComponent extends BehaviourComponent {
     }
 
     private void setTimeElapsed(int seconds) {
-        if(Farmland.get().getCurrentSave() == null)
+        if(Farmland.get().getLoadedSave() == null)
             return;
-        Farmland.get().getCurrentSave().turnTimePassed = seconds;
-        secondElapsed.dispatch(new SecondElapsed(Farmland.get().getCurrentSave().turnTimePassed));
+        Farmland.get().getLoadedSave().turnTimePassed = seconds;
+        secondElapsed.dispatch(new SecondElapsed(Farmland.get().getLoadedSave().turnTimePassed));
     }
 }

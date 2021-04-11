@@ -10,7 +10,7 @@ public class SingleplayerMenu extends MenuScene {
         String[] buttonIds;
         EventListener[] eventListeners;
 
-        if (Farmland.get().getSaveGames().size() > 0) {
+        if (Farmland.get().getSaves().size() > 0) {
             buttonNames = new String[] {"Nouvelle partie", "Charger partie", "Supprimer une partie", "Retour"};
             buttonIds = new String[] {"newButton", "loadButton", "deleteButton", "backButton"};
         } else {

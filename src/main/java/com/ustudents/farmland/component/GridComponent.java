@@ -21,6 +21,7 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class GridComponent extends BehaviourComponent implements RenderableComponent {
     @Viewable
     public Vector2i gridSize;
@@ -72,7 +73,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         SeedRandom random = new SeedRandom();
         TransformComponent transformComponent = getEntity().getComponent(TransformComponent.class);
 
-        if (Farmland.get().getNetMode() == NetMode.DedicatedServer || Farmland.get().getCurrentSave() == null) {
+        if (Farmland.get().getNetMode() == NetMode.DedicatedServer || Farmland.get().getLoadedSave() == null) {
             for (int x = 0; x < gridSize.x; x++) {
                 this.cells.add(new ArrayList<>());
 
@@ -96,7 +97,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 this.cells.add(new ArrayList<>());
 
                 for (int y = 0; y < gridSize.y; y++) {
-                    this.cells.get(x).add(Farmland.get().getCurrentSave().cells.get(x).get(y));
+                    this.cells.get(x).add(Farmland.get().getLoadedSave().cells.get(x).get(y));
                 }
             }
         }
@@ -112,28 +113,28 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         camera.setMinimalY(transformComponent.position.x + gridBackgroundSideSize.y);
         camera.setMaximalY(transformComponent.position.y + gridBackgroundSideSize.y + gridSize.x * cellSize.y);
 
-        if (Farmland.get().getCurrentSave() == null) {
+        if (Farmland.get().getLoadedSave() == null) {
             camera.centerOnPosition(new Vector2f(
                     transformComponent.position.x + gridBackgroundSideSize.x + (gridSize.x * cellSize.x) / 2.0f,
                     transformComponent.position.y + gridBackgroundSideSize.y + (gridSize.y * cellSize.y) / 2.0f));
         } else {
             if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
-                if (Farmland.get().getCurrentSave().getLocalPlayer().position != null) {
+                if (Farmland.get().getLoadedSave().getLocalPlayer().position != null) {
                     camera.centerOnPosition(new Vector2f(
-                            Farmland.get().getCurrentSave().getLocalPlayer().position.x,
-                            Farmland.get().getCurrentSave().getLocalPlayer().position.y));
+                            Farmland.get().getLoadedSave().getLocalPlayer().position.x,
+                            Farmland.get().getLoadedSave().getLocalPlayer().position.y));
                 } else {
                     camera.centerOnPosition(new Vector2f(
-                            Farmland.get().getCurrentSave().getLocalPlayer().village.position.x + 24,
-                            Farmland.get().getCurrentSave().getLocalPlayer().village.position.y + 24));
+                            Farmland.get().getLoadedSave().getLocalPlayer().village.position.x + 24,
+                            Farmland.get().getLoadedSave().getLocalPlayer().village.position.y + 24));
                 }
             }
         }
 
         camera.moved.add((dataType, data) -> {
             Camera.PositionChanged eventData = (Camera.PositionChanged) data;
-            if (Farmland.get().getCurrentSave() != null) {
-                Farmland.get().getCurrentSave().getLocalPlayer().position = new Vector2f(eventData.position.x, eventData.position.y);
+            if (Farmland.get().getLoadedSave() != null) {
+                Farmland.get().getLoadedSave().getLocalPlayer().position = new Vector2f(eventData.position.x, eventData.position.y);
             }
         });
     }
@@ -152,17 +153,17 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         if (selectionCursorEnabled && currentSelectedCell.x != -1 &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
-                Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(Farmland.get().getCurrentSave().getLocalPlayer().getId()) &&
+                Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId()) &&
                 cellIsOwnedByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).isOwnedByCurrentPlayer() &&
-                Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID != null
+                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null
                 && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
-            Item currentItem = Farmland.get().getCurrentSave().getLocalPlayer().getCurrentItemFromInventory();
+            Item currentItem = Farmland.get().getLoadedSave().getLocalPlayer().getCurrentItemFromInventory();
             Item clone = Item.clone(currentItem);
             assert clone != null;
             clone.quantity = 1;
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(clone);
-            if (Farmland.get().getCurrentSave().getLocalPlayer().deleteFromInventory(currentItem, "Buy")) {
-                Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID = null;
+            if (Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(currentItem, "Buy")) {
+                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = null;
             }
             onItemUsed.dispatch();
         }
@@ -170,14 +171,14 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
-                Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(Farmland.get().getCurrentSave().getLocalPlayer().getId()) &&
+                Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId()) &&
                 !cellIsOwnedByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCellByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) &&
-                Farmland.get().getCurrentSave().currentPlayerId.equals(Farmland.get().getCurrentSave().localPlayerId)
-                && Farmland.get().getCurrentSave().getLocalPlayer().money >= 25) {
+                Farmland.get().getLoadedSave().currentPlayerId.equals(Farmland.get().getLoadedSave().localPlayerId)
+                && Farmland.get().getLoadedSave().getLocalPlayer().money >= 25) {
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
-            int takeMoney = Farmland.get().getCurrentSave().getLocalPlayer().money - 25;
-            Farmland.get().getCurrentSave().getLocalPlayer().setMoney(Math.max(takeMoney, 0));
+            int takeMoney = Farmland.get().getLoadedSave().getLocalPlayer().money - 25;
+            Farmland.get().getLoadedSave().getLocalPlayer().setMoney(Math.max(takeMoney, 0));
         }
     }
 
@@ -204,7 +205,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         if (selectionCursorEnabled && currentSelectedCell.x != -1) {
             renderSelectionCursor(spritebatch, rendererComponent, transformComponent);
 
-            if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
+            if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(0)) {
                 renderSelectedItem(spritebatch, rendererComponent, transformComponent);
             }
         }
@@ -309,9 +310,9 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderSelectedItem(Spritebatch spritebatch, RendererComponent rendererComponent,
                                     TransformComponent transformComponent) {
-        if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID != null) {
+        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null) {
             Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
-                    Farmland.get().getItem(Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID).getSprite(),
+                    Farmland.get().getItem(Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID).getSprite(),
                     new Vector2f(
                             transformComponent.position.x + gridBackgroundSideSize.x +
                                     currentSelectedCell.x * cellSize.x,
@@ -344,13 +345,13 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderTerritoryCell(String type, int x, int y, Spritebatch spritebatch,
                                      RendererComponent rendererComponent, TransformComponent transformComponent, int ownderId) {
-        if (Farmland.get().getCurrentSave() != null) {
+        if (Farmland.get().getLoadedSave() != null) {
             Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
                     territoryTexture.getSprite(type),
                     new Vector2f(
                             transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
                             transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
-            spriteData.tint = Farmland.get().getCurrentSave().players.get(ownderId).color;
+            spriteData.tint = Farmland.get().getLoadedSave().players.get(ownderId).color;
             spriteData.zIndex = rendererComponent.zIndex + 3;
 
             spritebatch.drawSprite(spriteData);

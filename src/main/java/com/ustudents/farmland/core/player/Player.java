@@ -172,9 +172,9 @@ public class Player {
     public List<Cell> getOwnedCells() {
         List<Cell> cells = new ArrayList<>();
 
-        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+        for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
 
                 if (cell.ownerId.equals(getId())) {
                     cells.add(cell);
@@ -188,9 +188,9 @@ public class Player {
     public List<Cell> getOwnedCellsWithNoItem() {
         List<Cell> cells = new ArrayList<>();
 
-        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+        for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
 
                 if (cell.ownerId.equals(getId()) && !cell.hasItem()) {
                     cells.add(cell);
@@ -204,11 +204,11 @@ public class Player {
     public List<Cell> getCloseCellsAvailable() {
         List<Cell> cells = new ArrayList<>();
 
-        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
-            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
-                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+        for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
 
-                if (Farmland.get().getCurrentSave().cells.get(x).get(y).ownerId.equals(-1) && cellIsClosedToOwnedCell(x, y)) {
+                if (Farmland.get().getLoadedSave().cells.get(x).get(y).ownerId.equals(-1) && cellIsClosedToOwnedCell(x, y)) {
                     cells.add(cell);
                 }
             }
@@ -219,16 +219,16 @@ public class Player {
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
         Vector2i gridSize = Farmland.get().getSceneManager().getCurrentScene().getEntityByName("grid").getComponent(GridComponent.class).gridSize;
-        return ((x < gridSize.x - 1 && Farmland.get().getCurrentSave().cells.get(x + 1).get(y).ownerId.equals(getId()))) ||
-                (x > 0 && Farmland.get().getCurrentSave().cells.get(x - 1).get(y).ownerId.equals(getId())) ||
-                (y < gridSize.y - 1 && Farmland.get().getCurrentSave().cells.get(x).get(y + 1).ownerId.equals(getId())) ||
-                (y > 0 && Farmland.get().getCurrentSave().cells.get(x).get(y - 1).ownerId.equals(getId()));
+        return ((x < gridSize.x - 1 && Farmland.get().getLoadedSave().cells.get(x + 1).get(y).ownerId.equals(getId()))) ||
+                (x > 0 && Farmland.get().getLoadedSave().cells.get(x - 1).get(y).ownerId.equals(getId())) ||
+                (y < gridSize.y - 1 && Farmland.get().getLoadedSave().cells.get(x).get(y + 1).ownerId.equals(getId())) ||
+                (y > 0 && Farmland.get().getLoadedSave().cells.get(x).get(y - 1).ownerId.equals(getId()));
     }
 
     public Integer getId() {
-        if (Farmland.get().getCurrentSave() != null) {
-            for (int i = 0; i < Farmland.get().getCurrentSave().players.size(); i++) {
-                if (Farmland.get().getCurrentSave().players.get(i).name.equals(name)) {
+        if (Farmland.get().getLoadedSave() != null) {
+            for (int i = 0; i < Farmland.get().getLoadedSave().players.size(); i++) {
+                if (Farmland.get().getLoadedSave().players.get(i).name.equals(name)) {
                     return i;
                 }
             }
@@ -242,7 +242,7 @@ public class Player {
             setMoney(money - (item.value * quantity));
             for (int i = 0; i < quantity; i++) {
                 addToInventory(item, "Buy");
-                Farmland.get().getCurrentSave().itemsTurn.add(item);
+                Farmland.get().getLoadedSave().itemsTurn.add(item);
             }
         } else {
             Game.get().getClient().send(new BuyMessage(item.id));

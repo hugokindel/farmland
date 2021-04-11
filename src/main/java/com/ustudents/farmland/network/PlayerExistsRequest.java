@@ -20,7 +20,7 @@ public class PlayerExistsRequest extends Message {
 
     @Override
     public void process() {
-        SaveGame currentSave = Farmland.get().getCurrentSave();
+        SaveGame currentSave = Farmland.get().getLoadedSave();
         int playerId = getPlayerId();
         boolean exists = false;
 

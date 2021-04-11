@@ -43,7 +43,7 @@ public class EconomicComponent {
      * To change the value of some items.
      */
     public void changeValueOfRessource(){
-        List<Item> itemsTurn = Farmland.get().getCurrentSave().itemsTurn;
+        List<Item> itemsTurn = Farmland.get().getLoadedSave().itemsTurn;
         Set<Item> setItemTurn = new HashSet<>(itemsTurn);
         for(Item item:setItemTurn){
             if (item != null) {

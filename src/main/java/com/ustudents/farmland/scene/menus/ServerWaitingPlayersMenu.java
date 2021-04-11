@@ -1,9 +1,7 @@
 package com.ustudents.farmland.scene.menus;
 
-import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
-import com.ustudents.engine.network.Client;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
@@ -11,8 +9,6 @@ import com.ustudents.farmland.network.LoadSaveRequest;
 import com.ustudents.farmland.network.LoadSaveResponse;
 import com.ustudents.farmland.scene.InGameScene;
 import org.joml.Vector2f;
-
-import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class ServerWaitingPlayersMenu extends Scene {
@@ -44,11 +40,11 @@ public class ServerWaitingPlayersMenu extends Scene {
 
     @Override
     public void update(float dt) {
-        if (Farmland.get().allPlayersPresents.get()) {
-            Farmland.get().allPlayersPresents.set(false);
+        if (Farmland.get().clientAllPlayersPresents.get()) {
+            Farmland.get().clientAllPlayersPresents.set(false);
             Farmland.get().getClient().request(new LoadSaveRequest(), LoadSaveResponse.class);
             SaveGame saveGame = LoadSaveResponse.getUpdatedSaveGame();
-            Farmland.get().getSaveGames().put(saveGame.name, saveGame);
+            Farmland.get().getSaves().put(saveGame.name, saveGame);
             Farmland.get().loadSave(saveGame.name);
             changeScene(new InGameScene());
         }

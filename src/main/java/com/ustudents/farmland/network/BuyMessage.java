@@ -32,8 +32,8 @@ public class BuyMessage extends Message {
             Out.println("Client " + Farmland.get().getPlayerId(getSenderId()) + ", bought " + item.name + " (x1)");
         }
 
-        Farmland.get().getCurrentSave().getCurrentPlayer().buy(item, 1);
+        Farmland.get().getLoadedSave().getCurrentPlayer().buy(item, 1);
 
-        Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getCurrentSave()));
+        Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
     }
 }

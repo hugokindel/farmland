@@ -7,6 +7,6 @@ import com.ustudents.farmland.Farmland;
 public class LoadSaveRequest extends Message {
     @Override
     public void process() {
-        Farmland.get().getServer().send(getSenderId(), new LoadSaveResponse(Farmland.get().getCurrentSave()));
+        Farmland.get().getServer().send(getSenderId(), new LoadSaveResponse(Farmland.get().getLoadedSave()));
     }
 }

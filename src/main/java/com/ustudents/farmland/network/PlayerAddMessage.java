@@ -1,6 +1,5 @@
 package com.ustudents.farmland.network;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
@@ -23,7 +22,7 @@ public class PlayerAddMessage extends Message {
     @Override
     public void process() {
         int playerId = getPlayerId();
-        SaveGame currentSave = Farmland.get().getCurrentSave();
+        SaveGame currentSave = Farmland.get().getLoadedSave();
 
         Farmland.get().setPlayerIdForClientId(getSenderId(), playerId);
 
