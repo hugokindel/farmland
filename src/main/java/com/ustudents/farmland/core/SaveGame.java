@@ -37,6 +37,9 @@ public class SaveGame {
     public Integer turnTimePassed;
 
     @JsonSerializable
+    public Integer timePassed;
+
+    @JsonSerializable
     public Integer mapWidth;
 
     @JsonSerializable
@@ -83,6 +86,7 @@ public class SaveGame {
         this.startWithBots = numberOfBots > 0;
         this.turn = 0;
         this.turnTimePassed = 0;
+        this.timePassed = 0;
         this.currentPlayerId = 0;
         this.name = name;
         this.players = new ArrayList<>();

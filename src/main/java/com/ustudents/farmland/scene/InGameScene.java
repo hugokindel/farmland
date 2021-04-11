@@ -3,8 +3,6 @@ package com.ustudents.farmland.scene;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.component.graphics.SpriteComponent;
-import com.ustudents.engine.scene.component.graphics.TextureComponent;
-import com.ustudents.engine.scene.ecs.Component;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
@@ -13,7 +11,6 @@ import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.utility.DateUtil;
-import com.ustudents.engine.utility.Pair;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.EconomicComponent;
 import com.ustudents.farmland.component.GridComponent;
@@ -100,6 +97,68 @@ public class InGameScene extends Scene {
     public void initializeGui() {
         GuiBuilder guiBuilder = new GuiBuilder();
 
+
+        Texture researchTexture = Resources.loadTexture("ui/research.png");
+        GuiBuilder.ImageData imageDataResearch= new GuiBuilder.ImageData(researchTexture);
+        imageDataResearch.id = "ResearchImage";
+        imageDataResearch.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        imageDataResearch.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        imageDataResearch.position = new Vector2f(-642, -110);
+        imageDataResearch.scale = new Vector2f(3f, 3f);
+        imageDataResearch.zIndex = 2;
+        guiBuilder.addImage(imageDataResearch);
+
+        Texture caravanTexture = Resources.loadTexture("ui/caravan.png");
+        GuiBuilder.ImageData imageDataCaravan= new GuiBuilder.ImageData(caravanTexture);
+        imageDataCaravan.id = "ResearchImage";
+        imageDataCaravan.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        imageDataCaravan.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        imageDataCaravan.position = new Vector2f(-465, -110);
+        imageDataCaravan.scale = new Vector2f(3f, 3f);
+        imageDataCaravan.zIndex = 2;
+        guiBuilder.addImage(imageDataCaravan);
+
+        Texture inventoryTexture = Resources.loadTexture("ui/inventory.png");
+        GuiBuilder.ImageData imageDataInventory= new GuiBuilder.ImageData(inventoryTexture);
+        imageDataInventory.id = "ResearchImage";
+        imageDataInventory.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        imageDataInventory.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        imageDataInventory.position = new Vector2f(-145, -110);
+        imageDataInventory.scale = new Vector2f(3f, 3f);
+        imageDataInventory.zIndex = 2;
+        guiBuilder.addImage(imageDataInventory);
+
+
+        Texture marketTexture = Resources.loadTexture("ui/market.png");
+        GuiBuilder.ImageData imageDataMarket= new GuiBuilder.ImageData(marketTexture);
+        imageDataMarket.id = "ResearchImage";
+        imageDataMarket.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        imageDataMarket.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        imageDataMarket.position = new Vector2f(-320, -112);
+        imageDataMarket.scale = new Vector2f(3f, 3f);
+        imageDataMarket.zIndex = 2;
+        guiBuilder.addImage(imageDataMarket);
+
+        Texture turnEndTexture = Resources.loadTexture("ui/time.png");
+        GuiBuilder.ImageData imageDataTurnEnd= new GuiBuilder.ImageData(turnEndTexture);
+        imageDataTurnEnd.id = "ResearchImage";
+        imageDataTurnEnd.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        imageDataTurnEnd.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        imageDataTurnEnd.position = new Vector2f(40, -114);
+        imageDataTurnEnd.scale = new Vector2f(3f, 3f);
+        imageDataTurnEnd.zIndex = 2;
+        guiBuilder.addImage(imageDataTurnEnd);
+
+        Texture bankTexture = Resources.loadTexture("ui/bank.png");
+        GuiBuilder.ImageData imageDataBank= new GuiBuilder.ImageData(bankTexture);
+        imageDataBank.id = "ResearchImage";
+        imageDataBank.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        imageDataBank.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        imageDataBank.position = new Vector2f(-810, -110);
+        imageDataBank.scale = new Vector2f(3f, 3f);
+        imageDataBank.zIndex = 2;
+        guiBuilder.addImage(imageDataBank);
+
         Texture frameTexture = Resources.loadTexture("ui/frame.png");
         GuiBuilder.ImageData imageDataFrame = new GuiBuilder.ImageData(frameTexture);
         imageDataFrame.id = "FrameImage";
@@ -119,8 +178,8 @@ public class InGameScene extends Scene {
         imageDataMoney.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         imageDataMoney.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         imageDataMoney.scale = new Vector2f(3f, 3f);
-        imageDataMoney.position.y = 190;
-        imageDataMoney.position.x = 3;
+        imageDataMoney.position.y = 40;
+        imageDataMoney.position.x = 185;
         imageDataMoney.zIndex = 2;
         guiBuilder.addImage(imageDataMoney);
 
@@ -183,7 +242,7 @@ public class InGameScene extends Scene {
         buttonData1.id = "inventoryButton";
         buttonData1.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData1.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        buttonData1.position = new Vector2f(-220, -12);
+        buttonData1.position = new Vector2f(-220, -10);
         guiBuilder.addButton(buttonData1);
 
         GuiBuilder.ButtonData buttonData3 = new GuiBuilder.ButtonData("Marché", (dataType, data) -> {
@@ -192,7 +251,7 @@ public class InGameScene extends Scene {
         buttonData3.id = "marketButton";
         buttonData3.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData3.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        buttonData3.position = new Vector2f(-400, -10);
+        buttonData3.position = new Vector2f(-400, -8);
         guiBuilder.addButton(buttonData3);
 
         GuiBuilder.ButtonData buttonDataC = new GuiBuilder.ButtonData("Caravanes", (dataType, data) -> {
@@ -243,16 +302,24 @@ public class InGameScene extends Scene {
 
         guiBuilder.endWindow();
 
+        GuiBuilder.TextData textDataTime = new GuiBuilder.TextData("Temps : " + DateUtil.secondsToText(Farmland.get().getCurrentSave().timePassed));
+        textDataTime.id = "timePassedLabel";
+        textDataTime.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+        textDataTime.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+        textDataTime.position = new Vector2f(0, 95);
+        textDataTime.color = Color.BLACK;
+        guiBuilder.addText(textDataTime);
+
         GuiBuilder.TextData textData = new GuiBuilder.TextData("Temps restant: " + DateUtil.secondsToText(SaveGame.timePerTurn - Farmland.get().getCurrentSave().turnTimePassed));
         textData.id = "timeRemainingLabel";
         textData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
         textData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
-        textData.position = new Vector2f(0, 75);
+        textData.position = new Vector2f(0, 65);
         textData.color = Color.BLACK;
         guiBuilder.addText(textData);
 
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
-        String text = "    " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
+        String text = "";
         if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
             text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
         }
@@ -260,10 +327,20 @@ public class InGameScene extends Scene {
         textData2.id = "selectedLabel";
         textData2.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         textData2.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
-        textData2.position = new Vector2f(10, 195);
+        textData2.position = new Vector2f(10, 155);
         textData2.color = Color.BLACK;
 
         guiBuilder.addText(textData2);
+
+        String text2 = "    " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
+        GuiBuilder.TextData textDataMoney = new GuiBuilder.TextData(text2);
+        textDataMoney.id = "MoneyLabel";
+        textDataMoney.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        textDataMoney.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+        textDataMoney.position = new Vector2f(190, 50);
+        textDataMoney.color = Color.BLACK;
+
+        guiBuilder.addText(textDataMoney);
 
         if (Farmland.get().getCurrentSave().deadPlayers == null) {
             Farmland.get().getCurrentSave().deadPlayers = new ArrayList<>();
@@ -845,11 +922,13 @@ public class InGameScene extends Scene {
 
     public void onSelectedItemOrMoneyChanged() {
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
-        String text = "    " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
+        String text = "";
         if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
             text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
         }
+        String text2 = "    " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
         getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
+        getEntityByName("MoneyLabel").getComponent(TextComponent.class).setText(text2);
         moneyUpdate();
     }
 
@@ -869,5 +948,6 @@ public class InGameScene extends Scene {
 
     public void onSecondElapsed(int secondsElapsed) {
         getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText("Temps restant: " + DateUtil.secondsToText(SaveGame.timePerTurn - secondsElapsed));
+        getEntityByName("timePassedLabel").getComponent(TextComponent.class).setText("Temps : " + DateUtil.secondsToText( ++Farmland.get().getCurrentSave().timePassed));
     }
 }

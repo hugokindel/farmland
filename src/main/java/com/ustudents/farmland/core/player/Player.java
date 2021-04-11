@@ -84,29 +84,6 @@ public class Player {
         this.researchList.add(new Research("Eleveur"));
     }
 
-
-    /**
-    @JsonSerializableConstructor
-    public void deserialize() {
-        Map<String, Item> realInventory = new HashMap<>();
-        Map<String, Item> realSellInventory = new HashMap<>();
-        for (Map.Entry<String, Item> elements : buyInventory.entrySet()) {
-            Map<String, Object> value = ((Map<String, Object>)((Object)elements.getValue()));
-            Item item = Farmland.get().getItem((String)value.get("id"));
-            if (item instanceof Animal) {
-                realInventory.put(elements.getKey(), Json.deserialize(value, Animal.class));
-            } else if (item instanceof Crop) {
-                realInventory.put(elements.getKey(), Json.deserialize(value, Crop.class));
-            } else if (item instanceof Decoration) {
-                realInventory.put(elements.getKey(), Json.deserialize(value, Decoration.class));
-            } else if (item instanceof Property) {
-                realInventory.put(elements.getKey(), Json.deserialize(value, Property.class));
-            }
-        }
-        buyInventory = realInventory;
-        sellInventory = realSellInventory;
-    }*/
-
     public void addToInventory(Item item, String name) {
         if(name.equals("Buy")){
             if (!buyInventory.containsKey(item.id)) {
