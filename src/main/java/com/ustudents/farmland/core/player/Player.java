@@ -1,6 +1,6 @@
 package com.ustudents.farmland.core.player;
 
-import com.ustudents.engine.core.cli.print.In;
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
@@ -12,10 +12,10 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.network.BuyMessage;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.beans.EventHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -218,7 +218,7 @@ public class Player {
     }
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
-        Vector2i gridSize = Farmland.get().getSceneManager().getCurrentScene().getEntityByName("map").getComponent(GridComponent.class).gridSize;
+        Vector2i gridSize = Farmland.get().getSceneManager().getCurrentScene().getEntityByName("grid").getComponent(GridComponent.class).gridSize;
         return ((x < gridSize.x - 1 && Farmland.get().getCurrentSave().cells.get(x + 1).get(y).ownerId.equals(getId()))) ||
                 (x > 0 && Farmland.get().getCurrentSave().cells.get(x - 1).get(y).ownerId.equals(getId())) ||
                 (y < gridSize.y - 1 && Farmland.get().getCurrentSave().cells.get(x).get(y + 1).ownerId.equals(getId())) ||
@@ -235,5 +235,17 @@ public class Player {
         }
 
         return -1;
+    }
+
+    public void buy(Item item, int quantity) {
+        if (Game.get().hasAuthority()) {
+            setMoney(money - (item.value * quantity));
+            for (int i = 0; i < quantity; i++) {
+                addToInventory(item, "Buy");
+                Farmland.get().getCurrentSave().itemsTurn.add(item);
+            }
+        } else {
+            Game.get().getClient().send(new BuyMessage(item.id));
+        }
     }
 }

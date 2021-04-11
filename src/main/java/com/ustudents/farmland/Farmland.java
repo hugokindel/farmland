@@ -3,34 +3,43 @@ package com.ustudents.farmland;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
-import com.ustudents.engine.core.cli.option.annotation.Option;
+import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.NetMode;
-import com.ustudents.engine.network.Packet;
+import com.ustudents.engine.network.Server;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import org.joml.Vector2i;
 
 import java.io.File;
-import java.net.DatagramPacket;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /** The main class of the project. */
 @Command(name = "farmland", version = "0.0.1", description = "A management game about farming.")
 @SuppressWarnings("unchecked")
 public class Farmland extends Game {
-    private Map<String, Item> itemDatabase;
+    public Map<String, Item> itemDatabase;
 
-    private Map<String, SaveGame> saveGames;
+    public Map<String, SaveGame> saveGames;
 
-    private Map<String, Object> serverConfig;
+    public Map<String, Object> serverConfig;
 
     public String saveId;
+
+    public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
+
+    public AtomicInteger clientPlayerId = new AtomicInteger(0);
+
+    public AtomicBoolean allPlayersPresents = new AtomicBoolean(false);
 
     @Override
     protected void initialize() {
@@ -43,7 +52,16 @@ public class Farmland extends Game {
 
         if (getNetMode() == NetMode.DedicatedServer) {
             if (saveGames.containsKey("save-server.json")) {
-                saveId = "save-server.json";
+                loadSave("save-server.json", 0);
+            } else {
+                SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), new Vector2i(16, 16), System.currentTimeMillis(), ((Long)serverConfig.get("numberBots")).intValue());
+                saveGame.path = "save-server.json";
+                saveGame.maxNumberPlayers = ((Long)serverConfig.get("maxNumberPlayers")).intValue();
+                for (int i = 0; i < saveGame.maxNumberPlayers; i++) {
+                    saveGame.addPlayer("TEMP", "TEMP", Color.RED);
+                }
+                saveGames.put("save-server.json", saveGame);
+                loadSave("save-server.json", 0);
             }
         }
 
@@ -62,27 +80,11 @@ public class Farmland extends Game {
         } else {
             serverConfig = new HashMap<>();
             serverConfig.put("serverName", "Local server");
-        }
-    }
-
-    @Override
-    public Packet onServerHandleRequest(Packet packet) {
-        Out.println("Farmland handle");
-
-        Packet answer = new Packet(new LinkedHashMap<>(), packet.address, packet.datagram);
-
-        if (packet.data.get("command").equals("loadWorld")) {
-            if (getCurrentSave() == null) {
-                SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), "Forx", "Forx's village", Color.RED, new Vector2i(16, 16), System.currentTimeMillis(), 0);
-                saveGame.path = "save-server.json";
-                saveGames.put("save-server.json", saveGame);
-                saveId = "save-server.json";
-            }
-            answer.data.put("world", Json.serialize(getCurrentSave()));
-            return answer;
+            serverConfig.put("maxNumberPlayers", 2L);
+            serverConfig.put("numberBots", 4L);
         }
 
-        return null;
+        server.getClientDisconnectedDispatcher().add((dataType, data) -> serverPlayerIdPerClientId.remove(data.clientId));
     }
 
     @Override
@@ -147,6 +149,10 @@ public class Farmland extends Game {
 
             }
         }
+    }
+
+    public void loadTextures() {
+        Resources.loadTexture("map/grass.png");
     }
 
     public void saveSavedGames(){
@@ -264,6 +270,21 @@ public class Farmland extends Game {
 
     public void setCurrentSave(SaveGame saveGame){
         saveGames.put(saveId,saveGame);
+        Farmland.get().getCurrentSave().localPlayerId = 0;
+    }
+
+    public void loadSave(String saveId) {
+        Farmland.get().saveId = saveId;
+        Farmland.get().getCurrentSave().localPlayerId = 0;
+    }
+
+    public void loadSave(String saveId, Integer playerId) {
+        Farmland.get().saveId = saveId;
+        Farmland.get().getCurrentSave().localPlayerId = playerId;
+    }
+
+    public void unloadSave() {
+        Farmland.get().saveId = null;
     }
 
     public Item getItem(String id) {
@@ -272,5 +293,23 @@ public class Farmland extends Game {
 
     public static Farmland get() {
         return (Farmland)Game.get();
+    }
+
+    public int getPlayerId(int clientId) {
+        return serverPlayerIdPerClientId.get(clientId);
+    }
+
+    public List<Integer> getListOfConnectedPlayers() {
+        List<Integer> list = new ArrayList<>();
+
+        for (Map.Entry<Integer, Integer> connectedPlayer : serverPlayerIdPerClientId.entrySet()) {
+            list.add(connectedPlayer.getValue());
+        }
+
+        return list;
+    }
+
+    public void setPlayerIdForClientId(int clientId, int playerId) {
+        serverPlayerIdPerClientId.put(clientId, playerId);
     }
 }

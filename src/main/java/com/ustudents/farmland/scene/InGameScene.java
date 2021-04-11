@@ -4,6 +4,8 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.component.graphics.TextureComponent;
 import com.ustudents.engine.scene.ecs.Component;
+import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.component.core.TransformComponent;
 import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
@@ -22,6 +24,8 @@ import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Player;
+import com.ustudents.farmland.network.BuyMessage;
+import com.ustudents.farmland.network.LoadSaveResponse;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import com.ustudents.farmland.scene.menus.ResultMenu;
 import imgui.ImGui;
@@ -32,6 +36,7 @@ import org.joml.Vector2i;
 
 import java.util.*;
 
+@SuppressWarnings("unchecked")
 public class InGameScene extends Scene {
     public ImBoolean showInventory;
 
@@ -49,6 +54,12 @@ public class InGameScene extends Scene {
 
     @Override
     public void initialize() {
+        if (Farmland.get().getNetMode() == NetMode.Standalone) {
+            Farmland.get().clientPlayerId.set(0);
+        }
+
+        Farmland.get().getCurrentSave().localPlayerId = Farmland.get().clientPlayerId.get();
+
         forceImGui = true;
 
         showInventory = new ImBoolean(false);
@@ -61,7 +72,7 @@ public class InGameScene extends Scene {
         initializeGameplay();
         economicComponent = new EconomicComponent();
 
-        if (Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+        if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(Farmland.get().getCurrentSave().getLocalPlayer().getId())) {
             getEntityByName("endTurnButton").setEnabled(false);
             getEntityByName("inventoryButton").setEnabled(false);
             getEntityByName("marketButton").setEnabled(false);
@@ -80,13 +91,16 @@ public class InGameScene extends Scene {
         AnimatedSprite selectionCursor = new AnimatedSprite(Resources.loadSpritesheet("ui/map_cell_cursor.json"));
         Spritesheet territoryTexture = Resources.loadSpritesheet("ui/map_territory_indicator_white.json");
 
-        Entity grid = createEntityWithName("map");
+        Entity grid = createEntityWithName("grid");
         grid.addComponent(new TransformComponent());
         grid.addComponent(new WorldRendererComponent());
         grid.addComponent(new GridComponent(new Vector2i(Farmland.get().getCurrentSave().cells.size(), Farmland.get().getCurrentSave().cells.get(0).size()), new Vector2i(24, 24), gridBackground, cellBackground, selectionCursor, territoryTexture));
         grid.addComponent(new TurnTimerComponent(SaveGame.timePerTurn));
         grid.getComponent(GridComponent.class).onItemUsed.add((dataType, data) -> onSelectedItemOrMoneyChanged());
-        Farmland.get().getCurrentSave().players.get(0).moneyChanged.add((dataType, data) -> onSelectedItemOrMoneyChanged());
+
+        if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
+            Farmland.get().getCurrentSave().players.get(Farmland.get().getCurrentSave().getLocalPlayer().getId()).moneyChanged.add((dataType, data) -> onSelectedItemOrMoneyChanged());
+        }
 
         Entity player = createEntityWithName("player");
         player.addComponent(new PlayerMovementComponent(500.0f));
@@ -161,7 +175,7 @@ public class InGameScene extends Scene {
         guiBuilder.addButton(buttonDataR);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
-            Farmland.get().saveId = null;
+            Farmland.get().unloadSave();
             if (getGame().isConnectedToServer()) {
                 getGame().disconnectFromServer();
             }
@@ -198,10 +212,10 @@ public class InGameScene extends Scene {
         textData.color = Color.BLACK;
         guiBuilder.addText(textData);
 
-        String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
-        String text = "Argent: " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
-        if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
-            text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
+        String selectedId = Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID;
+        String text = "Argent: " + Farmland.get().getCurrentSave().getLocalPlayer().money;
+        if (Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID != null) {
+            text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         GuiBuilder.TextData textData2 = new GuiBuilder.TextData(text);
         textData2.id = "selectedLabel";
@@ -231,7 +245,7 @@ public class InGameScene extends Scene {
 
     public void initializeGameplay() {
         Farmland.get().getCurrentSave().turnEnded.add((dataType, data) -> onTurnEnded());
-        getEntityByName("map").getComponent(TurnTimerComponent.class).secondElapsed.add(((dataType, data) -> onSecondElapsed(((TurnTimerComponent.SecondElapsed)data).numberOfSecondElapsed)));
+        getEntityByName("grid").getComponent(TurnTimerComponent.class).secondElapsed.add(((dataType, data) -> onSecondElapsed(((TurnTimerComponent.SecondElapsed)data).numberOfSecondElapsed)));
     }
 
     @Override
@@ -414,9 +428,7 @@ public class InGameScene extends Scene {
 
             for(Item item : Farmland.get().getResourceDatabase().values()){
                 if(ImGui.button(nickNameItem(item)) && playerMoney>=item.value){
-                    player.setMoney(playerMoney-item.value);
-                    player.addToInventory(item, "Buy");
-                    Farmland.get().getCurrentSave().itemsTurn.add(item);
+                    Farmland.get().getCurrentSave().getCurrentPlayer().buy(item, 1);
                 }
                 ImGui.sameLine();
                 ImGui.text("Prix d'achat : " + item.value);
@@ -503,56 +515,59 @@ public class InGameScene extends Scene {
                     }
                 }
             }
+          
             if (!onCompletedTurnEnd()){
                 leaderBoardUpdate();
             }
         }
 
-        if (currentPlayer.getId() != 0) {
-            getEntityByName("endTurnButton").setEnabled(false);
-            getEntityByName("inventoryButton").setEnabled(false);
-            getEntityByName("marketButton").setEnabled(false);
-            getEntityByName("caravanButton").setEnabled(false);
-            getEntityByName("researchButton").setEnabled(false);
-            if (showMarket.get()) {
-                shouldShowBackMarket = true;
+        if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
+            if (currentPlayer.getId() != 0) {
+                getEntityByName("endTurnButton").setEnabled(false);
+                getEntityByName("inventoryButton").setEnabled(false);
+                getEntityByName("marketButton").setEnabled(false);
+                getEntityByName("caravanButton").setEnabled(false);
+                getEntityByName("researchButton").setEnabled(false);
+                if (showMarket.get()) {
+                    shouldShowBackMarket = true;
+                }
+                if (showInventory.get()) {
+                    shouldShowBackInventory = true;
+                }
+                if (showCaravan.get()) {
+                    shouldShowBackCaravan = true;
+                }
+                if (showResearch.get()) {
+                    shouldShowBackResearch = true;
+                }
+                showInventory.set(false);
+                showMarket.set(false);
+                showCaravan.set(false);
+                showResearch.set(false);
+            } else {
+                getEntityByName("endTurnButton").setEnabled(true);
+                getEntityByName("inventoryButton").setEnabled(true);
+                getEntityByName("marketButton").setEnabled(true);
+                getEntityByName("caravanButton").setEnabled(true);
+                getEntityByName("researchButton").setEnabled(true);
+                if (shouldShowBackInventory) {
+                    showInventory.set(true);
+                    shouldShowBackInventory = false;
+                }
+                if (shouldShowBackMarket) {
+                    showMarket.set(true);
+                    shouldShowBackMarket = false;
+                }
+                if (shouldShowBackCaravan) {
+                    showCaravan.set(true);
+                    shouldShowBackCaravan = false;
+                }
+                if (shouldShowBackResearch) {
+                    showResearch.set(true);
+                    shouldShowBackResearch = false;
+                }
+                checkPlayerFrame();
             }
-            if (showInventory.get()) {
-                shouldShowBackInventory = true;
-            }
-            if (showCaravan.get()) {
-                shouldShowBackCaravan = true;
-            }
-            if (showResearch.get()) {
-                shouldShowBackResearch = true;
-            }
-            showInventory.set(false);
-            showMarket.set(false);
-            showCaravan.set(false);
-            showResearch.set(false);
-        } else {
-            getEntityByName("endTurnButton").setEnabled(true);
-            getEntityByName("inventoryButton").setEnabled(true);
-            getEntityByName("marketButton").setEnabled(true);
-            getEntityByName("caravanButton").setEnabled(true);
-            getEntityByName("researchButton").setEnabled(true);
-            if (shouldShowBackInventory) {
-                showInventory.set(true);
-                shouldShowBackInventory = false;
-            }
-            if (shouldShowBackMarket) {
-                showMarket.set(true);
-                shouldShowBackMarket = false;
-            }
-            if (shouldShowBackCaravan) {
-                showCaravan.set(true);
-                shouldShowBackCaravan = false;
-            }
-            if (shouldShowBackResearch) {
-                showResearch.set(true);
-                shouldShowBackResearch = false;
-            }
-            checkPlayerFrame();
         }
     }
 
@@ -562,7 +577,6 @@ public class InGameScene extends Scene {
         int fl = player.farmerResearch.getObject2();
 
         if (bl > 4){
-
             if (fl > 4){
                 getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2breeder2.png");
             } else if (fl > 2){
@@ -570,9 +584,7 @@ public class InGameScene extends Scene {
             } else {
                 getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/breeder2.png");
             }
-
         } else if (bl > 2){
-
             if (fl > 4){
                 getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2breeder.png");
             } else if (fl > 2){
@@ -580,17 +592,11 @@ public class InGameScene extends Scene {
             } else {
                 getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/breeder.png");
             }
-
         } else if (fl > 4){
-
             getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer2.png");
-
         } else if (fl > 2){
-
             getEntityByName("FrameImage").getComponent(TextureComponent.class).texture = Resources.loadTexture("ui/farmer.png");
-
         }
-
     }
 
     public boolean onCompletedTurnEnd(){
@@ -613,7 +619,7 @@ public class InGameScene extends Scene {
             if (human != null) {
                 resultMenu.isWin = human.money >= 1000;
             }
-            Farmland.get().saveId = null;
+            Farmland.get().unloadSave();
             changeScene(resultMenu);
             return true;
 
@@ -632,7 +638,7 @@ public class InGameScene extends Scene {
                         resultMenu.currentPlayer = currentPlayer;
                         resultMenu.currentSave = Farmland.get().getCurrentSave();
                         resultMenu.isWin = false;
-                        Farmland.get().saveId = null;
+                        Farmland.get().unloadSave();
                         changeScene(resultMenu);
                         return true;
                     } else if (player.money <= 0) {
@@ -658,7 +664,7 @@ public class InGameScene extends Scene {
                 resultMenu.currentPlayer = currentPlayer;
                 resultMenu.currentSave = Farmland.get().getCurrentSave();
                 resultMenu.isWin = true;
-                Farmland.get().saveId = null;
+                Farmland.get().unloadSave();
                 changeScene(resultMenu);
                 return true;
             }
@@ -725,14 +731,33 @@ public class InGameScene extends Scene {
 
     public void onSelectedItemOrMoneyChanged() {
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
-        String text = "Argent: " + Farmland.get().getCurrentSave().getCurrentPlayer().money;
-        if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
-            text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
+        String text = "Argent: " + Farmland.get().getCurrentSave().getLocalPlayer().money;
+        if (Farmland.get().getCurrentSave().getLocalPlayer().selectedItemID != null) {
+            text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
     }
 
     public void onSecondElapsed(int secondsElapsed) {
         getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText("Temps restant: " + DateUtil.secondsToText(SaveGame.timePerTurn - secondsElapsed));
+    }
+
+    @Override
+    public void update(float dt) {
+        if (Farmland.get().isConnectedToServer()) {
+            SaveGame saveGame = LoadSaveResponse.getUpdatedSaveGame();
+            if (saveGame != null) {
+                if (saveGame.turn > Farmland.get().getCurrentSave().turn) {
+                    onTurnEnded();
+                    getEntityByName("grid").getComponent(TurnTimerComponent.class).onTurnEnded();
+                }
+
+                int time = saveGame.turnTimePassed > Farmland.get().getCurrentSave().turnTimePassed ? saveGame.turnTimePassed : Farmland.get().getCurrentSave().turnTimePassed;
+                Farmland.get().saveGames.put(Farmland.get().saveId, saveGame);
+                Farmland.get().getCurrentSave().turnTimePassed = time;
+            }
+            onSelectedItemOrMoneyChanged();
+            leaderBoardUpdate();
+        }
     }
 }

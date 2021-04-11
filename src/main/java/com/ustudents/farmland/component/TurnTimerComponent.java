@@ -7,6 +7,7 @@ import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.player.Bot;
 
+@SuppressWarnings("unchecked")
 public class TurnTimerComponent extends BehaviourComponent {
     public static class SecondElapsed extends Event {
         public int numberOfSecondElapsed;
@@ -37,10 +38,7 @@ public class TurnTimerComponent extends BehaviourComponent {
         skipmadepart1 = false;
 
         Farmland.get().getCurrentSave().turnEnded.add((dataType, data) -> {
-            time = 0;
-            skipturn = 0;
-            skipmadepart1 = false;
-            setTimeElapsed(0);
+            onTurnEnded();
         });
     }
 
@@ -49,12 +47,12 @@ public class TurnTimerComponent extends BehaviourComponent {
         time += dt;
         skipturn += dt;
 
-        if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+        if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
             Bot.playTurn();
             skipmadepart1 = true;
         }
 
-        if (skipturn >= 2f && skipmadepart1 && Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().name.contains("Robot")) {
+        if (skipturn >= 2f && skipmadepart1 && Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
             Farmland.get().getCurrentSave().endTurn();
         }
 
@@ -75,6 +73,13 @@ public class TurnTimerComponent extends BehaviourComponent {
 
     public void setTimePerTurn(float timePerTurn) {
         this.timePerTurn = timePerTurn;
+    }
+
+    public void onTurnEnded() {
+        time = 0;
+        skipturn = 0;
+        skipmadepart1 = false;
+        setTimeElapsed(0);
     }
 
     private void setTimeElapsed(int seconds) {

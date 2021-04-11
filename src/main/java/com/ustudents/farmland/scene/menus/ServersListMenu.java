@@ -7,6 +7,8 @@ import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.network.Client;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.network.GameInformationsRequest;
+import com.ustudents.farmland.network.GameInformationsResponse;
 import com.ustudents.farmland.scene.InGameScene;
 
 import java.util.Map;
@@ -15,16 +17,19 @@ import java.util.Map;
 public class ServersListMenu extends MenuScene {
     @Override
     public void initialize() {
-        boolean localServerExists;
+        if (!Farmland.get().getClient().isAlive()) {
+            Farmland.get().getClient().start();
+        }
 
-        localServerExists = Client.commandExists();
+        boolean localServerExists = Farmland.get().getClient().isAlive();
 
         int i = 0;
         String[] buttonNames;
         String[] buttonIds;
 
         if (localServerExists) {
-            buttonNames = new String[] {"Serveur local", "Recharger"};
+            GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
+            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", "Recharger"};
             buttonIds = new String[] {"localButton", "reloadButton"};
         } else {
             buttonNames = new String[] {"Recharger"};
@@ -38,20 +43,14 @@ public class ServersListMenu extends MenuScene {
             eventListeners[i] = (dataType, data) -> {
                 switch (buttonIds[j]) {
                     case "localButton":
-                        if (Client.isConnectedToServer()) {
-                            Client.commandDisconnect();
-                        }
-                        Client.commandConnect();
+                        /*if (Farmland.get().isConnectedToServer()) {
+                            Farmland.get().disconnectFromServer();
+                            Farmland.get().getClient().start();
+                        }*/
 
-                        Out.println("Connected to server with ID: " + Client.clientId);
+                        Out.println("Connected to server");
 
-                        Map<String, Object> answer = Client.request("loadWorld");
-                        SaveGame saveGame = Json.deserialize((Map<String, Object>)answer.get("world"), SaveGame.class);
-                        assert saveGame != null;
-                        saveGame.path = "save-server.json";
-                        Farmland.get().getSaveGames().put(saveGame.name, saveGame);
-                        Farmland.get().saveId = saveGame.name;
-                        changeScene(new InGameScene());
+                        changeScene(new ServerWaitingRoomMenu());
 
                         break;
                     case "reloadButton":

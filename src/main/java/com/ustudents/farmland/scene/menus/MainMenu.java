@@ -1,16 +1,16 @@
 package com.ustudents.farmland.scene.menus;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.core.window.Window;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.Farmland;
-import imgui.ImGui;
-import imgui.ImVec2;
+import com.ustudents.farmland.scene.InGameScene;
 
 public class MainMenu extends MenuScene {
     @Override
     public void initialize() {
-        Farmland.get().saveId = null;
+        if (Farmland.get().getNetMode() == NetMode.Standalone) {
+            Farmland.get().unloadSave();
+        }
 
         String[] buttonNames = {"Solo", "Multijoueur", "Paramètres", "Crédits"};
         String[] buttonIds = {"singleplayerButton", "multiplayerButton", "settingsButton", "creditsButton"};
@@ -43,6 +43,10 @@ public class MainMenu extends MenuScene {
 
     @Override
     public void update(float dt) {
-
+        if (Farmland.get().getNetMode() == NetMode.DedicatedServer) {
+            if (Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getCurrentSave().maxNumberPlayers) {
+                changeScene(new InGameScene());
+            }
+        }
     }
 }

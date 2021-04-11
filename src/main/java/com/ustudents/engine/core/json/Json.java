@@ -393,14 +393,14 @@ public class Json {
      * @param <T> The class's type.
      */
     public static <T> void checkSerializable(Class<T> classType) throws Exception {
-        if (!classType.isAnnotationPresent(JsonSerializable.class)) {
+        if (!classType.isAnnotationPresent(JsonSerializable.class) && !classType.getSuperclass().isAnnotationPresent(JsonSerializable.class)) {
             throw new Exception("Not a serializable class!");
         }
     }
 
     // TODO: Minify
     public static String minify(String json) {
-        // Does not handle between strings ""
+        // FIXME: Does not handle between strings ""
         //return json.replace("\n", "").replace("\t", "").replace(" ", "");
         return json;
     }

@@ -19,6 +19,7 @@ import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.InputSystemType;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.network.*;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
@@ -27,9 +28,9 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL33;
 
-import java.net.DatagramPacket;
 import java.util.Arrays;
-import java.util.Map;
+
+import static org.lwjgl.glfw.GLFW.glfwInit;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
@@ -118,9 +119,9 @@ public abstract class Game extends Runnable {
 
     protected boolean enableDocking;
 
-    protected ServerThread serverThread;
+    protected Client client = new Client();
 
-    protected ServerCliThread serverCliThread;
+    protected Server server = new Server();
 
     /** The game instance. */
     private static Game game;
@@ -312,7 +313,7 @@ public abstract class Game extends Runnable {
     }
 
     public NetMode getNetMode() {
-        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : Client.clientId != -1 ? NetMode.Client : NetMode.Standalone);
+        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : client.isAlive() ? NetMode.Client : NetMode.Standalone);
     }
 
     public boolean canRender() {
@@ -321,7 +322,7 @@ public abstract class Game extends Runnable {
 
     // if true Dedicated Server, Listen Server, Standalone, false Client
     public boolean hasAuthority() {
-        return dedicatedServerEnabled || listenServerEnabled || Client.clientId == -1;
+        return dedicatedServerEnabled || listenServerEnabled || !client.isAlive();
     }
 
     // if true Listen Server, Client, Standalone, false Dedicated Server
@@ -331,12 +332,11 @@ public abstract class Game extends Runnable {
 
     // if true Client, false Standalone
     public boolean isConnectedToServer() {
-        return Client.clientId != -1;
+        return client.isAlive();
     }
 
     public void disconnectFromServer() {
-        Client.commandDisconnect();
-        Client.closeSocket();
+        client.stop();
     }
 
     public void disableTools() {
@@ -376,16 +376,14 @@ public abstract class Game extends Runnable {
 
     }
 
-    public Packet onServerHandleRequest(Packet packet) {
-        return null;
-    }
-
     public void onServerDestroyed() {
 
     }
 
     /** Initialize everything. */
     public void initializeInternals(String[] args) {
+        Thread.currentThread().setName("MainThread");
+
         if (isDebugging()) {
             Out.printlnDebug("Initializing...");
         }
@@ -403,6 +401,14 @@ public abstract class Game extends Runnable {
                 vsync
         );
 
+        if (getNetMode() == NetMode.DedicatedServer) {
+            if (!glfwInit()) {
+                String errorMessage = "Unable to initialize glfw!";
+                Out.printlnError(errorMessage);
+                throw new IllegalStateException(errorMessage);
+            }
+        }
+
         Input.initialize();
 
         soundManager.initialize();
@@ -419,14 +425,16 @@ public abstract class Game extends Runnable {
         }
 
         if (getNetMode() == NetMode.DedicatedServer) {
-            serverThread = new ServerThread();
-            serverThread.start();
-
-            serverCliThread = new ServerCliThread();
-            serverCliThread.start();
+            server.start();
+            onServerStarted();
+            Out.println("Waiting for world initialization...");
         }
 
         initialize();
+
+        if (getNetMode() == NetMode.DedicatedServer) {
+            Out.println("World initialized.");
+        }
 
         window.show(true);
 
@@ -440,16 +448,37 @@ public abstract class Game extends Runnable {
         window.pollEvents();
 
         while (!shouldQuit()) {
-            sceneManager.startFrame();
-            updateInternal();
-
-            if (canRender()) {
-                renderInternal();
+            if (getNetMode() == NetMode.DedicatedServer) {
+                long lastTime = System.nanoTime();
+                final double ns = 1000000000.0 / 128.0;
+                double delta = 0;
+                while(!shouldQuit) {
+                    long now = System.nanoTime();
+                    delta += (now - lastTime) / ns;
+                    lastTime = now;
+                    while(delta >= 1){
+                        sceneManager.startFrame();
+                        updateInternal();
+                        timer.render();
+                        sceneManager.endFrame();
+                        window.pollEvents();
+                        delta--;
+                    }
+                }
+            } else {
+                sceneManager.startFrame();
+                updateInternal();
+                if (canRender()) {
+                    renderInternal();
+                }
+                sceneManager.endFrame();
+                window.pollEvents();
             }
-
-            sceneManager.endFrame();
-            window.pollEvents();
         }
+    }
+
+    public static boolean isMainThread() {
+        return Thread.currentThread().getName().equals("FarmlandMainThread");
     }
 
     /** Updates the game logic. */
@@ -530,17 +559,14 @@ public abstract class Game extends Runnable {
 
     /** Destroy everything. */
     public void destroyInternals() {
-        if (Client.isConnectedToServer()) {
+        if (client.isAlive()) {
             disconnectFromServer();
         }
 
         try {
-            if (serverCliThread != null && serverCliThread.isAlive()) {
-                serverCliThread.join();
-            }
-            if (serverThread != null && serverThread.isAlive()) {
-                ServerThread.closeSocket();
-                serverThread.join();
+            if (server.isAlive()) {
+                server.stop();
+                onServerDestroyed();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -581,5 +607,13 @@ public abstract class Game extends Runnable {
             scene.getUiCamera().resize(size.x, size.y);
             shouldResize = false;
         }
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public Server getServer() {
+        return server;
     }
 }
