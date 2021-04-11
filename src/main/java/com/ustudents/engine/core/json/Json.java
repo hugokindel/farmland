@@ -42,6 +42,10 @@ public class Json {
         return null;
     }
 
+    public static <T> T deserialize(Map<String, Object> json, Class<T> classType) {
+        return deserialize(json, classType, null);
+    }
+
     /**
      * Deserialize a Json map to an object.
      *
@@ -51,7 +55,7 @@ public class Json {
      *
      * @return the class of type T created.
      */
-    public static <T> T deserialize(Map<String, Object> json, Class<T> classType) {
+    public static <T ,U> T deserialize(Map<String, Object> json, Class<T> classType, Class<U> declaringClass) {
         try {
             checkSerializable(classType);
 
@@ -91,7 +95,7 @@ public class Json {
                     if (serializable.necessary()) {
                         throw new Exception("Missing key '" + key + "'!");
                     } else {
-                        if (field.getType().equals(boolean.class)) {
+                        if (field.getType().equals(Boolean.class)) {
                             field.set(object, false);
                         } else if (field.getType().equals(String.class)) {
                             field.set(object, "");
@@ -123,19 +127,23 @@ public class Json {
                 Object value = mapToSearch.get(path[path.length - 1]);
 
                 if (field.getType().isAnnotationPresent(JsonSerializable.class)) {
-                    if ((Map<String, Object>)value == null) {
+                    if (value == null) {
                         field.set(object, null);
                     } else {
                         field.set(object, deserialize((Map<String, Object>)value, field.getType()));
                     }
                     continue;
-                } else if (field.getType().isAssignableFrom(List.class)) {
+                } else if (field.getType().getName().startsWith("java.util.Map")) {
+                    if (mapExtraction(field, mapToSearch.get(path[path.length - 1]), object)) {
+                        continue;
+                    }
+                } else if (field.getType().getName().startsWith("java.util.List")) {
                     if (listExtraction(field, value, object)) {
                         continue;
                     }
                 }
 
-                convertAndAdd(field, mapToSearch.get(path[path.length - 1]), object);
+                convertAndAdd(field, value, object);
             }
 
             for (Method method : classType.getMethods()) {
@@ -156,7 +164,7 @@ public class Json {
         return null;
     }
 
-    public static boolean listExtraction(Field field, Object value, Object object) throws ClassNotFoundException {
+    public static boolean listExtraction(Field field, Object value, Object object) {
        try {
            ParameterizedType parameterizedType = (ParameterizedType)field.getGenericType();
            Type tType = parameterizedType.getActualTypeArguments()[0];
@@ -169,7 +177,11 @@ public class Json {
                    if (element == null) {
                        list.add(null);
                    } else {
-                       list.add(deserialize((Map<String, Object>) element, Class.forName(tType.getTypeName())));
+                       if (element.getClass().isAnnotationPresent(JsonSerializable.class)) {
+                           list.add(element);
+                       } else {
+                           list.add(deserialize((Map<String, Object>) element, Class.forName(tType.getTypeName())));
+                       }
                    }
                }
 
@@ -187,7 +199,11 @@ public class Json {
                        if (realElement == null) {
                            ((List<Object>)list.get(i)).add(null);
                        } else {
-                           ((List<Object>)list.get(i)).add(deserialize((Map<String, Object>) realElement, Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>'))));
+                           if (realElement.getClass().isAnnotationPresent(JsonSerializable.class)) {
+                               list.add(realElement);
+                           } else {
+                               ((List<Object>)list.get(i)).add(deserialize((Map<String, Object>) realElement, Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>'))));
+                           }
                        }
                    }
                    i++;
@@ -200,6 +216,32 @@ public class Json {
            e.printStackTrace();
        }
        return false;
+    }
+
+    public static boolean mapExtraction(Field field, Object value, Object object) {
+        ParameterizedType parameterizedType = (ParameterizedType)field.getGenericType();
+        Type tType = parameterizedType.getActualTypeArguments()[1];
+
+        Map<String, Object> returnMap = new LinkedHashMap<>();
+
+        try {
+            Class type = Class.forName(tType.getTypeName());
+            Map<String, Object> realMap = (Map<String, Object>)value;
+            if (realMap.isEmpty()) {
+                field.set(object, new LinkedHashMap<>());
+                return true;
+            } else if (type.isAnnotationPresent(JsonSerializable.class)) {
+                for (Map.Entry<String, Object> entry : realMap.entrySet()) {
+                    returnMap.put(entry.getKey(), deserialize((Map<String, Object>)entry.getValue(), type));
+                }
+                field.set(object, returnMap);
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public static String getBetweenFirstAndLast(String text, char first, char last) {

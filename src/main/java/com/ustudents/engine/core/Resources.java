@@ -267,7 +267,7 @@ public class Resources {
     public static Texture loadTexture(String filePath) {
         if (!textures.containsKey(filePath)) {
             if (Game.isDebugging()) {
-                Out.printlnDebug("Texture loaded: " + getTexturesDirectory() + "/" + filePath + "");
+                Out.printlnDebug("Texture loaded: " + getTexturesDirectory() + "/" + filePath);
             }
 
             textures.put(filePath, new Texture(getTexturesDirectory() + "/" + filePath));
@@ -294,7 +294,7 @@ public class Resources {
     static void unloadTexture(String filePath, boolean removeFromList) {
         if (textures.containsKey(filePath)) {
             if (Game.isDebugging()) {
-                Out.printlnDebug("Texture unloaded: " + getTexturesDirectory() + "/" + filePath + "");
+                Out.printlnDebug("Texture unloaded: " + getTexturesDirectory() + "/" + filePath);
             }
 
             textures.get(filePath).destroy();
@@ -312,7 +312,7 @@ public class Resources {
 
         if (!fonts.get(filePath).containsKey(fontSize)) {
             if (Game.isDebugging()) {
-                Out.printlnDebug("Font loaded: " + getFontsDirectory() + "/" + filePath + "");
+                Out.printlnDebug("Font loaded: " + getFontsDirectory() + "/" + filePath);
             }
 
             fonts.get(filePath).put(fontSize, new Font(getFontsDirectory() + "/" + filePath, fontSize));
@@ -339,7 +339,7 @@ public class Resources {
     static void unloadFont(String filePath, int fontSize, boolean removeFromList) {
         if (fonts.containsKey(filePath) && fonts.get(filePath).containsKey(fontSize)) {
             if (Game.isDebugging()) {
-                Out.printlnDebug("Font unloaded (size " + fontSize + "px): " + getFontsDirectory() + "/" + filePath + "");
+                Out.printlnDebug("Font unloaded (size " + fontSize + "px): " + getFontsDirectory() + "/" + filePath);
             }
 
             fonts.get(filePath).get(fontSize).destroy();
@@ -357,7 +357,7 @@ public class Resources {
     public static Sound loadSound(String filePath) {
         if (!sounds.containsKey(filePath)) {
             if (Game.isDebugging()) {
-                Out.printlnDebug("Sound loaded: " + getSoundsDirectoryName() + "/" + filePath + "");
+                Out.printlnDebug("Sound loaded: " + getSoundsDirectoryName() + "/" + filePath);
             }
 
             sounds.put(filePath, new Sound(getSoundsDirectoryName() + "/" + filePath));
@@ -384,7 +384,7 @@ public class Resources {
     static void unloadSound(String filePath, boolean removeFromList) {
         if (sounds.containsKey(filePath)) {
             if (Game.isDebugging()) {
-                Out.printlnDebug("Sound unloaded: " + getSoundsDirectoryName() + "/" + filePath + "");
+                Out.printlnDebug("Sound unloaded: " + getSoundsDirectoryName() + "/" + filePath);
             }
 
             sounds.get(filePath).destroy();
@@ -398,7 +398,7 @@ public class Resources {
     public static Spritesheet loadSpritesheet(String filePath) {
         if (!spritesheets.containsKey(filePath)) {
             if (Game.isDebugging()) {
-                Out.printlnDebug("Spritesheet loaded: " + getTexturesDirectory() + "/" + filePath + "");
+                Out.printlnDebug("Spritesheet loaded: " + getTexturesDirectory() + "/" + filePath);
             }
 
             spritesheets.put(filePath, Json.deserialize(getTexturesDirectory() + "/" + filePath, Spritesheet.class));

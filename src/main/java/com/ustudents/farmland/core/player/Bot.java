@@ -17,24 +17,45 @@ public class Bot {
         // TODO: seed
         SeedRandom random = new SeedRandom();
 
-        int action = random.generateInRange(0, 1);
+        int action = makeChoice();
 
         if (action == 0) {
             buyLand(random);
-        } else if (action == 1) {
-            addItem(random);
+        } else {
+            for (int i = 0; i < action ; i++){
+                addItem(random);
+            }
         }
 
         maintenanceCost();
     }
 
-    public static void maintenanceCost(){
+    public static int makeChoice(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        int c = 0;
+
         for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
             for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
                 Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
 
-                if (cell.isOwnedByCurrentPlayer()){
-                    Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+                if (cell.isOwned() && cell.ownerId.equals(player.getId())){
+                    if (!cell.hasItem()){
+                        c++;
+                    }
+                }
+            }
+        }
+        return c;
+    }
+
+    public static void maintenanceCost(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
+
+                if (cell.isOwned() && cell.ownerId.equals(player.getId())){
                     player.setMoney(player.money - 1);
                 }
             }
