@@ -132,20 +132,42 @@ Semaine de partiel (peu de travail effectué), amélioration du gameplay.
 
 ### Semaine 7 (jusqu'au 26 mars)
 
-- Continuation du travail sur le système économique (LE CORRE Léo et PAULAS VICTOR Francis)
+- Continuation du travail sur le système économique (LE CORRE Léo et PAULAS VICTOR Francis) **[FAIT]**
 
-- Gagner de l'argent à chaque tour et payer pour chaque propriété possédé (JAUROYON Maxime)
+- Gagner de l'argent à chaque tour et payer pour chaque propriété possédé (JAUROYON Maxime) **[FAIT]**
 
-- Synchronisation complète multijoueur entre les différents joueur en local (KINDEL Hugo)
-
-- Mise à niveau de la taille de certaines ressources (ex: les animaux) qui dépasse de leur case
+- Synchronisation complète multijoueur entre les différents joueur en local (KINDEL Hugo) **[FAIT]**
 
 ### Semaine 8 (jusqu'au 2 avril)
 
 - Synchronisation complète multijoueur entre les différents joueur en ligne (KINDEL Hugo)
 
-- Amélioration de certaines parties de l'interface graphique (refactor de certains code)
+- Amélioration de certaines parties de l'interface graphique (KINDEL Hugo)
 
-- Possibilité de placer des décorations
+- Optimisation des composants du gameplay (PAULAS VICTOR Francis et JAUROYON Maxime)
 
-- Système de troupeau pour les animaux (peut-être ?)
+- Mise à niveau de la taille de certaines ressources (ex: les animaux) qui dépasse de leur case (PAULAS VICTOR Francis) **[FAIT]**
+
+- Amélioration de l'affichage des composantes (JAUROYON Maxime) **[FAIT]**
+
+- Possibilité de placer des décorations **[Facultatif]**
+
+- Système de troupeau pour les animaux (peut-être ?) **[Facultatif]**
+
+### Semaine 9 (jusqu'au 9 avril)
+
+- Ajout d'un système de rechercher, de caravane (JAUROYON Maxime) **[FAIT]**
+
+- Création d'un avatar personnalisable (JAUROYON Maxime) **[FAIT]**
+
+- Passage du protocole UDP à TCP pour le multijoueur (KINDEL Hugo) **[FAIT]**
+
+- Finition du système économique (LE CORRE Léo) **[FAIT]**
+
+### Semaine 10 (jusqu'au 16 avril)
+
+- Choix de la langue utilisée (PAULAS VICTOR Francis)
+
+- Ajout d'un système d'emprunt (LE CORRE Léo)
+
+- Optimisation du code du gamplay (JAUROYON Maxime)
