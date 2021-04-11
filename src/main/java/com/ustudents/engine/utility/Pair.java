@@ -1,13 +1,22 @@
 package com.ustudents.engine.utility;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
+
 /** A container for a pair of objects. */
 @SuppressWarnings({"unused"})
+@JsonSerializable
 public class Pair<T, U> {
     /** The first object of the pair. */
+    @JsonSerializable
     private T object1;
 
     /** The second object of the pair. */
+    @JsonSerializable
     private U object2;
+
+    public Pair() {
+
+    }
 
     /**
      * Class constructor.
@@ -46,5 +55,13 @@ public class Pair<T, U> {
      */
     public void setObject2(U object) {
         object2 = object;
+    }
+
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "object1=" + object1 +
+                ", object2=" + object2 +
+                '}';
     }
 }

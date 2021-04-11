@@ -1,16 +1,26 @@
 package com.ustudents.engine.utility;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
+
 /** A container for a triplet of objects. */
 @SuppressWarnings({"unused"})
+@JsonSerializable
 public class Triplet<T, U, W> {
     /** The first object of the triplet. */
+    @JsonSerializable
     private T object1;
 
     /** The second object of the triplet. */
+    @JsonSerializable
     private U object2;
 
     /** The third object of the triplet. */
+    @JsonSerializable
     private W object3;
+
+    public Triplet() {
+
+    }
 
     /**
      * Class constructor.
@@ -65,5 +75,14 @@ public class Triplet<T, U, W> {
      */
     public void setObject3(W object) {
         object3 = object;
+    }
+
+    @Override
+    public String toString() {
+        return "Triplet{" +
+                "object1=" + object1 +
+                ", object2=" + object2 +
+                ", object3=" + object3 +
+                '}';
     }
 }

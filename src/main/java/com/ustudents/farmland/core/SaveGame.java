@@ -59,6 +59,7 @@ public class SaveGame {
 
     public Boolean startWithBots;
 
+    @JsonSerializable
     public List<Integer> deadPlayers;
 
     public String path;
