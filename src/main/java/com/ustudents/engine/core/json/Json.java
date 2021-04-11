@@ -43,7 +43,7 @@ public class Json {
     }
 
     public static <T> T deserialize(Map<String, Object> json, Class<T> classType) {
-        return deserialize(json, classType, null);
+        return deserialize(json, classType, null, null);
     }
 
     /**
@@ -55,7 +55,7 @@ public class Json {
      *
      * @return the class of type T created.
      */
-    public static <T ,U> T deserialize(Map<String, Object> json, Class<T> classType, Class<U> declaringClass) {
+    public static <T ,U> T deserialize(Map<String, Object> json, Class<T> classType, Class<U> declaringClass, String declaringFieldName) {
         try {
             checkSerializable(classType);
 
@@ -130,20 +130,20 @@ public class Json {
                     if (value == null) {
                         field.set(object, null);
                     } else {
-                        field.set(object, deserialize((Map<String, Object>)value, field.getType()));
+                        field.set(object, deserialize((Map<String, Object>)value, field.getType(), field.getDeclaringClass(), field.getName()));
                     }
                     continue;
                 } else if (field.getType().getName().startsWith("java.util.Map")) {
-                    if (mapExtraction(field, mapToSearch.get(path[path.length - 1]), object)) {
+                    if (mapExtraction(field, mapToSearch.get(path[path.length - 1]), object, declaringClass)) {
                         continue;
                     }
                 } else if (field.getType().getName().startsWith("java.util.List")) {
-                    if (listExtraction(field, value, object)) {
+                    if (listExtraction(field, value, object, declaringClass)) {
                         continue;
                     }
                 }
 
-                convertAndAdd(field, value, object);
+                convertAndAdd(field, value, object, declaringClass, declaringFieldName);
             }
 
             for (Method method : classType.getMethods()) {
@@ -164,7 +164,7 @@ public class Json {
         return null;
     }
 
-    public static boolean listExtraction(Field field, Object value, Object object) {
+    public static <T> boolean listExtraction(Field field, Object value, Object object, Class<T> declaringClass) {
        try {
            ParameterizedType parameterizedType = (ParameterizedType)field.getGenericType();
            Type tType = parameterizedType.getActualTypeArguments()[0];
@@ -180,7 +180,7 @@ public class Json {
                        if (element.getClass().isAnnotationPresent(JsonSerializable.class)) {
                            list.add(element);
                        } else {
-                           list.add(deserialize((Map<String, Object>) element, Class.forName(tType.getTypeName())));
+                           list.add(deserialize((Map<String, Object>)element, Class.forName(tType.getTypeName()), field.getDeclaringClass(), field.getName()));
                        }
                    }
                }
@@ -202,7 +202,9 @@ public class Json {
                            if (realElement.getClass().isAnnotationPresent(JsonSerializable.class)) {
                                list.add(realElement);
                            } else {
-                               ((List<Object>)list.get(i)).add(deserialize((Map<String, Object>) realElement, Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>'))));
+                               ((List<Object>)list.get(i)).add(deserialize((Map<String, Object>) realElement,
+                                       Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>')),
+                                       field.getDeclaringClass(), field.getName()));
                            }
                        }
                    }
@@ -218,7 +220,7 @@ public class Json {
        return false;
     }
 
-    public static boolean mapExtraction(Field field, Object value, Object object) {
+    public static <T> boolean mapExtraction(Field field, Object value, Object object, Class<T> declaringClass) {
         ParameterizedType parameterizedType = (ParameterizedType)field.getGenericType();
         Type tType = parameterizedType.getActualTypeArguments()[1];
 
@@ -232,7 +234,8 @@ public class Json {
                 return true;
             } else if (type.isAnnotationPresent(JsonSerializable.class)) {
                 for (Map.Entry<String, Object> entry : realMap.entrySet()) {
-                    returnMap.put(entry.getKey(), deserialize((Map<String, Object>)entry.getValue(), type));
+                    returnMap.put(entry.getKey(), deserialize((Map<String, Object>)entry.getValue(), type,
+                            field.getDeclaringClass(), field.getName()));
                 }
                 field.set(object, returnMap);
                 return true;
@@ -393,7 +396,19 @@ public class Json {
      * @param <T> The class's type.
      */
     public static <T> void checkSerializable(Class<T> classType) throws Exception {
-        if (!classType.isAnnotationPresent(JsonSerializable.class) && !classType.getSuperclass().isAnnotationPresent(JsonSerializable.class)) {
+        boolean isSerializable = false;
+        Class<?> type = classType;
+
+        while (type != null) {
+            if (type.isAnnotationPresent(JsonSerializable.class)) {
+                isSerializable = true;
+                break;
+            }
+
+            type = classType.getSuperclass();
+        }
+
+        if (!isSerializable) {
             throw new Exception("Not a serializable class!");
         }
     }
@@ -432,61 +447,76 @@ public class Json {
      *
      * @param field The field.
      * @param value The value.
-     * @param instance The instance (object) of the field.
+     * @param object The instance (object) of the field.
      */
-    private static void convertAndAdd(Field field, Object value, Object instance) {
+    private static <T> void convertAndAdd(Field field, Object value, Object object, Class<T> declaringClass, String declaringFieldName) {
         try {
+            Class<?> type;
+
+            if (declaringClass == null) {
+                type = field.getType();
+            } else {
+                Type genericType = Objects.requireNonNull(findFieldInClass(declaringFieldName, declaringClass)).getGenericType();
+                Type realType = searchSignature(field, genericType);
+
+                if (realType != null) {
+                    type = Class.forName(realType.getTypeName());
+                } else {
+                    type = field.getType();
+                }
+            }
+
             if (value == null) {
-                field.set(instance, null);
-            } else  if (field.getType() == Float.class) {
-                field.set(instance, ((Double)value).floatValue());
-            } else  if (field.getType() == Integer.class) {
-                field.set(instance, ((Long)value).intValue());
-            } else if (field.getType() == Vector2f.class) {
+                field.set(object, null);
+            } else  if (type == Float.class) {
+                field.set(object, ((Double)value).floatValue());
+            } else  if (type == Integer.class) {
+                field.set(object, ((Long)value).intValue());
+            } else if (type == Vector2f.class) {
                 Map<String, Object> map = (Map<String, Object>)value;
-                field.set(instance, new Vector2f(
+                field.set(object, new Vector2f(
                         ((Double)map.get("x")).floatValue(),
                         ((Double)map.get("y")).floatValue())
                 );
-            } else if (field.getType() == Vector3f.class) {
+            } else if (type == Vector3f.class) {
                 Map<String, Object> map = (Map<String, Object>)value;
-                field.set(instance, new Vector3f(
+                field.set(object, new Vector3f(
                         ((Double)map.get("x")).floatValue(),
                         ((Double)map.get("y")).floatValue(),
                         ((Double)map.get("z")).floatValue())
                 );
-            } else if (field.getType() == Vector4f.class) {
+            } else if (type == Vector4f.class) {
                 Map<String, Object> map = (Map<String, Object>)value;
-                field.set(instance, new Vector4f(
+                field.set(object, new Vector4f(
                         ((Double)map.get("x")).floatValue(),
                         ((Double)map.get("y")).floatValue(),
                         ((Double)map.get("z")).floatValue(),
                         ((Double)map.get("w")).floatValue())
                 );
-            } else if (field.getType() == Vector2i.class) {
+            } else if (type == Vector2i.class) {
                 Map<String, Object> map = (Map<String, Object>)value;
-                field.set(instance, new Vector2i(
+                field.set(object, new Vector2i(
                         ((Integer)map.get("x")),
                         ((Integer)map.get("y")))
                 );
-            } else if (field.getType() == Vector3i.class) {
+            } else if (type == Vector3i.class) {
                 Map<String, Object> map = (Map<String, Object>)value;
-                field.set(instance, new Vector3i(
+                field.set(object, new Vector3i(
                         ((Integer)map.get("x")),
                         ((Integer)map.get("y")),
                         ((Integer)map.get("z")))
                 );
-            } else if (field.getType() == Vector4i.class) {
+            } else if (type == Vector4i.class) {
                 Map<String, Object> map = (Map<String, Object>)value;
-                field.set(instance, new Vector4i(
+                field.set(object, new Vector4i(
                         ((Integer)map.get("x")),
                         ((Integer)map.get("y")),
                         ((Integer)map.get("z")),
                         ((Integer)map.get("w")))
                 );
-            } else if (field.getType() == Matrix4f.class) {
+            } else if (type == Matrix4f.class) {
                 Map<String, Object> map = (Map<String, Object>)value;
-                field.set(instance, new Matrix4f(
+                field.set(object, new Matrix4f(
                         ((Double)map.get("m00")).floatValue(),
                         ((Double)map.get("m01")).floatValue(),
                         ((Double)map.get("m02")).floatValue(),
@@ -505,10 +535,46 @@ public class Json {
                         ((Double)map.get("m33")).floatValue())
                 );
             } else {
-                field.set(instance, value);
+                field.set(object, value);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static <T> Field findFieldInClass(String fieldName, Class<T> type) {
+        for (Field classField : type.getDeclaredFields()) {
+            if (fieldName.equals(classField.getName())) {
+                return classField;
+            }
+        }
+
+        return null;
+    }
+
+    private static String getSignature(Field field) {
+        try {
+            return field.getGenericType().getTypeName();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private static Type searchSignature(Field field, Type genericTypes) {
+        String signature = getSignature(field);
+
+        if (field.getType() == Object.class && signature != null && genericTypes instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType)genericTypes;
+
+            for (int i = 0; i < field.getDeclaringClass().getTypeParameters().length; i++) {
+                if (signature.equals(field.getDeclaringClass().getTypeParameters()[i].getName())) {
+                    return parameterizedType.getActualTypeArguments()[i];
+                }
+            }
+        }
+
+        return null;
     }
 }
