@@ -6,6 +6,7 @@ import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.utility.Pair;
 import com.ustudents.engine.utility.Triplet;
 import com.ustudents.farmland.Farmland;
@@ -13,6 +14,7 @@ import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.network.BuyMessage;
+import com.ustudents.farmland.network.LoadSaveResponse;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -77,27 +79,6 @@ public class Player {
         this.caravans = new ArrayList<>();
         this.farmerResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
         this.breederResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
-    }
-
-    @JsonSerializableConstructor
-    public void deserialize() {
-        Map<String, Item> realInventory = new HashMap<>();
-        Map<String, Item> realSellInventory = new HashMap<>();
-        for (Map.Entry<String, Item> elements : buyInventory.entrySet()) {
-            Map<String, Object> value = ((Map<String, Object>)((Object)elements.getValue()));
-            Item item = Farmland.get().getItem((String)value.get("id"));
-            if (item instanceof Animal) {
-                realInventory.put(elements.getKey(), Json.deserialize(value, Animal.class));
-            } else if (item instanceof Crop) {
-                realInventory.put(elements.getKey(), Json.deserialize(value, Crop.class));
-            } else if (item instanceof Decoration) {
-                realInventory.put(elements.getKey(), Json.deserialize(value, Decoration.class));
-            } else if (item instanceof Property) {
-                realInventory.put(elements.getKey(), Json.deserialize(value, Property.class));
-            }
-        }
-        buyInventory = realInventory;
-        sellInventory = realSellInventory;
     }
 
     public void addToInventory(Item item, String name) {
@@ -243,6 +224,10 @@ public class Player {
             for (int i = 0; i < quantity; i++) {
                 addToInventory(item, "Buy");
                 Farmland.get().getLoadedSave().itemsTurn.add(item);
+            }
+
+            if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+                Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
             }
         } else {
             Game.get().getClient().send(new BuyMessage(item.id));

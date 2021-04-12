@@ -67,7 +67,6 @@ public class InGameScene extends Scene {
         initializeEntities();
         initializeGui();
         initializeGameplay();
-        economicComponent = new EconomicComponent();
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
             getEntityByName("endTurnButton").setEnabled(false);
@@ -93,14 +92,16 @@ public class InGameScene extends Scene {
         grid.addComponent(new WorldRendererComponent());
         grid.addComponent(new GridComponent(new Vector2i(Farmland.get().getLoadedSave().cells.size(), Farmland.get().getLoadedSave().cells.get(0).size()), new Vector2i(24, 24), gridBackground, cellBackground, selectionCursor, territoryTexture));
         grid.addComponent(new TurnTimerComponent(SaveGame.timePerTurn));
-        grid.getComponent(GridComponent.class).onItemUsed.add((dataType, data) -> onSelectedItemOrMoneyChanged());
+        grid.getComponent(GridComponent.class).onItemUsed.add((dataType, data) -> updateMoneyItemLabel());
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
-            Farmland.get().getLoadedSave().players.get(Farmland.get().getLoadedSave().getLocalPlayer().getId()).moneyChanged.add((dataType, data) -> onSelectedItemOrMoneyChanged());
+            Farmland.get().getLoadedSave().players.get(Farmland.get().getLoadedSave().getLocalPlayer().getId()).moneyChanged.add((dataType, data) -> updateMoneyItemLabel());
         }
 
         Entity player = createEntityWithName("player");
         player.addComponent(new PlayerMovementComponent(500.0f));
+
+        economicComponent = new EconomicComponent();
     }
 
     public void initializeGui() {
@@ -438,7 +439,7 @@ public class InGameScene extends Scene {
     private void makeListOfPlayerItem(){
         if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemID != null && ImGui.button("Désélectionner")) {
             Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemID = null;
-            onSelectedItemOrMoneyChanged();
+            updateMoneyItemLabel();
         }
 
         Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getLoadedSave()).getCurrentPlayer().buyInventory;
@@ -456,7 +457,7 @@ public class InGameScene extends Scene {
 
                 if (ImGui.button("Sélectionner")) {
                     Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemID = item;
-                    onSelectedItemOrMoneyChanged();
+                    updateMoneyItemLabel();
                 }
 
                 ImGui.popID();
@@ -514,7 +515,7 @@ public class InGameScene extends Scene {
             }
           
             if (!onCompletedTurnEnd()){
-                leaderBoardUpdate();
+                updateLeaderboard();
             }
         }
 
@@ -701,7 +702,7 @@ public class InGameScene extends Scene {
     }
 
 
-    public void leaderBoardUpdate(){
+    public void updateLeaderboard(){
         List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getLoadedSave().players);
         String leaderBoard = "Classement : ";
         for (Player player : leaderBoardList) {
@@ -730,7 +731,7 @@ public class InGameScene extends Scene {
         }
     }
 
-    public void onSelectedItemOrMoneyChanged() {
+    public void updateMoneyItemLabel() {
         String selectedId = Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemID;
         String text = "Argent : " + Farmland.get().getLoadedSave().getLocalPlayer().money;
         if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null) {
@@ -746,19 +747,28 @@ public class InGameScene extends Scene {
     @Override
     public void update(float dt) {
         if (Farmland.get().isConnectedToServer()) {
-            SaveGame saveGame = LoadSaveResponse.getUpdatedSaveGame();
-            if (saveGame != null) {
-                if (saveGame.turn > Farmland.get().getLoadedSave().turn) {
-                    onTurnEnded();
-                    getEntityByName("grid").getComponent(TurnTimerComponent.class).onTurnEnded();
+            SaveGame serverSave = LoadSaveResponse.getUpdatedSaveGame();
+
+            if (serverSave != null) {
+                SaveGame currentSave = Farmland.get().getLoadedSave();
+
+                serverSave.turnEnded = currentSave.turnEnded;
+
+                Farmland.get().saves.put(Farmland.get().saveId, serverSave);
+
+                if (!serverSave.currentPlayerId.equals(currentSave.currentPlayerId)) {
+                    Farmland.get().getLoadedSave().turnEnded.dispatch();
                 }
 
-                int time = saveGame.turnTimePassed > Farmland.get().getLoadedSave().turnTimePassed ? saveGame.turnTimePassed : Farmland.get().getLoadedSave().turnTimePassed;
-                Farmland.get().saves.put(Farmland.get().saveId, saveGame);
-                Farmland.get().getLoadedSave().turnTimePassed = time;
+                /*if (!serverSave.turnTimePassed.equals(currentSave.turnTimePassed)) {
+                    Farmland.get().getLoadedSave().turnTimePassed
+                            = serverSave.turnTimePassed > currentSave.turnTimePassed ?
+                              serverSave.turnTimePassed : currentSave.turnTimePassed;
+                }*/
             }
-            onSelectedItemOrMoneyChanged();
-            leaderBoardUpdate();
+
+            updateMoneyItemLabel();
+            updateLeaderboard();
         }
     }
 }

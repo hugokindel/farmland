@@ -1,10 +1,14 @@
 package com.ustudents.farmland.component;
 
+import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.player.Bot;
+import com.ustudents.farmland.network.EndTurnMessage;
 
 @SuppressWarnings("unchecked")
 public class TurnTimerComponent extends BehaviourComponent {
@@ -46,17 +50,19 @@ public class TurnTimerComponent extends BehaviourComponent {
         time += dt;
         skipturn += dt;
 
-        if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
-            Bot.playTurn();
-            skipmadepart1 = true;
-        }
+        if (Game.get().hasAuthority()) {
+            if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
+                Bot.playTurn();
+                skipmadepart1 = true;
+            }
 
-        if (skipturn >= 2f && skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
-            Farmland.get().getLoadedSave().endTurn();
+            if (skipturn >= 2f && skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().typeOfPlayer.equals("Robot")) {
+                Farmland.get().getLoadedSave().endTurn();
+            }
         }
 
         if (time >= timePerTurn) {
-            if (Farmland.get().getLoadedSave() != null) {
+            if (Game.get().hasAuthority() && Farmland.get().getLoadedSave() != null) {
                 Farmland.get().getLoadedSave().endTurn();
             }
 

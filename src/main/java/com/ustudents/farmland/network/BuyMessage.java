@@ -33,8 +33,6 @@ public class BuyMessage extends Message {
         }
 
         Farmland.get().getLoadedSave().getCurrentPlayer().buy(item, 1);
-
-        Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
     }
 
     @Override

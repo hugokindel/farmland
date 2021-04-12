@@ -1,5 +1,6 @@
 package com.ustudents.farmland.network;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 
@@ -12,8 +13,6 @@ public class EndTurnMessage extends Message {
     @Override
     public void process() {
         Farmland.get().getLoadedSave().endTurn();
-
-        Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
     }
 
     @Override

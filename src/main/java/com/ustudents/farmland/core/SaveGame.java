@@ -9,12 +9,14 @@ import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.engine.graphic.Texture;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.EndTurnMessage;
+import com.ustudents.farmland.network.LoadSaveResponse;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -185,6 +187,8 @@ public class SaveGame {
 
     public void endTurn() {
         if (Game.get().hasAuthority()) {
+            Out.println("Turn end");
+
             if (Game.isDebugging()) {
                 Out.printlnDebug("Turn end");
             }
@@ -197,6 +201,10 @@ public class SaveGame {
             }
 
             turnEnded.dispatch();
+
+            if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+                Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
+            }
         } else {
             Game.get().getClient().send(new EndTurnMessage());
         }
