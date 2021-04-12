@@ -541,7 +541,7 @@ public class InGameScene extends Scene {
                 shouldShowBackResearch = true;
             }
             showInventory.set(false);
-            showMarket.set(true);
+            showMarket.set(false);
             showCaravan.set(false);
             showResearch.set(false);
         } else {
