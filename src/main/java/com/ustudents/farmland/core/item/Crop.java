@@ -10,6 +10,7 @@ import java.util.Map;
 
 @JsonSerializable
 public class Crop extends Item {
+
     @JsonSerializable
     public Integer numberOfTurnsToGrow;
 

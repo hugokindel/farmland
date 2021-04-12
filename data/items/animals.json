@@ -2,7 +2,8 @@
   {
     "name": "Poulet",
     "id": "chicken",
-    "value" : 500,
+    "buyingValue" : 500,
+    "sellingValue" : 500,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "chicken.json",
     "sprites" :[
@@ -17,7 +18,8 @@
   {
     "name": "Vache",
     "id": "cow",
-    "value" : 10,
+    "buyingValue" : 50,
+    "sellingValue" : 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "cow.json",
     "sprites" :[
@@ -32,7 +34,8 @@
   {
     "name": "Chevre",
     "id": "goat",
-    "value" : 10,
+    "buyingValue" : 50,
+    "sellingValue" : 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "goat.json",
     "sprites" :[
@@ -47,7 +50,8 @@
   {
     "name": "Cochon",
     "id": "pig",
-    "value" : 10,
+    "buyingValue" : 50,
+    "sellingValue" : 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "pig.json",
     "sprites" :[
@@ -62,7 +66,8 @@
   {
     "name": "Mouton",
     "id": "sheep",
-    "value" : 10,
+    "buyingValue" : 50,
+    "sellingValue" : 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "sheep.json",
     "sprites" :[

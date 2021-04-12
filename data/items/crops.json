@@ -2,7 +2,8 @@
 	{
 		"name": "Tomate",
 		"id": "tomato",
-		"value" : 10,
+		"buyingValue" : 10,
+		"sellingValue" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "tomato.json",
 		"sprites" :[
@@ -18,7 +19,8 @@
 	{
 		"name": "Fraise",
 		"id": "strawberry",
-		"value" : 10,
+		"buyingValue" : 10,
+		"sellingValue" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "strawberry.json",
 		"sprites" :[
@@ -34,7 +36,8 @@
 	{
 		"name": "Mais",
 		"id": "corn",
-		"value" : 10,
+		"buyingValue" : 10,
+		"sellingValue" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "corn.json",
 		"sprites" :[
@@ -50,7 +53,8 @@
 	{
 		"name": "Raisins",
 		"id": "grapes",
-		"value" : 10,
+		"buyingValue" : 10,
+		"sellingValue" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "grapes.json",
 		"sprites" :[
@@ -66,7 +70,8 @@
 	{
 		"name": "Orange",
 		"id": "orange",
-		"value" : 10,
+		"buyingValue" : 10,
+		"sellingValue" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "orange.json",
 		"sprites" :[
@@ -82,7 +87,8 @@
 	{
 		"name": "Ananas",
 		"id": "pineapple",
-		"value" : 10,
+		"buyingValue" : 10,
+		"sellingValue" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "pineapple.json",
 		"sprites" :[
@@ -98,7 +104,8 @@
 	{
 		"name": "Radis",
 		"id": "shuttle",
-		"value" : 10,
+		"buyingValue" : 10,
+		"sellingValue" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "shuttle.json",
 		"sprites" :[
@@ -114,7 +121,8 @@
 	{
 		"name": "Pasteque",
 		"id": "watermelon",
-		"value" : 10,
+		"buyingValue" : 10,
+		"sellingValue" : 10,
 		"numberOfTurnsToGrow": 6,
 		"texture": "watermelon.json",
 		"sprites" :[

@@ -9,6 +9,7 @@ import com.ustudents.farmland.core.item.Crop;
 import com.ustudents.farmland.core.item.Item;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ public class Bot {
             }
         }
 
+        sellInventory();
         maintenanceCost();
     }
 
@@ -88,16 +90,17 @@ public class Bot {
                 return;
             }
 
-            List<Item> items = Farmland.get().getResourceDatabase().values().stream().filter(Objects::nonNull).collect(Collectors.toList());
-            //List<Item> items = Farmland.get().getItemDatabase().values().stream().filter(j -> j instanceof Crop).collect(Collectors.toList());
+            List<Item> items = Farmland.get().getCurrentSave().getResourceDatabase().values().stream().filter(Objects::nonNull).collect(Collectors.toList());
             Item item = items.get(random.generateInRange(0, items.size() - 1));
+            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), true);
 
-            if (player.money < item.value) {
+            if (player.money < item.buyingValue) {
                 i++;
                 continue;
             }
 
-            player.setMoney(player.money - item.value);
+            player.setMoney(player.money - item.buyingValue);
+            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), true);
             Item clone = Item.clone(item);
             assert clone != null;
             clone.quantity = 1;
@@ -113,5 +116,17 @@ public class Bot {
                 i++;
             }
         }
+    }
+
+    public static void sellInventory(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        for(Item item: player.getAllItemOfSellInventory().values()){
+            item.sellingValue = Farmland.get().getCurrentSave().getResourceDatabase().get(item.id).sellingValue;
+            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), false);
+            player.money += item.quantity * item.sellingValue;
+        }
+
+        player.getAllItemOfSellInventory().clear();
     }
 }
