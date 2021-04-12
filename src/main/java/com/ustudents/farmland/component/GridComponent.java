@@ -172,6 +172,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
                 Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId()) &&
+                Farmland.get().getLoadedSave().getLocalPlayer().getCurrentItemFromInventory() == null &&
                 !cellIsOwnedByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) &&
                 cellIsClosedToOwnedCellByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) &&
                 Farmland.get().getLoadedSave().currentPlayerId.equals(Farmland.get().getLoadedSave().localPlayerId)

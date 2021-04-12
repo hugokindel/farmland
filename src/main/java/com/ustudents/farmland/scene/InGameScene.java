@@ -2,6 +2,8 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.input.Input;
+import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.scene.component.graphics.TextureComponent;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.ecs.Entity;
@@ -48,6 +50,8 @@ public class InGameScene extends Scene {
     public boolean sellMenu;
 
     public boolean caravanMenu;
+
+    public String lastSelectedItemId;
 
     @Override
     public void initialize() {
@@ -437,8 +441,8 @@ public class InGameScene extends Scene {
     }
 
     private void makeListOfPlayerItem(){
-        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemID != null && ImGui.button("Désélectionner")) {
-            Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemID = null;
+        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null && ImGui.button("Désélectionner")) {
+            Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = null;
             updateMoneyItemLabel();
         }
 
@@ -456,7 +460,7 @@ public class InGameScene extends Scene {
                 ImGui.pushID(item);
 
                 if (ImGui.button("Sélectionner")) {
-                    Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemID = item;
+                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = item;
                     updateMoneyItemLabel();
                 }
 
@@ -759,16 +763,24 @@ public class InGameScene extends Scene {
                 if (!serverSave.currentPlayerId.equals(currentSave.currentPlayerId)) {
                     Farmland.get().getLoadedSave().turnEnded.dispatch();
                 }
-
-                /*if (!serverSave.turnTimePassed.equals(currentSave.turnTimePassed)) {
-                    Farmland.get().getLoadedSave().turnTimePassed
-                            = serverSave.turnTimePassed > currentSave.turnTimePassed ?
-                              serverSave.turnTimePassed : currentSave.turnTimePassed;
-                }*/
             }
 
             updateMoneyItemLabel();
             updateLeaderboard();
+        }
+
+        if (Input.isMouseRelease(MouseButton.Right)) {
+            if (Farmland.get().getLoadedSave().getLocalPlayer().getId().equals(Farmland.get().getLoadedSave().getCurrentPlayer().getId())) {
+                if (lastSelectedItemId == null) {
+                    lastSelectedItemId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID;
+                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = null;
+                } else {
+                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = lastSelectedItemId;
+                    lastSelectedItemId = null;
+                }
+
+                updateMoneyItemLabel();
+            }
         }
     }
 }
