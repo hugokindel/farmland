@@ -84,6 +84,10 @@ public class Message {
         return Reliability.OrderedAndReliable;
     }
 
+    public boolean shouldBeHandledOnMainThread() {
+        return false;
+    }
+
     public void process() {
 
     }

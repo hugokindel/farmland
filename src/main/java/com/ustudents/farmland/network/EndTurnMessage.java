@@ -15,4 +15,9 @@ public class EndTurnMessage extends Message {
 
         Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
     }
+
+    @Override
+    public boolean shouldBeHandledOnMainThread() {
+        return true;
+    }
 }

@@ -36,4 +36,9 @@ public class BuyMessage extends Message {
 
         Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
     }
+
+    @Override
+    public boolean shouldBeHandledOnMainThread() {
+        return true;
+    }
 }

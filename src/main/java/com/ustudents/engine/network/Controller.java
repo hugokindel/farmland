@@ -32,6 +32,8 @@ public abstract class Controller {
 
     protected final Queue<Message> messagesToSend = new ConcurrentLinkedQueue<>();
 
+    protected final Queue<Message> messagesToHandleOnMainThread = new ConcurrentLinkedQueue<>();
+
     protected final AtomicBoolean mainThreadWaitingForResponse = new AtomicBoolean(false);
 
     protected final AtomicReference<Class> mainThreadWaitingForResponseType = new AtomicReference<>(null);
@@ -83,6 +85,10 @@ public abstract class Controller {
     public abstract boolean isAlive();
 
     public abstract Type getType();
+
+    public Queue<Message> getMessagesToHandleOnMainThread() {
+        return messagesToHandleOnMainThread;
+    }
 
     protected abstract Connection findConnectionToSendMessage(Message message);
 
@@ -150,6 +156,7 @@ public abstract class Controller {
     private void internalStop() {
         messagesToRead.clear();
         messagesToSend.clear();
+        messagesToHandleOnMainThread.clear();
         mainThreadWaitingForResponse.set(false);
         mainThreadWaitingForResponseType.set(null);
         responseForMainThread.set(null);
@@ -169,7 +176,12 @@ public abstract class Controller {
                     Message message = readMessage(data.getObject2());
                     message.setSenderId(data.getObject1());
                     handleMessageIfNecessary(message);
-                    message.process();
+
+                    if (message.shouldBeHandledOnMainThread()) {
+                        messagesToHandleOnMainThread.add(message);
+                    } else {
+                        message.process();
+                    }
 
                     if (mainThreadWaitingForResponse.get() && message.getClass() == mainThreadWaitingForResponseType.get()) {
                         if (Game.isDebugging()) {

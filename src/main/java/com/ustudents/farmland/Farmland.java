@@ -189,7 +189,7 @@ public class Farmland extends Game {
             serverSettings = JsonReader.readMap(Resources.getDataDirectory() + "/server.json");
         } else {
             serverSettings = new HashMap<>();
-            serverSettings.put("serverName", "Local server");
+            serverSettings.put("serverName", "Mon serveur");
             serverSettings.put("maxNumberPlayers", 2L);
             serverSettings.put("numberBots", 4L);
         }

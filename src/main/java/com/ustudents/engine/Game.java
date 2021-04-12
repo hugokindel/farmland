@@ -29,6 +29,7 @@ import org.joml.Vector2i;
 import org.lwjgl.opengl.GL33;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
@@ -498,8 +499,17 @@ public abstract class Game extends Runnable {
             }
         }
 
-        float dt = timer.getDeltaTime();
+        if (getNetMode() == NetMode.DedicatedServer || getNetMode() == NetMode.ListenServer) {
+            if (!getServer().getMessagesToHandleOnMainThread().isEmpty()) {
+                Objects.requireNonNull(getServer().getMessagesToHandleOnMainThread().poll()).process();
+            }
+        } else if (getNetMode() == NetMode.ListenServer || getNetMode() == NetMode.Client) {
+            if (!getClient().getMessagesToHandleOnMainThread().isEmpty()) {
+                Objects.requireNonNull(getClient().getMessagesToHandleOnMainThread().poll()).process();
+            }
+        }
 
+        float dt = timer.getDeltaTime();
         sceneManager.update(dt);
         update(dt);
         Input.update(dt);

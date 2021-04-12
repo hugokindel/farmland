@@ -19,6 +19,9 @@ import java.lang.reflect.Type;
 import java.text.Collator;
 import java.util.*;
 
+import static com.ustudents.engine.utility.ReflectionUtil.findFieldInClass;
+import static com.ustudents.engine.utility.ReflectionUtil.searchSignature;
+
 /** Contains utility functions to deserialize and serialize Json data format files. */
 @SuppressWarnings({"unchecked", "unused"})
 public class Json {
@@ -540,41 +543,5 @@ public class Json {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private static <T> Field findFieldInClass(String fieldName, Class<T> type) {
-        for (Field classField : type.getDeclaredFields()) {
-            if (fieldName.equals(classField.getName())) {
-                return classField;
-            }
-        }
-
-        return null;
-    }
-
-    private static String getSignature(Field field) {
-        try {
-            return field.getGenericType().getTypeName();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    private static Type searchSignature(Field field, Type genericTypes) {
-        String signature = getSignature(field);
-
-        if (field.getType() == Object.class && signature != null && genericTypes instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType)genericTypes;
-
-            for (int i = 0; i < field.getDeclaringClass().getTypeParameters().length; i++) {
-                if (signature.equals(field.getDeclaringClass().getTypeParameters()[i].getName())) {
-                    return parameterizedType.getActualTypeArguments()[i];
-                }
-            }
-        }
-
-        return null;
     }
 }
