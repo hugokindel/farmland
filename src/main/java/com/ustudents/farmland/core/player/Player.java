@@ -2,19 +2,15 @@ package com.ustudents.farmland.core.player;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
-import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.utility.Pair;
 import com.ustudents.engine.utility.Triplet;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
-import com.ustudents.farmland.network.BuyMessage;
-import com.ustudents.farmland.network.LoadSaveResponse;
+import com.ustudents.farmland.network.actions.BuyMessage;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -45,7 +41,7 @@ public class Player {
     public Vector2f position;
 
     @JsonSerializable
-    public String selectedItemID;
+    public String selectedItemId;
 
     @JsonSerializable
     public Map<String, Item> buyInventory;
@@ -95,7 +91,6 @@ public class Player {
 
             sellInventory.get(item.id).quantity++;
         }
-
     }
 
     public boolean deleteFromInventory(Item item, String name) {
@@ -138,8 +133,8 @@ public class Player {
     }
 
     public Item getCurrentItemFromInventory() {
-        if (selectedItemID != null) {
-            return buyInventory.get(selectedItemID);
+        if (selectedItemId != null) {
+            return buyInventory.get(selectedItemId);
         } else {
             return null;
         }
@@ -221,16 +216,36 @@ public class Player {
     public void buy(Item item, int quantity) {
         if (Game.get().hasAuthority()) {
             setMoney(money - (item.value * quantity));
+
             for (int i = 0; i < quantity; i++) {
                 addToInventory(item, "Buy");
                 Farmland.get().getLoadedSave().itemsTurn.add(item);
             }
 
-            if (Game.get().getNetMode() == NetMode.DedicatedServer) {
-                Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
-            }
+            Farmland.get().serverBroadcastSave();
         } else {
             Game.get().getClient().send(new BuyMessage(item.id));
+        }
+    }
+
+    public void placeSelectedItemInCell(int x, int y) {
+        if (Game.get().hasAuthority()) {
+            Item selectedItem = buyInventory.get(selectedItemId);
+            Item selectedItemClone = Item.clone(selectedItem);
+            assert selectedItemClone != null;
+            selectedItemClone.quantity = 1;
+
+            Farmland.get().getLoadedSave().getCell(x, y).setItem(selectedItemClone);
+
+            if (Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(selectedItem, "Buy")) {
+                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
+            }
+
+            Farmland.get().getLoadedSave().itemUsed.dispatch();
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            // TODO
         }
     }
 }

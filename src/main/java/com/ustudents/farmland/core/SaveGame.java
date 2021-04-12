@@ -15,8 +15,8 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
-import com.ustudents.farmland.network.EndTurnMessage;
-import com.ustudents.farmland.network.LoadSaveResponse;
+import com.ustudents.farmland.network.actions.EndTurnMessage;
+import com.ustudents.farmland.network.general.LoadSaveResponse;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @JsonSerializable
+@SuppressWarnings("unchecked")
 public class SaveGame {
     public static final int timePerTurn = 90;
 
@@ -73,6 +74,8 @@ public class SaveGame {
     public String path;
 
     public EventDispatcher turnEnded = new EventDispatcher();
+
+    public EventDispatcher itemUsed = new EventDispatcher();
 
     public SeedRandom random;
 
@@ -313,6 +316,10 @@ public class SaveGame {
         }
 
         return locations;
+    }
+
+    public Cell getCell(int x, int y) {
+        return cells.get(x).get(y);
     }
 
     private int getAvailableHumanId() {

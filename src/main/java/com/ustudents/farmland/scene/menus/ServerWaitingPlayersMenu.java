@@ -5,8 +5,8 @@ import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
-import com.ustudents.farmland.network.LoadSaveRequest;
-import com.ustudents.farmland.network.LoadSaveResponse;
+import com.ustudents.farmland.network.general.LoadSaveRequest;
+import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.scene.InGameScene;
 import org.joml.Vector2f;
 

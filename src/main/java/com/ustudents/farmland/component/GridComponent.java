@@ -1,6 +1,5 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.component.core.BehaviourComponent;
 import com.ustudents.engine.scene.component.core.TransformComponent;
@@ -40,8 +39,6 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     @Viewable
     public List<List<Cell>> cells;
-
-    public EventDispatcher onItemUsed = new EventDispatcher();
 
     private Vector2i currentSelectedCell;
 
@@ -155,7 +152,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 Input.isMousePressed(MouseButton.Left) &&
                 Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId()) &&
                 cellIsOwnedByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).isOwnedByCurrentPlayer() &&
-                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null
+                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null
                 && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
             Item currentItem = Farmland.get().getLoadedSave().getLocalPlayer().getCurrentItemFromInventory();
             Item clone = Item.clone(currentItem);
@@ -163,9 +160,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
             clone.quantity = 1;
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(clone);
             if (Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(currentItem, "Buy")) {
-                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = null;
+                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
             }
-            onItemUsed.dispatch();
         }
 
         if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
@@ -311,9 +307,9 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderSelectedItem(Spritebatch spritebatch, RendererComponent rendererComponent,
                                     TransformComponent transformComponent) {
-        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null) {
+        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
             Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
-                    Farmland.get().getItem(Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID).getSprite(),
+                    Farmland.get().getItem(Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId).getSprite(),
                     new Vector2f(
                             transformComponent.position.x + gridBackgroundSideSize.x +
                                     currentSelectedCell.x * cellSize.x,

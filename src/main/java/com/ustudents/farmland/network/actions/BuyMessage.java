@@ -1,4 +1,4 @@
-package com.ustudents.farmland.network;
+package com.ustudents.farmland.network.actions;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;

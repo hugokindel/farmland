@@ -11,6 +11,7 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import org.joml.Vector2i;
 
@@ -182,6 +183,12 @@ public class Farmland extends Game {
 
     public void setPlayerIdForClientId(int clientId, int playerId) {
         serverPlayerIdPerClientId.put(clientId, playerId);
+    }
+
+    public void serverBroadcastSave() {
+        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+            Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
+        }
     }
 
     private void loadServerSettings() {

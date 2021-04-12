@@ -5,7 +5,7 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.network.PlayerCreateMessage;
+import com.ustudents.farmland.network.general.PlayerCreateMessage;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.type.ImString;

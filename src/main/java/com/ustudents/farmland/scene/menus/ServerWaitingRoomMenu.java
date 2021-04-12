@@ -1,11 +1,8 @@
 package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.network.Client;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.network.*;
-
-import java.util.Map;
+import com.ustudents.farmland.network.general.*;
 
 @SuppressWarnings("unchecked")
 public class ServerWaitingRoomMenu extends MenuScene {

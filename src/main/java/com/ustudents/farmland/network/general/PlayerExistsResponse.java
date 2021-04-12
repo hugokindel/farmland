@@ -1,4 +1,4 @@
-package com.ustudents.farmland.network;
+package com.ustudents.farmland.network.general;
 
 import com.ustudents.engine.network.messages.Message;
 

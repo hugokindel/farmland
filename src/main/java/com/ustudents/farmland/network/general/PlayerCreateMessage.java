@@ -1,4 +1,4 @@
-package com.ustudents.farmland.network;
+package com.ustudents.farmland.network.general;
 
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.graphic.Color;

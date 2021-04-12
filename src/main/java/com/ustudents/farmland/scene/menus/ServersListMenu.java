@@ -1,17 +1,10 @@
 package com.ustudents.farmland.scene.menus;
 
-import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.core.json.Json;
-import com.ustudents.engine.network.Client;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
-import com.ustudents.farmland.network.GameInformationsRequest;
-import com.ustudents.farmland.network.GameInformationsResponse;
-import com.ustudents.farmland.scene.InGameScene;
-
-import java.util.Map;
+import com.ustudents.farmland.network.general.GameInformationsRequest;
+import com.ustudents.farmland.network.general.GameInformationsResponse;
 
 @SuppressWarnings("unchecked")
 public class ServersListMenu extends MenuScene {

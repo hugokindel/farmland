@@ -24,7 +24,7 @@ import com.ustudents.farmland.core.SaveGame;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Player;
-import com.ustudents.farmland.network.LoadSaveResponse;
+import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import com.ustudents.farmland.scene.menus.ResultMenu;
 import imgui.ImGui;
@@ -96,7 +96,7 @@ public class InGameScene extends Scene {
         grid.addComponent(new WorldRendererComponent());
         grid.addComponent(new GridComponent(new Vector2i(Farmland.get().getLoadedSave().cells.size(), Farmland.get().getLoadedSave().cells.get(0).size()), new Vector2i(24, 24), gridBackground, cellBackground, selectionCursor, territoryTexture));
         grid.addComponent(new TurnTimerComponent(SaveGame.timePerTurn));
-        grid.getComponent(GridComponent.class).onItemUsed.add((dataType, data) -> updateMoneyItemLabel());
+        Farmland.get().getLoadedSave().itemUsed.add((dataType, data) -> updateMoneyItemLabel());
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
             Farmland.get().getLoadedSave().players.get(Farmland.get().getLoadedSave().getLocalPlayer().getId()).moneyChanged.add((dataType, data) -> updateMoneyItemLabel());
@@ -214,9 +214,9 @@ public class InGameScene extends Scene {
         textData.color = Color.BLACK;
         guiBuilder.addText(textData);
 
-        String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID;
+        String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
         String text = "Argent : " + Farmland.get().getLoadedSave().getLocalPlayer().money;
-        if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null) {
+        if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
             text += "\n\nSélectionné : " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         GuiBuilder.TextData textData2 = new GuiBuilder.TextData(text);
@@ -441,8 +441,8 @@ public class InGameScene extends Scene {
     }
 
     private void makeListOfPlayerItem(){
-        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null && ImGui.button("Désélectionner")) {
-            Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = null;
+        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null && ImGui.button("Désélectionner")) {
+            Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
             updateMoneyItemLabel();
         }
 
@@ -460,7 +460,7 @@ public class InGameScene extends Scene {
                 ImGui.pushID(item);
 
                 if (ImGui.button("Sélectionner")) {
-                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = item;
+                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = item;
                     updateMoneyItemLabel();
                 }
 
@@ -736,9 +736,9 @@ public class InGameScene extends Scene {
     }
 
     public void updateMoneyItemLabel() {
-        String selectedId = Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemID;
+        String selectedId = Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemId;
         String text = "Argent : " + Farmland.get().getLoadedSave().getLocalPlayer().money;
-        if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID != null) {
+        if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
             text += "\n\nSélectionné : " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
@@ -772,10 +772,10 @@ public class InGameScene extends Scene {
         if (Input.isMouseRelease(MouseButton.Right)) {
             if (Farmland.get().getLoadedSave().getLocalPlayer().getId().equals(Farmland.get().getLoadedSave().getCurrentPlayer().getId())) {
                 if (lastSelectedItemId == null) {
-                    lastSelectedItemId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID;
-                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = null;
+                    lastSelectedItemId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
+                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
                 } else {
-                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemID = lastSelectedItemId;
+                    Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = lastSelectedItemId;
                     lastSelectedItemId = null;
                 }
 
