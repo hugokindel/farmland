@@ -6,6 +6,7 @@ import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.network.messages.BroadcastMessage;
+import com.ustudents.engine.network.messages.DisconnectMessage;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.engine.utility.Pair;
 
@@ -94,6 +95,10 @@ public abstract class Controller {
     protected abstract Connection findConnectionToSendMessage(Message message);
 
     protected void handleMessageIfNecessary(Message message) {
+
+    }
+
+    protected void onDisconnect() {
 
     }
 
@@ -216,6 +221,10 @@ public abstract class Controller {
                         }
                     } else {
                         send(message);
+
+                        if (message instanceof DisconnectMessage) {
+                            onDisconnect();
+                        }
                     }
                 } else {
                     try {
@@ -228,17 +237,20 @@ public abstract class Controller {
         }
 
         private void send(Message message) {
-            message.setType(message.getClass().getName());
             Connection connection = findConnectionToSendMessage(message);
-            String minifiedMessage = JsonWriter.writeToString(Json.serialize(message), false, false, false);
-            Out.println("sent: " + minifiedMessage);
-            connection.writer.println(Objects.requireNonNull(minifiedMessage));
 
-            if (Game.isDebugging()) {
-                if (getType() == Type.Server) {
-                    Out.println("Message sent to client " + message.getReceiverId() + ": ");
-                } else {
-                    Out.println("Message sent: " + minifiedMessage);
+            if (connection != null) {
+                message.setType(message.getClass().getName());
+                String minifiedMessage = JsonWriter.writeToString(Json.serialize(message), false, false, false);
+                Out.println("sent: " + minifiedMessage);
+                connection.writer.println(Objects.requireNonNull(minifiedMessage));
+
+                if (Game.isDebugging()) {
+                    if (getType() == Type.Server) {
+                        Out.println("Message sent to client " + message.getReceiverId() + ": ");
+                    } else {
+                        Out.println("Message sent: " + minifiedMessage);
+                    }
                 }
             }
         }

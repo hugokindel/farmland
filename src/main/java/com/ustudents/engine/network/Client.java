@@ -33,9 +33,7 @@ public class Client extends Controller {
     @Override
     public void stop() {
         try {
-            request(new DisconnectMessage());
-            connection.close();
-            connection = null;
+            send(new DisconnectMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,6 +56,12 @@ public class Client extends Controller {
     @Override
     protected Connection findConnectionToSendMessage(Message message) {
         return connection;
+    }
+
+    @Override
+    protected void onDisconnect() {
+        connection.close();
+        connection = null;
     }
 
     private class ServerReaderRunnable implements Runnable {

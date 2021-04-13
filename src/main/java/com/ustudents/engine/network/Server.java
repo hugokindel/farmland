@@ -130,14 +130,19 @@ public class Server extends Controller {
 
     @Override
     protected Connection findConnectionToSendMessage(Message message) {
-        return clients.get(message.getReceiverId());
+        if (clients.containsKey(message.getReceiverId())) {
+            return clients.get(message.getReceiverId());
+        }
+
+        return null;
     }
 
     @Override
     protected void handleMessageIfNecessary(Message message) {
         if (message instanceof DisconnectMessage) {
-
             send(message.getSenderId(), new DisconnectMessage());
+            clients.remove(message.getSenderId());
+            freeClientIds.add(message.getSenderId());
         }
     }
 
