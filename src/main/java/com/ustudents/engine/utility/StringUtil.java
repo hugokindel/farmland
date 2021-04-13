@@ -76,4 +76,14 @@ public class StringUtil {
 
         return result.toString();
     }
+
+    public static String getBetweenFirstAndLast(String text, char first, char last) {
+        int firstSep = text.indexOf(first);
+        int lastSep = text.lastIndexOf(last);
+        return text.substring(firstSep + 1, lastSep);
+    }
+
+    public static String removeWhitespaces(String string) {
+        return string.replaceAll("\\s","");
+    }
 }

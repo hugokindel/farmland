@@ -5,6 +5,7 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.engine.network.messages.BroadcastMessage;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.engine.utility.Pair;
 
@@ -124,23 +125,11 @@ public abstract class Controller {
 
     protected Message readMessage(String data) {
         Map<String, Object> json = JsonReader.readMap(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
-
-        Long id = (Long)json.get("id");
-        Integer senderId = json.get("senderId") == null ? -1 : ((Long)json.get("senderId")).intValue();
-        Integer receiverId = json.get("receiverId") == null ? -1 : ((Long)json.get("receiverId")).intValue();
-        Map<String, Object> payload = (Map<String, Object>)json.get("payload");
-        String type = (String)json.get("type");
+        Out.println("read: " + data);
+        assert json != null;
 
         try {
-            Class classType = Class.forName(type);
-
-            Message message = (Message)classType.getConstructors()[0].newInstance();
-            message.setId(id);
-            message.setSenderId(senderId);
-            message.setReceiverId(receiverId);
-            message.setPayload(payload);
-
-            return message;
+            return (Message)Json.deserialize(json, Class.forName((String)json.get("_type")));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -177,10 +166,14 @@ public abstract class Controller {
                     message.setSenderId(data.getObject1());
                     handleMessageIfNecessary(message);
 
-                    if (message.shouldBeHandledOnMainThread()) {
-                        messagesToHandleOnMainThread.add(message);
-                    } else {
-                        message.process();
+                    if (message.getProcessingSide() == Message.ProcessingSide.Everywhere ||
+                            (getType() == Type.Server && message.getProcessingSide() == Message.ProcessingSide.Server) ||
+                            (getType() == Type.Client && message.getProcessingSide() == Message.ProcessingSide.Client)) {
+                        if (message.shouldBeHandledOnMainThread()) {
+                            messagesToHandleOnMainThread.add(message);
+                        } else {
+                            message.process();
+                        }
                     }
 
                     if (mainThreadWaitingForResponse.get() && message.getClass() == mainThreadWaitingForResponseType.get()) {
@@ -209,17 +202,20 @@ public abstract class Controller {
             while (isAlive()) {
                 if (!messagesToSend.isEmpty()) {
                     Message message = messagesToSend.poll();
-                    message.setType(message.getClass().getName());
-                    Connection connection = findConnectionToSendMessage(message);
-                    String minifiedMessage = Json.minify(JsonWriter.writeToString(Json.serialize(message), false, false, false));
-                    connection.writer.println(Objects.requireNonNull(minifiedMessage));
 
-                    if (Game.isDebugging()) {
-                        if (getType() == Type.Server) {
-                            Out.println("Message sent to client " + message.getReceiverId() + ": ");
+                    if (message instanceof BroadcastMessage) {
+                        if (getType() == Type.Client) {
+                            Out.printlnError("A client cannot broadcast a message!");
                         } else {
-                            Out.println("Message sent: " + minifiedMessage);
+                            BroadcastMessage broadcastMessage = (BroadcastMessage)message;
+
+                            for (int clientId : broadcastMessage.receiverIds) {
+                                broadcastMessage.messageToSend.setReceiverId(clientId);
+                                send(broadcastMessage.messageToSend);
+                            }
                         }
+                    } else {
+                        send(message);
                     }
                 } else {
                     try {
@@ -227,6 +223,22 @@ public abstract class Controller {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+            }
+        }
+
+        private void send(Message message) {
+            message.setType(message.getClass().getName());
+            Connection connection = findConnectionToSendMessage(message);
+            String minifiedMessage = JsonWriter.writeToString(Json.serialize(message), false, false, false);
+            Out.println("sent: " + minifiedMessage);
+            connection.writer.println(Objects.requireNonNull(minifiedMessage));
+
+            if (Game.isDebugging()) {
+                if (getType() == Type.Server) {
+                    Out.println("Message sent to client " + message.getReceiverId() + ": ");
+                } else {
+                    Out.println("Message sent: " + minifiedMessage);
                 }
             }
         }

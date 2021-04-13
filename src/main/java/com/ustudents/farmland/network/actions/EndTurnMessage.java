@@ -6,10 +6,6 @@ import com.ustudents.farmland.Farmland;
 
 // PROCESSED ON SERVER
 public class EndTurnMessage extends Message {
-    public EndTurnMessage() {
-
-    }
-
     @Override
     public void process() {
         Farmland.get().getLoadedSave().endTurn();

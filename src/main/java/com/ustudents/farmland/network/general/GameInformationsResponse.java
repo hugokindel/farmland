@@ -1,44 +1,55 @@
 package com.ustudents.farmland.network.general;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // PROCESSED ON CLIENT
-@SuppressWarnings("unchecked")
+@JsonSerializable
 public class GameInformationsResponse extends Message {
+    @JsonSerializable
+    String name;
+
+    @JsonSerializable
+    Integer capacity;
+
+    @JsonSerializable
+    List<Integer> connectedPlayerIds;
+
     public GameInformationsResponse() {
 
     }
 
     public GameInformationsResponse(String name, int capacity, List<Integer> connectedPlayerIds) {
-        getPayload().put("name", name);
-        getPayload().put("capacity", capacity);
-        getPayload().put("connectedPlayerIds", connectedPlayerIds);
+        this.name = name;
+        this.capacity = capacity;
+        this.connectedPlayerIds = connectedPlayerIds;
     }
 
     public String getName() {
-        return (String) getPayload().get("name");
+        return name;
     }
 
     public int getCapacity() {
-        return ((Long) getPayload().get("capacity")).intValue();
+        return capacity;
     }
 
     public List<Integer> getConnectedPlayerIds() {
-        List<Integer> list = new ArrayList<>();
-
-        for (Long element : ((List<Long>) getPayload().get("connectedPlayerIds"))) {
-            if (element != null) {
-                list.add(element.intValue());
-            }
-        }
-
-        return list;
+        return connectedPlayerIds;
     }
 
     public int getNumberOfConnectedPlayers() {
         return getConnectedPlayerIds().size();
+    }
+
+    @Override
+    public String toString() {
+        return "GameInformationsResponse{" +
+                "name='" + name + '\'' +
+                ", capacity=" + capacity +
+                ", connectedPlayerIds=" + connectedPlayerIds +
+                '}';
     }
 }

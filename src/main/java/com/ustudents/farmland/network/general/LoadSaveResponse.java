@@ -1,6 +1,7 @@
 package com.ustudents.farmland.network.general;
 
 import com.ustudents.engine.core.json.Json;
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
@@ -8,20 +9,23 @@ import com.ustudents.farmland.core.SaveGame;
 import java.util.Map;
 
 // PROCESSED ON CLIENT
-@SuppressWarnings("unchecked")
+@JsonSerializable
 public class LoadSaveResponse extends Message {
     private static SaveGame updatedSaveGame = null;
+
+    @JsonSerializable
+    SaveGame save;
 
     public LoadSaveResponse() {
 
     }
 
-    public LoadSaveResponse(SaveGame saveGame) {
-        getPayload().put("save", saveGame);
+    public LoadSaveResponse(SaveGame save) {
+        this.save = save;
     }
 
     public SaveGame getSave() {
-        return Json.deserialize((Map<String, Object>) getPayload().get("save"), SaveGame.class);
+        return save;
     }
 
     @Override

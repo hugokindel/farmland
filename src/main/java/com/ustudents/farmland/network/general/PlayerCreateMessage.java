@@ -1,6 +1,7 @@
 package com.ustudents.farmland.network.general;
 
 import com.ustudents.engine.core.json.Json;
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
@@ -9,33 +10,45 @@ import com.ustudents.farmland.core.SaveGame;
 import java.util.Map;
 
 // PROCESSED ON SERVER
-@SuppressWarnings("unchecked")
+@JsonSerializable
 public class PlayerCreateMessage extends Message {
+    @JsonSerializable
+    Integer playerId;
+
+    @JsonSerializable
+    String playerName;
+
+    @JsonSerializable
+    String villageName;
+
+    @JsonSerializable
+    Color bannerColor;
+
     public PlayerCreateMessage() {
 
     }
 
     public PlayerCreateMessage(int playerId, String playerName, String villageName, Color bannerColor) {
-        getPayload().put("playerId", playerId);
-        getPayload().put("playerName", playerName);
-        getPayload().put("villageName", villageName);
-        getPayload().put("bannerColor", bannerColor);
+        this.playerId = playerId;
+        this.playerName = playerName;
+        this.villageName = villageName;
+        this.bannerColor = bannerColor;
     }
 
     public int getPlayerId() {
-        return ((Long) getPayload().get("playerId")).intValue();
+        return playerId;
     }
 
     public String getPlayerName() {
-        return (String) getPayload().get("playerName");
+        return playerName;
     }
 
     public String getVillageName() {
-        return (String) getPayload().get("villageName");
+        return villageName;
     }
 
     public Color getBannerColor() {
-        return Json.deserialize((Map<String, Object>) getPayload().get("bannerColor"), Color.class);
+        return bannerColor;
     }
 
     @Override

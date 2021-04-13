@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.network.general.*;
@@ -11,10 +12,12 @@ public class ServerWaitingRoomMenu extends MenuScene {
         boolean localServerExists = Farmland.get().getClient().isAlive();
         GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
 
+        Out.println(informations);
+
         int capacity = informations.getCapacity();
         int connectedPlayers = informations.getNumberOfConnectedPlayers();
 
-        int i = 0;
+        int i;
         String[] buttonNames = new String[capacity - connectedPlayers];
         String[] buttonIds = new String[capacity - connectedPlayers];
 

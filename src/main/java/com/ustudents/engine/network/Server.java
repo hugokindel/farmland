@@ -4,16 +4,15 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
+import com.ustudents.engine.network.messages.BroadcastMessage;
 import com.ustudents.engine.network.messages.DisconnectMessage;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.engine.utility.Pair;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -105,9 +104,10 @@ public class Server extends Controller {
     }
 
     public void broadcast(Message message) {
-        for (Map.Entry<Integer, Connection> client : clients.entrySet()) {
-            send(client.getKey(), Objects.requireNonNull(Message.clone(message)));
+        if (Game.isDebugging()) {
+            Out.printlnDebug("Message broadcasted");
         }
+        super.send(new BroadcastMessage(new ArrayList<>(clients.keySet()), message));
     }
 
     public void respond(Message response, Message request) {

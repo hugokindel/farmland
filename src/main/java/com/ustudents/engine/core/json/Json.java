@@ -1,14 +1,8 @@
 package com.ustudents.engine.core.json;
 
-import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.cli.print.style.Style;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.core.json.annotation.JsonSerializableType;
-import com.ustudents.engine.scene.ecs.Component;
-import com.ustudents.engine.scene.ecs.Entity;
-import com.ustudents.engine.scene.ecs.Registry;
-import com.ustudents.engine.scene.Scene;
 import org.joml.*;
 
 import java.lang.reflect.Field;
@@ -16,244 +10,27 @@ import java.lang.Class;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.text.Collator;
 import java.util.*;
 
-import static com.ustudents.engine.utility.ReflectionUtil.findFieldInClass;
-import static com.ustudents.engine.utility.ReflectionUtil.searchSignature;
+import static com.ustudents.engine.utility.ReflectionUtil.*;
+import static com.ustudents.engine.utility.StringUtil.getBetweenFirstAndLast;
 
 /** Contains utility functions to deserialize and serialize Json data format files. */
 @SuppressWarnings({"unchecked", "unused"})
 public class Json {
     /**
-     * Deserialize a Json file to an object.
+     * Serialize a Json file from an object.
      *
-     * @param filePath The file path to deserialize.
-     * @param classType The Class to create.
-     * @param <T> The type to return.
-     *
-     * @return the class of type T created.
+     * @param filePath The file path to use.
+     * @param object The object to serialize.
+     * @param <T> The type of the object.
      */
-    public static <T> T deserialize(String filePath, Class<T> classType) {
+    public static <T> void serialize(String filePath, T object) {
         try {
-            checkSerializable(classType);
-            return deserialize(JsonReader.readMap(filePath), classType);
+            JsonWriter.writeToFile(filePath, serialize(object));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return null;
-    }
-
-    public static <T> T deserialize(Map<String, Object> json, Class<T> classType) {
-        return deserialize(json, classType, null, null);
-    }
-
-    /**
-     * Deserialize a Json map to an object.
-     *
-     * @param json The json map to deserialize.
-     * @param classType The Class to create.
-     * @param <T> The type to return.
-     *
-     * @return the class of type T created.
-     */
-    public static <T ,U> T deserialize(Map<String, Object> json, Class<T> classType, Class<U> declaringClass, String declaringFieldName) {
-        try {
-            checkSerializable(classType);
-
-            T object = classType.getConstructor().newInstance();
-            ArrayList<Field> fields = new ArrayList<>(Arrays.asList(classType.getDeclaredFields()));
-            Class<?> parent = classType.getSuperclass();
-            while (parent != null && parent.isAnnotationPresent(JsonSerializable.class)) {
-                fields.addAll(Arrays.asList(parent.getDeclaredFields()));
-                parent = parent.getSuperclass();
-            }
-            fields.removeIf(field -> !field.isAnnotationPresent(JsonSerializable.class));
-
-            for (Field field : fields) {
-                JsonSerializable serializable = field.getAnnotation(JsonSerializable.class);
-
-                if (serializable.type() == JsonSerializableType.SerializableOnly) {
-                    continue;
-                }
-
-                String key = serializable.path().isEmpty() ? field.getName() : serializable.path();
-                String[] path = key.split("\\.");
-                Map<String, Object> mapToSearch = json;
-
-                if (path.length > 1) {
-                    for (int i = 0; i < path.length - 1; i++) {
-                        if (mapToSearch.get(path[i]) instanceof Map) {
-                            mapToSearch = (Map<String, Object>)mapToSearch.get(path[i]);
-                        } else {
-                            throw new Exception("Wrong path!");
-                        }
-                    }
-                }
-
-                field.setAccessible(true);
-
-                if (!mapToSearch.containsKey(path[path.length - 1])) {
-                    if (serializable.necessary()) {
-                        throw new Exception("Missing key '" + key + "'!");
-                    } else {
-                        if (field.getType().equals(Boolean.class)) {
-                            field.set(object, false);
-                        } else if (field.getType().equals(String.class)) {
-                            field.set(object, "");
-                        } else if (field.getType().equals(Integer.class)) {
-                            field.set(object, 0);
-                        } else if (field.getType().equals(Double.class)) {
-                            field.set(object, 0.0);
-                        } else if (field.getType().equals(Float.class)) {
-                            field.set(object, 0.0f);
-                        } else if (field.getType().equals(Vector2f.class)) {
-                            field.set(object, new Vector2f());
-                        } else if (field.getType().equals(Vector3f.class)) {
-                            field.set(object, new Vector3f());
-                        } else if (field.getType().equals(Vector4f.class)) {
-                            field.set(object, new Vector4f());
-                        } else if (field.getType().equals(Vector2i.class)) {
-                            field.set(object, new Vector2i());
-                        } else if (field.getType().equals(Vector3i.class)) {
-                            field.set(object, new Vector3i());
-                        } else if (field.getType().equals(Vector4i.class)) {
-                            field.set(object, new Vector4i());
-                        } else {
-                            field.set(object, null);
-                        }
-                        continue;
-                    }
-                }
-
-                Object value = mapToSearch.get(path[path.length - 1]);
-
-                if (field.getType().isAnnotationPresent(JsonSerializable.class)) {
-                    if (value == null) {
-                        field.set(object, null);
-                    } else {
-                        field.set(object, deserialize((Map<String, Object>)value, field.getType(), field.getDeclaringClass(), field.getName()));
-                    }
-                    continue;
-                } else if (field.getType().getName().startsWith("java.util.Map")) {
-                    if (mapExtraction(field, mapToSearch.get(path[path.length - 1]), object, declaringClass)) {
-                        continue;
-                    }
-                } else if (field.getType().getName().startsWith("java.util.List")) {
-                    if (listExtraction(field, value, object, declaringClass)) {
-                        continue;
-                    }
-                }
-
-                convertAndAdd(field, value, object, declaringClass, declaringFieldName);
-            }
-
-            for (Method method : classType.getMethods()) {
-                if (method.isAnnotationPresent(JsonSerializableConstructor.class)) {
-                    if (method.getParameterTypes().length == 0) {
-                        method.invoke(object);
-                    } else {
-                        method.invoke(object, json);
-                    }
-                }
-            }
-
-            return object;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static <T> boolean listExtraction(Field field, Object value, Object object, Class<T> declaringClass) {
-       try {
-           ParameterizedType parameterizedType = (ParameterizedType)field.getGenericType();
-           Type tType = parameterizedType.getActualTypeArguments()[0];
-
-           if (!tType.getTypeName().contains("<") &&
-                   Class.forName(tType.getTypeName()).isAnnotationPresent(JsonSerializable.class)) {
-               List<Object> list = new ArrayList<>();
-
-               for (Object element : (List<Object>) value) {
-                   if (element == null) {
-                       list.add(null);
-                   } else {
-                       if (element.getClass().isAnnotationPresent(JsonSerializable.class)) {
-                           list.add(element);
-                       } else {
-                           list.add(deserialize((Map<String, Object>)element, Class.forName(tType.getTypeName()), field.getDeclaringClass(), field.getName()));
-                       }
-                   }
-               }
-
-               field.set(object, list);
-               return true;
-           } else if (tType.getTypeName().contains("<") && tType.getTypeName().startsWith("java.util.List") &&
-                   Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>')).isAnnotationPresent(JsonSerializable.class)) {
-               List<Object> list = new ArrayList<>();
-
-               int i = 0;
-               for (Object element : (List<Object>) value) {
-                   list.add(new ArrayList<>());
-
-                   for (Object realElement : (List<Object>)element) {
-                       if (realElement == null) {
-                           ((List<Object>)list.get(i)).add(null);
-                       } else {
-                           if (realElement.getClass().isAnnotationPresent(JsonSerializable.class)) {
-                               list.add(realElement);
-                           } else {
-                               ((List<Object>)list.get(i)).add(deserialize((Map<String, Object>) realElement,
-                                       Class.forName(getBetweenFirstAndLast(tType.getTypeName(), '<', '>')),
-                                       field.getDeclaringClass(), field.getName()));
-                           }
-                       }
-                   }
-                   i++;
-               }
-
-               field.set(object, list);
-               return true;
-           }
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-       return false;
-    }
-
-    public static <T> boolean mapExtraction(Field field, Object value, Object object, Class<T> declaringClass) {
-        ParameterizedType parameterizedType = (ParameterizedType)field.getGenericType();
-        Type tType = parameterizedType.getActualTypeArguments()[1];
-
-        Map<String, Object> returnMap = new LinkedHashMap<>();
-
-        try {
-            Class type = Class.forName(tType.getTypeName());
-            Map<String, Object> realMap = (Map<String, Object>)value;
-            if (realMap.isEmpty()) {
-                field.set(object, new LinkedHashMap<>());
-                return true;
-            } else if (type.isAnnotationPresent(JsonSerializable.class)) {
-                for (Map.Entry<String, Object> entry : realMap.entrySet()) {
-                    returnMap.put(entry.getKey(), deserialize((Map<String, Object>)entry.getValue(), type,
-                            field.getDeclaringClass(), field.getName()));
-                }
-                field.set(object, returnMap);
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-    public static String getBetweenFirstAndLast(String text, char first, char last) {
-        int firstSep = text.indexOf(first);
-        int lastSep = text.lastIndexOf(last);
-        return text.substring(firstSep + 1, lastSep);
     }
 
     /**
@@ -266,18 +43,12 @@ public class Json {
      */
     public static <T> Map<String, Object> serialize(T object) {
         try {
-            Class<T> classType = (Class<T>) object.getClass();
+            Class<T> type = (Class<T>) object.getClass();
 
-            checkSerializable(classType);
+            isSerializable(type);
 
             Map<String, Object> json = new LinkedHashMap<>();
-            ArrayList<Field> fields = new ArrayList<>(Arrays.asList(classType.getDeclaredFields()));
-            Class<?> parent = classType.getSuperclass();
-            while (parent != null && parent.isAnnotationPresent(JsonSerializable.class)) {
-                fields.addAll(Arrays.asList(parent.getDeclaredFields()));
-                parent = parent.getSuperclass();
-            }
-            fields.removeIf(field -> !field.isAnnotationPresent(JsonSerializable.class));
+            List<Field> fields = findSerializableFields(type);
 
             for (Field field : fields) {
                 JsonSerializable serializable = field.getAnnotation(JsonSerializable.class);
@@ -286,18 +57,19 @@ public class Json {
                     continue;
                 }
 
+                field.setAccessible(true);
+
                 String key = serializable.path().isEmpty() ? field.getName() : serializable.path();
                 String[] path = key.split("\\.");
-                field.setAccessible(true);
 
                 if (field.getType().isAnnotationPresent(JsonSerializable.class)) {
                     if (field.get(object) == null) {
-                        addToMap(json, path, null);
+                        insertInMapAtSearchPath(json, path, null);
                     } else {
-                        addToMap(json, path, serialize(field.get(object)));
+                        insertInMapAtSearchPath(json, path, serialize(field.get(object)));
                     }
                 } else {
-                    addToMap(json, path, field.get(object));
+                    insertInMapAtSearchPath(json, path, field.get(object));
                 }
             }
 
@@ -307,120 +79,6 @@ public class Json {
         }
 
         return null;
-    }
-
-    public static <T extends Scene> Map<String, Object> serializeScene(T object) {
-        try {
-            Class<T> classType = (Class<T>) object.getClass();
-            Registry registry = object.getRegistry();
-
-            if (!classType.isAnnotationPresent(JsonSerializable.class)) {
-                Out.printlnWarning("A scene can be serialized without the " + Style.Bold + "@JsonSerializable" + Style.Reset + " annotation, but it should still be defined!");
-            }
-
-            Map<String, Object> json = new LinkedHashMap<>();
-            json.put("type", object.getClass().getName());
-            List<Map<String, Object>> entitiesArray = new ArrayList<>();
-
-            for (Map.Entry<Integer, Entity> entitySet : registry.getEntities().entrySet()) {
-                Map<String, Object> entityMap = new LinkedHashMap<>();
-                Entity entity = entitySet.getValue();
-
-                entityMap.put("id", entity.getId());
-
-                if (entity.hasName()) {
-                    entityMap.put("name", entity.getName());
-                }
-
-                List<String> tags = new ArrayList<>(entity.getTags());
-                tags.sort(Collator.getInstance());
-
-                if (entity.hasParent()) {
-                    entityMap.put("parent", entity.getParent().getId());
-                }
-
-                entityMap.put("enabled", entity.isEnabled());
-
-                if (!tags.isEmpty()) {
-                    entityMap.put("tags", tags);
-                }
-
-                List<Map<String, Object>> componentsMap = new ArrayList<>();
-
-                for (Component component : entity.getComponents()) {
-                    Map<String, Object> componentMap = new LinkedHashMap<>();
-
-                    componentMap.put("type", component.getClass().getName());
-                    componentMap.put("data", serialize(component));
-
-                    componentsMap.add(componentMap);
-                }
-
-                if (!componentsMap.isEmpty()) {
-                    entityMap.put("components", componentsMap);
-                }
-
-                entitiesArray.add(entityMap);
-            }
-
-            json.put("entities", entitiesArray);
-
-            return json;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    /**
-     * Serialize a Json file from an object.
-     *
-     * @param filePath The file path to use.
-     * @param object The object to serialize.
-     * @param <T> The type of the object.
-     */
-    public static <T> void serialize(String filePath, T object) {
-        try {
-            if (object instanceof Scene) {
-                JsonWriter.writeToFile(filePath, serializeScene((Scene)object));
-            } else {
-                JsonWriter.writeToFile(filePath, serialize(object));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Check if a class is serializable.
-     *
-     * @param classType The Java Class to use.
-     * @param <T> The class's type.
-     */
-    public static <T> void checkSerializable(Class<T> classType) throws Exception {
-        boolean isSerializable = false;
-        Class<?> type = classType;
-
-        while (type != null) {
-            if (type.isAnnotationPresent(JsonSerializable.class)) {
-                isSerializable = true;
-                break;
-            }
-
-            type = classType.getSuperclass();
-        }
-
-        if (!isSerializable) {
-            throw new Exception("Not a serializable class!");
-        }
-    }
-
-    // TODO: Minify
-    public static String minify(String json) {
-        // FIXME: Does not handle between strings ""
-        //return json.replace("\n", "").replace("\t", "").replace(" ", "");
-        return json;
     }
 
     /**
@@ -430,19 +88,249 @@ public class Json {
      * @param path The path to search in.
      * @param value The value to add.
      */
-    private static void addToMap(Map<String, Object> map, String[] path, Object value) {
+    private static void insertInMapAtSearchPath(Map<String, Object> map, String[] path, Object value) {
         if (path.length == 1) {
             map.put(path[0], value);
             return;
         }
 
         if (!map.containsKey(path[0])) {
-            addToMap(map, new String[] {path[0]}, new LinkedHashMap<String, Object>());
+            insertInMapAtSearchPath(map, new String[] {path[0]}, new LinkedHashMap<String, Object>());
         }
 
         String[] newPath = new String[path.length - 1];
         System.arraycopy(path, 1, newPath, 0, path.length - 1);
-        addToMap((Map<String, Object>) map.get(path[0]), newPath, value);
+        insertInMapAtSearchPath((Map<String, Object>) map.get(path[0]), newPath, value);
+    }
+
+    /**
+     * Deserialize a Json file to an object.
+     *
+     * @param filePath The file path to deserialize.
+     * @param classType The Class to create.
+     * @param <T> The type to return.
+     *
+     * @return the class of type T created.
+     */
+    public static <T> T deserialize(String filePath, Class<T> classType) {
+        try {
+            isSerializable(classType);
+            return deserialize(JsonReader.readMap(filePath), classType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static <T> T deserialize(Map<String, Object> json, Class<T> classType) {
+        return deserialize(json, classType, null, null, null);
+    }
+
+    /**
+     * Deserialize a Json map to an object.
+     *
+     * @param json The json map to deserialize.
+     * @param type The Class to create.
+     * @param <T> The type to return.
+     *
+     * @return the class of type T created.
+     */
+    public static <T ,U> T deserialize(Map<String, Object> json, Class<T> type, Class<U> declaringClass,
+                                       String declaringFieldName, TypeGraph remainingTypeGraph) {
+        try {
+            isSerializable(type);
+
+            T object = type.getConstructor().newInstance();
+            List<Field> fields = findSerializableFields(type);
+
+            for (Field field : fields) {
+                JsonSerializable annotation = field.getAnnotation(JsonSerializable.class);
+
+                if (annotation.type() == JsonSerializableType.SerializableOnly) {
+                    continue;
+                }
+
+                field.setAccessible(true);
+
+                String key = annotation.path().isEmpty() ? field.getName() : annotation.path();
+                String[] path = key.split("\\.");
+                Map<String, Object> search = json;
+
+                if (path.length > 1) {
+                    for (int i = 0; i < path.length - 1; i++) {
+                        if (search.get(path[i]) instanceof Map) {
+                            search = (Map<String, Object>)search.get(path[i]);
+                        } else {
+                            throw new Exception("Wrong path!");
+                        }
+                    }
+                }
+
+                if (!search.containsKey(path[path.length - 1])) {
+                    if (annotation.necessary()) {
+                        throw new Exception("Missing key '" + key + "'!");
+                    } else {
+                        setDefaultValue(field, object);
+                        continue;
+                    }
+                }
+
+                Object value = search.get(path[path.length - 1]);
+
+                if (value == null) {
+                    field.set(object, null);
+                    continue;
+                } else if (field.getType().isAnnotationPresent(JsonSerializable.class)) {
+                    field.set(object, deserialize((Map<String, Object>)value, field.getType(),
+                            field.getDeclaringClass(), field.getName(), null));
+                    continue;
+                }  else if (field.getType().getName().startsWith("java.util.Map")) {
+                    Object obj = tryDeserializeMap(field, value, object, field.getDeclaringClass(), field.getName(), remainingTypeGraph);
+                    field.set(object, obj);
+                    continue;
+                } else if (field.getType().getName().startsWith("java.util.List")) {
+                    Object obj = tryDeserializeList(field, value, object, field.getDeclaringClass(), field.getName(), remainingTypeGraph);
+                    field.set(object, obj);
+                    continue;
+                }
+
+                if (isGeneric(Objects.requireNonNull(findFieldInClass(field.getName(), field.getDeclaringClass())).getGenericType())) {
+                    field.set(object, set(field, value, object, declaringClass, declaringFieldName, remainingTypeGraph));
+                } else {
+                    field.set(object, set(field, value, object, null, field.getName(), remainingTypeGraph));
+                }
+            }
+
+            invokeSerializableConstructor(type, object, json);
+
+            return object;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static <T> Object tryDeserializeList(Field field, Object value, Object object, Class<T> declaringClass, String declaringFieldName, TypeGraph remainingTypeGraph)
+            throws Exception {
+        Type genericType = Objects.requireNonNull(findFieldInClass(declaringFieldName, declaringClass))
+                .getGenericType();
+        TypeGraph completeTypeGraph = remainingTypeGraph == null || remainingTypeGraph.children.isEmpty() ? generateTypeGraph(genericType.getTypeName()) : remainingTypeGraph;
+        TypeGraph typeGraph = completeTypeGraph.children.get(0);
+
+        List<Object> list = new ArrayList<>();
+
+        if (!typeGraph.children.isEmpty()) {
+            for (Object element : (List<Object>) value) {
+                list.add(set(field, element, object, declaringClass, declaringFieldName, typeGraph));
+            }
+        } else {
+            for (Object element : (List<Object>) value) {
+                list.add(set(field, element, object, declaringClass, declaringFieldName, typeGraph));
+            }
+        }
+
+        return list;
+    }
+
+    public static <T> Object tryDeserializeMap(Field field, Object value, Object object, Class<T> declaringClass, String declaringFieldName, TypeGraph remainingTypeGraph)
+            throws Exception {
+        Type genericType = Objects.requireNonNull(findFieldInClass(declaringFieldName, declaringClass))
+                .getGenericType();
+        TypeGraph completeTypeGraph = remainingTypeGraph == null || remainingTypeGraph.children.isEmpty() ? generateTypeGraph(genericType.getTypeName()) : remainingTypeGraph;
+        TypeGraph typeGraph = completeTypeGraph.children.get(1);
+
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        if (!typeGraph.children.isEmpty()) {
+            for (Map.Entry<String, Object> element : ((Map<String, Object>)value).entrySet()) {
+                map.put(element.getKey(), set(field, element.getValue(), object, declaringClass, declaringFieldName, typeGraph));
+            }
+        } else {
+            for (Map.Entry<String, Object> element : ((Map<String, Object>)value).entrySet()) {
+                map.put(element.getKey(), set(field, element.getValue(), object, declaringClass, declaringFieldName, typeGraph));
+            }
+        }
+
+        return map;
+    }
+
+    /**
+     * Check if a class is serializable.
+     *
+     * @param type The Java Class to use.
+     * @param <T> The class's type.
+     */
+    private static <T> void isSerializable(Class<T> type) throws Exception {
+        boolean isSerializable = false;
+
+        Class<?> currentType = type;
+        while (currentType != null) {
+            if (currentType.isAnnotationPresent(JsonSerializable.class)) {
+                isSerializable = true;
+                break;
+            }
+
+            currentType = currentType.getSuperclass();
+        }
+
+        if (!isSerializable) {
+            throw new Exception("Not a serializable class!");
+        }
+    }
+
+    private static <T> List<Field> findSerializableFields(Class<T> type) {
+        ArrayList<Field> fields = new ArrayList<>();
+
+        Class<?> currentType = type;
+        while (currentType != null) {
+            if (currentType.isAnnotationPresent(JsonSerializable.class)) {
+                fields.addAll(Arrays.asList(currentType.getDeclaredFields()));
+            }
+
+            currentType = currentType.getSuperclass();
+        }
+
+        fields.removeIf(field -> !field.isAnnotationPresent(JsonSerializable.class));
+
+        return fields;
+    }
+
+    private static void setDefaultValue(Field field, Object object) throws Exception {
+        Type type = field.getType();
+
+        if (type.equals(Boolean.class)) {
+            field.set(object, false);
+        } else if (type.equals(String.class)) {
+            field.set(object, "");
+        } else if (type.equals(Character.class)) {
+            field.set(object, '\u0000');
+        } else if (type.equals(Integer.class)) {
+            field.set(object, 0);
+        } else if (type.equals(Long.class)) {
+            field.set(object, 0L);
+        } else if (type.equals(Double.class)) {
+            field.set(object, 0.0);
+        } else if (type.equals(Float.class)) {
+            field.set(object, 0.0f);
+        } else if (type.equals(Vector2f.class)) {
+            field.set(object, new Vector2f());
+        } else if (type.equals(Vector3f.class)) {
+            field.set(object, new Vector3f());
+        } else if (type.equals(Vector4f.class)) {
+            field.set(object, new Vector4f());
+        } else if (type.equals(Vector2i.class)) {
+            field.set(object, new Vector2i());
+        } else if (type.equals(Vector3i.class)) {
+            field.set(object, new Vector3i());
+        } else if (type.equals(Vector4i.class)) {
+            field.set(object, new Vector4i());
+        } else if (type.equals(Matrix4f.class)) {
+            field.set(object, new Matrix4f());
+        } else {
+            field.set(object, null);
+        }
     }
 
     /**
@@ -452,96 +340,203 @@ public class Json {
      * @param value The value.
      * @param object The instance (object) of the field.
      */
-    private static <T> void convertAndAdd(Field field, Object value, Object object, Class<T> declaringClass, String declaringFieldName) {
-        try {
-            Class<?> type;
+    private static <T> Object set(Field field, Object value, Object object, Class<T> declaringClass,
+                                String declaringFieldName, TypeGraph remainingTypeGraph) throws Exception {
+        Class<?> type;
 
-            if (declaringClass == null) {
-                type = field.getType();
-            } else {
-                Type genericType = Objects.requireNonNull(findFieldInClass(declaringFieldName, declaringClass)).getGenericType();
-                Type realType = searchSignature(field, genericType);
+        if (declaringClass == null) {
+            type = field.getType();
+        } else {
+            Type genericType = Objects.requireNonNull(findFieldInClass(declaringFieldName, declaringClass))
+                    .getGenericType();
+            TypeGraph completeTypeGraph = remainingTypeGraph == null ? generateTypeGraph(genericType.getTypeName()) : remainingTypeGraph;
+            TypeGraph typeGraph = searchType(field, genericType, completeTypeGraph);
 
-                if (realType != null) {
-                    type = Class.forName(realType.getTypeName());
+            if (completeTypeGraph.children.isEmpty() && Class.forName(completeTypeGraph.name).isAnnotationPresent(JsonSerializable.class)) {
+                if (value instanceof Map) {
+                    return deserialize((Map<String, Object>)value, Class.forName(completeTypeGraph.name), field.getDeclaringClass(), field.getName(), completeTypeGraph);
                 } else {
-                    type = field.getType();
+                    type = Class.forName(completeTypeGraph.name);
+                }
+            } else if (typeGraph != null) {
+                if (!typeGraph.children.isEmpty() && !typeGraph.name.startsWith("java.util.Map") && value instanceof Map) {
+                    return deserialize((Map<String, Object>)value, Class.forName(typeGraph.name), field.getDeclaringClass(), field.getName(), typeGraph);
+                } else {
+                    type = Class.forName(typeGraph.name);
+                }
+            } else if (completeTypeGraph.children.size() == 0) {
+                type = Class.forName(completeTypeGraph.name);
+            } else if (completeTypeGraph.name.equals("java.util.List")) {
+                return tryDeserializeList(field, value, object, field.getDeclaringClass(), field.getName(), completeTypeGraph);
+            } else if (completeTypeGraph.name.equals("java.util.Map")) {
+                return tryDeserializeMap(field, value, object, field.getDeclaringClass(), field.getName(), completeTypeGraph);
+            } else {
+                return deserialize((Map<String, Object>)value, Class.forName(completeTypeGraph.name), field.getDeclaringClass(), field.getName(), completeTypeGraph);
+            }
+        }
+
+        if (value == null) {
+            return null;
+        } else if (type == Float.class) {
+            if (value instanceof Long) {
+                value = ((Long) value).doubleValue();
+            }
+
+            return ((Double)value).floatValue();
+        } else if (type == Integer.class) {
+            if (value instanceof Double) {
+                value = ((Double) value).longValue();
+            }
+
+            return ((Long)value).intValue();
+        } else if (type == Long.class) {
+            if (value instanceof Double) {
+                value = ((Double) value).longValue();
+            }
+
+            return value;
+        } else if (type == Double.class) {
+            if (value instanceof Long) {
+                value = ((Long) value).doubleValue();
+            }
+
+            return value;
+        } else if (type == Vector2f.class) {
+            Map<String, Object> map = (Map<String, Object>)value;
+
+            if (map.get("x") instanceof Long) {
+                map.put("x", ((Long) map.get("x")).doubleValue());
+            }
+            if (map.get("y") instanceof Long) {
+                map.put("y", ((Long) map.get("y")).doubleValue());
+            }
+
+            return new Vector2f(
+                    ((Double)map.get("x")).floatValue(),
+                    ((Double)map.get("y")).floatValue());
+        } else if (type == Vector3f.class) {
+            Map<String, Object> map = (Map<String, Object>)value;
+
+            if (map.get("x") instanceof Long) {
+                map.put("x", ((Long) map.get("x")).doubleValue());
+            }
+            if (map.get("y") instanceof Long) {
+                map.put("y", ((Long) map.get("y")).doubleValue());
+            }
+            if (map.get("z") instanceof Long) {
+                map.put("z", ((Long) map.get("z")).doubleValue());
+            }
+
+            return new Vector3f(
+                    ((Double)map.get("x")).floatValue(),
+                    ((Double)map.get("y")).floatValue(),
+                    ((Double)map.get("z")).floatValue());
+        } else if (type == Vector4f.class) {
+            Map<String, Object> map = (Map<String, Object>)value;
+
+            if (map.get("x") instanceof Long) {
+                map.put("x", ((Long) map.get("x")).doubleValue());
+            }
+            if (map.get("y") instanceof Long) {
+                map.put("y", ((Long) map.get("y")).doubleValue());
+            }
+            if (map.get("z") instanceof Long) {
+                map.put("z", ((Long) map.get("z")).doubleValue());
+            }
+            if (map.get("w") instanceof Long) {
+                map.put("w", ((Long) map.get("w")).doubleValue());
+            }
+
+            return new Vector4f(
+                    ((Double)map.get("x")).floatValue(),
+                    ((Double)map.get("y")).floatValue(),
+                    ((Double)map.get("z")).floatValue(),
+                    ((Double)map.get("w")).floatValue());
+        } else if (type == Vector2i.class) {
+            Map<String, Object> map = (Map<String, Object>)value;
+
+            if (map.get("x") instanceof Double) {
+                map.put("x", ((Double) map.get("x")).longValue());
+            }
+            if (map.get("y") instanceof Double) {
+                map.put("y", ((Double) map.get("y")).longValue());
+            }
+
+            return new Vector2i(
+                    ((Long)map.get("x")).intValue(),
+                    ((Long)map.get("y")).intValue());
+        } else if (type == Vector3i.class) {
+            Map<String, Object> map = (Map<String, Object>)value;
+
+            if (map.get("x") instanceof Double) {
+                map.put("x", ((Double) map.get("x")).longValue());
+            }
+            if (map.get("y") instanceof Double) {
+                map.put("y", ((Double) map.get("y")).longValue());
+            }
+            if (map.get("z") instanceof Double) {
+                map.put("z", ((Double) map.get("z")).longValue());
+            }
+
+            return new Vector3i(
+                    ((Long)map.get("x")).intValue(),
+                    ((Long)map.get("y")).intValue(),
+                    ((Long)map.get("z")).intValue());
+        } else if (type == Vector4i.class) {
+            Map<String, Object> map = (Map<String, Object>)value;
+
+            if (map.get("x") instanceof Double) {
+                map.put("x", ((Double) map.get("x")).longValue());
+            }
+            if (map.get("y") instanceof Double) {
+                map.put("y", ((Double) map.get("y")).longValue());
+            }
+            if (map.get("z") instanceof Double) {
+                map.put("z", ((Double) map.get("z")).longValue());
+            }
+            if (map.get("w") instanceof Double) {
+                map.put("w", ((Double) map.get("w")).longValue());
+            }
+
+            return new Vector4i(
+                    ((Long)map.get("x")).intValue(),
+                    ((Long)map.get("y")).intValue(),
+                    ((Long)map.get("z")).intValue(),
+                    ((Long)map.get("w")).intValue());
+        }/* else if (type == Matrix4f.class) {
+            Map<String, Object> map = (Map<String, Object>)value;
+            return new Matrix4f(
+                    ((Double)map.get("m00")).floatValue(),
+                    ((Double)map.get("m01")).floatValue(),
+                    ((Double)map.get("m02")).floatValue(),
+                    ((Double)map.get("m03")).floatValue(),
+                    ((Double)map.get("m10")).floatValue(),
+                    ((Double)map.get("m11")).floatValue(),
+                    ((Double)map.get("m12")).floatValue(),
+                    ((Double)map.get("m13")).floatValue(),
+                    ((Double)map.get("m20")).floatValue(),
+                    ((Double)map.get("m21")).floatValue(),
+                    ((Double)map.get("m22")).floatValue(),
+                    ((Double)map.get("m23")).floatValue(),
+                    ((Double)map.get("m30")).floatValue(),
+                    ((Double)map.get("m31")).floatValue(),
+                    ((Double)map.get("m32")).floatValue(),
+                    ((Double)map.get("m33")).floatValue());
+        }*/ else {
+            return value;
+        }
+    }
+
+    private static <T> void invokeSerializableConstructor(Class<T> type, Object object, Map<String, Object> json)
+            throws Exception {
+        for (Method method : type.getMethods()) {
+            if (method.isAnnotationPresent(JsonSerializableConstructor.class)) {
+                if (method.getParameterTypes().length == 0) {
+                    method.invoke(object);
+                } else {
+                    method.invoke(object, json);
                 }
             }
-
-            if (value == null) {
-                field.set(object, null);
-            } else  if (type == Float.class) {
-                field.set(object, ((Double)value).floatValue());
-            } else  if (type == Integer.class) {
-                field.set(object, ((Long)value).intValue());
-            } else if (type == Vector2f.class) {
-                Map<String, Object> map = (Map<String, Object>)value;
-                field.set(object, new Vector2f(
-                        ((Double)map.get("x")).floatValue(),
-                        ((Double)map.get("y")).floatValue())
-                );
-            } else if (type == Vector3f.class) {
-                Map<String, Object> map = (Map<String, Object>)value;
-                field.set(object, new Vector3f(
-                        ((Double)map.get("x")).floatValue(),
-                        ((Double)map.get("y")).floatValue(),
-                        ((Double)map.get("z")).floatValue())
-                );
-            } else if (type == Vector4f.class) {
-                Map<String, Object> map = (Map<String, Object>)value;
-                field.set(object, new Vector4f(
-                        ((Double)map.get("x")).floatValue(),
-                        ((Double)map.get("y")).floatValue(),
-                        ((Double)map.get("z")).floatValue(),
-                        ((Double)map.get("w")).floatValue())
-                );
-            } else if (type == Vector2i.class) {
-                Map<String, Object> map = (Map<String, Object>)value;
-                field.set(object, new Vector2i(
-                        ((Integer)map.get("x")),
-                        ((Integer)map.get("y")))
-                );
-            } else if (type == Vector3i.class) {
-                Map<String, Object> map = (Map<String, Object>)value;
-                field.set(object, new Vector3i(
-                        ((Integer)map.get("x")),
-                        ((Integer)map.get("y")),
-                        ((Integer)map.get("z")))
-                );
-            } else if (type == Vector4i.class) {
-                Map<String, Object> map = (Map<String, Object>)value;
-                field.set(object, new Vector4i(
-                        ((Integer)map.get("x")),
-                        ((Integer)map.get("y")),
-                        ((Integer)map.get("z")),
-                        ((Integer)map.get("w")))
-                );
-            } else if (type == Matrix4f.class) {
-                Map<String, Object> map = (Map<String, Object>)value;
-                field.set(object, new Matrix4f(
-                        ((Double)map.get("m00")).floatValue(),
-                        ((Double)map.get("m01")).floatValue(),
-                        ((Double)map.get("m02")).floatValue(),
-                        ((Double)map.get("m03")).floatValue(),
-                        ((Double)map.get("m10")).floatValue(),
-                        ((Double)map.get("m11")).floatValue(),
-                        ((Double)map.get("m12")).floatValue(),
-                        ((Double)map.get("m13")).floatValue(),
-                        ((Double)map.get("m20")).floatValue(),
-                        ((Double)map.get("m21")).floatValue(),
-                        ((Double)map.get("m22")).floatValue(),
-                        ((Double)map.get("m23")).floatValue(),
-                        ((Double)map.get("m30")).floatValue(),
-                        ((Double)map.get("m31")).floatValue(),
-                        ((Double)map.get("m32")).floatValue(),
-                        ((Double)map.get("m33")).floatValue())
-                );
-            } else {
-                field.set(object, value);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

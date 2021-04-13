@@ -2,22 +2,27 @@ package com.ustudents.farmland.network.actions;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.item.Item;
 
 // PROCESSED ON SERVER
+@JsonSerializable
 public class BuyMessage extends Message {
+    @JsonSerializable
+    String itemId;
+
     public BuyMessage() {
 
     }
 
     public BuyMessage(String itemId) {
-        getPayload().put("item", itemId);
+        this.itemId = itemId;
     }
 
     public String getItemId() {
-        return (String) getPayload().get("item");
+        return itemId;
     }
 
     public Item getItem() {

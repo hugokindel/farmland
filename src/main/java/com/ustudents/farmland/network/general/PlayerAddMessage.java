@@ -1,22 +1,26 @@
 package com.ustudents.farmland.network.general;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.SaveGame;
 
 // PROCESSED ON SERVER
-@SuppressWarnings("unchecked")
+@JsonSerializable
 public class PlayerAddMessage extends Message {
+    @JsonSerializable
+    Integer playerId;
+
     public PlayerAddMessage() {
 
     }
 
     public PlayerAddMessage(int playerId) {
-        getPayload().put("playerId", Long.valueOf(playerId));
+        this.playerId = playerId;
     }
 
     public int getPlayerId() {
-        return ((Long) getPayload().get("playerId")).intValue();
+        return playerId;
     }
 
     @Override
