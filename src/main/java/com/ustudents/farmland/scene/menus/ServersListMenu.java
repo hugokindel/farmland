@@ -11,7 +11,7 @@ public class ServersListMenu extends MenuScene {
     @Override
     public void initialize() {
         if (!Farmland.get().getClient().isAlive()) {
-            Farmland.get().getClient().start();
+            Farmland.get().getClient().start(100);
         }
 
         boolean localServerExists = Farmland.get().getClient().isAlive();
@@ -44,7 +44,6 @@ public class ServersListMenu extends MenuScene {
                     case "addressButton":
                         if (Farmland.get().isConnectedToServer()) {
                             Farmland.get().disconnectFromServer();
-                            Farmland.get().getClient().start();
                         }
 
                         changeScene(new ServerCustomMenu());
@@ -65,7 +64,6 @@ public class ServersListMenu extends MenuScene {
     public void destroy() {
         if (Farmland.get().isConnectedToServer()) {
             Farmland.get().disconnectFromServer();
-            Farmland.get().getClient().start();
         }
     }
 }

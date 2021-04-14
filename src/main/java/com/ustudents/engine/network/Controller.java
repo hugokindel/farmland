@@ -30,6 +30,8 @@ public abstract class Controller {
 
     public static final int DEFAULT_PORT = 8533;
 
+    public static final int DEFAULT_SO_TIMEOUT = 1000;
+
     protected final Queue<Pair<Integer, String>> messagesToRead = new ConcurrentLinkedQueue<>();
 
     protected final Queue<Message> messagesToSend = new ConcurrentLinkedQueue<>();

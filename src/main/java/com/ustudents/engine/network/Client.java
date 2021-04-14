@@ -5,6 +5,7 @@ import com.ustudents.engine.network.messages.Message;
 import com.ustudents.engine.utility.Pair;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class Client extends Controller {
@@ -12,12 +13,13 @@ public class Client extends Controller {
 
     private Thread serverReader;
 
-    public boolean start(String address, int port) {
+    public boolean start(String address, int port, int timeout) {
         try {
-            Socket socket = new Socket(InetAddress.getByName(address), port);
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(InetAddress.getByName(address), port), timeout);
             connection = new Connection(socket);
         } catch (Exception e) {
-            if (!e.getMessage().toLowerCase().contains("connection refused")) {
+            if (!e.getMessage().toLowerCase().contains("connection refused") && !e.getMessage().toLowerCase().contains("connect timed out")) {
                 e.printStackTrace();
             }
 
@@ -29,9 +31,17 @@ public class Client extends Controller {
         return super.start();
     }
 
+    public boolean start(String address, int port) {
+        return start(address, port, DEFAULT_SO_TIMEOUT);
+    }
+
+    public boolean start(int timeout) {
+        return start(DEFAULT_ADDRESS, DEFAULT_PORT, timeout);
+    }
+
     @Override
     public boolean start() {
-        return start(Controller.DEFAULT_ADDRESS, Controller.DEFAULT_PORT);
+        return start(DEFAULT_SO_TIMEOUT);
     }
 
     @Override

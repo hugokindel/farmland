@@ -85,7 +85,7 @@ public class ServerCustomMenu extends MenuScene {
                 if (serverExists) {
                     changeScene(new ServerWaitingRoomMenu());
                 } else {
-                    Out.println("Ce serveur ne répond pas.");
+                    ImGui.text("Ce serveur ne répond pas.");
                 }
             }
         }

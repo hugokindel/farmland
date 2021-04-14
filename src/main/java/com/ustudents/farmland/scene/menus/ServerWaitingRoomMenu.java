@@ -53,4 +53,11 @@ public class ServerWaitingRoomMenu extends MenuScene {
 
         super.initialize();
     }
+
+    @Override
+    public void destroy() {
+        if (Farmland.get().isConnectedToServer()) {
+            Farmland.get().disconnectFromServer();
+        }
+    }
 }
