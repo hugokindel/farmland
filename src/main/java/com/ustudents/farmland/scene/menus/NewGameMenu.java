@@ -6,7 +6,6 @@ import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.Save;
-import com.ustudents.farmland.scene.InGameScene;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiDataType;
@@ -95,8 +94,7 @@ public class NewGameMenu extends MenuScene {
                 Farmland.get().loadSave(save.name);
                 Farmland.get().writeAllSaves();
 
-                SceneManager.get().getTypeOfLastScene();
-                changeScene(new InGameScene());
+                SceneManager.get().popTypeOfLastScene();
             }
         }
 

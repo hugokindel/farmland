@@ -75,10 +75,12 @@ public class Farmland extends Game {
     public void onServerStarted() {
         loadServerSettings();
         server.getClientDisconnectedDispatcher().add((dataType, data) -> {
-            Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Robot;
-            Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
-            serverPlayerIdPerClientId.remove(data.clientId);
-            server.broadcast(new LoadSaveResponse(getLoadedSave()));
+            if (serverPlayerIdPerClientId.containsKey(data.clientId)) {
+                Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Robot;
+                Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
+                serverPlayerIdPerClientId.remove(data.clientId);
+                server.broadcast(new LoadSaveResponse(getLoadedSave()));
+            }
         });
     }
 

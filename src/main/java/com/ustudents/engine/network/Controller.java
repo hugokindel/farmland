@@ -166,35 +166,37 @@ public abstract class Controller {
                     }
 
                     Pair<Integer, String> data = messagesToRead.poll();
-                    assert data != null;
-                    Message message = readMessage(data.getObject2());
-                    message.setSenderId(data.getObject1());
-                    handleMessageIfNecessary(message);
 
-                    if (message.getProcessingSide() == Message.ProcessingSide.Everywhere ||
-                            (getType() == Type.Server && message.getProcessingSide() == Message.ProcessingSide.Server) ||
-                            (getType() == Type.Client && message.getProcessingSide() == Message.ProcessingSide.Client)) {
-                        if (message.shouldBeHandledOnMainThread()) {
-                            messagesToHandleOnMainThread.add(message);
+                    if (data != null) {
+                        Message message = readMessage(data.getObject2());
+                        message.setSenderId(data.getObject1());
+                        handleMessageIfNecessary(message);
+
+                        if (message.getProcessingSide() == Message.ProcessingSide.Everywhere ||
+                                (getType() == Type.Server && message.getProcessingSide() == Message.ProcessingSide.Server) ||
+                                (getType() == Type.Client && message.getProcessingSide() == Message.ProcessingSide.Client)) {
+                            if (message.shouldBeHandledOnMainThread()) {
+                                messagesToHandleOnMainThread.add(message);
+                            } else {
+                                message.process();
+                            }
+                        }
+
+                        if (mainThreadWaitingForResponse.get() && message.getClass() == mainThreadWaitingForResponseType.get()) {
+                            if (Game.isDebugging()) {
+                                Out.println("Response received");
+                            }
+
+                            mainThreadWaitingForResponse.set(false);
+                            mainThreadWaitingForResponseType.set(null);
+                            responseForMainThread.set(message);
                         } else {
-                            message.process();
+                            try {
+                                Thread.sleep(10);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-
-                    if (mainThreadWaitingForResponse.get() && message.getClass() == mainThreadWaitingForResponseType.get()) {
-                        if (Game.isDebugging()) {
-                            Out.println("Response received");
-                        }
-
-                        mainThreadWaitingForResponse.set(false);
-                        mainThreadWaitingForResponseType.set(null);
-                        responseForMainThread.set(message);
-                    }
-                } else {
-                    try {
-                        Thread.sleep(10);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             }

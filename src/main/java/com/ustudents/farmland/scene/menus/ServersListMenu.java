@@ -22,11 +22,11 @@ public class ServersListMenu extends MenuScene {
 
         if (localServerExists) {
             GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
-            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", "Recharger"};
-            buttonIds = new String[] {"localButton", "reloadButton"};
+            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", "Rechercher une partie", "Recharger"};
+            buttonIds = new String[] {"localButton", "addressButton", "reloadButton"};
         } else {
-            buttonNames = new String[] {"Recharger"};
-            buttonIds = new String[] {"reloadButton"};
+            buttonNames = new String[] {"Rechercher une partie", "Recharger"};
+            buttonIds = new String[] {"addressButton", "reloadButton"};
         }
 
         EventListener[] eventListeners = new EventListener[buttonNames.length];
@@ -36,15 +36,18 @@ public class ServersListMenu extends MenuScene {
             eventListeners[i] = (dataType, data) -> {
                 switch (buttonIds[j]) {
                     case "localButton":
-                        /*if (Farmland.get().isConnectedToServer()) {
-                            Farmland.get().disconnectFromServer();
-                            Farmland.get().getClient().start();
-                        }*/
-
                         Out.println("Connected to server");
 
                         changeScene(new ServerWaitingRoomMenu());
 
+                        break;
+                    case "addressButton":
+                        if (Farmland.get().isConnectedToServer()) {
+                            Farmland.get().disconnectFromServer();
+                            Farmland.get().getClient().start();
+                        }
+
+                        changeScene(new ServerCustomMenu());
                         break;
                     case "reloadButton":
                         changeScene(new ServersListMenu(), false);
@@ -56,5 +59,13 @@ public class ServersListMenu extends MenuScene {
         initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, true);
 
         super.initialize();
+    }
+
+    @Override
+    public void destroy() {
+        if (Farmland.get().isConnectedToServer()) {
+            Farmland.get().disconnectFromServer();
+            Farmland.get().getClient().start();
+        }
     }
 }

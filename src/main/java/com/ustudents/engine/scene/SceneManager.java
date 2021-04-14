@@ -184,7 +184,7 @@ public class SceneManager {
         return registry;
     }
 
-    public Class<?> getTypeOfLastScene() {
+    public Class<?> popTypeOfLastScene() {
         return lastScenesType.pop();
     }
 

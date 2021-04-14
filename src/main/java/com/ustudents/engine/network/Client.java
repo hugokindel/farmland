@@ -12,10 +12,9 @@ public class Client extends Controller {
 
     private Thread serverReader;
 
-    @Override
-    public boolean start() {
+    public boolean start(String address, int port) {
         try {
-            Socket socket = new Socket(InetAddress.getByName(Controller.DEFAULT_ADDRESS), Controller.DEFAULT_PORT);
+            Socket socket = new Socket(InetAddress.getByName(address), port);
             connection = new Connection(socket);
         } catch (Exception e) {
             if (!e.getMessage().toLowerCase().contains("connection refused")) {
@@ -28,6 +27,11 @@ public class Client extends Controller {
         serverReader = runThread("ServerReader", new ServerReaderRunnable());
 
         return super.start();
+    }
+
+    @Override
+    public boolean start() {
+        return start(Controller.DEFAULT_ADDRESS, Controller.DEFAULT_PORT);
     }
 
     @Override
