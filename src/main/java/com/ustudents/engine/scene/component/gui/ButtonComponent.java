@@ -23,6 +23,9 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
     @Viewable
     public NineSlicedSpriteComponent sprite;
 
+    @Viewable
+    public Boolean bypassDisableInput = false;
+
     private boolean focused;
 
     private boolean down;
@@ -125,7 +128,7 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
                 realButtonPos.y + realButtonSize.y
         );
 
-        if (disableInput && !changeState) {
+        if (!bypassDisableInput && disableInput && !changeState) {
             focused = false;
             down = false;
             changeState = true;
@@ -133,20 +136,20 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
 
         if (cursorPos.x > buttonViewRect.x && cursorPos.x < buttonViewRect.z && cursorPos.y > buttonViewRect.y && cursorPos.y < buttonViewRect.w) {
             if (!focused) {
-                if (!disableInput) {
+                if (bypassDisableInput || !disableInput) {
                     changeState = true;
                     focused = true;
                 }
             }
         } else {
             if (down) {
-                if (!disableInput) {
+                if (bypassDisableInput || !disableInput) {
                     changeState = true;
                     down = false;
                     focused = false;
                 }
             } else if (focused) {
-                if (!disableInput) {
+                if (bypassDisableInput || !disableInput) {
                     changeState = true;
                     focused = false;
                 }
@@ -155,12 +158,12 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
 
         if (focused) {
             if (!down && Input.isMouseDown(MouseButton.Left)) {
-                if (!disableInput) {
+                if (bypassDisableInput || !disableInput) {
                     down = true;
                     changeState = true;
                 }
             } else if (down && !Input.isMouseDown(MouseButton.Left)) {
-                if (!disableInput) {
+                if (bypassDisableInput || !disableInput) {
                     down = false;
                     event.dispatch();
                     changeState = true;

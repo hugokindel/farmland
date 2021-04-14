@@ -1,6 +1,7 @@
 package com.ustudents.engine.graphic;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
@@ -10,6 +11,7 @@ import com.ustudents.engine.core.window.events.ScrollMovedEvent;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;
+import com.ustudents.farmland.scene.InGameScene;
 import org.joml.*;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -180,9 +182,13 @@ public class Camera {
     }
 
     public void moveToMousePosition(Vector2f newMousePosition) {
-        if ((Input.isKeyDown(Key.LeftAlt) || Input.isKeyDown(Key.RightAlt)) && Input.isMouseDown(MouseButton.Left)) {
-            moveTo(newMousePosition, mousePosition, 1);
+        // TODO: Move to Farmland
+        if (Game.get().getSceneManager().getCurrentScene() instanceof InGameScene) {
+            if (!((InGameScene)Game.get().getSceneManager().getCurrentScene()).inPause && (Input.isKeyDown(Key.LeftAlt) || Input.isKeyDown(Key.RightAlt)) && Input.isMouseDown(MouseButton.Left)) {
+                moveTo(newMousePosition, mousePosition, 1);
+            }
         }
+
         mousePosition = newMousePosition;
     }
 

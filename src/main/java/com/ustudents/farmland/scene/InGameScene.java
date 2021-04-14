@@ -207,12 +207,16 @@ public class InGameScene extends Scene {
             if (getGame().isConnectedToServer()) {
                 getGame().disconnectFromServer();
             }
+            setPause(false);
             changeScene(new MainMenu());
         });
+        buttonData2.id = "mainMenuButton";
         buttonData2.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Left);
         buttonData2.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Left);
         buttonData2.position = new Vector2f(10, -10);
+        buttonData2.zIndex = 50;
         guiBuilder.addButton(buttonData2);
+        getEntityByName("mainMenuButton").getComponent(ButtonComponent.class).bypassDisableInput = true;
 
         GuiBuilder.WindowData windowData = new GuiBuilder.WindowData();
         windowData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);

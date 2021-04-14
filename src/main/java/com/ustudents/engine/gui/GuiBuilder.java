@@ -89,6 +89,8 @@ public class GuiBuilder {
 
         public boolean applyGlobalScaling;
 
+        public int zIndex;
+
         public ButtonData(String text, EventListener listener) {
             this.text = text;
             this.id = "button";
@@ -99,6 +101,7 @@ public class GuiBuilder {
             this.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
             this.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
             this.applyGlobalScaling = true;
+            this.zIndex = 0;
         }
     }
 
@@ -267,7 +270,7 @@ public class GuiBuilder {
         buttonPosition(data, transformComponent);
         Window.get().getSizeChanged().add((dataType, windowData) -> buttonPosition(data, transformComponent));
         button.addComponent(transformComponent);
-        button.addComponent(new UiRendererComponent());
+        button.addComponent(new UiRendererComponent(data.zIndex));
         button.addComponent(new ButtonComponent(data.text, data.listener));
     }
 
