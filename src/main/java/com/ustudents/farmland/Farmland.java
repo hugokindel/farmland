@@ -4,13 +4,15 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.NetMode;
-import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import org.joml.Vector2i;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 public class Farmland extends Game {
     public Map<String, Item> itemDatabase = new HashMap<>();
 
-    public Map<String, SaveGame> saves = new HashMap<>();
+    public Map<String, Save> saves = new HashMap<>();
 
     public Map<String, Object> serverSettings = new HashMap<>();
 
@@ -41,6 +43,10 @@ public class Farmland extends Game {
     public AtomicInteger clientPlayerId = new AtomicInteger(0);
 
     public AtomicBoolean clientAllPlayersPresents = new AtomicBoolean(false);
+
+    public AtomicBoolean clientGameStarted = new AtomicBoolean(false);
+
+    public EventDispatcher saveChanged = new EventDispatcher();
 
     @Override
     protected void initialize() {
@@ -68,7 +74,12 @@ public class Farmland extends Game {
     @Override
     public void onServerStarted() {
         loadServerSettings();
-        server.getClientDisconnectedDispatcher().add((dataType, data) -> serverPlayerIdPerClientId.remove(data.clientId));
+        server.getClientDisconnectedDispatcher().add((dataType, data) -> {
+            Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Robot;
+            Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
+            serverPlayerIdPerClientId.remove(data.clientId);
+            server.broadcast(new LoadSaveResponse(getLoadedSave()));
+        });
     }
 
     @Override
@@ -91,10 +102,10 @@ public class Farmland extends Game {
         for (File file : listOfFiles) {
             if (file.isFile()) {
                 String path = file.getPath().replace("\\", "/");
-                SaveGame saveGame = Json.deserialize(path, SaveGame.class);
-                if (saveGame != null) {
-                    saveGame.path = path.replace(Resources.getSavesDirectoryName() + "/", "");
-                    saves.put(saveGame.name, saveGame);
+                Save save = Json.deserialize(path, Save.class);
+                if (save != null) {
+                    save.path = path.replace(Resources.getSavesDirectoryName() + "/", "");
+                    saves.put(save.name, save);
                 } else {
                     Out.printlnError("Cannot load savegame: " + path);
                 }
@@ -103,17 +114,17 @@ public class Farmland extends Game {
     }
 
     public void writeAllSaves() {
-        for (SaveGame saveGame : saves.values()) {
-            Json.serialize(Resources.getSavesDirectoryName() + "/" + saveGame.path, saveGame);
+        for (Save save : saves.values()) {
+            Json.serialize(Resources.getSavesDirectoryName() + "/" + save.path, save);
         }
     }
 
-    public Map<String, SaveGame> getSaves() {
+    public Map<String, Save> getSaves() {
         return saves;
     }
 
-    public SaveGame getSaveWithFilename(String id) {
-        for (SaveGame save : saves.values()) {
+    public Save getSaveWithFilename(String id) {
+        for (Save save : saves.values()) {
             if (save.path.replace(".json", "").equals(id)) {
                 return save;
             }
@@ -122,7 +133,7 @@ public class Farmland extends Game {
         return null;
     }
 
-    public SaveGame getLoadedSave() {
+    public Save getLoadedSave() {
         if (saveId == null) {
             return null;
         }
@@ -130,13 +141,14 @@ public class Farmland extends Game {
         return saves.get(saveId);
     }
 
-    public void replaceSave(SaveGame saveGame) {
-        replaceSave(saveGame, 0);
+    public void replaceLoadedSave(Save save) {
+        replaceLoadedSave(save, 0);
     }
 
-    public void replaceSave(SaveGame saveGame, int playerId) {
-        saves.put(saveId, saveGame);
+    public void replaceLoadedSave(Save save, int playerId) {
+        saves.put(saveId, save);
         Farmland.get().getLoadedSave().localPlayerId = playerId;
+        saveChanged.dispatch();
     }
 
     public void loadSave(String saveId) {
@@ -146,10 +158,12 @@ public class Farmland extends Game {
     public void loadSave(String saveId, int playerId) {
         Farmland.get().saveId = saveId;
         Farmland.get().getLoadedSave().localPlayerId = playerId;
+        saveChanged.dispatch();
     }
 
     public void unloadSave() {
         Farmland.get().saveId = null;
+        saveChanged.dispatch();
     }
 
     public Map<String, Item> getItemDatabase() {
@@ -280,14 +294,14 @@ public class Farmland extends Game {
 
     private void loadOrCreateServerSave() {
         if (!saves.containsKey("save-server.json")) {
-            SaveGame saveGame = new SaveGame((String) serverSettings.get("serverName"), new Vector2i(16, 16),
+            Save save = new Save((String) serverSettings.get("serverName"), new Vector2i(16, 16),
                     System.currentTimeMillis(), ((Long) serverSettings.get("numberBots")).intValue());
-            saveGame.path = "save-server.json";
-            saveGame.maxNumberPlayers = ((Long) serverSettings.get("maxNumberPlayers")).intValue();
-            for (int i = 0; i < saveGame.maxNumberPlayers; i++) {
-                saveGame.addPlayer("TEMP", "TEMP", Color.RED);
+            save.path = "save-server.json";
+            save.maxNumberPlayers = ((Long) serverSettings.get("maxNumberPlayers")).intValue();
+            for (int i = 0; i < save.maxNumberPlayers; i++) {
+                save.addPlayer("_temp", "_temp", Color.RED);
             }
-            saves.put("save-server.json", saveGame);
+            saves.put("save-server.json", save);
         }
 
         loadSave("save-server.json", 0);

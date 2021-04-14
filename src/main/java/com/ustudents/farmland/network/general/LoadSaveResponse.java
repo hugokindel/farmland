@@ -1,47 +1,44 @@
 package com.ustudents.farmland.network.general;
 
-import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
-
-import java.util.Map;
+import com.ustudents.farmland.core.Save;
 
 // PROCESSED ON CLIENT
 @JsonSerializable
 public class LoadSaveResponse extends Message {
-    private static SaveGame updatedSaveGame = null;
+    private static Save updatedSave = null;
 
     @JsonSerializable
-    SaveGame save;
+    Save save;
 
     public LoadSaveResponse() {
 
     }
 
-    public LoadSaveResponse(SaveGame save) {
+    public LoadSaveResponse(Save save) {
         this.save = save;
     }
 
-    public SaveGame getSave() {
+    public Save getSave() {
         return save;
     }
 
     @Override
     public void process() {
-        updatedSaveGame = getSave();
-        updatedSaveGame.path = "save-server.json";
-        updatedSaveGame.localPlayerId = Farmland.get().clientPlayerId.get();
+        updatedSave = getSave();
+        updatedSave.path = "save-server.json";
+        updatedSave.localPlayerId = Farmland.get().clientPlayerId.get();
     }
 
-    public static SaveGame getUpdatedSaveGame() {
-        SaveGame saveGame = updatedSaveGame;
+    public static Save getUpdatedSaveGame() {
+        Save save = updatedSave;
 
-        if (saveGame != null) {
-            updatedSaveGame = null;
+        if (save != null) {
+            updatedSave = null;
         }
 
-        return saveGame;
+        return save;
     }
 }

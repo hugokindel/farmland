@@ -143,8 +143,8 @@ public abstract class Controller {
     }
 
     private void internalStart() {
-        readerThread = runThread("Reader", new Server.ReaderRunnable());
-        senderThread = runThread("Sender", new Server.SenderRunnable());
+        readerThread = runThread("Reader", new ReaderRunnable());
+        senderThread = runThread("Sender", new SenderRunnable());
     }
 
     private void internalStop() {

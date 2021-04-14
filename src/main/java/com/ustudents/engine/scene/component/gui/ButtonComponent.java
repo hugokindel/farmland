@@ -37,6 +37,8 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
 
     private Vector2f textSize;
 
+    public static boolean disableInput;
+
     public ButtonComponent(String label) {
         this(label, null);
     }
@@ -123,30 +125,46 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
                 realButtonPos.y + realButtonSize.y
         );
 
+        if (disableInput && !changeState) {
+            focused = false;
+            down = false;
+            changeState = true;
+        }
+
         if (cursorPos.x > buttonViewRect.x && cursorPos.x < buttonViewRect.z && cursorPos.y > buttonViewRect.y && cursorPos.y < buttonViewRect.w) {
             if (!focused) {
-                changeState = true;
-                focused = true;
+                if (!disableInput) {
+                    changeState = true;
+                    focused = true;
+                }
             }
         } else {
             if (down) {
-                changeState = true;
-                down = false;
-                focused = false;
+                if (!disableInput) {
+                    changeState = true;
+                    down = false;
+                    focused = false;
+                }
             } else if (focused) {
-                changeState = true;
-                focused = false;
+                if (!disableInput) {
+                    changeState = true;
+                    focused = false;
+                }
             }
         }
 
         if (focused) {
             if (!down && Input.isMouseDown(MouseButton.Left)) {
-                down = true;
-                changeState = true;
+                if (!disableInput) {
+                    down = true;
+                    changeState = true;
+                }
             } else if (down && !Input.isMouseDown(MouseButton.Left)) {
-                event.dispatch();
-                down = false;
-                changeState = true;
+                if (!disableInput) {
+                    down = false;
+                    event.dispatch();
+                    changeState = true;
+                }
             }
         }
 

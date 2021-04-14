@@ -10,7 +10,10 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
-import com.ustudents.farmland.network.actions.BuyMessage;
+import com.ustudents.farmland.network.actions.BuyCellMessage;
+import com.ustudents.farmland.network.actions.BuyItemMessage;
+import com.ustudents.farmland.network.actions.PlaceSelectedItemMessage;
+import com.ustudents.farmland.network.actions.SelectItemMessage;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -22,6 +25,11 @@ import java.util.Map;
 @JsonSerializable
 @SuppressWarnings("unchecked")
 public class Player {
+    public enum Type {
+        Human,
+        Robot
+    }
+
     @JsonSerializable
     public String name;
 
@@ -32,7 +40,7 @@ public class Player {
     public Integer money;
 
     @JsonSerializable
-    public String typeOfPlayer;
+    public Type type;
 
     @JsonSerializable
     public Color color;
@@ -49,8 +57,6 @@ public class Player {
     @JsonSerializable
     public Map<String, Item> sellInventory;
 
-    public String ipAddress;
-
     public List<Pair<Integer,Integer>> caravans;
 
     public Triplet<Integer,Integer,Integer> farmerResearch;
@@ -59,17 +65,19 @@ public class Player {
 
     public EventDispatcher moneyChanged = new EventDispatcher();
 
+    public static int DEFAULT_CELL_PRICE = 25;
+
     public Player() {
         this.buyInventory = new HashMap<>();
         this.sellInventory = new HashMap<>();
     }
 
-    public Player(String name, String villageName, Color color, String typeOfPlayer) {
+    public Player(String name, String villageName, Color color, Type type) {
         this.name = name;
         this.village = new Village(villageName);
         this.color = color;
         this.money = 500;
-        this.typeOfPlayer = typeOfPlayer;
+        this.type = type;
         this.buyInventory = new HashMap<>();
         this.sellInventory = new HashMap<>();
         this.caravans = new ArrayList<>();
@@ -213,7 +221,25 @@ public class Player {
         return -1;
     }
 
-    public void buy(Item item, int quantity) {
+    public String getSelectedItemId() {
+        return selectedItemId;
+    }
+
+    public void setSelectedItemId(String selectedItemId) {
+        this.selectedItemId = selectedItemId;
+    }
+
+    public void selectItem(String itemId) {
+        if (Game.get().hasAuthority()) {
+            setSelectedItemId(itemId);
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new SelectItemMessage(itemId));
+        }
+    }
+
+    public void buyItem(Item item, int quantity) {
         if (Game.get().hasAuthority()) {
             setMoney(money - (item.value * quantity));
 
@@ -224,18 +250,30 @@ public class Player {
 
             Farmland.get().serverBroadcastSave();
         } else {
-            Game.get().getClient().send(new BuyMessage(item.id));
+            Game.get().getClient().send(new BuyItemMessage(item.id));
         }
     }
 
-    public void placeSelectedItemInCell(int x, int y) {
+    public void buyCell(Vector2i position) {
+        if (Game.get().hasAuthority()) {
+            setMoney(money - DEFAULT_CELL_PRICE);
+
+            Farmland.get().getLoadedSave().getCell(position).setOwned(true, getId());
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new BuyCellMessage(position));
+        }
+    }
+
+    public void placeSelectedItem(Vector2i position) {
         if (Game.get().hasAuthority()) {
             Item selectedItem = buyInventory.get(selectedItemId);
             Item selectedItemClone = Item.clone(selectedItem);
             assert selectedItemClone != null;
             selectedItemClone.quantity = 1;
 
-            Farmland.get().getLoadedSave().getCell(x, y).setItem(selectedItemClone);
+            Farmland.get().getLoadedSave().getCell(position).setItem(selectedItemClone);
 
             if (Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(selectedItem, "Buy")) {
                 Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
@@ -245,7 +283,7 @@ public class Player {
 
             Farmland.get().serverBroadcastSave();
         } else {
-            // TODO
+            Game.get().getClient().send(new PlaceSelectedItemMessage(position));
         }
     }
 }

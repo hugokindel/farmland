@@ -4,7 +4,6 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.BroadcastMessage;
 import com.ustudents.engine.network.messages.DisconnectMessage;
 import com.ustudents.engine.network.messages.Message;
@@ -46,7 +45,7 @@ public class Server extends Controller {
     @Override
     public boolean start() {
         try {
-            socket = new ServerSocket(Controller.DEFAULT_PORT);
+            socket = new ServerSocket(DEFAULT_PORT);
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -143,6 +142,7 @@ public class Server extends Controller {
             send(message.getSenderId(), new DisconnectMessage());
             clients.remove(message.getSenderId());
             freeClientIds.add(message.getSenderId());
+            clientDisconnected.get().dispatch(new ClientDisconnected(message.getSenderId()));
         }
     }
 

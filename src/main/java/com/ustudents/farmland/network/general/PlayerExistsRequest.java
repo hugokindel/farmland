@@ -3,7 +3,8 @@ package com.ustudents.farmland.network.general;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.Save;
+import com.ustudents.farmland.core.player.Player;
 
 // PROCESSED ON SERVER
 @JsonSerializable
@@ -25,13 +26,13 @@ public class PlayerExistsRequest extends Message {
 
     @Override
     public void process() {
-        SaveGame currentSave = Farmland.get().getLoadedSave();
+        Save currentSave = Farmland.get().getLoadedSave();
         int playerId = getPlayerId();
         boolean exists = false;
 
         if (currentSave.players.size() > playerId &&
-                currentSave.players.get(playerId).typeOfPlayer.equals("Humain") &&
-                !currentSave.players.get(playerId).name.equals("TEMP")) {
+                currentSave.players.get(playerId).type == Player.Type.Human &&
+                !currentSave.players.get(playerId).name.equals("_temp")) {
             exists = true;
         }
 

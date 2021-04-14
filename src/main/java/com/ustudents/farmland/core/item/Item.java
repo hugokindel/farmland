@@ -1,6 +1,7 @@
 package com.ustudents.farmland.core.item;
 
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.core.json.annotation.JsonSerializableType;
@@ -51,17 +52,7 @@ public class Item {
     }
 
     public static Item clone(Item item) {
-        if (item instanceof Animal) {
-            return Animal.clone((Animal)item);
-        } else if (item instanceof Crop) {
-            return Crop.clone((Crop)item);
-        } else if (item instanceof Decoration) {
-            return Decoration.clone((Decoration)item);
-        } else if (item instanceof Property) {
-            return Property.clone((Property)item);
-        }
-
-        return null;
+        return Json.deserialize(Json.serialize(item), item.getClass());
     }
 
     public void endTurn() {

@@ -2,7 +2,7 @@ package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.scene.InGameScene;
 
 public class LoadGameMenu extends MenuScene {
@@ -13,7 +13,7 @@ public class LoadGameMenu extends MenuScene {
         String[] buttonIds = new String[buttonNames.length];
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
-        for (SaveGame save : Farmland.get().getSaves().values()) {
+        for (Save save : Farmland.get().getSaves().values()) {
             int j = i;
             buttonNames[i] = save.name;
             buttonIds[i] = save.path.replace(".json", "") + "Button";

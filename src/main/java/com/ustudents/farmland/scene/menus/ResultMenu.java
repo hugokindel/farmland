@@ -7,7 +7,7 @@ import com.ustudents.engine.graphic.Origin;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.InGameScene;
 import org.joml.Vector2f;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 
 public class ResultMenu extends MenuScene {
     public Player currentPlayer;
-    public SaveGame currentSave;
+    public Save currentSave;
     public boolean isWin;
 
     @Override
@@ -55,7 +55,7 @@ public class ResultMenu extends MenuScene {
                     Player player = currentPlayer;
                     Vector2i vector = new Vector2i(this.currentSave.mapWidth,this.currentSave.mapHeight);
                     Farmland.get().loadSave(currentSave.name);
-                    Farmland.get().replaceSave(new SaveGame(this.currentSave.name, player.name, player.village.name, player.color, vector, this.currentSave.seed, this.currentSave.players.size()-1));
+                    Farmland.get().replaceLoadedSave(new Save(this.currentSave.name, player.name, player.village.name, player.color, vector, this.currentSave.seed, this.currentSave.players.size()-1));
                     Farmland.get().writeAllSaves();
                     changeScene(new InGameScene());
                 }else{

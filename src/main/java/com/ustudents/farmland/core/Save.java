@@ -28,7 +28,7 @@ import java.util.List;
 
 @JsonSerializable
 @SuppressWarnings("unchecked")
-public class SaveGame {
+public class Save {
     public static final int timePerTurn = 90;
 
     @JsonSerializable
@@ -79,11 +79,11 @@ public class SaveGame {
 
     public SeedRandom random;
 
-    public SaveGame() {
+    public Save() {
         this.itemsTurn = new ArrayList<>();
     }
 
-    public SaveGame(String name, Vector2i mapSize, Long seed, int numberOfBots) {
+    public Save(String name, Vector2i mapSize, Long seed, int numberOfBots) {
         mapWidth = mapSize.x;
         mapHeight = mapSize.y;
         this.seed = seed;
@@ -131,7 +131,7 @@ public class SaveGame {
         List<Vector2i> usedLocations = new ArrayList<>();
         usedLocations.add(new Vector2i(mapSize.x / 2 - 1, mapSize.y / 2 - 1));
         for (int i = 0; i < numberOfBots; i++) {
-            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors), "Robot"));
+            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors), Player.Type.Robot));
             Vector2i villagePosition = generateMapLocation(random, usedLocations);
             this.players.get(i).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
             this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i);
@@ -148,7 +148,7 @@ public class SaveGame {
         }
     }
 
-    public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
+    public Save(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
         this(name, mapSize, seed, numberOfBots);
         addPlayer(playerName, playerVillageName, playerColor);
     }
@@ -161,7 +161,7 @@ public class SaveGame {
 
     public void addPlayer(String playerName, String playerVillageName, Color playerColor) {
         int playerId = getAvailableHumanId();
-        this.players.add(playerId, new Player(playerName, playerVillageName, playerColor,"Humain"));
+        this.players.add(playerId, new Player(playerName, playerVillageName, playerColor, Player.Type.Human));
         Vector2i villagePosition = generateMapLocation(random, getUsedLocations());
         this.players.get(playerId).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
         this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, playerId);
@@ -266,28 +266,34 @@ public class SaveGame {
         }
     }
 
-    public boolean PlayerMeetCondition(){
-        for(Player player: players){
-            if(player.typeOfPlayer.contains("Humain")){
-                return (player.money <= 0 || player.money >= 1000);
+    public boolean PlayerMeetCondition() {
+        for(Player player : players) {
+            if(player.type == Player.Type.Human) {
+                return player.money <= 0 || player.money >= 1000;
             }
         }
+
         return true;
     }
 
-    public boolean BotMeetCondition(){
-        for(Player player: players){
-            if(player.typeOfPlayer.contains("Robot") && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())){
+    public boolean BotMeetCondition() {
+        for(Player player : players) {
+            if(player.type == Player.Type.Robot && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
                 if (player.money <= 0 || player.money >= 1000){
                     return true;
                 }
             }
         }
+
         return false;
     }
 
     public Player getLocalPlayer() {
         return players.get(localPlayerId);
+    }
+
+    public boolean isLocalPlayerTurn() {
+        return getCurrentPlayer().getId().equals(getLocalPlayer().getId());
     }
 
     public List<Color> getUsedColors() {
@@ -322,11 +328,15 @@ public class SaveGame {
         return cells.get(x).get(y);
     }
 
+    public Cell getCell(Vector2i position) {
+        return cells.get(position.x).get(position.y);
+    }
+
     private int getAvailableHumanId() {
         int i = 0;
 
         for (Player player : players) {
-            if (player.typeOfPlayer.equals("Humain")) {
+            if (player.type == Player.Type.Human) {
                 i++;
             }
         }

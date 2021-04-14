@@ -379,25 +379,41 @@ public class Json {
             return null;
         } else if (type == Float.class) {
             if (value instanceof Long) {
-                value = ((Long) value).doubleValue();
+                return ((Long) value).floatValue();
+            } else if (value instanceof Integer) {
+                return ((Integer) value).floatValue();
+            } else if (value instanceof Double) {
+                return ((Double)value).floatValue();
             }
 
-            return ((Double)value).floatValue();
+            return value;
         } else if (type == Integer.class) {
-            if (value instanceof Double) {
-                value = ((Double) value).longValue();
+            if (value instanceof Long) {
+                return ((Long)value).intValue();
+            } else if (value instanceof Double) {
+                return ((Double) value).intValue();
+            } else if (value instanceof Float) {
+                return ((Float) value).intValue();
             }
 
-            return ((Long)value).intValue();
+            return value;
         } else if (type == Long.class) {
-            if (value instanceof Double) {
-                value = ((Double) value).longValue();
+            if (value instanceof Integer) {
+                return ((Integer) value).longValue();
+            } else if (value instanceof Double) {
+                return ((Double) value).longValue();
+            } else if (value instanceof Float) {
+                return ((Float) value).longValue();
             }
 
             return value;
         } else if (type == Double.class) {
             if (value instanceof Long) {
-                value = ((Long) value).doubleValue();
+                return ((Long) value).doubleValue();
+            } else if (value instanceof Integer) {
+                return ((Integer) value).doubleValue();
+            } else if (value instanceof Float) {
+                return ((Float) value).doubleValue();
             }
 
             return value;

@@ -1,13 +1,10 @@
 package com.ustudents.farmland.network.general;
 
-import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
-
-import java.util.Map;
+import com.ustudents.farmland.core.Save;
 
 // PROCESSED ON SERVER
 @JsonSerializable
@@ -54,7 +51,7 @@ public class PlayerCreateMessage extends Message {
     @Override
     public void process() {
         int playerId = getPlayerId();
-        SaveGame currentSave = Farmland.get().getLoadedSave();
+        Save currentSave = Farmland.get().getLoadedSave();
 
         currentSave.players.get(playerId).name = getPlayerName();
         currentSave.players.get(playerId).village.name = getVillageName();

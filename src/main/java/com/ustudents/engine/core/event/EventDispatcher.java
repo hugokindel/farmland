@@ -3,6 +3,7 @@ package com.ustudents.engine.core.event;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Safer rmove
 public class EventDispatcher<T extends Event> {
     List<EventListener<T>> listeners;
     Class<?> dataType;

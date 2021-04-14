@@ -4,7 +4,7 @@ import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.network.general.LoadSaveRequest;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.scene.InGameScene;
@@ -43,9 +43,9 @@ public class ServerWaitingPlayersMenu extends Scene {
         if (Farmland.get().clientAllPlayersPresents.get()) {
             Farmland.get().clientAllPlayersPresents.set(false);
             Farmland.get().getClient().request(new LoadSaveRequest(), LoadSaveResponse.class);
-            SaveGame saveGame = LoadSaveResponse.getUpdatedSaveGame();
-            Farmland.get().getSaves().put(saveGame.name, saveGame);
-            Farmland.get().loadSave(saveGame.name);
+            Save save = LoadSaveResponse.getUpdatedSaveGame();
+            Farmland.get().getSaves().put(save.name, save);
+            Farmland.get().loadSave(save.name);
             changeScene(new InGameScene());
         }
     }

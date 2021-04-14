@@ -3,7 +3,7 @@ package com.ustudents.farmland.scene.menus;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.Save;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,7 +16,7 @@ public class DeleteGameMenu extends MenuScene{
         String[] buttonIds = new String[buttonNames.length+1];
         EventListener[] eventListeners = new EventListener[buttonNames.length+1];
 
-        for (SaveGame save : Farmland.get().getSaves().values()) {
+        for (Save save : Farmland.get().getSaves().values()) {
             int j = i;
             buttonNames[i] = save.name;
             buttonIds[i] = save.path.replace(".json", "") + "Button";
