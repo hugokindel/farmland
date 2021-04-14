@@ -9,6 +9,7 @@ import java.util.Map;
 
 @JsonSerializable
 public class Animal extends Item {
+
     @JsonSerializable
     public Integer numberOfTurnsToReachMaturity;
 
