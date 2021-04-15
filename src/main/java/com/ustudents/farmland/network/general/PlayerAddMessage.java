@@ -30,7 +30,7 @@ public class PlayerAddMessage extends Message {
 
         Farmland.get().setPlayerIdForClientId(getSenderId(), playerId);
 
-        if (Farmland.get().serverPlayerIdPerClientId.size() == currentSave.maxNumberPlayers) {
+        if (Farmland.get().serverPlayerIdPerClientId.size() == currentSave.capacity) {
             Farmland.get().getServer().broadcast(new PlayerAllPresentsMessage());
         }
     }

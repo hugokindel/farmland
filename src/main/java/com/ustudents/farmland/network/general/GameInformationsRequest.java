@@ -9,8 +9,8 @@ import java.util.List;
 public class GameInformationsRequest extends Message {
     @Override
     public void process() {
-        String name = (String)Farmland.get().serverSettings.get("serverName");
-        int capacity = ((Long)Farmland.get().serverSettings.get("maxNumberPlayers")).intValue();
+        String name = Farmland.get().serverConfig.name;
+        int capacity = Farmland.get().serverConfig.capacity;
         List<Integer> connectedPlayers = Farmland.get().getListOfConnectedPlayers();
         Farmland.get().getServer().send(senderId, new GameInformationsResponse(name, capacity, connectedPlayers));
     }

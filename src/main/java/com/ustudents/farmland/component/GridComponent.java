@@ -69,7 +69,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     public void initialize() {
         recalculateCells();
 
-        Farmland.get().saveChanged.add((dataType, data) -> recalculateCells());
+        Farmland.get().loadedSaveChanged.add((dataType, data) -> recalculateCells());
     }
 
     @Override

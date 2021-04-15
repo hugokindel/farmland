@@ -62,7 +62,7 @@ public class Save {
     public List<List<Cell>> cells;
 
     @JsonSerializable
-    public Integer maxNumberPlayers;
+    public Integer capacity;
 
     public Integer localPlayerId;
 
@@ -95,7 +95,7 @@ public class Save {
 
         this.deadPlayers = new LinkedList<>();
         this.startWithBots = numberOfBots > 0;
-        this.maxNumberPlayers = 1;
+        this.capacity = 1;
         this.turn = 0;
         this.turnTimePassed = 0;
         this.currentPlayerId = 0;
@@ -150,7 +150,7 @@ public class Save {
 
     public Save(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
         this(name, mapSize, seed, numberOfBots);
-        addPlayer(playerName, playerVillageName, playerColor);
+        addPlayer(playerName, playerVillageName, playerColor, Player.Type.Human);
     }
 
     @JsonSerializableConstructor
@@ -159,9 +159,9 @@ public class Save {
         deadPlayers = new ArrayList<>();
     }
 
-    public void addPlayer(String playerName, String playerVillageName, Color playerColor) {
+    public void addPlayer(String playerName, String playerVillageName, Color playerColor, Player.Type type) {
         int playerId = getAvailableHumanId();
-        this.players.add(playerId, new Player(playerName, playerVillageName, playerColor, Player.Type.Human));
+        this.players.add(playerId, new Player(playerName, playerVillageName, playerColor, type));
         Vector2i villagePosition = generateMapLocation(random, getUsedLocations());
         this.players.get(playerId).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
         this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, playerId);

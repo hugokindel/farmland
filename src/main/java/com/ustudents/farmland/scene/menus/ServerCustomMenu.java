@@ -47,7 +47,7 @@ public class ServerCustomMenu extends MenuScene {
     @Override
     public void renderImGui() {
         ImGuiUtils.setNextWindowWithSizeCentered(550, 300, ImGuiCond.Appearing);
-        ImGui.begin("Rechercher une partie");
+        ImGui.begin("Rechercher un serveur");
 
         ImGui.text("Entrez l'adresse ip et le port du serveur:");
         ImGui.pushItemWidth(-1);
@@ -73,19 +73,23 @@ public class ServerCustomMenu extends MenuScene {
             }
 
             if (errors.isEmpty()) {
-                SceneManager.get().popTypeOfLastScene();
-
                 if (!Farmland.get().getClient().isAlive()) {
                     String[] rAddress = address.get().split(":");
-                    Farmland.get().getClient().start(rAddress[0], Integer.parseInt(rAddress[1]));
+                    Farmland.get().clientServerIp = rAddress[0];
+                    Farmland.get().clientServerPort = Integer.parseInt(rAddress[1]);
+                    Farmland.get().getClient().start(Farmland.get().clientServerIp, Farmland.get().clientServerPort);
                 }
 
                 boolean serverExists = Farmland.get().getClient().isAlive();
 
                 if (serverExists) {
-                    changeScene(new ServerWaitingRoomMenu());
+                    SceneManager.get().popTypeOfLastScene();
+
+                    changeScene(new ServerWaitingRoomMenu(), false);
                 } else {
-                    ImGui.text("Ce serveur ne répond pas.");
+                    Farmland.get().clientServerIp = null;
+                    Farmland.get().clientServerPort = 0;
+                    errors.add("Ce serveur ne répond pas");
                 }
             }
         }

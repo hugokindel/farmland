@@ -9,6 +9,10 @@ import com.ustudents.farmland.network.general.*;
 public class ServerWaitingRoomMenu extends MenuScene {
     @Override
     public void initialize() {
+        if (!Farmland.get().isConnectedToServer()) {
+            Farmland.get().getClient().start(Farmland.get().clientServerIp, Farmland.get().clientServerPort);
+        }
+
         boolean localServerExists = Farmland.get().getClient().isAlive();
         GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
 

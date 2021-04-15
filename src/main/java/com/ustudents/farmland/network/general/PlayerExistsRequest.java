@@ -30,9 +30,7 @@ public class PlayerExistsRequest extends Message {
         int playerId = getPlayerId();
         boolean exists = false;
 
-        if (currentSave.players.size() > playerId &&
-                currentSave.players.get(playerId).type == Player.Type.Human &&
-                !currentSave.players.get(playerId).name.equals("_temp")) {
+        if (currentSave.players.size() > playerId && currentSave.players.get(playerId).type == Player.Type.Human) {
             exists = true;
         }
 

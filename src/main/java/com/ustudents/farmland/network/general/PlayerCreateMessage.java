@@ -5,6 +5,7 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.Save;
+import com.ustudents.farmland.core.player.Player;
 
 // PROCESSED ON SERVER
 @JsonSerializable
@@ -56,6 +57,7 @@ public class PlayerCreateMessage extends Message {
         currentSave.players.get(playerId).name = getPlayerName();
         currentSave.players.get(playerId).village.name = getVillageName();
         currentSave.players.get(playerId).color = getBannerColor();
+        currentSave.players.get(playerId).type = Player.Type.Human;
 
         PlayerAddMessage message = new PlayerAddMessage(playerId);
         message.setSenderId(getSenderId());

@@ -26,6 +26,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class Player {
     public enum Type {
+        Undefined,
         Human,
         Robot
     }

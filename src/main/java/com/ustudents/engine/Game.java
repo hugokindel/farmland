@@ -24,6 +24,7 @@ import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.window.Window;
+import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL33;

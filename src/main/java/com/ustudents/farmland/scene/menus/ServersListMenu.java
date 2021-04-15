@@ -2,6 +2,7 @@ package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.network.Controller;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.network.general.GameInformationsRequest;
 import com.ustudents.farmland.network.general.GameInformationsResponse;
@@ -22,10 +23,10 @@ public class ServersListMenu extends MenuScene {
 
         if (localServerExists) {
             GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
-            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", "Rechercher une partie", "Recharger"};
+            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", "Rechercher un serveur", "Recharger"};
             buttonIds = new String[] {"localButton", "addressButton", "reloadButton"};
         } else {
-            buttonNames = new String[] {"Rechercher une partie", "Recharger"};
+            buttonNames = new String[] {"Rechercher un serveur", "Recharger"};
             buttonIds = new String[] {"addressButton", "reloadButton"};
         }
 
@@ -37,7 +38,8 @@ public class ServersListMenu extends MenuScene {
                 switch (buttonIds[j]) {
                     case "localButton":
                         Out.println("Connected to server");
-
+                        Farmland.get().clientServerIp = Controller.DEFAULT_ADDRESS;
+                        Farmland.get().clientServerPort = Controller.DEFAULT_PORT;
                         changeScene(new ServerWaitingRoomMenu());
 
                         break;

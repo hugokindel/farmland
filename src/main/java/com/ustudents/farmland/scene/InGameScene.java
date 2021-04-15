@@ -43,7 +43,6 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("unchecked")
 public class InGameScene extends Scene {
@@ -827,7 +826,7 @@ public class InGameScene extends Scene {
 
                 serverSave.turnEnded = currentSave.turnEnded;
 
-                Farmland.get().saves.put(Farmland.get().saveId, serverSave);
+                Farmland.get().saves.put(Farmland.get().loadedSaveId, serverSave);
 
                 if (!serverSave.currentPlayerId.equals(currentSave.currentPlayerId)) {
                     Farmland.get().getLoadedSave().turnEnded.dispatch();

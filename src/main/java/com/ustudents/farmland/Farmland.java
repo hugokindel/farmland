@@ -7,10 +7,10 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
-import com.ustudents.engine.core.json.JsonWriter;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.core.Save;
+import com.ustudents.farmland.core.ServerConfig;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
@@ -32,12 +32,14 @@ public class Farmland extends Game {
 
     public Map<String, Save> saves = new HashMap<>();
 
-    public Map<String, Object> serverSettings = new HashMap<>();
+    public String loadedSaveId = null;
 
-    public String saveId = null;
+    public EventDispatcher loadedSaveChanged = new EventDispatcher();
 
     // SERVER SPECIFIC
     public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
+
+    public ServerConfig serverConfig;
 
     // CLIENT SPECIFIC
     public AtomicInteger clientPlayerId = new AtomicInteger(0);
@@ -46,7 +48,9 @@ public class Farmland extends Game {
 
     public AtomicBoolean clientGameStarted = new AtomicBoolean(false);
 
-    public EventDispatcher saveChanged = new EventDispatcher();
+    public String clientServerIp;
+
+    public int clientServerPort;
 
     @Override
     protected void initialize() {
@@ -73,7 +77,7 @@ public class Farmland extends Game {
 
     @Override
     public void onServerStarted() {
-        loadServerSettings();
+        readServerConfig();
         server.getClientDisconnectedDispatcher().add((dataType, data) -> {
             if (serverPlayerIdPerClientId.containsKey(data.clientId)) {
                 Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Robot;
@@ -86,7 +90,7 @@ public class Farmland extends Game {
 
     @Override
     public void onServerDestroyed() {
-        JsonWriter.writeToFile(Resources.getDataDirectory() + "/server.json", serverSettings);
+        writeServerConfig();
     }
 
     public static Farmland get() {
@@ -136,11 +140,11 @@ public class Farmland extends Game {
     }
 
     public Save getLoadedSave() {
-        if (saveId == null) {
+        if (loadedSaveId == null) {
             return null;
         }
 
-        return saves.get(saveId);
+        return saves.get(loadedSaveId);
     }
 
     public void replaceLoadedSave(Save save) {
@@ -148,9 +152,9 @@ public class Farmland extends Game {
     }
 
     public void replaceLoadedSave(Save save, int playerId) {
-        saves.put(saveId, save);
+        saves.put(loadedSaveId, save);
         Farmland.get().getLoadedSave().localPlayerId = playerId;
-        saveChanged.dispatch();
+        loadedSaveChanged.dispatch();
     }
 
     public void loadSave(String saveId) {
@@ -158,14 +162,14 @@ public class Farmland extends Game {
     }
 
     public void loadSave(String saveId, int playerId) {
-        Farmland.get().saveId = saveId;
+        Farmland.get().loadedSaveId = saveId;
         Farmland.get().getLoadedSave().localPlayerId = playerId;
-        saveChanged.dispatch();
+        loadedSaveChanged.dispatch();
     }
 
     public void unloadSave() {
-        Farmland.get().saveId = null;
-        saveChanged.dispatch();
+        Farmland.get().loadedSaveId = null;
+        loadedSaveChanged.dispatch();
     }
 
     public Map<String, Item> getItemDatabase() {
@@ -207,15 +211,16 @@ public class Farmland extends Game {
         }
     }
 
-    private void loadServerSettings() {
+    private void readServerConfig() {
         if (new File(Resources.getDataDirectory() + "/server.json").exists()) {
-            serverSettings = JsonReader.readMap(Resources.getDataDirectory() + "/server.json");
+            serverConfig = Json.deserialize(Resources.getDataDirectory() + "/server.json", ServerConfig.class);
         } else {
-            serverSettings = new HashMap<>();
-            serverSettings.put("serverName", "Mon serveur");
-            serverSettings.put("maxNumberPlayers", 2L);
-            serverSettings.put("numberBots", 4L);
+            serverConfig = new ServerConfig("Mon serveur", 1);
         }
+    }
+
+    private void writeServerConfig() {
+        Json.serialize(Resources.getDataDirectory() + "/server.json", serverConfig);
     }
 
     private void loadItems() {
@@ -296,13 +301,15 @@ public class Farmland extends Game {
 
     private void loadOrCreateServerSave() {
         if (!saves.containsKey("save-server.json")) {
-            Save save = new Save((String) serverSettings.get("serverName"), new Vector2i(16, 16),
-                    System.currentTimeMillis(), ((Long) serverSettings.get("numberBots")).intValue());
+            Save save = new Save(serverConfig.name, new Vector2i(16, 16),
+                    System.currentTimeMillis(), serverConfig.numberOfBots);
             save.path = "save-server.json";
-            save.maxNumberPlayers = ((Long) serverSettings.get("maxNumberPlayers")).intValue();
-            for (int i = 0; i < save.maxNumberPlayers; i++) {
-                save.addPlayer("_temp", "_temp", Color.RED);
+            save.capacity = serverConfig.capacity;
+
+            for (int i = 0; i < save.capacity; i++) {
+                save.addPlayer("", "", Color.RED, Player.Type.Undefined);
             }
+
             saves.put("save-server.json", save);
         }
 

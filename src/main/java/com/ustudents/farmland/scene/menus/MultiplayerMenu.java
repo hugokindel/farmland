@@ -5,7 +5,7 @@ import com.ustudents.engine.core.event.EventListener;
 public class MultiplayerMenu extends MenuScene {
     @Override
     public void initialize() {
-        String[] buttonNames = {"Rejoindre serveur"};
+        String[] buttonNames = {"Rejoindre un serveur"};
         String[] buttonIds = {"joinButton"};
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
