@@ -294,7 +294,7 @@ public abstract class Game extends Runnable {
      */
     public void setVsync(boolean vsync) {
         this.vsync = vsync;
-        Resources.setSetting("vsync", vsync);
+        Resources.getConfig().useVsync = vsync;
         window.setVsync(vsync);
     }
 
@@ -393,13 +393,13 @@ public abstract class Game extends Runnable {
         Resources.loadSettingsAndInitialize();
 
         if (!Arrays.asList(args).contains("--vsync")) {
-            vsync = (Boolean)Resources.getSetting("vsync");
+            vsync = Resources.getConfig().useVsync;
         }
 
         String commandName = getClass().getAnnotation(Command.class).name();
         window.initialize(
                 commandName.substring(0, 1).toUpperCase() + commandName.substring(1),
-                new Vector2i(1280, 720),
+                Resources.getConfig().windowSize,
                 vsync
         );
 

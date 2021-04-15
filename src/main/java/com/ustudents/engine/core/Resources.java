@@ -1,6 +1,7 @@
 package com.ustudents.engine.core;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.GameConfig;
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -34,12 +36,12 @@ public class Resources {
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
     private static final Lock settingsWriteLock = settingsLock.writeLock();
-    private static Map<String, Object> settings;
     private static Map<String, Shader> shaders;
     private static Map<String, Texture> textures;
     private static Map<String, Sound> sounds;
     private static Map<String, Map<Integer, Font>> fonts;
     private static Map<String, Spritesheet> spritesheets;
+    private static AtomicReference<GameConfig> config;
 
     /**
      * Gets the data directory's path.
@@ -96,41 +98,9 @@ public class Resources {
         return null;
     }
 
-    /**
-     * Gets a specific setting.
-     *
-     * @param name The name of the setting.
-     * @return the object containing the setting's value.
-     */
-    public static Object getSetting(String name) {
-        settingsReadLock.lock();
-
-        try {
-            return settings.get(name);
-        } finally {
-            settingsReadLock.unlock();
-        }
-    }
-
-    /**
-     * Sets the specific setting with the given value.
-     *
-     * @param name The name of the setting.
-     * @param value The value of use.
-     */
-    public static void setSetting(String name, Object value) {
-       settingsWriteLock.lock();
-
-       try {
-           settings.put(name, value);
-       } finally {
-           settingsWriteLock.unlock();
-       }
-    }
-
     /** Loads everything. */
     public static void loadSettingsAndInitialize() {
-        loadSettings();
+        loadConfig();
 
         shaders = new HashMap<>();
         textures = new HashMap<>();
@@ -176,21 +146,19 @@ public class Resources {
 
         spritesheets.clear();
 
-        saveSettings();
+        saveConfig();
     }
 
     /** Loads the settings into memory. */
-    private static void loadSettings() {
-        if (settings == null) {
+    private static void loadConfig() {
+        if (config == null) {
             try {
                 File file = new File(getDataDirectory() + "/" + settingsFilename);
 
                 if (file.exists()) {
-                    settings = JsonReader.readMap(getDataDirectory() + "/" + settingsFilename);
+                    config = new AtomicReference<>(Json.deserialize(getDataDirectory() + "/" + settingsFilename, GameConfig.class));
                 } else {
-                    settings = new HashMap<>();
-                    settings.put("vsync", true);
-                    settings.put("windowSize", new Vector2i(1280, 720));
+                    config = new AtomicReference<>(new GameConfig());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -199,10 +167,10 @@ public class Resources {
     }
 
     /** Saves the settings on the hard drive. */
-    private static void saveSettings() {
+    private static void saveConfig() {
         try {
-            if (settings != null) {
-                JsonWriter.writeToFile(getDataDirectory() + "/" + settingsFilename, settings);
+            if (config != null) {
+                Json.serialize(getDataDirectory() + "/" + settingsFilename, config.get());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -413,5 +381,9 @@ public class Resources {
     
     public static Spritesheet getSpritesheet(String filePath) {
         return spritesheets.get(filePath);
+    }
+
+    public static GameConfig getConfig() {
+        return config.get();
     }
 }

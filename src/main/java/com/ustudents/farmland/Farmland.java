@@ -36,6 +36,8 @@ public class Farmland extends Game {
 
     public EventDispatcher loadedSaveChanged = new EventDispatcher();
 
+    public FarmlandConfig config;
+
     // SERVER SPECIFIC
     public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
 
@@ -57,6 +59,7 @@ public class Farmland extends Game {
         changeIcon("ui/farmland_logo.png");
         changeCursor("ui/cursor.png");
 
+        loadConfig();
         loadTextures();
         loadShaders();
         loadSounds();
@@ -73,6 +76,7 @@ public class Farmland extends Game {
     @Override
     protected void destroy() {
         writeAllSaves();
+        saveConfig();
     }
 
     @Override
@@ -243,6 +247,10 @@ public class Farmland extends Game {
         }
     }
 
+    private void loadConfig() {
+        config = Json.deserialize(Resources.getConfig().game, FarmlandConfig.class);
+    }
+
     private void loadTextures() {
         Resources.loadSpritesheet("animals/chicken.json");
         Resources.loadSpritesheet("animals/cow.json");
@@ -314,5 +322,9 @@ public class Farmland extends Game {
         }
 
         loadSave("save-server.json", 0);
+    }
+
+    private void saveConfig() {
+        Resources.getConfig().game = Json.serialize(config);
     }
 }
