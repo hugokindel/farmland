@@ -930,6 +930,7 @@ public class InGameScene extends Scene {
                 }
 
             currentPlayer.caravanList.removeAll(toDelete);
+            }
         }
     }
 
