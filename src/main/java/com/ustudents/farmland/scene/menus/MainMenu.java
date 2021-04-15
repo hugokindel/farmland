@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.Farmland;
@@ -12,7 +13,12 @@ public class MainMenu extends MenuScene {
             Farmland.get().unloadSave();
         }
 
-        String[] buttonNames = {"Solo", "Multijoueur", "Paramètres", "Crédits"};
+        String[] buttonNames = {
+                Resources.getLocalizedText("singleplayer"),
+                Resources.getLocalizedText("multiplayer"),
+                Resources.getLocalizedText("settings"),
+                Resources.getLocalizedText("credits")
+        };
         String[] buttonIds = {"singleplayerButton", "multiplayerButton", "settingsButton", "creditsButton"};
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 

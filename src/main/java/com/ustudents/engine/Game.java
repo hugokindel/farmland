@@ -24,7 +24,6 @@ import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.window.Window;
-import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL33;
@@ -390,7 +389,7 @@ public abstract class Game extends Runnable {
             Out.printlnDebug("Initializing...");
         }
 
-        Resources.loadSettingsAndInitialize();
+        Resources.loadAndInitialize();
 
         if (!Arrays.asList(args).contains("--vsync")) {
             vsync = Resources.getConfig().useVsync;

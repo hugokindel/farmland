@@ -476,8 +476,9 @@ public class InGameScene extends Scene {
             for (String item: uniqueItems){
                 int sellValueOfItem = (int) (playerInventory.get(item).value/1.5);
                 if (ImGui.button(playerInventory.get(item).name) && playerMoney >= playerInventory.get(item).value) {
-                    player.setMoney(playerMoney + sellValueOfItem);
-                    toDelete.add(playerInventory.get(item));
+                    player.sellItem(item, 1);
+                    updateMoneyItemLabel();
+                    updateLeaderboard();
                 }
                 ImGui.sameLine();
                 if(playerInventory.get(item) == null){

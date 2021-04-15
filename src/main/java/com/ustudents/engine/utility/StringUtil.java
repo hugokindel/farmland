@@ -1,7 +1,71 @@
 package com.ustudents.engine.utility;
 
+import com.ustudents.engine.core.cli.print.Out;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /** Utility functions for strings. */
 public class StringUtil {
+    public static String parseValuesFromString(String string, Object[] values) {
+        return parseValuesFromString(string, values, null);
+    }
+
+    public static String parseValuesFromString(String string, Object[] values, String id) {
+        StringBuilder result = new StringBuilder();
+        boolean isEscaped = false;
+        int currentValue = 0;
+
+        for (int i = 0; i < string.length(); i++) {
+            char c = string.charAt(i);
+
+            if (c == '\\') {
+                isEscaped = true;
+            } else {
+                if (c == '{') {
+                    if (!isEscaped) {
+                        StringBuilder valueNumber = new StringBuilder();
+
+                        while (string.charAt(i) != '}') {
+                            i++;
+
+                            valueNumber.append(string.charAt(i));
+                        }
+
+                        valueNumber.deleteCharAt(valueNumber.length() - 1);
+
+                        if (valueNumber.length() != 0) {
+                            currentValue = Integer.parseInt(valueNumber.toString());
+
+                        }
+
+                        if (values.length > currentValue) {
+                            result.append(values[currentValue]);
+                        } else if (id == null) {
+                            Out.printlnError("Not enough arguments to get " + currentValue);
+                        } else {
+                            Out.printlnError("Not enough arguments to get " + currentValue + " for string '" + id + "'");
+                        }
+
+                        currentValue++;
+                    } else {
+                        result.append("{");
+                        isEscaped = false;
+                    }
+                } else if (isEscaped) {
+                    result.append("\\");
+                    result.append(c);
+                    isEscaped = false;
+                } else {
+                    result.append(c);
+                }
+            }
+        }
+
+        return result.toString();
+    }
+
     /**
      * Gets an unescaped string from a string.
      *

@@ -3,8 +3,7 @@ package com.ustudents.engine;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import org.joml.Vector2i;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @JsonSerializable
 public class GameConfig {
@@ -13,6 +12,9 @@ public class GameConfig {
 
     @JsonSerializable(necessary = false)
     public boolean useVsync = true;
+
+    @JsonSerializable(necessary = false)
+    public String language = "fr";
 
     @JsonSerializable(necessary = false)
     public Map<String, Object> game = new LinkedHashMap<>();

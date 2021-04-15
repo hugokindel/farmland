@@ -13,19 +13,22 @@ public class SettingsMenu extends MenuScene {
     @Override
     public void initialize() {
         SoundManager currentSoundManager = Farmland.get().getSoundManager();
-        String[] buttonNames = new String[2];
-        String[] buttonIds = new String[2];
+        String[] buttonNames = new String[3];
+        String[] buttonIds = new String[3];
 
         if(currentSoundManager.getNoSound()){
-            buttonNames[0] = "Activer le son";
-            buttonIds[0] = "Activer le son";
+            buttonNames[0] = Resources.getLocalizedText("activateSound");
+            buttonIds[0] = "activateSound";
         }else{
-            buttonNames[0] = "Désactiver le son";
-            buttonIds[0] = "Désactiver le son";
+            buttonNames[0] = Resources.getLocalizedText("deactivateSound");
+            buttonIds[0] = "deactivateSound";
         }
 
-        buttonNames[1] = "Retour";
-        buttonIds[1] = "Retour";
+        buttonNames[1] = Resources.getLocalizedText("changeLanguage", Resources.getLocalizedText("language"));
+        buttonIds[1] = "changeLanguge";
+
+        buttonNames[2] = "Retour";
+        buttonIds[2] = "goBack";
 
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
@@ -33,7 +36,7 @@ public class SettingsMenu extends MenuScene {
             int j = i;
             eventListeners[i] = (dataType, data) -> {
                 switch (buttonIds[j]) {
-                    case "Activer le son":
+                    case "activateSound":
                         initializeMusic();
                         Sound musicSound = Resources.loadSound("music/main_menu_background.ogg");
                         Entity music = createEntityWithName("backgroundMusic");
@@ -41,11 +44,15 @@ public class SettingsMenu extends MenuScene {
                         new SoundComponent(musicSound, true, true).play();
                         changeScene(new SettingsMenu());
                         break;
-                    case "Désactiver le son":
+                    case "deactivateSound":
                         currentSoundManager.stopAll();
                         changeScene(new SettingsMenu());
                         break;
-                    case "Retour":
+                    case "changeLanguage":
+                        Resources.chooseNextLanguage();
+                        changeScene(new SettingsMenu());
+                        break;
+                    case "goBack":
                         changeScene(new MainMenu());
                         break;
                 }

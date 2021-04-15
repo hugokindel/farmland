@@ -107,7 +107,7 @@ public abstract class MenuScene extends Scene {
 
         if (canGoBack) {
             try {
-                GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Retour", (dataType, data) -> {
+                GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("goBack"), (dataType, data) -> {
                     try {
                         SceneManager.get().goBack();
                     } catch (Exception e) {
@@ -126,7 +126,7 @@ public abstract class MenuScene extends Scene {
         }
 
         if (canGoToMainMenu) {
-            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> changeScene(new MainMenu(), false));
+            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("mainMenu"), (dataType, data) -> changeScene(new MainMenu(), false));
             buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
             buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
             buttonData.position = new Vector2f(0, 250 + i * 75);
@@ -136,7 +136,7 @@ public abstract class MenuScene extends Scene {
         }
 
         if (canQuit) {
-            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Quitter", (dataType, data) -> quit());
+            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("quit"), (dataType, data) -> quit());
             buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
             buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
             buttonData.position = new Vector2f(0, 250 + i * 75);

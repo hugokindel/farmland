@@ -1,6 +1,7 @@
 package com.ustudents.farmland.core;
 
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
+import com.ustudents.engine.network.Server;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,10 @@ public class ServerConfig {
 
     @JsonSerializable(necessary = false)
     public List<String> blacklist = new ArrayList<>();
+
+    public ServerConfig() {
+
+    }
 
     public ServerConfig(String name, Integer capacity) {
         this.name = name;

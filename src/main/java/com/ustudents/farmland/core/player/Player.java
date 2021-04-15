@@ -10,10 +10,7 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
-import com.ustudents.farmland.network.actions.BuyCellMessage;
-import com.ustudents.farmland.network.actions.BuyItemMessage;
-import com.ustudents.farmland.network.actions.PlaceSelectedItemMessage;
-import com.ustudents.farmland.network.actions.SelectItemMessage;
+import com.ustudents.farmland.network.actions.*;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -252,6 +249,19 @@ public class Player {
             Farmland.get().serverBroadcastSave();
         } else {
             Game.get().getClient().send(new BuyItemMessage(item.id));
+        }
+    }
+
+    public void sellItem(String itemId, int quantity) {
+        if (Game.get().hasAuthority()) {
+            for (int i = 0; i < quantity; i++) {
+                setMoney(money + (int)(sellInventory.get(itemId).value/1.5));
+                deleteFromInventory(sellInventory.get(itemId), "Sell");
+            }
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new SellItemMessage(itemId));
         }
     }
 

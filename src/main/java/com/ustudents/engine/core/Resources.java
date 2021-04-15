@@ -9,10 +9,9 @@ import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Shader;
 import com.ustudents.engine.graphic.Spritesheet;
 import com.ustudents.engine.graphic.Texture;
-import com.ustudents.engine.core.json.JsonReader;
-import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.engine.i18n.Language;
 import com.ustudents.engine.utility.FileUtil;
-import org.joml.Vector2i;
+import com.ustudents.engine.utility.StringUtil;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -32,16 +31,19 @@ public class Resources {
     private static final String fontsDirectoryName = "fonts";
     private static final String soundsDirectoryName = "sounds";
     private static final String savesDirectoryName = "saves";
+    private static final String localizationsDirectoryName = "i18n";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
     private static final Lock settingsWriteLock = settingsLock.writeLock();
     private static Map<String, Shader> shaders;
+    private static Map<String, Language> languages;
     private static Map<String, Texture> textures;
     private static Map<String, Sound> sounds;
     private static Map<String, Map<Integer, Font>> fonts;
     private static Map<String, Spritesheet> spritesheets;
-    private static AtomicReference<GameConfig> config;
+    private static GameConfig config;
+    private static List<String> languagesList;
 
     /**
      * Gets the data directory's path.
@@ -99,8 +101,9 @@ public class Resources {
     }
 
     /** Loads everything. */
-    public static void loadSettingsAndInitialize() {
+    public static void loadAndInitialize() {
         loadConfig();
+        loadLanguages();
 
         shaders = new HashMap<>();
         textures = new HashMap<>();
@@ -156,9 +159,9 @@ public class Resources {
                 File file = new File(getDataDirectory() + "/" + settingsFilename);
 
                 if (file.exists()) {
-                    config = new AtomicReference<>(Json.deserialize(getDataDirectory() + "/" + settingsFilename, GameConfig.class));
+                    config = Json.deserialize(getDataDirectory() + "/" + settingsFilename, GameConfig.class);
                 } else {
-                    config = new AtomicReference<>(new GameConfig());
+                    config = new GameConfig();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -170,7 +173,7 @@ public class Resources {
     private static void saveConfig() {
         try {
             if (config != null) {
-                Json.serialize(getDataDirectory() + "/" + settingsFilename, config.get());
+                Json.serialize(getDataDirectory() + "/" + settingsFilename, config);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -384,6 +387,36 @@ public class Resources {
     }
 
     public static GameConfig getConfig() {
-        return config.get();
+        return config;
+    }
+
+    public static void loadLanguages() {
+        languages = new HashMap<>();
+        languagesList = new ArrayList<>();
+
+        for (final File fileEntry : new File(getDataDirectory() + "/" + localizationsDirectoryName).listFiles()) {
+            languagesList.add(FileUtil.getFileNameWithoutExtension(fileEntry));
+            languages.put(FileUtil.getFileNameWithoutExtension(fileEntry), Json.deserialize(fileEntry.getAbsolutePath(), Language.class));
+        }
+    }
+
+    public static String getLocalizedText(String textId, Object... values) {
+        if (languages.containsKey(config.language) && languages.get(config.language).content.containsKey(textId)) {
+            return StringUtil.parseValuesFromString(languages.get(config.language).content.get(textId), values, textId);
+        }
+
+        return textId;
+    }
+
+    public static void chooseNextLanguage() {
+        if (languagesList.get(languagesList.size() - 1).equals(config.language)) {
+            config.language = languagesList.get(0);
+        } else {
+            for (int i = 0; i < languagesList.size(); i++) {
+                if (languagesList.get(i).equals(config.language)) {
+                    config.language = languagesList.get(i + 1);
+                }
+            }
+        }
     }
 }

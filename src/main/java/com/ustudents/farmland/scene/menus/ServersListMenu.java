@@ -11,6 +11,10 @@ import com.ustudents.farmland.network.general.GameInformationsResponse;
 public class ServersListMenu extends MenuScene {
     @Override
     public void initialize() {
+        if (Farmland.get().isConnectedToServer()) {
+            Farmland.get().disconnectFromServer();
+        }
+
         if (!Farmland.get().getClient().isAlive()) {
             Farmland.get().getClient().start(100);
         }
