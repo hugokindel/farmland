@@ -155,7 +155,6 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
             Item currentItem = Farmland.get().getCurrentSave().players.get(0).getCurrentItemFromInventory();
             Item clone = Item.clone(currentItem);
-            Out.println(currentItem);
             assert clone != null;
             clone.quantity = 1;
             cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(clone);
