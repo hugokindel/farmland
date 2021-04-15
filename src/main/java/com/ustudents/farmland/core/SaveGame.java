@@ -37,6 +37,9 @@ public class SaveGame {
     public Integer turnTimePassed;
 
     @JsonSerializable
+    public Integer timePassed;
+
+    @JsonSerializable
     public Integer mapWidth;
 
     @JsonSerializable
@@ -90,7 +93,7 @@ public class SaveGame {
     public SaveGame() {
     }
 
-    public SaveGame(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
+    public SaveGame(String name, String playerName, String playerVillageName, Color playerBannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, Vector2i mapSize, Long seed, int numberOfBots) {
         mapWidth = mapSize.x;
         mapHeight = mapSize.y;
         this.seed = seed;
@@ -104,10 +107,11 @@ public class SaveGame {
         this.startWithBots = numberOfBots > 0;
         this.turn = 0;
         this.turnTimePassed = 0;
+        this.timePassed = 0;
         this.currentPlayerId = 0;
         this.name = name;
         this.players = new ArrayList<>();
-        this.players.add(new Player(playerName, playerVillageName, playerColor,"Humain"));
+        this.players.add(new Player(playerName, playerVillageName, playerBannerColor, bracesColor, shirtColor, hatColor, buttonColor,"Humain"));
         this.players.get(0).village.position = new Vector2f(5 + (mapSize.x / 2) * 24, 5 + (mapSize.y / 2) * 24);
 
         cropItem = new ArrayList<>();
@@ -159,13 +163,18 @@ public class SaveGame {
         }
 
         List<Color> usedColors = new ArrayList<>();
-        usedColors.add(playerColor);
+        usedColors.add(playerBannerColor);
 
         List<Vector2i> usedLocations = new ArrayList<>();
         usedLocations.add(new Vector2i(mapSize.x / 2 - 1, mapSize.y / 2 - 1));
 
         for (int i = 0; i < numberOfBots; i++) {
-            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors), "Robot"));
+            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1),
+                    generateColor(random, usedColors, true),
+                    generateColor(random, usedColors, false),
+                    generateColor(random, usedColors, false),
+                    generateColor(random, usedColors, false),
+                    generateColor(random, usedColors, false), "Robot"));
             Vector2i villagePosition = generateMapLocation(random, usedLocations);
             this.players.get(i + 1).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
             this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i + 1);
@@ -223,7 +232,7 @@ public class SaveGame {
         return players.get(currentPlayerId);
     }
 
-    private Color generateColor(SeedRandom random, List<Color> usedColors) {
+    private Color generateColor(SeedRandom random, List<Color> usedColors, boolean needsToBeUnique) {
         while (true) {
             boolean unique = true;
 
@@ -233,15 +242,19 @@ public class SaveGame {
             color.b = random.generateInRange(0, 255) / 255.0f;
             color.a = random.generateInRange(0, 255) / 255.0f;
 
-            for (Color usedColor : usedColors) {
-                if (color.equals(usedColor)) {
-                    unique = false;
-                    break;
+            if (needsToBeUnique) {
+                for (Color usedColor : usedColors) {
+                    if (color.equals(usedColor)) {
+                        unique = false;
+                        break;
+                    }
                 }
-            }
 
-            if (unique) {
-                usedColors.add(color);
+                if (unique) {
+                    usedColors.add(color);
+                    return color;
+                }
+            } else {
                 return color;
             }
         }

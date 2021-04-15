@@ -73,9 +73,9 @@ public class Farmland extends Game {
 
         if (packet.data.get("command").equals("loadWorld")) {
             if (getCurrentSave() == null) {
-                SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), "Forx", "Forx's village", Color.RED, new Vector2i(16, 16), System.currentTimeMillis(), 0);
-                saveGame.path = "save-server.json";
-                saveGames.put("save-server.json", saveGame);
+                //SaveGame saveGame = new SaveGame((String)serverConfig.get("serverName"), "Forx", "Forx's village", Color.RED, new Vector2i(16, 16), System.currentTimeMillis(), 0);
+                //saveGame.path = "save-server.json";
+                //saveGames.put("save-server.json", saveGame);
                 saveId = "save-server.json";
             }
             answer.data.put("world", Json.serialize(getCurrentSave()));

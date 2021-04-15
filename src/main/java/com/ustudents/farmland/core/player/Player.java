@@ -10,6 +10,8 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.system.Caravan;
+import com.ustudents.farmland.core.system.Research;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -34,7 +36,10 @@ public class Player {
     public String typeOfPlayer;
 
     @JsonSerializable
-    public Color color;
+    public Color bannerColor;
+
+    @JsonSerializable
+    public Avatar avatar;
 
     @JsonSerializable
     public Vector2f position;
@@ -54,35 +59,32 @@ public class Player {
     @JsonSerializable
     public List<Animal> soldAnimals;
 
-    public String ipAddress;
+    @JsonSerializable
+    public List<Caravan> caravanList;
 
-
-    public List<Pair<Integer,Integer>> caravans;
-
-
-    public Triplet<Integer,Integer,Integer> farmerResearch;
-
-
-    public Triplet<Integer,Integer,Integer> breederResearch;
+    @JsonSerializable
+    public List<Research> researchList;
 
     public EventDispatcher moneyChanged = new EventDispatcher();
 
     public Player() {
     }
 
-    public Player(String name, String villageName, Color color, String typeOfPlayer) {
+    public Player(String name, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, String typeOfPlayer) {
         this.name = name;
         this.village = new Village(villageName);
-        this.color = color;
+        this.bannerColor = bannerColor;
+        this.avatar = new Avatar(bracesColor, shirtColor, hatColor, buttonColor);
         this.money = 500;
         this.typeOfPlayer = typeOfPlayer;
+        this.caravanList = new ArrayList<>();
+        this.researchList = new ArrayList<>();
+        this.researchList.add(new Research("Fermier"));
+        this.researchList.add(new Research("Eleveur"));
         this.boughtCrops = new ArrayList<>();
         this.boughtAnimals = new ArrayList<>();
         this.soldCrops = new ArrayList<>();
         this.soldAnimals = new ArrayList<>();
-        this.caravans = new ArrayList<>();
-        this.farmerResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
-        this.breederResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
     }
 
     public void addToInventory(Item item, String name){
