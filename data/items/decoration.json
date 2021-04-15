@@ -2,7 +2,8 @@
   {
     "name": "Montagne",
     "id": "mountain",
-    "value" : 0,
+    "buyingValue" : 0,
+    "sellingValue" : 0,
     "texture": "mountain.json",
     "sprites" :[
       "mountain1",
@@ -13,7 +14,8 @@
   {
     "name": "Ville",
     "id": "cities",
-    "value" : 0,
+    "buyingValue" : 0,
+    "sellingValue" : 0,
     "texture": "cities.json",
     "sprites" :[
       "cities1"

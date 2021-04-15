@@ -37,7 +37,7 @@ import java.util.*;
  *     "example-null": null
  * }
  */
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unchecked", "unused"})
 public class JsonReader {
     /** The file reader, used to scan a file. */
     private Reader reader;
@@ -56,6 +56,10 @@ public class JsonReader {
 
     /** Utility array to use in some functions containing digit characters. */
     private static final char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+    private static final char[] uppercase = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+
+    private static final char[] lowercase = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 
     /**
      * Class constructor.
@@ -214,15 +218,17 @@ public class JsonReader {
             return parseNumber();
         } else if (is(currentCharacter, '{')) {
             return parseMap();
-        } else if (is(currentCharacter, 't', 'f')) {
+        } else if (is(currentCharacter, lowercase, uppercase)) {
+            return parseEnum();
+        } /*else if (is(currentCharacter, 't', 'f')) {
             return parseBoolean();
-        } else if (is(currentCharacter, '\'')) {
+        }*/ else if (is(currentCharacter, '\'')) {
             return parseCharacter();
         } else if (is(currentCharacter, '[')) {
             return parseArray();
-        } else if (is(currentCharacter, 'n')) {
+        } /*else if (is(currentCharacter, 'n')) {
             return parseNull();
-        }
+        }*/
 
         return null;
     }
@@ -281,7 +287,7 @@ public class JsonReader {
      *
      * @return the boolean.
      */
-    private boolean parseBoolean() throws IOException, JSonCannotParseException {
+    /*private boolean parseBoolean() throws IOException, JSonCannotParseException {
         StringBuilder contentBuilder = new StringBuilder(new String(new char[] {currentCharacter}));
         while (Character.isAlphabetic(next(true))) {
             if (!"false".startsWith(contentBuilder.toString()) && !"true".startsWith(contentBuilder.toString())) {
@@ -291,14 +297,14 @@ public class JsonReader {
         }
 
         return contentBuilder.toString().equals("true");
-    }
+    }*/
 
     /**
      * Parses a null value, meaning the keyword 'null'.
      *
      * @return null.
      */
-    private Object parseNull() throws IOException, JSonCannotParseException {
+    /*private Object parseNull() throws IOException, JSonCannotParseException {
         StringBuilder contentBuilder = new StringBuilder(new String(new char[] {currentCharacter}));
         while (Character.isAlphabetic(next(true))) {
             if (!"null".startsWith(contentBuilder.toString())) {
@@ -308,7 +314,7 @@ public class JsonReader {
         }
 
         return null;
-    }
+    }*/
 
     /**
      * Parses a map, either empty or with map elements.
@@ -352,6 +358,39 @@ public class JsonReader {
         next();
 
         return elements;
+    }
+
+    private Object parseEnum() throws JSonCannotParseException, IOException {
+        StringBuilder contentBuilder = new StringBuilder(new String(new char[] {currentCharacter}));
+        while (is(next(), digits, lowercase, uppercase, ':', '$', '.')) {
+            contentBuilder.append(currentCharacter);
+        }
+        String[] contentParts = contentBuilder.toString().split(":");
+
+        if (contentParts.length != 3) {
+            if (contentParts.length == 1) {
+                switch (contentParts[0]) {
+                    case "null":
+                        return null;
+                    case "true":
+                        return true;
+                    case "false":
+                        return false;
+                }
+            }
+
+            throw new JSonCannotParseException("Invalid enum ");
+        }
+
+        Class type;
+
+        try {
+            type = Class.forName(contentParts[0]);
+        } catch (Exception e) {
+            throw new JSonCannotParseException("Invalid enum");
+        }
+
+        return Enum.valueOf(type, contentParts[2]);
     }
 
     /**
