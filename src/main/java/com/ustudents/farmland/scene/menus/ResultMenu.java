@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Anchor;
@@ -40,9 +41,13 @@ public class ResultMenu extends MenuScene {
         imageData.position.y = 7;
         guiBuilder.addImage(imageData);
 
-
-        buttonNames = new String[]{"Rejouer","Menu Principal"};
-        buttonIds = new String[]{"Rejouer","Menu Principal"};
+        if (Game.get().isConnectedToServer()) {
+            buttonNames = new String[]{"Menu Principal"};
+            buttonIds = new String[]{"mainMenu"};
+        } else {
+            buttonNames = new String[]{"Rejouer", "Menu Principal"};
+            buttonIds = new String[]{"replay", "mainMenu"};
+        }
 
         eventListeners = new EventListener[buttonNames.length];
 
@@ -51,7 +56,7 @@ public class ResultMenu extends MenuScene {
         for (int i = 0; i < buttonNames.length; i++) {
             int j = i;
             eventListeners[i] = (dataType, data) -> {
-                if ("Rejouer".equals(buttonIds[j])) {
+                if ("replay".equals(buttonIds[j])) {
                     Player player = currentPlayer;
                     Vector2i vector = new Vector2i(this.currentSave.mapWidth,this.currentSave.mapHeight);
                     Farmland.get().loadSave(currentSave.name);

@@ -2,10 +2,6 @@ package com.ustudents.engine.utility;
 
 import com.ustudents.engine.core.cli.print.Out;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /** Utility functions for strings. */
 public class StringUtil {
     public static String parseValuesFromString(String string, Object[] values) {

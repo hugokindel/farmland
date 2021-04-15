@@ -6,6 +6,7 @@
 		"settings": "Paramètres",
 		"credits": "Crédits",
 		"quit": "Quitter",
+		"version": "Version: {}",
 		"goBack": "return",
 		"mainMenu": "Menu principal",
 		"deactivateSound": "Désactiver le son",
@@ -46,7 +47,7 @@
 		"receive": "Réception",
 		"noSend": "Pas de ressources à envoyé !",
 		"noCaravans": "Vous ne possédez pas de caravanes",
-		"yourResearchs": "Recherches :", // TODO: Finish researchs
+		"yourResearchs": "Recherches :",
 		"joinServer": "Rejoindre un serveur",
 		"researchServer": "Rechercher un serveur",
 		"reloadServer": "Recharger",

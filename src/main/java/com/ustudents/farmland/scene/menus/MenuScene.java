@@ -146,7 +146,7 @@ public abstract class MenuScene extends Scene {
 
         Font debugFont = Resources.loadFont("ui/debug.ttf", 16);
 
-        GuiBuilder.TextData textData = new GuiBuilder.TextData("Version: " + Farmland.class.getAnnotation(Command.class).version());
+        GuiBuilder.TextData textData = new GuiBuilder.TextData(Resources.getLocalizedText("version", Farmland.class.getAnnotation(Command.class).version()));
         textData.font = debugFont;
         textData.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Left);
         textData.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Left);

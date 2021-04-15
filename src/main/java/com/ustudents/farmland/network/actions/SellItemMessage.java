@@ -7,6 +7,7 @@ import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.item.Item;
 
+@JsonSerializable
 public class SellItemMessage extends Message {
     @JsonSerializable
     String itemId;
