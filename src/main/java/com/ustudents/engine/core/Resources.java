@@ -409,12 +409,15 @@ public class Resources {
     }
 
     public static void chooseNextLanguage() {
-        if (languagesList.get(languagesList.size() - 1).equals(config.language)) {
-            config.language = languagesList.get(0);
-        } else {
-            for (int i = 0; i < languagesList.size(); i++) {
-                if (languagesList.get(i).equals(config.language)) {
-                    config.language = languagesList.get(i + 1);
+        for (int i = 0; i < languagesList.size(); i++) {
+            if (languagesList.get(i).equals(config.language)) {
+                if (i+1 >= languagesList.size()) {
+                    config.language = languagesList.get(0);
+                    break;
+                }
+                else{
+                    config.language = languagesList.get(i+1);
+                    break;
                 }
             }
         }
