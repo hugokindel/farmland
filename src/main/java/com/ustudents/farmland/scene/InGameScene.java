@@ -545,7 +545,7 @@ public class InGameScene extends Scene {
             }
 
         }else{
-            if(player.debtMoney != 0) {
+            if(player.debtMoney > 0) {
                 ImGui.text("\n\n" + "Votre dette : " + player.debtMoney + " pièces d'or \n\n");
                 ImGui.inputInt("Somme à emprunter", selectBorrow,maxBorrow/10);
                 ImGui.text("Valeur de remboursement sélectionné: " + selectBorrow.get() + "\n\n\n\n");
