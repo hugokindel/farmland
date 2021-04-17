@@ -33,6 +33,12 @@ public class Player {
     public Integer money;
 
     @JsonSerializable
+    public Integer loanMoney;
+
+    @JsonSerializable
+    public Integer debtMoney;
+
+    @JsonSerializable
     public String typeOfPlayer;
 
     @JsonSerializable
@@ -76,6 +82,8 @@ public class Player {
         this.bannerColor = bannerColor;
         this.avatar = new Avatar(bracesColor, shirtColor, hatColor, buttonColor);
         this.money = 500;
+        this.loanMoney = 0;
+        this.debtMoney = 0;
         this.typeOfPlayer = typeOfPlayer;
         this.caravanList = new ArrayList<>();
         this.researchList = new ArrayList<>();

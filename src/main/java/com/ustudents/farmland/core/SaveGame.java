@@ -49,16 +49,16 @@ public class SaveGame {
     public Long seed;
 
     @JsonSerializable
+    public Integer maxBorrow;
+
+    @JsonSerializable
+    public Integer debtRate;
+
+    @JsonSerializable
     public Integer currentPlayerId;
 
     @JsonSerializable
     public List<Player> players;
-
-    /*@JsonSerializable
-    public Map<String, Item> buyTurnItemDataBase;
-
-    @JsonSerializable
-    public Map<String, Map<String,Item>> buyItemDatabasePerTurn;*/
 
     @JsonSerializable
     public List<Item> buyTurnItemDataBase;
@@ -90,10 +90,11 @@ public class SaveGame {
 
     public EventDispatcher turnEnded = new EventDispatcher();
 
-    public SaveGame() {
-    }
+    public SaveGame() {}
 
-    public SaveGame(String name, String playerName, String playerVillageName, Color playerBannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, Vector2i mapSize, Long seed, int numberOfBots) {
+    public SaveGame(String name, String playerName, String playerVillageName, Color playerBannerColor, Color bracesColor,
+                    Color shirtColor, Color hatColor, Color buttonColor, Vector2i mapSize, Long seed, int numberOfBots,
+                    int maxBorrow, int debtRate) {
         mapWidth = mapSize.x;
         mapHeight = mapSize.y;
         this.seed = seed;
@@ -113,6 +114,8 @@ public class SaveGame {
         this.players = new ArrayList<>();
         this.players.add(new Player(playerName, playerVillageName, playerBannerColor, bracesColor, shirtColor, hatColor, buttonColor,"Humain"));
         this.players.get(0).village.position = new Vector2f(5 + (mapSize.x / 2) * 24, 5 + (mapSize.y / 2) * 24);
+        this.maxBorrow = maxBorrow;
+        this.debtRate = debtRate;
 
         cropItem = new ArrayList<>();
         animalItem = new ArrayList<>();
@@ -288,7 +291,7 @@ public class SaveGame {
     public boolean PlayerMeetCondition(){
         for(Player player: players){
             if(player.typeOfPlayer.contains("Humain")){
-                return (player.money <= 0 || player.money >= 1000);
+                return (player.money <= 0 || (player.money >= 1000 && player.debtMoney <= 0));
             }
         }
         return true;
@@ -297,7 +300,7 @@ public class SaveGame {
     public boolean BotMeetCondition(){
         for(Player player: players){
             if(player.typeOfPlayer.contains("Robot") && !Farmland.get().getCurrentSave().deadPlayers.contains(player.getId())){
-                if (player.money <= 0 || player.money >= 1000){
+                if (player.money <= 0 || (player.money >= 1000 && player.debtMoney <= 0)){
                     return true;
                 }
             }

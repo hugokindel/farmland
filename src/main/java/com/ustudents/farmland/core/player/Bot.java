@@ -7,14 +7,17 @@ import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Crop;
 import com.ustudents.farmland.core.item.Item;
+import com.ustudents.farmland.scene.InGameScene;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Bot {
     public static void playTurn() {
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
         // TODO: seed
         SeedRandom random = new SeedRandom();
 
@@ -30,6 +33,19 @@ public class Bot {
 
         sellInventory();
         maintenanceCost();
+
+        Random rand = new Random();
+        boolean cantPayDebt = false;
+        if(player.debtMoney == 0 && rand.nextInt(100) <= 15){
+            //Out.println("Le bot prend un pret");
+            botTakesOutALoan();
+            cantPayDebt = true;
+        }
+
+        if(player.debtMoney > 0 && !cantPayDebt){
+            //Out.println("Dette à payer : " + player.debtMoney);
+            payDebt();
+        }
     }
 
     public static int makeChoice(){
@@ -128,5 +144,34 @@ public class Bot {
         }
 
         player.getAllItemOfSellInventory().clear();
+    }
+
+    public static void botTakesOutALoan(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        Random rand = new Random();
+        int maxBorrow = Farmland.get().getCurrentSave().maxBorrow;
+        int randValue = rand.nextInt(maxBorrow - maxBorrow/10);
+        player.money += randValue;
+        //Out.println("Avant l'enprunt : " + player.loanMoney);
+        player.loanMoney = randValue + (int)(randValue*0.03f);
+        //Out.println("Après l'enprunt : " + player.loanMoney);
+        player.debtMoney += randValue + (int)(randValue*0.03f);
+        //Out.println("Dette du bot : " + player.loanMoney);
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).onSelectedItemOrMoneyChanged();
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).leaderBoardUpdate();
+    }
+
+    public static void payDebt(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        Random rand = new Random();
+        int debt = player.debtMoney;
+        int randValue = rand.nextInt(debt);
+        //Out.println("Remboursement de : " + randValue);
+        player.money -= randValue;
+        player.debtMoney -= randValue;
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).onSelectedItemOrMoneyChanged();
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).leaderBoardUpdate();
     }
 }
