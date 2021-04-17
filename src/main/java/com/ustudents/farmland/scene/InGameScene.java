@@ -568,6 +568,7 @@ public class InGameScene extends Scene {
                     }
                 }
             }else{
+                player.loanMoney = 0;
                 ImGui.text("\n\n" + "Vous n'avez pas de dette à rembourser" + "\n\n");
             }
 
@@ -689,7 +690,8 @@ public class InGameScene extends Scene {
             for (String item: uniqueItems){
                 if (ImGui.button(sellnickNameItem(playerInventory.get(item)))) {
                     player.setMoney(playerMoney + Farmland.get().getCurrentSave().getResourceDatabase().get(item).sellingValue);
-                    decreasePlayerDept(player, Farmland.get().getCurrentSave().debtRate);
+                    if(player.debtMoney > 0)
+                        decreasePlayerDept(player, Farmland.get().getCurrentSave().debtRate);
                     toDelete.add(playerInventory.get(item));
                     Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(playerInventory.get(item)), false);
                 }
@@ -748,7 +750,6 @@ public class InGameScene extends Scene {
             onSelectedItemOrMoneyChanged();
         }
 
-        //Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getCurrentSave()).getCurrentPlayer().buyInventory;
         Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getCurrentSave()).getCurrentPlayer().getAllItemOfBoughtInventory();
         Set<String> uniqueItems = playerInventory.keySet();
 
@@ -786,8 +787,10 @@ public class InGameScene extends Scene {
     }
 
     public void onTurnEnded() {
+        if(Farmland.get().getCurrentSave() == null) return;
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
-        decreasePlayerDept(currentPlayer, Farmland.get().getCurrentSave().debtRate);
+        if(currentPlayer.debtMoney > 0)
+            decreasePlayerDept(currentPlayer, Farmland.get().getCurrentSave().debtRate);
 
         if(Farmland.get().getCurrentSave().currentPlayerId == 0){
             Farmland.get().getCurrentSave().fillBuyItemDataBasePerTurn();
@@ -809,7 +812,7 @@ public class InGameScene extends Scene {
                         player.setMoney(player.money - 1);
                     }
 
-                    if (cell.hasItem()/* && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(cell.ownerId)*/) {
+                    if (cell.hasItem()) {
                         cell.item.endTurn();
 
                         if (cell.item.shouldBeDestroyed()) {
