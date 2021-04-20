@@ -23,27 +23,25 @@ public class Bot {
 
         int action = makeChoice();
 
-        if (action == 0) {
-            buyLand(random);
-        } else {
-            for (int i = 0; i < action ; i++){
-                addItem(random);
-            }
-        }
+        if (action == 0) {                             // A mettre en commentaire pour verifier plus facilement
+            buyLand(random);                           //
+        } else {                                       //   Pour Francis
+            for (int i = 0; i < action ; i++){         //       /*
+                addItem(random);                       //                   [le code à gauche]
+            }                                          //       */
+        }                                              //
 
         sellInventory();
         maintenanceCost();
 
         Random rand = new Random();
         boolean cantPayDebt = false;
-        if(player.debtMoney == 0 && rand.nextInt(100) <= 15){
-            //Out.println("Le bot prend un pret");
+        if(player.debtMoney == 0 && rand.nextInt(100) <= 50){
             botTakesOutALoan();
             cantPayDebt = true;
         }
 
         if(player.debtMoney > 0 && !cantPayDebt){
-            //Out.println("Dette à payer : " + player.debtMoney);
             payDebt();
         }
     }
@@ -168,11 +166,13 @@ public class Bot {
         int maxBorrow = Farmland.get().getCurrentSave().maxBorrow;
         int randValue = rand.nextInt(maxBorrow - maxBorrow/10);
         player.money += randValue;
-        //Out.println("Avant l'enprunt : " + player.loanMoney);
+        //Out.println("Emprunt du bot"); //Pour Francis
+        //Out.println("Avant l'enprunt : " + player.loanMoney); //Pour Francis
         player.loanMoney = randValue + (int)(randValue*0.03f);
-        //Out.println("Après l'enprunt : " + player.loanMoney);
+        //Out.println("Après l'enprunt : " + player.loanMoney); //Pour Francis
         player.debtMoney += randValue + (int)(randValue*0.03f);
-        //Out.println("Dette du bot : " + player.loanMoney);
+        //Out.println("Dette du bot : " + player.loanMoney); //Pour Francis
+        //Out.println("-------------------------------------------------------"); //Pour Francis
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).onSelectedItemOrMoneyChanged();
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).leaderBoardUpdate();
     }
@@ -183,9 +183,13 @@ public class Bot {
         Random rand = new Random();
         int debt = player.debtMoney;
         int randValue = rand.nextInt(debt);
-        //Out.println("Remboursement de : " + randValue);
+        //Out.println("Dette à payer : " + player.debtMoney); //Pour Francis
+        //Out.println("Remboursement de : " + randValue); //Pour Francis
+        //Out.println("Avant : " + player.money); //Pour Francis
         player.money -= randValue;
         player.debtMoney -= randValue;
+        //Out.println("Après : " + player.money); //Pour Francis
+        //Out.println("-------------------------------------------------------"); //Pour Francis
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).onSelectedItemOrMoneyChanged();
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).leaderBoardUpdate();
     }

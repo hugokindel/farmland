@@ -779,11 +779,12 @@ public class InGameScene extends Scene {
         int value = Math.max((int)(currentPlayer.loanMoney*percent), 1);
         if(currentPlayer.debtMoney >= value){
             currentPlayer.debtMoney -= value;
-            currentPlayer.money -= value;
+            currentPlayer.setMoney(currentPlayer.money - value);
         }else{
-            currentPlayer.money -= currentPlayer.debtMoney;
+            currentPlayer.setMoney(currentPlayer.money - currentPlayer.debtMoney);
             currentPlayer.debtMoney = 0;
         }
+        leaderBoardUpdate();
     }
 
     public void onTurnEnded() {
