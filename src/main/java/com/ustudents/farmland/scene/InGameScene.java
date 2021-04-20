@@ -716,7 +716,7 @@ public class InGameScene extends Scene {
                     player.setMoney(playerMoney-item.buyingValue);
                     player.addToInventory(item, "Buy");
                     Farmland.get().getCurrentSave().fillTurnItemDataBase(item, true);
-
+                    leaderBoardUpdate();
                 }
                 ImGui.sameLine();
                 ImGui.text("Prix d'achat : " + item.buyingValue);
