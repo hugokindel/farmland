@@ -790,14 +790,10 @@ public class InGameScene extends Scene {
     public void onTurnEnded() {
         if(Farmland.get().getCurrentSave() == null) return;
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+        
         if(currentPlayer.debtMoney > 0)
             decreasePlayerDept(currentPlayer, Farmland.get().getCurrentSave().debtRate);
 
-        if(Farmland.get().getCurrentSave().currentPlayerId == 0){
-            Farmland.get().getCurrentSave().fillBuyItemDataBasePerTurn();
-            economicComponent.changeValueOfRessource();
-            Farmland.get().getCurrentSave().clearTurnItemDatabase();
-        }
         if (!Farmland.get().getCurrentSave().deadPlayers.contains(currentPlayer.getId())) {
             getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
             checkCaravan();
@@ -926,6 +922,10 @@ public class InGameScene extends Scene {
 
     public boolean onCompletedTurnEnd(){
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        Farmland.get().getCurrentSave().fillBuyItemDataBasePerTurn();
+        economicComponent.changeValueOfRessource();
+        Farmland.get().getCurrentSave().clearTurnItemDatabase();
 
         if (Farmland.get().getCurrentSave().PlayerMeetCondition()) {
 
