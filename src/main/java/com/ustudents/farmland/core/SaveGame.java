@@ -81,6 +81,7 @@ public class SaveGame {
     @JsonSerializable
     public List<List<Cell>> cells;
 
+    @JsonSerializable
     public Boolean startWithBots;
 
     @JsonSerializable

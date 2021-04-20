@@ -178,6 +178,11 @@ public class Player {
         return playerInventory;
     }
 
+    public void clearSoldLists(){
+        soldCrops.clear();
+        soldAnimals.clear();
+    }
+
     public boolean deleteFromInventory(Item item, String name) {
             List<? extends Item> items = getGoodList(item, (name.contains("Buy")));
             Item todelete = null;

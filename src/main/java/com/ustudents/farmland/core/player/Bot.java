@@ -102,20 +102,24 @@ public class Bot {
 
         int i = 0;
         while (true) {
-            if (i == 20) {
+            if (i == 20) { // i = 2 Pour maxime
                 return;
             }
 
             List<Item> items = Farmland.get().getCurrentSave().getResourceDatabase().values().stream().filter(Objects::nonNull).collect(Collectors.toList());
             Item item = items.get(random.generateInRange(0, items.size() - 1));
-            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), true);
+            //Item item = Farmland.get().getCurrentSave().getResourceDatabase().get("corn"); Pour Maxime
+            //Out.println("Achat du bot :"); Pour maxime
+            //Out.println(item.buyingValue + ", " + item.sellingValue + " et " + item.name); Pour maxime
 
             if (player.money < item.buyingValue) {
                 i++;
                 continue;
             }
-
+            //Out.println("Avant : " + player.money); Pour maxime
             player.setMoney(player.money - item.buyingValue);
+            //Out.println("Après : " + player.money); Pour maxime
+            //Out.println("-------------------------------------------------------"); Pour maxime
             Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), true);
             Item clone = Item.clone(item);
             assert clone != null;
@@ -138,12 +142,23 @@ public class Bot {
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
 
         for(Item item: player.getAllItemOfSellInventory().values()){
+            //Out.println("Vente du bot :"); Pour maxime
             item.sellingValue = Farmland.get().getCurrentSave().getResourceDatabase().get(item.id).sellingValue;
-            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), false);
+            //Out.println(item.buyingValue + ", " + item.sellingValue + ", " + item.quantity +  " et " + item.name); Pour maxime
+            fillTurnItemDataBasePerQuantity(item);
+            //Out.println("Avant : " + player.money); Pour maxime
             player.money += item.quantity * item.sellingValue;
+            //Out.println("Après : " + player.money); Pour maxime
+            //Out.println("-------------------------------------------------------"); Pour maxime
         }
 
-        player.getAllItemOfSellInventory().clear();
+        player.clearSoldLists();
+    }
+
+    private static void fillTurnItemDataBasePerQuantity(Item item){
+        for(int i = 0; i < item.quantity; i++){
+            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), false);
+        }
     }
 
     public static void botTakesOutALoan(){
