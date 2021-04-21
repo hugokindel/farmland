@@ -1,12 +1,17 @@
 package com.ustudents.engine.input.glfw;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.window.events.CursorMovedEvent;
 import com.ustudents.engine.core.window.events.KeyStateChangedEvent;
 import com.ustudents.engine.core.window.events.MouseButtonStateChangedEvent;
 import com.ustudents.engine.core.window.events.ScrollMovedEvent;
 import com.ustudents.engine.input.empty.EmptyInput;
+import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
+import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.scene.menus.CommandsMenu;
+import com.ustudents.farmland.scene.menus.MenuScene;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
@@ -128,12 +133,39 @@ public class GLFWInput extends EmptyInput {
         mousePosInWorld = SceneManager.getScene().getWorldCamera().screenCoordToWorldCoord(mousePos);
     }
 
+    public int findKey(){
+        for(int i = 0; i < keys.length; i++){
+            if(keys[i]){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private void setupCallbacks() {
         Window.get().getKeyStateChanged().add((dataType, data) -> {
             KeyStateChangedEvent eventData = (KeyStateChangedEvent) data;
             keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
             keyStates[eventData.key] = eventData.action;
             keyPressedStates[eventData.key] = eventData.action;
+        });
+
+        Window.get().getKeyStateChanged().add((dataType, data) -> {
+            KeyStateChangedEvent eventData = (KeyStateChangedEvent) data;
+            Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
+            if(currentScene instanceof CommandsMenu){
+                //((CommandsMenu)currentScene).selectedKeyBind = eventData.key;
+                ((CommandsMenu)currentScene).selectNewBind(true, eventData.key);
+            }
+        });
+
+        Window.get().getMouseButtonStateChanged().add((dataType, data) -> {
+            MouseButtonStateChangedEvent eventData = (MouseButtonStateChangedEvent) data;
+            Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
+            if(currentScene instanceof CommandsMenu){
+                //((CommandsMenu)currentScene).selectedButtonBind = eventData.button;
+                ((CommandsMenu)currentScene).selectNewBind(false, eventData.button);
+            }
         });
 
         Window.get().getCursorMoved().add((dataType, data) -> {

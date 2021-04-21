@@ -13,8 +13,8 @@ public class SettingsMenu extends MenuScene {
     @Override
     public void initialize() {
         SoundManager currentSoundManager = Farmland.get().getSoundManager();
-        String[] buttonNames = new String[3];
-        String[] buttonIds = new String[3];
+        String[] buttonNames = new String[4];
+        String[] buttonIds = new String[4];
 
         if(currentSoundManager.getNoSound()){
             buttonNames[0] = Resources.getLocalizedText("activateSound");
@@ -27,8 +27,11 @@ public class SettingsMenu extends MenuScene {
         buttonNames[1] = Resources.getLocalizedText("changeLanguage", Resources.getLocalizedText("language"));
         buttonIds[1] = "changeLanguage";
 
-        buttonNames[2] = "Retour";
-        buttonIds[2] = "goBack";
+        buttonNames[2] = "Commandes";
+        buttonIds[2] = "commands";
+
+        buttonNames[3] = "Retour";
+        buttonIds[3] = "goBack";
 
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
@@ -51,6 +54,9 @@ public class SettingsMenu extends MenuScene {
                     case "changeLanguage":
                         Resources.chooseNextLanguage();
                         changeScene(new SettingsMenu());
+                        break;
+                    case "commands":
+                        changeScene(new CommandsMenu());
                         break;
                     case "goBack":
                         changeScene(new MainMenu());

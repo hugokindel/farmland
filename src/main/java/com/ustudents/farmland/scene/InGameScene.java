@@ -809,6 +809,8 @@ public class InGameScene extends Scene {
         String text = "Argent : " + Farmland.get().getLoadedSave().getLocalPlayer().money;
         if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
             text += "\n\nSélectionné : " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
+        }else{
+            lastSelectedItemId = null;
         }
         getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
     }

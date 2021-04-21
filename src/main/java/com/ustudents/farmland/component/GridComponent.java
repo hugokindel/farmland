@@ -112,7 +112,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     public void update(float dt) {
         selectionCursor.update(dt);
 
-        showTypeOfTerritory = Input.isKeyDown(Key.LeftControl) || Input.isKeyDown(Key.RightControl);
+        //showTypeOfTerritory = Input.isKeyDown(Key.LeftControl) || Input.isKeyDown(Key.RightControl);
+        showTypeOfTerritory = Input.isActionSuccessful("showTerritory");
 
         if (currentSelectedCell.x == -1 || !Input.isMouseInWorldViewRect(
                 getCell(currentSelectedCell).viewRectangle)) {

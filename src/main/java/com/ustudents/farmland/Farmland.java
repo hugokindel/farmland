@@ -1,6 +1,7 @@
 package com.ustudents.farmland;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.GameConfig;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.print.Out;
@@ -8,6 +9,10 @@ import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.input.Action;
+import com.ustudents.engine.input.Key;
+import com.ustudents.engine.input.Mapping;
+import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.ServerConfig;
@@ -249,6 +254,136 @@ public class Farmland extends Game {
 
     private void loadConfig() {
         config = Json.deserialize(Resources.getConfig().game, FarmlandConfig.class);
+        if(Resources.getConfig().commands.isEmpty()){
+            initializeCommands(Resources.getConfig());
+        }
+        reloadCustomizableCommands();
+    }
+
+    public void initializeCommands(GameConfig config){
+        Map<String, Action> actions = config.commands;
+        Action action;
+        if(!actions.containsKey("goUp")){
+            action = new Action();
+            Mapping KeyW = new Mapping("keyboard");
+            Mapping KeyUp = new Mapping("keyboard");
+            KeyW.bindDownAction(Key.W);
+            KeyUp.bindDownAction(Key.Up);
+            action.addMapping(KeyW);
+            action.addMapping(KeyUp);
+            config.commands.put("goUp", action);
+        }
+        if(!actions.containsKey("goDown")){
+            action = new Action();
+            Mapping KeyS = new Mapping("keyboard");
+            Mapping KeyDown = new Mapping("keyboard");
+            KeyS.bindDownAction(Key.S);
+            KeyDown.bindDownAction(Key.Down);
+            action.addMapping(KeyS);
+            action.addMapping(KeyDown);
+            config.commands.put("goDown", action);
+        }
+        if(!actions.containsKey("goLeft")){
+            action = new Action();
+            Mapping KeyA = new Mapping("keyboard");
+            Mapping KeyLeft = new Mapping("keyboard");
+            KeyA.bindDownAction(Key.A);
+            KeyLeft.bindDownAction(Key.Left);
+            action.addMapping(KeyA);
+            action.addMapping(KeyLeft);
+            config.commands.put("goLeft", action);
+        }
+        if(!actions.containsKey("goRight")){
+            action = new Action();
+            Mapping KeyD = new Mapping("keyboard");
+            Mapping KeyRight = new Mapping("keyboard");
+            KeyD.bindDownAction(Key.D);
+            KeyRight.bindDownAction(Key.Right);
+            action.addMapping(KeyD);
+            action.addMapping(KeyRight);
+            config.commands.put("goRight", action);
+        }
+
+        if(!actions.containsKey("showTerritory")) {
+            action = new Action();
+            Mapping KeyCtrlG = new Mapping("keyboard");
+            Mapping KeyCtrlD = new Mapping("keyboard");
+            KeyCtrlG.bindDownAction(Key.LeftControl);
+            KeyCtrlD.bindDownAction(Key.RightControl);
+            action.addMapping(KeyCtrlG);
+            action.addMapping(KeyCtrlD);
+            config.commands.put("showTerritory", action);
+        }
+
+        if(!actions.containsKey("putItem")) {
+            action = new Action();
+            Mapping leftMouseButton = new Mapping("mouse");
+            leftMouseButton.bindDownAction(MouseButton.Left);
+            action.addMapping(leftMouseButton);
+            config.commands.put("putItem", action);
+        }
+
+        if(!actions.containsKey("getItem")) {
+            action = new Action();
+            Mapping RightMouseButton = new Mapping("mouse");
+            RightMouseButton.bindDownAction(MouseButton.Right);
+            action.addMapping(RightMouseButton);
+            config.commands.put("getItem", action);
+        }
+
+        if(!actions.containsKey("debugMenu")) {
+            action = new Action();
+            Mapping debug = new Mapping("keyboard");
+            debug.bindPressedAction(Key.F1);
+            action.addMapping(debug);
+            config.commands.put("debugMenu", action);
+        }
+
+        if(!actions.containsKey("showPerfomance")) {
+            action = new Action();
+            Mapping showPerfomance = new Mapping("keyboard");
+            showPerfomance.bindPressedAction(Key.F2);
+            action.addMapping(showPerfomance);
+            config.commands.put("showPerfomance", action);
+        }
+    }
+
+    public void reloadCustomizableCommands(){
+        Map<String, Action> actions = Resources.getConfig().commands;
+        if(actions.get("goUp").getFirstBindInMapping() <= 0){
+            actions.get("goUp").addFirstBindInMapping(Key.W, "down");
+        }
+
+        if(actions.get("goDown").getFirstBindInMapping() <= 0){
+            actions.get("goDown").addFirstBindInMapping(Key.S, "down");
+        }
+        if(actions.get("goLeft").getFirstBindInMapping() <= 0){
+            actions.get("goLeft").addFirstBindInMapping(Key.A, "down");
+        }
+        if(actions.get("goRight").getFirstBindInMapping() <= 0){
+            actions.get("goRight").addFirstBindInMapping(Key.D, "down");
+        }
+
+        if(actions.get("showTerritory").getFirstBindInMapping() <= 0){
+            actions.get("showTerritory").addFirstBindInMapping(Key.D, "down");
+        }
+
+        if(actions.get("putItem").getFirstBindInMapping() <= 0){
+            actions.get("putItem").addFirstBindInMapping(MouseButton.Left, "down");
+        }
+
+        if(actions.get("getItem").getFirstBindInMapping() <= 0){
+            actions.get("getItem").addFirstBindInMapping(MouseButton.Right, "down");
+        }
+
+        if(actions.get("debugMenu").getFirstBindInMapping() <= 0){
+            actions.get("debugMenu").addFirstBindInMapping(Key.F1, "pressed");
+        }
+
+        if(actions.get("showPerfomance").getFirstBindInMapping() <= 0){
+            actions.get("showPerfomance").addFirstBindInMapping(Key.F2, "pressed");
+        }
+
     }
 
     private void loadTextures() {
