@@ -28,6 +28,7 @@ import com.ustudents.farmland.scene.menus.ResultMenu;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.type.ImBoolean;
+import imgui.type.ImInt;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -42,11 +43,17 @@ public class InGameScene extends Scene {
 
     public ImBoolean showResearch;
 
+    public ImBoolean showBank;
+
+    public ImInt selectBorrow;
+
     public EconomicComponent economicComponent;
 
     public boolean sellMenu;
 
     public boolean caravanMenu;
+
+    public boolean refundMenu;
 
     @Override
     public void initialize() {
@@ -56,6 +63,8 @@ public class InGameScene extends Scene {
         showMarket = new ImBoolean(false);
         showCaravan = new ImBoolean(false);
         showResearch = new ImBoolean(false);
+        showBank = new ImBoolean(false);
+        selectBorrow = new ImInt(Farmland.get().getCurrentSave().maxBorrow/10);
 
         initializeEntities();
         initializeGui();
@@ -155,7 +164,7 @@ public class InGameScene extends Scene {
         imageDataBank.id = "ResearchImage";
         imageDataBank.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataBank.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        imageDataBank.position = new Vector2f(-810, -110);
+        imageDataBank.position = new Vector2f(-800, -110);
         imageDataBank.scale = new Vector2f(3f, 3f);
         imageDataBank.zIndex = 2;
         guiBuilder.addImage(imageDataBank);
@@ -273,6 +282,15 @@ public class InGameScene extends Scene {
         buttonDataR.position = new Vector2f(-715, -10);
         guiBuilder.addButton(buttonDataR);
 
+        GuiBuilder.ButtonData buttonDataB = new GuiBuilder.ButtonData("Banque", (dataType, data) -> {
+            showBank.set(!showBank.get());
+        });
+        buttonDataB.id = "bankButton";
+        buttonDataB.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        buttonDataB.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+        buttonDataB.position = new Vector2f(-880, -10);
+        guiBuilder.addButton(buttonDataB);
+
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
             Farmland.get().saveId = null;
             if (getGame().isConnectedToServer()) {
@@ -322,7 +340,6 @@ public class InGameScene extends Scene {
         String selectedId = Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID;
         String text = "";
         if (Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID != null) {
-            //text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().buyInventory.get(selectedId).quantity + ")";
             text += "\n\nSélectionné: " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getCurrentSave().getCurrentPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity + ")";
         }
         GuiBuilder.TextData textData2 = new GuiBuilder.TextData(text);
@@ -473,6 +490,90 @@ public class InGameScene extends Scene {
             ImGuiBuyingResearch();
             ImGui.end();
         }
+
+        if (showBank.get()) {
+            ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
+
+            ImGui.begin("Banque", showBank);
+            ImGui.text("Votre argent : " + Farmland.get().getCurrentSave().getCurrentPlayer().money + "\n\n");
+            ImGuiBank();
+            ImGui.end();
+        }
+    }
+
+    private void ImGuiBank(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        int maxBorrow = Farmland.get().getCurrentSave().maxBorrow;
+
+        if(ImGui.button("Emprunt")){
+            selectBorrow.set(maxBorrow/10);
+            refundMenu = false;
+        }
+        ImGui.sameLine();
+        if(ImGui.button("Remboursement")){
+            selectBorrow.set(1);
+            refundMenu = true;
+        }
+
+        if(!refundMenu){
+            if(player.debtMoney == 0){
+                player.loanMoney = 0;
+                ImGui.text("\n\n" + "Maximum d'emprunt : " + player.debtMoney+ "/" + maxBorrow +"\n\n");
+                ImGui.inputInt("Somme à emprunter", selectBorrow,maxBorrow/10);
+                ImGui.text("Valeur d'emprunt sélectionné: " + selectBorrow.get() + "\n\n\n\n");
+                if(!(selectBorrow.get() >= 5 && selectBorrow.get() <= maxBorrow)) {
+                    if (selectBorrow.get() < 5)
+                        selectBorrow.set(maxBorrow/10);
+                    else if (selectBorrow.get() > player.debtMoney)
+                        selectBorrow.set(maxBorrow);
+                }else{
+                    if(ImGui.button("Confirmer")){
+                        player.money+= selectBorrow.get();
+                        player.loanMoney = selectBorrow.get() + (int)(selectBorrow.get()*0.03f) + 1;
+                        player.debtMoney += selectBorrow.get() + (int)(selectBorrow.get()*0.03f) + 1;
+                        onSelectedItemOrMoneyChanged();
+                        leaderBoardUpdate();
+                        selectBorrow.set(maxBorrow/10);
+                    }
+                    ImGui.sameLine();
+                    if(ImGui.button("Annuler")){
+                        selectBorrow.set(maxBorrow/10);
+                    }
+                }
+            }else{
+                ImGui.text("\n\n" + "Somme à payer : " + player.debtMoney + " pièces d'or \n\n");
+                ImGui.text("\n\n" + "Vous devez rembourser votre emprunt !" + "\n\n");
+            }
+
+        }else{
+            if(player.debtMoney > 0) {
+                ImGui.text("\n\n" + "Votre dette : " + player.debtMoney + " pièces d'or \n\n");
+                ImGui.inputInt("Somme à emprunter", selectBorrow,maxBorrow/10);
+                ImGui.text("Valeur de remboursement sélectionné: " + selectBorrow.get() + "\n\n\n\n");
+                if(!(selectBorrow.get() >= 1 && selectBorrow.get() <= player.debtMoney)) {
+                    if (selectBorrow.get() < 0)
+                        selectBorrow.set(1);
+                    else if (selectBorrow.get() > player.debtMoney)
+                        selectBorrow.set(player.debtMoney);
+                }else{
+                    if(ImGui.button("Confirmer")){
+                        player.money -= selectBorrow.get();
+                        player.debtMoney -= selectBorrow.get();
+                        onSelectedItemOrMoneyChanged();
+                        leaderBoardUpdate();
+                        selectBorrow.set(1);
+                    }
+                    ImGui.sameLine();
+                    if(ImGui.button("Annuler")){
+                        selectBorrow.set(1);
+                    }
+                }
+            }else{
+                player.loanMoney = 0;
+                ImGui.text("\n\n" + "Vous n'avez pas de dette à rembourser" + "\n\n");
+            }
+
+        }
     }
 
     private void ImGuiBuyingResearch(){
@@ -588,10 +689,13 @@ public class InGameScene extends Scene {
             }
 
             for (String item: uniqueItems){
-                if (ImGui.button(sellnickNameItem(playerInventory.get(item))) /*&& playerMoney >= playerInventory.get(item).value*/) {
-                    player.setMoney(playerMoney + /*playerInventory.get(item).sellingValue*/ Farmland.get().getCurrentSave().getResourceDatabase().get(item).sellingValue);
+                if (ImGui.button(sellnickNameItem(playerInventory.get(item)))) {
+                    player.setMoney(playerMoney + Farmland.get().getCurrentSave().getResourceDatabase().get(item).sellingValue);
+                    if(player.debtMoney > 0)
+                        decreasePlayerDept(player, Farmland.get().getCurrentSave().debtRate);
                     toDelete.add(playerInventory.get(item));
                     Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(playerInventory.get(item)), false);
+                    leaderBoardUpdate();
                 }
                 ImGui.sameLine();
                 if(playerInventory.get(item) == null){
@@ -614,7 +718,7 @@ public class InGameScene extends Scene {
                     player.setMoney(playerMoney-item.buyingValue);
                     player.addToInventory(item, "Buy");
                     Farmland.get().getCurrentSave().fillTurnItemDataBase(item, true);
-
+                    leaderBoardUpdate();
                 }
                 ImGui.sameLine();
                 ImGui.text("Prix d'achat : " + item.buyingValue);
@@ -648,7 +752,6 @@ public class InGameScene extends Scene {
             onSelectedItemOrMoneyChanged();
         }
 
-        //Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getCurrentSave()).getCurrentPlayer().buyInventory;
         Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getCurrentSave()).getCurrentPlayer().getAllItemOfBoughtInventory();
         Set<String> uniqueItems = playerInventory.keySet();
 
@@ -656,7 +759,7 @@ public class InGameScene extends Scene {
             ImGui.text("Votre inventaire est vide !");
         } else {
             for(String item : uniqueItems){
-                ImGui.text(nickNameItem(playerInventory.get(item)) + " (x" + playerInventory.get(item).quantity + ")");
+                ImGui.text(buyNickNameItem(playerInventory.get(item)) + " (x" + playerInventory.get(item).quantity + ")");
 
                 ImGui.sameLine();
 
@@ -672,28 +775,32 @@ public class InGameScene extends Scene {
         }
     }
 
-    private String nickNameItem(Item item){
-        if(item instanceof Crop){
-            return "Graine de " + item.name.toLowerCase();
+    public void decreasePlayerDept(Player currentPlayer, float percent){
+        percent = percent/100;
+        int value = Math.max((int)(currentPlayer.loanMoney*percent), 1);
+        if(currentPlayer.debtMoney >= value){
+            currentPlayer.debtMoney -= value;
+            currentPlayer.setMoney(currentPlayer.money - value);
+        }else{
+            currentPlayer.setMoney(currentPlayer.money - currentPlayer.debtMoney);
+            currentPlayer.debtMoney = 0;
         }
-        return item.name;
+        leaderBoardUpdate();
     }
 
     public void onTurnEnded() {
+        if(Farmland.get().getCurrentSave() == null) return;
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+        
+        if(currentPlayer.debtMoney > 0)
+            decreasePlayerDept(currentPlayer, Farmland.get().getCurrentSave().debtRate);
 
-        if(Farmland.get().getCurrentSave().currentPlayerId == 0){
-            Farmland.get().getCurrentSave().fillBuyItemDataBasePerTurn();
-            economicComponent.changeValueOfRessource();
-            Farmland.get().getCurrentSave().clearTurnItemDatabase();
-        }
         if (!Farmland.get().getCurrentSave().deadPlayers.contains(currentPlayer.getId())) {
             getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getCurrentSave().turn + 1) + " de " + Farmland.get().getCurrentSave().getCurrentPlayer().name);
             checkCaravan();
         }
 
         if (Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
-            //checkCaravan();
             for (int x = 0; x < Farmland.get().getCurrentSave().cells.size(); x++) {
                 for (int y = 0; y < Farmland.get().getCurrentSave().cells.get(x).size(); y++) {
                     Cell cell = Farmland.get().getCurrentSave().cells.get(x).get(y);
@@ -703,7 +810,7 @@ public class InGameScene extends Scene {
                         player.setMoney(player.money - 1);
                     }
 
-                    if (cell.hasItem()/* && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(cell.ownerId)*/) {
+                    if (cell.hasItem()) {
                         cell.item.endTurn();
 
                         if (cell.item.shouldBeDestroyed()) {
@@ -725,6 +832,7 @@ public class InGameScene extends Scene {
             getEntityByName("marketButton").setEnabled(false);
             getEntityByName("caravanButton").setEnabled(false);
             getEntityByName("researchButton").setEnabled(false);
+            getEntityByName("bankButton").setEnabled(false);
             if (showMarket.get()) {
                 shouldShowBackMarket = true;
             }
@@ -737,16 +845,21 @@ public class InGameScene extends Scene {
             if (showResearch.get()) {
                 shouldShowBackResearch = true;
             }
+            if (showBank.get()) {
+                shouldShowBackBank = true;
+            }
             showInventory.set(false);
             showMarket.set(false);
             showCaravan.set(false);
             showResearch.set(false);
+            showBank.set(false);
         } else {
             getEntityByName("endTurnButton").setEnabled(true);
             getEntityByName("inventoryButton").setEnabled(true);
             getEntityByName("marketButton").setEnabled(true);
             getEntityByName("caravanButton").setEnabled(true);
             getEntityByName("researchButton").setEnabled(true);
+            getEntityByName("bankButton").setEnabled(true);
             if (shouldShowBackInventory) {
                 showInventory.set(true);
                 shouldShowBackInventory = false;
@@ -762,6 +875,10 @@ public class InGameScene extends Scene {
             if (shouldShowBackResearch) {
                 showResearch.set(true);
                 shouldShowBackResearch = false;
+            }
+            if (shouldShowBackBank) {
+                showBank.set(true);
+                shouldShowBackBank = false;
             }
             checkPlayerFrame();
         }
@@ -806,6 +923,10 @@ public class InGameScene extends Scene {
 
     public boolean onCompletedTurnEnd(){
         Player currentPlayer = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        Farmland.get().getCurrentSave().fillBuyItemDataBasePerTurn();
+        economicComponent.changeValueOfRessource();
+        Farmland.get().getCurrentSave().clearTurnItemDatabase();
 
         if (Farmland.get().getCurrentSave().PlayerMeetCondition()) {
 
@@ -884,6 +1005,8 @@ public class InGameScene extends Scene {
     public boolean shouldShowBackCaravan = false;
 
     public boolean shouldShowBackResearch = false;
+
+    public boolean shouldShowBackBank = false;
 
     public List<Player> leaderBoardMaker(List<Player> list){
         Player[] tmp = new Player[list.size()];

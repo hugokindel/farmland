@@ -7,14 +7,17 @@ import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Crop;
 import com.ustudents.farmland.core.item.Item;
+import com.ustudents.farmland.scene.InGameScene;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Bot {
     public static void playTurn() {
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
         // TODO: seed
         SeedRandom random = new SeedRandom();
 
@@ -30,6 +33,17 @@ public class Bot {
 
         sellInventory();
         maintenanceCost();
+
+        Random rand = new Random();
+        boolean cantPayDebt = false;
+        if(player.debtMoney == 0 && rand.nextInt(100) <= 50){
+            botTakesOutALoan();
+            cantPayDebt = true;
+        }
+
+        if(player.debtMoney > 0 && !cantPayDebt){
+            payDebt();
+        }
     }
 
     public static int makeChoice(){
@@ -92,7 +106,6 @@ public class Bot {
 
             List<Item> items = Farmland.get().getCurrentSave().getResourceDatabase().values().stream().filter(Objects::nonNull).collect(Collectors.toList());
             Item item = items.get(random.generateInRange(0, items.size() - 1));
-            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), true);
 
             if (player.money < item.buyingValue) {
                 i++;
@@ -123,10 +136,41 @@ public class Bot {
 
         for(Item item: player.getAllItemOfSellInventory().values()){
             item.sellingValue = Farmland.get().getCurrentSave().getResourceDatabase().get(item.id).sellingValue;
-            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), false);
+            fillTurnItemDataBasePerQuantity(item);
             player.money += item.quantity * item.sellingValue;
         }
 
-        player.getAllItemOfSellInventory().clear();
+        player.clearSoldLists();
+    }
+
+    private static void fillTurnItemDataBasePerQuantity(Item item){
+        for(int i = 0; i < item.quantity; i++){
+            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), false);
+        }
+    }
+
+    public static void botTakesOutALoan(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        Random rand = new Random();
+        int maxBorrow = Farmland.get().getCurrentSave().maxBorrow;
+        int randValue = rand.nextInt(maxBorrow - maxBorrow/10);
+        player.money += randValue;
+        player.loanMoney = randValue + (int)(randValue*0.03f);
+        player.debtMoney += randValue + (int)(randValue*0.03f);
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).onSelectedItemOrMoneyChanged();
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).leaderBoardUpdate();
+    }
+
+    public static void payDebt(){
+        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+
+        Random rand = new Random();
+        int debt = player.debtMoney;
+        int randValue = rand.nextInt(debt);
+        player.money -= randValue;
+        player.debtMoney -= randValue;
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).onSelectedItemOrMoneyChanged();
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).leaderBoardUpdate();
     }
 }

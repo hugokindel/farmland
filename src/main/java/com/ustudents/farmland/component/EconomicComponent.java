@@ -53,7 +53,8 @@ public class EconomicComponent {
 
         int res = 0;
 
-        if(item.buyingValue > item.initValue / 4 && (!appearsInList && Farmland.get().getCurrentSave().turn > 0 && Farmland.get().getCurrentSave().turn%2 == 0)){
+        if(item.buyingValue > item.initValue / 4 && (!appearsInList && Farmland.get().getCurrentSave().turn > 0
+                && Farmland.get().getCurrentSave().turn%2 == 0)){
             if(item instanceof Crop){
                 res = -1;
             }else if(item instanceof Animal){
@@ -65,7 +66,6 @@ public class EconomicComponent {
             if(item instanceof Crop) {
                 res = 1 + previouslyBought/4;
             }else if(item instanceof Animal){
-                Out.println(previouslyBought);
                 res = 3 + previouslyBought/2;
             }
         }
@@ -78,7 +78,8 @@ public class EconomicComponent {
         int count = countWhereItemAppearsInList(Farmland.get().getCurrentSave().sellItemDatabasePerTurn, turnTab, item);
 
         int res = 0;
-        if(item.sellingValue < item.initValue * 4 && (!appearsInList && Farmland.get().getCurrentSave().turn > 0 && Farmland.get().getCurrentSave().turn%2 == 0)){
+        if(item.sellingValue < item.initValue * 4 && (!appearsInList && Farmland.get().getCurrentSave().turn > 0
+                && Farmland.get().getCurrentSave().turn%2 == 0)){
             if(item instanceof Crop){
                 res = 1;
             }else if(item instanceof Animal){

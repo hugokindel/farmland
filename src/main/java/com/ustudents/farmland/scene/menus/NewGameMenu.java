@@ -11,6 +11,7 @@ import com.ustudents.farmland.scene.InGameScene;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiDataType;
+import imgui.type.ImInt;
 import imgui.type.ImLong;
 import imgui.type.ImString;
 import org.joml.Vector2i;
@@ -31,6 +32,8 @@ public class NewGameMenu extends MenuScene {
     ImLong seed = new ImLong(System.currentTimeMillis());
     List<String> errors = new ArrayList<>();
     int[] numberOfBots = new int[1];
+    ImInt percentDebt = new ImInt(10);
+    ImInt maxBorrow = new ImInt(100);
 
     @Override
     public void initialize() {
@@ -71,6 +74,20 @@ public class NewGameMenu extends MenuScene {
         ImGui.inputInt2("Taille de la carte", size);
         ImGui.inputScalar("Graine de la carte", ImGuiDataType.S64, seed);
         ImGui.sliderInt("Nombre de robots", numberOfBots, 0, 3);
+        ImGui.inputInt("Somme maximal à emprunter", maxBorrow,100);
+        ImGui.inputInt("taux de remboursement de l'emprunt", percentDebt,10);
+
+        if (maxBorrow.get() < 100 || maxBorrow.get()%100 != 0 || maxBorrow.get()%10 != 0)
+            maxBorrow.set(100);
+
+        if (maxBorrow.get() > 500)
+            maxBorrow.set(500);
+
+        if (percentDebt.get() < 10 || percentDebt.get()%10 != 0)
+            percentDebt.set(10);
+
+        if (percentDebt.get() > 30)
+            percentDebt.set(30);
 
         if (ImGui.button("Retour")) {
             SceneManager.get().goBack();
@@ -117,7 +134,7 @@ public class NewGameMenu extends MenuScene {
 
                 SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(),
                         new Color(bannerColor), braces, shirt, hat, buttons,
-                        new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0]);
+                        new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0], maxBorrow.get(), percentDebt.get());
 
                 Farmland.get().getSaveGames().put(saveGame.name, saveGame);
                 Farmland.get().saveId = saveGame.name;
