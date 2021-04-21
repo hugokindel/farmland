@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.farmland.Farmland;
 
@@ -11,10 +12,15 @@ public class SingleplayerMenu extends MenuScene {
         EventListener[] eventListeners;
 
         if (Farmland.get().getSaves().size() > 0) {
-            buttonNames = new String[] {"Nouvelle partie", "Charger partie", "Supprimer une partie", "Retour"};
+            buttonNames = new String[] {
+                    Resources.getLocalizedText("newGame"),
+                    Resources.getLocalizedText("loadGame"),
+                    Resources.getLocalizedText("removeGame"),
+                    Resources.getLocalizedText("goBack")
+            };
             buttonIds = new String[] {"newButton", "loadButton", "deleteButton", "backButton"};
         } else {
-            buttonNames = new String[] {"Nouvelle partie", "Retour"};
+            buttonNames = new String[] {Resources.getLocalizedText("newGame"), Resources.getLocalizedText("goBack")};
             buttonIds = new String[] {"newButton", "backButton"};
         }
 

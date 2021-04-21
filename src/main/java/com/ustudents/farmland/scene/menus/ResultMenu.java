@@ -42,10 +42,10 @@ public class ResultMenu extends MenuScene {
         guiBuilder.addImage(imageData);
 
         if (Game.get().isConnectedToServer()) {
-            buttonNames = new String[]{"Menu Principal"};
+            buttonNames = new String[]{Resources.getLocalizedText("mainMenu")};
             buttonIds = new String[]{"mainMenu"};
         } else {
-            buttonNames = new String[]{"Rejouer", "Menu Principal"};
+            buttonNames = new String[]{Resources.getLocalizedText("replay"), Resources.getLocalizedText("mainMenu")};
             buttonIds = new String[]{"replay", "mainMenu"};
         }
 

@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.network.Controller;
@@ -27,10 +28,10 @@ public class ServersListMenu extends MenuScene {
 
         if (localServerExists) {
             GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
-            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", "Rechercher un serveur", "Recharger"};
+            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", Resources.getLocalizedText("researchServer"), Resources.getLocalizedText("reloadServer")};
             buttonIds = new String[] {"localButton", "addressButton", "reloadButton"};
         } else {
-            buttonNames = new String[] {"Rechercher un serveur", "Recharger"};
+            buttonNames = new String[] {Resources.getLocalizedText("researchServer"), Resources.getLocalizedText("reloadServer")};
             buttonIds = new String[] {"addressButton", "reloadButton"};
         }
 

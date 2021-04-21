@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
@@ -20,7 +21,7 @@ public class ServerWaitingPlayersMenu extends Scene {
     public void initializeGui() {
         GuiBuilder guiBuilder = new GuiBuilder();
 
-        GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> {
+        GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData(Resources.getLocalizedText("mainMenu"), (dataType, data) -> {
             Farmland.get().unloadSave();
             if (getGame().isConnectedToServer()) {
                 getGame().disconnectFromServer();
@@ -32,7 +33,7 @@ public class ServerWaitingPlayersMenu extends Scene {
         buttonData2.position = new Vector2f(10, -10);
         guiBuilder.addButton(buttonData2);
 
-        GuiBuilder.TextData textData = new GuiBuilder.TextData("En attente des autres joueurs...");
+        GuiBuilder.TextData textData = new GuiBuilder.TextData(Resources.getLocalizedText("waitingPlayers"));
         textData.origin = new Origin(Origin.Vertical.Middle, Origin.Horizontal.Center);
         textData.anchor = new Anchor(Anchor.Vertical.Middle, Anchor.Horizontal.Center);
         guiBuilder.addText(textData);

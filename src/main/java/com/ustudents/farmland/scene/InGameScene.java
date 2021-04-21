@@ -225,7 +225,7 @@ public class InGameScene extends Scene {
 
         // Happens within the window.
         {
-            GuiBuilder.TextData textData = new GuiBuilder.TextData("Tour " + (Farmland.get().getLoadedSave().turn + 1) + " de " + Farmland.get().getLoadedSave().getCurrentPlayer().name);
+            GuiBuilder.TextData textData = new GuiBuilder.TextData(Resources.getLocalizedText("turnInfo", Farmland.get().getLoadedSave().turn + 1, Farmland.get().getLoadedSave().getCurrentPlayer().name));
             textData.id = "stateLabel";
             textData.origin = new Origin(Origin.Vertical.Middle, Origin.Horizontal.Center);
             textData.anchor = new Anchor(Anchor.Vertical.Middle, Anchor.Horizontal.Center);
@@ -235,7 +235,7 @@ public class InGameScene extends Scene {
 
         guiBuilder.endWindow();
 
-        GuiBuilder.TextData textData = new GuiBuilder.TextData("Temps restant : " + DateUtil.secondsToText(Save.timePerTurn - Farmland.get().getLoadedSave().turnTimePassed));
+        GuiBuilder.TextData textData = new GuiBuilder.TextData(Resources.getLocalizedText("timeRemaining") + DateUtil.secondsToText(Save.timePerTurn - Farmland.get().getLoadedSave().turnTimePassed));
         textData.id = "timeRemainingLabel";
         textData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
         textData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
@@ -244,9 +244,9 @@ public class InGameScene extends Scene {
         guiBuilder.addText(textData);
 
         String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
-        String text = "Argent : " + Farmland.get().getLoadedSave().getLocalPlayer().money;
+        String text = Resources.getLocalizedText("money") + Farmland.get().getLoadedSave().getLocalPlayer().money;
         if (selectedId != null) {
-            text += "\n\nSélectionné : " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
+            text += Resources.getLocalizedText("\n\nselect") + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         GuiBuilder.TextData textData2 = new GuiBuilder.TextData(text);
         textData2.id = "selectedLabel";
@@ -259,7 +259,7 @@ public class InGameScene extends Scene {
 
 
         List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getLoadedSave().players);
-        String leaderBoard = "Classement : ";
+        String leaderBoard = Resources.getLocalizedText("leaderboard");
         for (Player player : leaderBoardList) {
             leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getLoadedSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
         }
@@ -271,7 +271,7 @@ public class InGameScene extends Scene {
         textData3.color = Color.BLACK;
         guiBuilder.addText(textData3);
 
-        GuiBuilder.TextData pauseText = new GuiBuilder.TextData("En pause");
+        GuiBuilder.TextData pauseText = new GuiBuilder.TextData(Resources.getLocalizedText("theWorld"));
         pauseText.id = "pauseLabel";
         pauseText.origin = new Origin(Origin.Vertical.Middle, Origin.Horizontal.Center);
         pauseText.anchor = new Anchor(Anchor.Vertical.Middle, Anchor.Horizontal.Center);
@@ -326,8 +326,8 @@ public class InGameScene extends Scene {
         if (showInventory.get()) {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
-            ImGui.begin("Inventaire", showInventory);
-            ImGui.text("Votre argent : " + Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
+            ImGui.begin(Resources.getLocalizedText("inventory"), showInventory);
+            ImGui.text(Resources.getLocalizedText("yourMoney")+ Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
             makeListOfPlayerItem();
             ImGui.end();
         }
@@ -335,8 +335,8 @@ public class InGameScene extends Scene {
         if (showMarket.get()) {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
-            ImGui.begin("Marché", showMarket);
-            ImGui.text("Votre argent : " + Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
+            ImGui.begin(Resources.getLocalizedText("market"), showMarket);
+            ImGui.text(Resources.getLocalizedText("yourMoney")+ Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
             ImGuiBuyingItem();
             ImGui.end();
         }
@@ -344,8 +344,8 @@ public class InGameScene extends Scene {
         if (showCaravan.get()) {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
-            ImGui.begin("Caravanes", showCaravan);
-            ImGui.text("Votre argent : " + Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
+            ImGui.begin(Resources.getLocalizedText("caravans"), showCaravan);
+            ImGui.text(Resources.getLocalizedText("yourMoney") + Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
             ImGuiBuyingCaravan();
             ImGui.end();
         }
@@ -353,8 +353,8 @@ public class InGameScene extends Scene {
         if (showResearch.get()) {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
-            ImGui.begin("Recherche", showResearch);
-            ImGui.text("Votre argent : " + Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
+            ImGui.begin(Resources.getLocalizedText("research"), showResearch);
+            ImGui.text(Resources.getLocalizedText("yourMoney") + Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
             ImGuiBuyingResearch();
             ImGui.end();
         }
@@ -363,33 +363,33 @@ public class InGameScene extends Scene {
     private void ImGuiBuyingResearch(){
         Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
-        ImGui.text("Recherches : \n\n");
+        ImGui.text(Resources.getLocalizedText("yourResearchs\n\n"));
         // FarmerResearch
-        if (ImGui.button("Améliorer Fermier " + "[" + player.farmerResearch.getObject1() + "]") && player.money > player.farmerResearch.getObject1()){
+        if (ImGui.button(Resources.getLocalizedText("farmerUpgrade") + "[" + player.farmerResearch.getObject1() + "]") && player.money > player.farmerResearch.getObject1()){
             player.setMoney(player.money - player.farmerResearch.getObject1());
             player.farmerResearch.setObject1(player.farmerResearch.getObject1() + 10);
             player.farmerResearch.setObject2(player.farmerResearch.getObject2() + 1);
             player.farmerResearch.setObject3(player.farmerResearch.getObject3() + 1);
         }
         ImGui.sameLine();
-        ImGui.text(" Fermier niveau : " + player.farmerResearch.getObject2() + " bonus de revente : " + player.farmerResearch.getObject3());
+        ImGui.text(Resources.getLocalizedText("farmerLevel") + player.farmerResearch.getObject2() + Resources.getLocalizedText("bonus") + player.farmerResearch.getObject3());
         // BreederReasearch
-        if (ImGui.button("Améliorer Eleveur " + "[" + player.breederResearch.getObject1() + "]") && player.money > player.breederResearch.getObject1()){
+        if (ImGui.button(Resources.getLocalizedText("rancherUpgrade") + "[" + player.breederResearch.getObject1() + "]") && player.money > player.breederResearch.getObject1()){
             player.setMoney(player.money - player.breederResearch.getObject1());
             player.breederResearch.setObject1(player.breederResearch.getObject1() + 10);
             player.breederResearch.setObject2(player.breederResearch.getObject2() + 1);
             player.breederResearch.setObject3(player.breederResearch.getObject3() + 1);
         }
         ImGui.sameLine();
-        ImGui.text(" Eleveur niveau : " + player.breederResearch.getObject2() + " bonus de revente : " + player.breederResearch.getObject3());
+        ImGui.text(Resources.getLocalizedText("rancherLevel") + player.breederResearch.getObject2() + Resources.getLocalizedText("bonus") + player.breederResearch.getObject3());
     }
 
     private void ImGuiBuyingCaravan(){
-        if(ImGui.button("Envoie")){
+        if(ImGui.button(Resources.getLocalizedText("send"))){
             caravanMenu = false;
         }
         ImGui.sameLine();
-        if(ImGui.button("Reception")){
+        if(ImGui.button(Resources.getLocalizedText("receive"))){
             caravanMenu = true;
         }
 
@@ -401,9 +401,9 @@ public class InGameScene extends Scene {
 
         if (!caravanMenu) {
             if (uniqueItems.isEmpty()) {
-                ImGui.text("Pas de Ressources a envoyé !");
+                ImGui.text(Resources.getLocalizedText("noSend"));
             } else {
-                ImGui.text("Caravanes a envoyé : \n\n");
+                ImGui.text(Resources.getLocalizedText("sentCaravans"));
 
                 for (String item : uniqueItems) {
                     int currentQuantity = playerInventory.get(item).quantity;
@@ -414,7 +414,7 @@ public class InGameScene extends Scene {
                         int sellValueOfCaravan = (int) (((playerInventory.get(item).value + researchBonus) * 1.25) * currentQuantity / 2);
                         int travelTime = 4;
                         int travelPrice = 10;
-                        if (ImGui.button("Envoyé " + playerInventory.get(item).name + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
+                        if (ImGui.button(Resources.getLocalizedText("sended") + playerInventory.get(item).name + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
                             player.setMoney(playerMoney - travelPrice);
                             player.caravans.add(new Pair<>(travelTime, sellValueOfCaravan));
                             for (int i = 0; i < currentQuantity / 2; i++) {
@@ -423,37 +423,37 @@ public class InGameScene extends Scene {
                         }
                         ImGui.sameLine();
                         if (playerInventory.get(item) == null) {
-                            ImGui.text("  Plus de caravanes");
+                            ImGui.text(Resources.getLocalizedText("noMoreCaravans"));
                         } else {
                             ImGui.text(playerInventory.get(item).name + " x" + currentQuantity / 2);
                         }
                         ImGui.sameLine();
-                        ImGui.text("Prix de vente : " + sellValueOfCaravan + " / Temps estimé :  " + travelTime);
+                        ImGui.text(Resources.getLocalizedText("sellingPrice") + sellValueOfCaravan + Resources.getLocalizedText("estimatedtime") + travelTime);
                     } else {
-                        ImGui.text("Pas assez de " + playerInventory.get(item).name + " a envoyé");
+                        ImGui.text(Resources.getLocalizedText("lackOf") + playerInventory.get(item).name + Resources.getLocalizedText("sent"));
                     }
                 }
             }
         } else {
             if (player.caravans.isEmpty()){
-                ImGui.text(" Vous ne possedez pas de caravanes ");
+                ImGui.text(Resources.getLocalizedText("noCaravans"));
             } else {
-                ImGui.text(" Parcour de vos caravanes : \n\n");
+                ImGui.text(Resources.getLocalizedText("seeCaravans"));
 
                 for (int i = 0; i < player.caravans.size() ; i++){
                     Pair<Integer,Integer> caravan = player.caravans.get(i);
-                    ImGui.text("Caravane pour " + caravan.getObject2() + " pieces : " + caravan.getObject1() + " tours restants");
+                    ImGui.text(Resources.getLocalizedText("caravansFor", caravan.getObject2(), caravan.getObject1()));
                 }
             }
         }
     }
 
     private void ImGuiBuyingItem(){
-        if(ImGui.button("Achat")){
+        if(ImGui.button(Resources.getLocalizedText("purchase"))){
             sellMenu = false;
         }
         ImGui.sameLine();
-        if(ImGui.button("Vente")){
+        if(ImGui.button(Resources.getLocalizedText("sale"))){
             sellMenu = true;
         }
 
@@ -461,7 +461,7 @@ public class InGameScene extends Scene {
         int playerMoney = player.money;
 
         if(sellMenu){
-            ImGui.text("Objets à vendre : \n\n");
+            ImGui.text(Resources.getLocalizedText("sellItem"));
 
             Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getLoadedSave()).getCurrentPlayer().sellInventory;
             Set<String> uniqueItems = playerInventory.keySet();
@@ -470,7 +470,7 @@ public class InGameScene extends Scene {
             List<Item> toDelete = new ArrayList<>();
 
             if(uniqueItems.isEmpty()){
-                ImGui.text("Vous n'avez pas de ressource à vendre");
+                ImGui.text(Resources.getLocalizedText("noSell"));
             }
 
             for (String item: uniqueItems){
@@ -482,18 +482,18 @@ public class InGameScene extends Scene {
                 }
                 ImGui.sameLine();
                 if(playerInventory.get(item) == null){
-                    ImGui.text("  Possédé : x0" );
+                    ImGui.text(Resources.getLocalizedText("possess") + ": x0" );
                 }else{
-                    ImGui.text(" Possédé : x" + playerInventory.get(item).quantity);
+                    ImGui.text(Resources.getLocalizedText("possess") + ": x" + playerInventory.get(item).quantity);
                 }
                 ImGui.sameLine();
-                ImGui.text("Prix de revente : " + sellValueOfItem);
+                ImGui.text(Resources.getLocalizedText("resellPrice") + sellValueOfItem);
             }
 
             player.deleteFromInventory(toDelete, "Sell");
 
         }else{
-            ImGui.text("Objets en magasin : \n\n");
+            ImGui.text(Resources.getLocalizedText("products"));
 
 
             for(Item item : Farmland.get().getResourceDatabase().values()){
@@ -502,7 +502,7 @@ public class InGameScene extends Scene {
                     updateLeaderboard();
                 }
                 ImGui.sameLine();
-                ImGui.text("Prix d'achat : " + item.value);
+                ImGui.text(Resources.getLocalizedText("sellPrice") + item.value);
 
             }
         }
@@ -510,7 +510,8 @@ public class InGameScene extends Scene {
     }
 
     private void makeListOfPlayerItem(){
-        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null && ImGui.button("Désélectionner")) {
+        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null &&
+                ImGui.button(Resources.getLocalizedText("unselect"))) {
             Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
             updateMoneyItemLabel();
         }
@@ -519,7 +520,7 @@ public class InGameScene extends Scene {
         Set<String> uniqueItems = playerInventory.keySet();
 
         if (uniqueItems.isEmpty()) {
-            ImGui.text("Votre inventaire est vide !");
+            ImGui.text(Resources.getLocalizedText("emptyInventory"));
         } else {
             for(String item : uniqueItems){
                 ImGui.text(nickNameItem(playerInventory.get(item)) + " (x" + playerInventory.get(item).quantity + ")");
@@ -528,7 +529,7 @@ public class InGameScene extends Scene {
 
                 ImGui.pushID(item);
 
-                if (ImGui.button("Sélectionner")) {
+                if (ImGui.button(Resources.getLocalizedText("select"))) {
                     Farmland.get().getLoadedSave().getLocalPlayer().selectItem(item);
                     updateMoneyItemLabel();
                 }
@@ -540,7 +541,7 @@ public class InGameScene extends Scene {
 
     private String nickNameItem(Item item){
         if(item instanceof Crop){
-            return "Graine de " + item.name.toLowerCase();
+            return Resources.getLocalizedText("seedOf") + item.name.toLowerCase();
         }
         return item.name;
     }
@@ -556,7 +557,7 @@ public class InGameScene extends Scene {
             Farmland.get().getLoadedSave().itemsTurn= new ArrayList<>();
         }
         if (!Farmland.get().getLoadedSave().deadPlayers.contains(currentPlayer.getId())) {
-            getEntityByName("stateLabel").getComponent(TextComponent.class).setText("Tour " + (Farmland.get().getLoadedSave().turn + 1) + " de " + Farmland.get().getLoadedSave().getCurrentPlayer().name);
+            getEntityByName("stateLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("turnInfo", (Farmland.get().getLoadedSave().turn + 1), Farmland.get().getLoadedSave().getCurrentPlayer().name));
             checkCaravan();
         }
 
@@ -777,7 +778,7 @@ public class InGameScene extends Scene {
 
     public void updateLeaderboard(){
         List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getLoadedSave().players);
-        String leaderBoard = "Classement : ";
+        String leaderBoard = Resources.getLocalizedText("leaderboard");
         for (Player player : leaderBoardList) {
             leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getLoadedSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
         }
@@ -806,15 +807,15 @@ public class InGameScene extends Scene {
 
     public void updateMoneyItemLabel() {
         String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
-        String text = "Argent : " + Farmland.get().getLoadedSave().getLocalPlayer().money;
+        String text = Resources.getLocalizedText("money") + Farmland.get().getLoadedSave().getLocalPlayer().money;
         if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
-            text += "\n\nSélectionné : " + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
+            text += Resources.getLocalizedText("selected") + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().buyInventory.get(selectedId).quantity + ")";
         }
         getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
     }
 
     public void onSecondElapsed(int secondsElapsed) {
-        getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText("Temps restant : " + DateUtil.secondsToText(Save.timePerTurn - secondsElapsed));
+        getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("timeRemaining") + DateUtil.secondsToText(Save.timePerTurn - secondsElapsed));
     }
 
     @Override

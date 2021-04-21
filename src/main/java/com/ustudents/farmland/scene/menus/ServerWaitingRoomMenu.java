@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.farmland.Farmland;
@@ -28,7 +29,7 @@ public class ServerWaitingRoomMenu extends MenuScene {
         int j = 0;
         for (i = 0; i < capacity; i++) {
             if (!informations.getConnectedPlayerIds().contains(i)) {
-                buttonNames[j] = "Joueur " + (i + 1);
+                buttonNames[j] = Resources.getLocalizedText("player") + (i + 1);
                 buttonIds[j] = (i + 1) + "Button";
                 j++;
             }
