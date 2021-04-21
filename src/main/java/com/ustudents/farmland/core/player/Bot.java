@@ -22,72 +22,77 @@ public class Bot {
     public static void playTurn() {
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
         // TODO: seed
-        SeedRandom random = new SeedRandom();
 
-        switch (Farmland.get().getCurrentSave().botDifficulty){
-            case 0 :
-                int rd = random.generateInRange(0,20);
-                if (rd < 5) {
-                    buyLand(random);
-                } else {
-                    addItem(random);
-                }
-                sellInventory();
-                break;
-            case 1:
-                int action = makeChoice();
-                if (action == 0) {
-                    buyLand(random);
-                } else {
-                    for (int i = 0; i < action ; i++){
+        if (!Farmland.get().getCurrentSave().deadPlayers.contains(player.getId())) {
+
+            SeedRandom random = new SeedRandom();
+
+            switch (Farmland.get().getCurrentSave().botDifficulty) {
+                case 0:
+                    int rd = random.generateInRange(0, 20);
+                    if (rd < 5) {
+                        buyLand(random);
+                    } else {
                         addItem(random);
                     }
-                }
-                sellInventory();
-                break;
-            case 2:
-                int action2 = makeChoice();
-                if (action2 == 0) {
-                    int choice = random.generateInRange(0,10);
-                    if(choice < 5){
-                        upgradeResearch();
-                    } else {
+                    sellInventory();
+                    break;
+                case 1:
+                    int action = makeChoice();
+                    if (action == 0) {
                         buyLand(random);
+                    } else {
+                        for (int i = 0; i < action; i++) {
+                            addItem(random);
+                        }
                     }
-                } else {
-                    addItem(random,action2);
-                }
-                exportInventory();
-                sellInventory();
-                break;
-            case 3:
-                Random rand = new Random();
-                boolean cantPayDebt = false;
-                if(player.debtMoney == 0 && rand.nextInt(100) <= 50){
-                    botTakesOutALoan();
-                    cantPayDebt = true;
-                }
+                    sellInventory();
+                    break;
+                case 2:
+                    int action2 = makeChoice();
+                    if (action2 == 0) {
+                        int choice = random.generateInRange(0, 10);
+                        if (choice < 5) {
+                            upgradeResearch();
+                        } else {
+                            buyLand(random);
+                        }
+                    } else {
+                        addItem(random, action2);
+                    }
+                    exportInventory();
+                    sellInventory();
+                    break;
+                case 3:
+                    Random rand = new Random();
+                    boolean cantPayDebt = false;
+                    if (player.debtMoney == 0 && rand.nextInt(100) <= 50) {
+                        botTakesOutALoan();
+                        cantPayDebt = true;
+                    }
 
-                if(player.debtMoney > 0 && !cantPayDebt){
-                    payDebt();
-                }
-                 int action3 = makeChoice();
-                 if (action3 == 0) {
-                 int choice2 = random.generateInRange(0,10);
-                 if(choice2 < 5){
-                 upgradeResearch();
-                 } else {
-                 buyLand(random);
-                 }
-                 } else {
-                 addItem(random,action3);
-                 }
-                 exportInventory();
-                 sellInventory();
-                break;
+                    if (player.debtMoney > 0 && !cantPayDebt) {
+                        payDebt();
+                    }
+                    int action3 = makeChoice();
+                    if (action3 == 0) {
+                        int choice2 = random.generateInRange(0, 10);
+                        if (choice2 < 5) {
+                            upgradeResearch();
+                        } else {
+                            buyLand(random);
+                        }
+                    } else {
+                        addItem(random, action3);
+                    }
+                    exportInventory();
+                    sellInventory();
+                    break;
+            }
+
+            maintenanceCost();
+
         }
-
-        maintenanceCost();
     }
 
     public static void upgradeResearch(){
