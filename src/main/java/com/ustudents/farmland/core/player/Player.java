@@ -183,6 +183,36 @@ public class Player {
         soldAnimals.clear();
     }
 
+    public void deleteFromSoldInventory(Item item, boolean isAnimal){
+        if (isAnimal){
+            Animal todelete = null;
+            for(Item i: soldAnimals){
+                if(item.id.equals(i.id)){
+                    i.quantity -= 1;
+                    if (i.quantity <= 0){
+                        todelete = (Animal)i;
+                    }
+                }
+            }
+            if(todelete != null){
+                soldAnimals.remove(todelete);
+            }
+        } else {
+            Crop todelete = null;
+            for(Item i: soldCrops){
+                if(item.id.equals(i.id)){
+                    i.quantity -= 1;
+                    if (i.quantity <= 0){
+                        todelete = (Crop)i;
+                    }
+                }
+            }
+            if(todelete != null){
+                soldCrops.remove(todelete);
+            }
+        }
+    }
+
     public boolean deleteFromInventory(Item item, String name) {
             List<? extends Item> items = getGoodList(item, (name.contains("Buy")));
             Item todelete = null;

@@ -61,7 +61,7 @@ public class ResultMenu extends MenuScene {
                             player.bannerColor, player.avatar.bracesColor, player.avatar.shirtColor,
                             player.avatar.hatColor, player.avatar.buttonsColor, vector, this.currentSave.seed,
                             this.currentSave.players.size()-1, this.currentSave.maxBorrow,
-                            this.currentSave.debtRate));
+                            this.currentSave.debtRate, this.currentSave.botDifficulty));
                     Farmland.get().saveSavedGames();
                     changeScene(new InGameScene());
                 }else{
