@@ -517,6 +517,7 @@ public class InGameScene extends Scene {
 
         if(!refundMenu){
             if(player.debtMoney == 0){
+                player.loanMoney = 0;
                 ImGui.text("\n\n" + "Maximum d'emprunt : " + player.debtMoney+ "/" + maxBorrow +"\n\n");
                 ImGui.inputInt("Somme à emprunter", selectBorrow,maxBorrow/10);
                 ImGui.text("Valeur d'emprunt sélectionné: " + selectBorrow.get() + "\n\n\n\n");
@@ -694,6 +695,7 @@ public class InGameScene extends Scene {
                         decreasePlayerDept(player, Farmland.get().getCurrentSave().debtRate);
                     toDelete.add(playerInventory.get(item));
                     Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(playerInventory.get(item)), false);
+                    leaderBoardUpdate();
                 }
                 ImGui.sameLine();
                 if(playerInventory.get(item) == null){
@@ -775,7 +777,6 @@ public class InGameScene extends Scene {
 
     public void decreasePlayerDept(Player currentPlayer, float percent){
         percent = percent/100;
-        //Out.println("Pourcentage pour la revente : " + percent);
         int value = Math.max((int)(currentPlayer.loanMoney*percent), 1);
         if(currentPlayer.debtMoney >= value){
             currentPlayer.debtMoney -= value;
@@ -848,10 +849,10 @@ public class InGameScene extends Scene {
                 shouldShowBackBank = true;
             }
             showInventory.set(false);
-            showMarket.set(true);
+            showMarket.set(false);
             showCaravan.set(false);
             showResearch.set(false);
-            showBank.set(false);
+            showBank.set(true);
         } else {
             getEntityByName("endTurnButton").setEnabled(true);
             getEntityByName("inventoryButton").setEnabled(true);

@@ -77,7 +77,7 @@ public class NewGameMenu extends MenuScene {
         ImGui.inputInt("Somme maximal à emprunter", maxBorrow,100);
         ImGui.inputInt("taux de remboursement de l'emprunt", percentDebt,10);
 
-        if (maxBorrow.get() < 100 || percentDebt.get()%10 != 0)
+        if (maxBorrow.get() < 100 || maxBorrow.get()%100 != 0 || maxBorrow.get()%10 != 0)
             maxBorrow.set(100);
 
         if (maxBorrow.get() > 500)
