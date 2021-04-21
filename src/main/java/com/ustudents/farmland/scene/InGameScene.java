@@ -852,7 +852,7 @@ public class InGameScene extends Scene {
             showMarket.set(false);
             showCaravan.set(false);
             showResearch.set(false);
-            showBank.set(true);
+            showBank.set(false);
         } else {
             getEntityByName("endTurnButton").setEnabled(true);
             getEntityByName("inventoryButton").setEnabled(true);
