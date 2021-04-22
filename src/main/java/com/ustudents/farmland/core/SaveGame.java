@@ -85,6 +85,9 @@ public class SaveGame {
     public Boolean startWithBots;
 
     @JsonSerializable
+    public Integer botDifficulty;
+
+    @JsonSerializable
     public List<Integer> deadPlayers;
 
     public String path;
@@ -95,7 +98,7 @@ public class SaveGame {
 
     public SaveGame(String name, String playerName, String playerVillageName, Color playerBannerColor, Color bracesColor,
                     Color shirtColor, Color hatColor, Color buttonColor, Vector2i mapSize, Long seed, int numberOfBots,
-                    int maxBorrow, int debtRate) {
+                    int maxBorrow, int debtRate, int difficulty) {
         mapWidth = mapSize.x;
         mapHeight = mapSize.y;
         this.seed = seed;
@@ -107,6 +110,7 @@ public class SaveGame {
 
         this.deadPlayers = new LinkedList<>();
         this.startWithBots = numberOfBots > 0;
+        this.botDifficulty = difficulty;
         this.turn = 0;
         this.turnTimePassed = 0;
         this.timePassed = 0;
