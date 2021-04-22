@@ -33,7 +33,7 @@ public class Bot {
                     if (rd < 5) {
                         buyLand(random);
                     } else {
-                        addItem(random);
+                        addItem(random,1);
                     }
                     sellInventory();
                     break;
@@ -43,7 +43,7 @@ public class Bot {
                         buyLand(random);
                     } else {
                         for (int i = 0; i < action; i++) {
-                            addItem(random);
+                            addItem(random,1);
                         }
                     }
                     sellInventory();
@@ -169,42 +169,6 @@ public class Bot {
         }
     }
 
-    public static void addItem(SeedRandom random) {
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
-
-        int i = 0;
-        while (true) {
-            if (i == 20) {
-                return;
-            }
-
-            List<Item> items = Farmland.get().getCurrentSave().getResourceDatabase().values().stream().filter(Objects::nonNull).collect(Collectors.toList());
-            Item item = items.get(random.generateInRange(0, items.size() - 1));
-
-            if (player.money < item.buyingValue) {
-                i++;
-                continue;
-            }
-
-            player.setMoney(player.money - item.buyingValue);
-            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), true);
-            Item clone = Item.clone(item);
-            assert clone != null;
-            clone.quantity = 1;
-
-            List<Cell> cells = player.getOwnedCellsWithNoItem();
-
-            if (!cells.isEmpty()) {
-                Cell cellWanted = cells.get(random.generateInRange(0, cells.size() - 1));
-                cellWanted.setItem(clone);
-                Farmland.get().getSceneManager().getCurrentScene().getEntityByName("map").getComponent(GridComponent.class).onItemUsed.dispatch();
-                break;
-            } else {
-                i++;
-            }
-        }
-    }
-
     public static void addItem(SeedRandom random,int nb) {
         Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
 
@@ -226,7 +190,7 @@ public class Bot {
             Item clone = Item.clone(item);
             assert clone != null;
             clone.quantity = nb;
-            fillTurnItemDataBasePerQuantity(item);
+            fillTurnItemDataBasePerQuantity(clone,true);
 
             List<Cell> cells = player.getOwnedCellsWithNoItem();
 
@@ -248,16 +212,16 @@ public class Bot {
 
         for(Item item: player.getAllItemOfSellInventory().values()){
             item.sellingValue = Farmland.get().getCurrentSave().getResourceDatabase().get(item.id).sellingValue;
-            fillTurnItemDataBasePerQuantity(item);
+            fillTurnItemDataBasePerQuantity(item,false);
             player.money += item.quantity * item.sellingValue;
         }
 
         player.clearSoldLists();
     }
 
-    private static void fillTurnItemDataBasePerQuantity(Item item){
+    private static void fillTurnItemDataBasePerQuantity(Item item, boolean buy){
         for(int i = 0; i < item.quantity; i++){
-            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), false);
+            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), buy);
         }
     }
 
