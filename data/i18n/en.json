@@ -29,7 +29,7 @@
     "caravans": "Caravans",
     "market": "Market",
     "inventory": "Inventory",
-    "endTurn": "End the round",
+    "endTurn": "End turn",
     "money": "Money: {}",
     "turnInfo": "Turn {} of {}",
     "timeRemaining": "Remaining time: {}",
