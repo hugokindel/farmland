@@ -38,7 +38,7 @@ public class Camera {
     private Matrix4f invertViewProjectionMatrix = new Matrix4f();
     private Vector4i viewportSize;
     private Vector2f mousePosition;
-    private boolean[] mouseDown = new boolean[3];
+    private boolean[] mouseDown = new boolean[8];
     private Vector2f normalizedDeviceCoordinates;
     private float minimalZoom;
     private float maximalZoom;
