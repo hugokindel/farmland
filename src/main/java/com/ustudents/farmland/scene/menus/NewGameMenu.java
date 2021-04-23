@@ -1,6 +1,7 @@
 package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -11,6 +12,7 @@ import com.ustudents.farmland.scene.InGameScene;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiDataType;
+import imgui.type.ImInt;
 import imgui.type.ImLong;
 import imgui.type.ImString;
 import org.joml.Vector2i;
@@ -22,11 +24,18 @@ public class NewGameMenu extends MenuScene {
     ImString saveName = new ImString();
     ImString playerName = new ImString();
     ImString villageName = new ImString();
-    float[] color = {1, 0, 0, 1};
+    float[] bannerColor = {1, 0, 0, 1};
+    float[] bracesColor = {0.7098f, 0.2745f, 0.3921f, 1f};
+    float[] shirtColor = {0.2627f, 0.5607f, 0.4392f, 1f};
+    float[] hatColor = {0.7098f, 0.2745f, 0.3921f, 1f};
+    float[] buttonsColor = {0.9843f, 0.7764f, 0.2117f, 1f};
     int[] size = {16, 16};
     ImLong seed = new ImLong(System.currentTimeMillis());
     List<String> errors = new ArrayList<>();
     int[] numberOfBots = new int[1];
+    int[] difficulty = {1};
+    ImInt percentDebt = new ImInt(10);
+    ImInt maxBorrow = new ImInt(100);
 
     @Override
     public void initialize() {
@@ -52,7 +61,7 @@ public class NewGameMenu extends MenuScene {
 
     @Override
     public void renderImGui() {
-        ImGuiUtils.setNextWindowWithSizeCentered(550, 300, ImGuiCond.Appearing);
+        ImGuiUtils.setNextWindowWithSizeCentered(850, 400, ImGuiCond.Appearing);
         ImGui.begin(Resources.getLocalizedText(Resources.getLocalizedText("newGame")));
 
         ImGui.text(Resources.getLocalizedText("newGameDescription"));
@@ -60,9 +69,28 @@ public class NewGameMenu extends MenuScene {
         ImGui.inputText(Resources.getLocalizedText("ngPlayerName"), playerName);
         ImGui.inputText(Resources.getLocalizedText("ngVillageName"), villageName);
         ImGui.colorEdit4(Resources.getLocalizedText("ngBannerColor"), color);
+        ImGui.colorEdit4("Couleur de votre combinaison à bretelles", bracesColor);
+        ImGui.colorEdit4("Couleur de votre chemise", shirtColor);
+        ImGui.colorEdit4("Couleur de votre chapeau", hatColor);
+        ImGui.colorEdit4("Couleur de vos boutons de bretelles", buttonsColor);
         ImGui.inputInt2(Resources.getLocalizedText("ngMapSize"), size);
         ImGui.inputScalar(Resources.getLocalizedText("ngMapSeed"), ImGuiDataType.S64, seed);
         ImGui.sliderInt(Resources.getLocalizedText("ngNumBots"), numberOfBots, 0, 3);
+        ImGui.sliderInt("difficulté des robots",difficulty,0,3);
+        ImGui.inputInt("Somme maximal à emprunter", maxBorrow,100);
+        ImGui.inputInt("taux de remboursement de l'emprunt", percentDebt,10);
+
+        if (maxBorrow.get() < 100 || maxBorrow.get()%100 != 0 || maxBorrow.get()%10 != 0)
+            maxBorrow.set(100);
+
+        if (maxBorrow.get() > 500)
+            maxBorrow.set(500);
+
+        if (percentDebt.get() < 10 || percentDebt.get()%10 != 0)
+            percentDebt.set(10);
+
+        if (percentDebt.get() > 30)
+            percentDebt.set(30);
 
         if (ImGui.button(Resources.getLocalizedText("return"))) {
             SceneManager.get().goBack();
@@ -90,7 +118,26 @@ public class NewGameMenu extends MenuScene {
             }
 
             if (errors.isEmpty()) {
-                Save save = new Save(saveName.get(), playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3]), new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0]);
+                Color braces = new Color(bracesColor);
+                Color shirt = new Color(shirtColor);
+                Color hat = new Color(hatColor);
+                Color buttons = new Color(buttonsColor);
+
+                if (isColorClose(shirtColor, bracesColor)) {
+                    braces.contrast(10);
+                }
+
+                if (isColorClose(shirtColor, buttonsColor)) {
+                    buttons.contrast(10);
+                }
+
+                if (isColorClose(bracesColor, buttonsColor)) {
+                    buttons.contrast(10);
+                }
+
+                Save save = new Save(saveName.get(), playerName.get(), villageName.get(),
+                        new Color(bannerColor), braces, shirt, hat, buttons,
+                        new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0], maxBorrow.get(), percentDebt.get(),difficulty[0]);
 
                 Farmland.get().getSaves().put(save.name, save);
                 Farmland.get().loadSave(save.name);
@@ -107,5 +154,9 @@ public class NewGameMenu extends MenuScene {
         }
 
         ImGui.end();
+    }
+
+    public boolean isColorClose(float[] color1, float[] color2) {
+        return new Color(color1).isCloseTo(new Color(color2));
     }
 }

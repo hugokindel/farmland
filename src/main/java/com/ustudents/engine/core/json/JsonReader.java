@@ -276,6 +276,7 @@ public class JsonReader {
      */
     private Object parseNumber() throws IOException {
         StringBuilder contentBuilder = new StringBuilder(new String(new char[] {currentCharacter}));
+
         while (is(next(), digits, '-', '.', 'E')) {
             contentBuilder.append(currentCharacter);
         }

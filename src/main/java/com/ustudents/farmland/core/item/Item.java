@@ -22,7 +22,10 @@ public class Item {
     public Integer initValue;
 
     @JsonSerializable
-    public Integer value;
+    public Integer buyingValue;
+
+    @JsonSerializable
+    public Integer sellingValue;
 
     @JsonSerializable
     public String texture;
@@ -45,7 +48,8 @@ public class Item {
         this.id = from.id;
         this.name = from.name;
         this.initValue = from.initValue;
-        this.value = from.value;
+        this.buyingValue = from.buyingValue;
+        this.sellingValue = from.sellingValue;
         this.texture = from.texture;
         this.quantity = from.quantity;
         this.spritesheet = from.spritesheet;

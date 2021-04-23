@@ -35,6 +35,18 @@ public class SpriteComponent extends Component implements RenderableComponent {
     }
 
     /**
+     * Class constructor.
+     *
+     * @param sprite The sprite.
+     * @param tint The color tint.
+     */
+    public SpriteComponent(Sprite sprite, Color tint) {
+        this.sprite = sprite;
+        this.tint = tint;
+        this.origin = new Vector2f();
+    }
+
+    /**
      * Sets the new sprite.
      *
      * @param sprite The sprite.

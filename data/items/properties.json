@@ -2,7 +2,8 @@
   {
     "name": "Enclos",
     "id": "fence",
-    "value" : 10,
+    "buyingValue" : 50,
+    "sellingValue" : 50,
     "maintenanceCost" : 0,
     "initLevel" : 0,
     "actualLevel" : 0,
@@ -16,7 +17,8 @@
   {
     "name": "Champ",
     "id": "crop",
-    "value" : 10,
+    "buyingValue" : 50,
+    "sellingValue" : 50,
     "maintenanceCost" : 0,
     "initLevel" : 0,
     "actualLevel" : 0,

@@ -59,9 +59,20 @@ public class ResultMenu extends MenuScene {
                 if ("replay".equals(buttonIds[j])) {
                     Player player = currentPlayer;
                     Vector2i vector = new Vector2i(this.currentSave.mapWidth,this.currentSave.mapHeight);
+/*
                     Farmland.get().loadSave(currentSave.name);
                     Farmland.get().replaceLoadedSave(new Save(this.currentSave.name, player.name, player.village.name, player.color, vector, this.currentSave.seed, this.currentSave.players.size()-1));
                     Farmland.get().writeAllSaves();
+                    
+                    Farmland.get().saveId = currentSave.name;
+                    Farmland.get().setCurrentSave(new SaveGame(this.currentSave.name, player.name, player.village.name,
+                            player.bannerColor, player.avatar.bracesColor, player.avatar.shirtColor,
+                            player.avatar.hatColor, player.avatar.buttonsColor, vector, this.currentSave.seed,
+                            this.currentSave.players.size()-1, this.currentSave.maxBorrow,
+                            this.currentSave.debtRate, this.currentSave.botDifficulty));
+                    Farmland.get().saveSavedGames();
+
+// TODO: FIX RESULT
                     changeScene(new InGameScene());
                 }else{
                     Farmland.get().getSaves().remove(currentSave.name);

@@ -13,6 +13,8 @@ import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
+import com.ustudents.farmland.core.item.Animal;
+import com.ustudents.farmland.core.item.Crop;
 import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.actions.EndTurnMessage;
@@ -22,9 +24,7 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @JsonSerializable
 @SuppressWarnings("unchecked")
@@ -41,6 +41,9 @@ public class Save {
     public Integer turnTimePassed;
 
     @JsonSerializable
+    public Integer timePassed;
+
+    @JsonSerializable
     public Integer mapWidth;
 
     @JsonSerializable
@@ -50,13 +53,34 @@ public class Save {
     public Long seed;
 
     @JsonSerializable
+    public Integer maxBorrow;
+
+    @JsonSerializable
+    public Integer debtRate;
+
+    @JsonSerializable
     public Integer currentPlayerId;
 
     @JsonSerializable
     public List<Player> players;
 
     @JsonSerializable
-    public List<Item> itemsTurn;
+    public List<Item> buyTurnItemDataBase;
+
+    @JsonSerializable
+    public List<List<Item>> buyItemDatabasePerTurn;
+
+    @JsonSerializable
+    public List<Item> sellTurnItemDataBase;
+
+    @JsonSerializable
+    public List<List<Item>> sellItemDatabasePerTurn;
+
+    @JsonSerializable
+    public List<Crop> cropItem;
+
+    @JsonSerializable
+    public List<Animal> animalItem;
 
     @JsonSerializable
     public List<List<Cell>> cells;
@@ -65,8 +89,12 @@ public class Save {
     public Integer capacity;
 
     public Integer localPlayerId;
-
+    
+    @JsonSerializable
     public Boolean startWithBots;
+
+    @JsonSerializable
+    public Integer botDifficulty;
 
     @JsonSerializable
     public List<Integer> deadPlayers;
@@ -79,11 +107,11 @@ public class Save {
 
     public SeedRandom random;
 
-    public Save() {
-        this.itemsTurn = new ArrayList<>();
-    }
+    public Save() {}
 
-    public Save(String name, Vector2i mapSize, Long seed, int numberOfBots) {
+    public Save(String name, String playerName, String playerVillageName, Color playerBannerColor, Color bracesColor,
+                    Color shirtColor, Color hatColor, Color buttonColor, Vector2i mapSize, Long seed, int numberOfBots,
+                    int maxBorrow, int debtRate, int difficulty) {
         mapWidth = mapSize.x;
         mapHeight = mapSize.y;
         this.seed = seed;
@@ -96,13 +124,34 @@ public class Save {
         this.deadPlayers = new LinkedList<>();
         this.startWithBots = numberOfBots > 0;
         this.capacity = 1;
+        this.botDifficulty = difficulty;
         this.turn = 0;
         this.turnTimePassed = 0;
+        this.timePassed = 0;
         this.currentPlayerId = 0;
         this.name = name;
         this.players = new ArrayList<>();
-        this.itemsTurn = new ArrayList<>();
         this.random = new SeedRandom(seed);
+        this.players.add(new Player(playerName, playerVillageName, playerBannerColor, bracesColor, shirtColor, hatColor, buttonColor,"Humain"));
+        this.players.get(0).village.position = new Vector2f(5 + (mapSize.x / 2) * 24, 5 + (mapSize.y / 2) * 24);
+        this.maxBorrow = maxBorrow;
+        this.debtRate = debtRate;
+
+        cropItem = new ArrayList<>();
+        animalItem = new ArrayList<>();
+        for(Item item: Farmland.get().getItemDatabase().values()){
+            if(item instanceof Crop){
+                cropItem.add((Crop) Crop.clone(item));
+            }else if(item instanceof Animal){
+                animalItem.add((Animal) Animal.clone(item));
+            }
+
+        }
+
+        buyItemDatabasePerTurn = new ArrayList<>();
+        buyTurnItemDataBase = new ArrayList<>();
+        sellItemDatabasePerTurn = new ArrayList<>();
+        sellTurnItemDataBase = new ArrayList<>();
 
         this.cells = new ArrayList<>();
 
@@ -169,8 +218,20 @@ public class Save {
         this.cells.get(villagePosition.x).get(villagePosition.y + 1).setOwned(true, playerId);
         this.cells.get(villagePosition.x + 1).get(villagePosition.y + 1).setOwned(true, playerId);
     }
+    
+    public Map<String, Item> getResourceDatabase(){
+        Map<String, Item> ResourceDatabase = new HashMap<>();
+        for(Item item: cropItem){
+            ResourceDatabase.put(item.id,item);
+        }
 
-    private int getMaxSavedGamesId() {
+        for(Item item: animalItem){
+            ResourceDatabase.put(item.id,item);
+        }
+        return ResourceDatabase;
+    }
+
+    private int getMaxSavedGamesId(){
         File savedDir = new File(Resources.getSavesDirectoryName());
         File[] list = savedDir.listFiles();
         int max = -1;
@@ -217,7 +278,7 @@ public class Save {
         return players.get(currentPlayerId);
     }
 
-    private Color generateColor(SeedRandom random, List<Color> usedColors) {
+    private Color generateColor(SeedRandom random, List<Color> usedColors, boolean needsToBeUnique) {
         while (true) {
             boolean unique = true;
 
@@ -227,15 +288,19 @@ public class Save {
             color.b = random.generateInRange(0, 255) / 255.0f;
             color.a = random.generateInRange(0, 255) / 255.0f;
 
-            for (Color usedColor : usedColors) {
-                if (color.equals(usedColor)) {
-                    unique = false;
-                    break;
+            if (needsToBeUnique) {
+                for (Color usedColor : usedColors) {
+                    if (color.equals(usedColor)) {
+                        unique = false;
+                        break;
+                    }
                 }
-            }
 
-            if (unique) {
-                usedColors.add(color);
+                if (unique) {
+                    usedColors.add(color);
+                    return color;
+                }
+            } else {
                 return color;
             }
         }
@@ -269,7 +334,7 @@ public class Save {
     public boolean PlayerMeetCondition() {
         for(Player player : players) {
             if(player.type == Player.Type.Human) {
-                return player.money <= 0 || player.money >= 1000;
+                return player.money <= 0 || (player.money >= 1000 && player.debtMoney <= 0);
             }
         }
 
@@ -279,7 +344,7 @@ public class Save {
     public boolean BotMeetCondition() {
         for(Player player : players) {
             if(player.type == Player.Type.Robot && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
-                if (player.money <= 0 || player.money >= 1000){
+                if (player.money <= 0 || (player.money >= 1000 && player.debtMoney <= 0)){
                     return true;
                 }
             }
@@ -352,5 +417,48 @@ public class Save {
         }
 
         return i;
+    }
+    
+    public void fillBuyItemDataBasePerTurn(){
+        buyItemDatabasePerTurn.add(List.copyOf(buyTurnItemDataBase));
+        sellItemDatabasePerTurn.add(List.copyOf(sellTurnItemDataBase));
+    }
+
+    public void fillTurnItemDataBase(Item item, boolean buyInventory){
+        assert(item != null);
+        if(buyInventory){
+            boolean contains = false;
+            for(Item i: buyTurnItemDataBase){
+                if(item.id.equals(i.id)){
+                    contains = true;
+                    i.quantity += 1;
+                }
+            }
+            if(!contains){
+                Item clone = Item.clone(item);
+                assert clone != null;
+                clone.quantity = 1;
+                buyTurnItemDataBase.add(clone);
+            }
+        }else{
+            boolean contains = false;
+            for(Item i: sellTurnItemDataBase){
+                if(item.id.equals(i.id)){
+                    contains = true;
+                    i.quantity += 1;
+                }
+            }
+            if(!contains){
+                Item clone = Item.clone(item);
+                assert clone != null;
+                clone.quantity = 1;
+                sellTurnItemDataBase.add(clone);
+            }
+        }
+    }
+
+    public void clearTurnItemDatabase(){
+        buyTurnItemDataBase.clear();
+        sellTurnItemDataBase.clear();
     }
 }

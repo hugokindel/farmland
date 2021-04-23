@@ -3,6 +3,8 @@ package com.ustudents.farmland.scene.menus;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.core.window.Window;
+import com.ustudents.engine.graphic.Color;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.scene.InGameScene;
 

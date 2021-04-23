@@ -5,6 +5,7 @@ import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.scene.component.graphics.RectangleComponent;
+import com.ustudents.engine.scene.component.graphics.SpriteComponent;
 import com.ustudents.engine.scene.ecs.Entity;
 import com.ustudents.engine.scene.ecs.Registry;
 import com.ustudents.engine.scene.component.core.TransformComponent;
@@ -18,6 +19,7 @@ import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.joml.Vector4f;
 import org.w3c.dom.Text;
 
 @SuppressWarnings("unchecked")
@@ -114,11 +116,17 @@ public class GuiBuilder {
 
         public Vector2f scale;
 
+        public Vector4f region;
+
         public Origin origin;
 
         public Anchor anchor;
 
         public boolean applyGlobalScaling;
+
+        public int zIndex;
+
+        public Color tint;
 
         public ImageData(Texture texture) {
             this.texture = texture;
@@ -128,6 +136,9 @@ public class GuiBuilder {
             this.position = new Vector2f();
             this.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
             this.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
+            this.region = new Vector4f(0, 0, texture.getWidth(), texture.getHeight());
+            this.zIndex = 0;
+            this.tint = Color.WHITE;
         }
     }
 
@@ -280,8 +291,8 @@ public class GuiBuilder {
         imagePosition(data, transformComponent);
         Window.get().getSizeChanged().add((dataType, windowData) -> imagePosition(data, transformComponent));
         image.addComponent(transformComponent);
-        image.addComponent(new UiRendererComponent());
-        image.addComponent(new TextureComponent(data.texture));
+        image.addComponent(new UiRendererComponent(data.zIndex));
+        image.addComponent(new SpriteComponent(new Sprite(data.texture, data.region), data.tint));
     }
 
     public void addRectangle(RectangleData data) {

@@ -1,6 +1,7 @@
 package com.ustudents.farmland.core.player;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
@@ -11,6 +12,8 @@ import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.network.actions.*;
+import com.ustudents.farmland.core.system.Caravan;
+import com.ustudents.farmland.core.system.Research;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -41,7 +44,16 @@ public class Player {
     public Type type;
 
     @JsonSerializable
-    public Color color;
+    public Integer loanMoney;
+
+    @JsonSerializable
+    public Integer debtMoney;
+
+    @JsonSerializable
+    public Color bannerColor;
+
+    @JsonSerializable
+    public Avatar avatar;
 
     @JsonSerializable
     public Vector2f position;
@@ -50,78 +62,182 @@ public class Player {
     public String selectedItemId;
 
     @JsonSerializable
-    public Map<String, Item> buyInventory;
+    public List<Crop> boughtCrops;
 
     @JsonSerializable
-    public Map<String, Item> sellInventory;
+    public List<Animal> boughtAnimals;
 
-    public List<Pair<Integer,Integer>> caravans;
+    @JsonSerializable
+    public List<Crop> soldCrops;
 
-    public Triplet<Integer,Integer,Integer> farmerResearch;
+    @JsonSerializable
+    public List<Animal> soldAnimals;
 
-    public Triplet<Integer,Integer,Integer> breederResearch;
+    @JsonSerializable
+    public List<Caravan> caravanList;
+
+    @JsonSerializable
+    public List<Research> researchList;
 
     public EventDispatcher moneyChanged = new EventDispatcher();
 
     public static int DEFAULT_CELL_PRICE = 25;
 
     public Player() {
-        this.buyInventory = new HashMap<>();
-        this.sellInventory = new HashMap<>();
     }
 
-    public Player(String name, String villageName, Color color, Type type) {
+    public Player(String name, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, String typeOfPlayer) {
         this.name = name;
         this.village = new Village(villageName);
-        this.color = color;
+        this.bannerColor = bannerColor;
+        this.avatar = new Avatar(bracesColor, shirtColor, hatColor, buttonColor);
         this.money = 500;
         this.type = type;
-        this.buyInventory = new HashMap<>();
-        this.sellInventory = new HashMap<>();
-        this.caravans = new ArrayList<>();
-        this.farmerResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
-        this.breederResearch = new Triplet<Integer, Integer, Integer>(10,1,0);
+        this.loanMoney = 0;
+        this.debtMoney = 0;
+        this.caravanList = new ArrayList<>();
+        this.researchList = new ArrayList<>();
+        this.researchList.add(new Research("Fermier"));
+        this.researchList.add(new Research("Eleveur"));
+        this.boughtCrops = new ArrayList<>();
+        this.boughtAnimals = new ArrayList<>();
+        this.soldCrops = new ArrayList<>();
+        this.soldAnimals = new ArrayList<>();
     }
 
     public void addToInventory(Item item, String name) {
         if(name.equals("Buy")){
-            if (!buyInventory.containsKey(item.id)) {
-                buyInventory.put(item.id, Item.clone(item));
+            boolean contains = false;
+            List<? extends Item> items = getGoodList(item, true);
+            assert items != null;
+            for(Item i: items){
+                if(item.id.equals(i.id)){
+                    contains = true;
+                    i.quantity += 1;
+                }
             }
-
-            buyInventory.get(item.id).quantity++;
+            if(!contains){
+                if(item instanceof Crop){
+                    Crop clone = (Crop) Crop.clone(item);
+                    assert clone != null;
+                    clone.quantity = 1;
+                    boughtCrops.add(clone);
+                }else if(item instanceof Animal){
+                    Animal clone = (Animal) Animal.clone(item);
+                    assert clone != null;
+                    clone.quantity = 1;
+                    boughtAnimals.add(clone);
+                }
+            }
         }else{
-            if (!sellInventory.containsKey(item.id)) {
-                sellInventory.put(item.id, Item.clone(item));
+            boolean contains = false;
+            List<? extends Item> items = getGoodList(item, false);
+            assert items != null;
+            for(Item i: items){
+                if(item.id.equals(i.id)){
+                    contains = true;
+                    i.quantity += 1;
+                }
             }
+            if(!contains){
+                if(item instanceof Crop){
+                    Crop clone = (Crop) Crop.clone(item);
+                    assert clone != null;
+                    clone.quantity = 1;
+                    soldCrops.add(clone);
+                }else if(item instanceof Animal){
+                    Animal clone = (Animal) Animal.clone(item);
+                    assert clone != null;
+                    clone.quantity = 1;
+                    soldAnimals.add(clone);
+                }
+            }
+        }
+    }
 
-            sellInventory.get(item.id).quantity++;
+    private List<? extends Item> getGoodList(Item item, boolean bought){
+        if(item instanceof Crop){
+            return (bought)? boughtCrops: soldCrops;
+        }else if(item instanceof Animal){
+            return (bought)? boughtAnimals: soldAnimals;
+        }
+        return null;
+    }
+
+    public Map<String, Item> getAllItemOfBoughtInventory(){
+        Map<String, Item> playerInventory = new HashMap<>();
+        for(Item item: boughtCrops){
+            playerInventory.put(item.id,item);
+        }
+        for(Item item: boughtAnimals){
+            playerInventory.put(item.id,item);
+        }
+        return playerInventory;
+    }
+
+    public Map<String, Item> getAllItemOfSellInventory(){
+        Map<String, Item> playerInventory = new HashMap<>();
+        for(Item item: soldCrops){
+            playerInventory.put(item.id,item);
+        }
+
+        for(Item item: soldAnimals){
+            playerInventory.put(item.id,item);
+        }
+        return playerInventory;
+    }
+
+    public void clearSoldLists(){
+        soldCrops.clear();
+        soldAnimals.clear();
+    }
+
+    public void deleteFromSoldInventory(Item item, boolean isAnimal){
+        if (isAnimal){
+            Animal todelete = null;
+            for(Item i: soldAnimals){
+                if(item.id.equals(i.id)){
+                    i.quantity -= 1;
+                    if (i.quantity <= 0){
+                        todelete = (Animal)i;
+                    }
+                }
+            }
+            if(todelete != null){
+                soldAnimals.remove(todelete);
+            }
+        } else {
+            Crop todelete = null;
+            for(Item i: soldCrops){
+                if(item.id.equals(i.id)){
+                    i.quantity -= 1;
+                    if (i.quantity <= 0){
+                        todelete = (Crop)i;
+                    }
+                }
+            }
+            if(todelete != null){
+                soldCrops.remove(todelete);
+            }
         }
     }
 
     public boolean deleteFromInventory(Item item, String name) {
-        if(name.equals("Buy")){
-            if (buyInventory.containsKey(item.id)) {
-                if (buyInventory.get(item.id).quantity >= 2) {
-                    buyInventory.get(item.id).quantity--;
-                    return false;
-                } else {
-                    buyInventory.remove(item.id);
-                    return true;
+            List<? extends Item> items = getGoodList(item, (name.contains("Buy")));
+            Item todelete = null;
+            assert items != null;
+            for(Item i: items){
+                if(item.id.equals(i.id)){
+                    i.quantity -= 1;
+                    if (i.quantity <= 0){
+                        todelete = i;
+                    }
                 }
             }
 
-        }else{
-            if (sellInventory.containsKey(item.id)) {
-                if (sellInventory.get(item.id).quantity >= 2) {
-                    sellInventory.get(item.id).quantity--;
-                    return false;
-                } else {
-                    sellInventory.remove(item.id);
-                    return true;
-                }
+            if(todelete != null){
+                items.remove(todelete);
             }
-        }
         return false;
     }
 
@@ -135,12 +251,12 @@ public class Player {
     }
 
     public Item getItemFromInventory(String id) {
-        return buyInventory.getOrDefault(id, null);
+        return getAllItemOfBoughtInventory().getOrDefault(id, null);
     }
 
     public Item getCurrentItemFromInventory() {
-        if (selectedItemId != null) {
-            return buyInventory.get(selectedItemId);
+        if (selectedItemID != null) {
+            return getAllItemOfBoughtInventory().get(selectedItemID);
         } else {
             return null;
         }

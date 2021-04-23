@@ -1,5 +1,6 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import org.joml.Vector4f;
 
@@ -43,6 +44,13 @@ public class Color {
         this.g = g;
         this.b = b;
         this.a = a;
+    }
+
+    public Color(float[] color) {
+        this.r = color[0];
+        this.g = color[1];
+        this.b = color[2];
+        this.a = color[3];
     }
 
     public Color(int rgba) {
@@ -105,5 +113,85 @@ public class Color {
                g.floatValue() == color.g.floatValue() &&
                b.floatValue() == color.b.floatValue() &&
                a.floatValue() == color.a.floatValue();
+    }
+
+    // Implementation from: https://css-tricks.com/converting-color-spaces-in-javascript/
+    public ColorHsla toHsla() {
+        float r = Math.round(this.r * 255f) / 255f;
+        float g = Math.round(this.g * 255f) / 255f;
+        float b = Math.round(this.b * 255f) / 255f;
+        float cmin = Math.min(r, Math.min(g, b));
+        float cmax = Math.max(r, Math.max(g, b));
+        float delta = cmax - cmin;
+        float h = 0;
+        float s = 0;
+        float l = 0;
+
+        if (delta == 0) {
+            h = 0;
+        } else if (cmax == r) {
+            h = ((g - b) / delta) % 6;
+        } else if (cmax == g) {
+            h = (b - r) / delta + 2;
+        } else {
+            h = (r - g) / delta + 4;
+        }
+
+        h = Math.round(h * 60);
+
+        if (h < 0) {
+            h += 360;
+        }
+
+        l = (cmax + cmin) / 2;
+        s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+
+        return new ColorHsla(h, s, l, a);
+    }
+
+    public void darken(int percent) {
+        set(toHsla().darken(percent).toRgba());
+    }
+
+    public void lighten(int percent) {
+        set(toHsla().lighten(percent).toRgba());
+    }
+
+    public void contrast(int percent) {
+        if (isDark()) {
+            lighten(percent);
+        } else {
+            darken(percent);
+        }
+    }
+
+    public boolean isDark() {
+        return getDarkness() > 0.5f;
+    }
+
+    public boolean isLight() {
+        return getDarkness() < 0.5;
+    }
+
+    public float getDarkness() {
+        return 1f - (0.299f * r + 0.587f * g + 0.114f * b);
+    }
+
+    public boolean isCloseTo(Color color) {
+        float r = Math.abs(this.r - color.r);
+        float g = Math.abs(this.g - color.g);
+        float b = Math.abs(this.b - color.b);
+
+        return !(r + g + b > 0.02);
+    }
+
+    @Override
+    public String toString() {
+        return "Color{" +
+                "r=" + r +
+                ", g=" + g +
+                ", b=" + b +
+                ", a=" + a +
+                '}';
     }
 }
