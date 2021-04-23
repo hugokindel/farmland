@@ -684,9 +684,7 @@ public class InGameScene extends Scene {
                     human = player;
                 }
             }
-            if (getGame().isConnectedToServer()) {
-                getGame().disconnectFromServer();
-            }
+
             ResultMenu resultMenu = new ResultMenu();
             resultMenu.currentPlayer = human;
             resultMenu.currentSave = Farmland.get().getLoadedSave();

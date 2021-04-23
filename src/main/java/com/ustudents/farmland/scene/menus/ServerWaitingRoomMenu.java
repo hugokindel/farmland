@@ -16,8 +16,6 @@ public class ServerWaitingRoomMenu extends MenuScene {
         boolean localServerExists = Farmland.get().getClient().isAlive();
         GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
 
-        Out.println(informations);
-
         int capacity = informations.getCapacity();
         int connectedPlayers = informations.getNumberOfConnectedPlayers();
 
