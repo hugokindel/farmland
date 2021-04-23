@@ -86,7 +86,7 @@
     "resellPrice": "Resale price: ",
     "products": "In-store items: \n\n",
     "seedOf": "Seed of ",
-    "selected": "\n\nSelected: ",
+    "selected": "\n\nSelected: {} (x{})",
     "chicken": "Chicken",
     "cow": "Cow",
     "goat": "Goat",

@@ -86,7 +86,7 @@
 		"resellPrice": "Prix de revente : ",
 		"products": "Objets en magasin : \n\n",
 		"seedOf": "Graine de ",
-		"selected": "\n\nSélectionné : ",
+		"selected": "\n\nSélectionné : {} (x{})",
 		"chicken": "Poulet",
 		"cow": "Vache",
 		"goat": "Chèvre",
