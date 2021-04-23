@@ -27,7 +27,7 @@ public class SettingsMenu extends MenuScene {
         buttonNames[1] = Resources.getLocalizedText("changeLanguage", Resources.getLocalizedText("language"));
         buttonIds[1] = "changeLanguage";
 
-        buttonNames[2] = "Retour";
+        buttonNames[2] = Resources.getLocalizedText("return");
         buttonIds[2] = "goBack";
 
         EventListener[] eventListeners = new EventListener[buttonNames.length];

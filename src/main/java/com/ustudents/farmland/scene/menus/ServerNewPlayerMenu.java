@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -49,27 +50,27 @@ public class ServerNewPlayerMenu extends MenuScene {
     @Override
     public void renderImGui() {
         ImGuiUtils.setNextWindowWithSizeCentered(550, 300, ImGuiCond.Appearing);
-        ImGui.begin("Création du joueur " + (playerId + 1));
+        ImGui.begin(Resources.getLocalizedText("createPlayer") + (playerId + 1));
 
-        ImGui.text("Entrez les informations de la sauvegarde:");
-        ImGui.inputText("Votre nom de joueur", playerName);
-        ImGui.inputText("Votre nom de village", villageName);
-        ImGui.colorEdit4("Couleur de votre bannière", color);
+        ImGui.text(Resources.getLocalizedText("newGameDescription"));
+        ImGui.inputText(Resources.getLocalizedText("ngPlayerName"), playerName);
+        ImGui.inputText(Resources.getLocalizedText("ngVillageName"), villageName);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngBannerColor"), color);
 
-        if (ImGui.button("Retour")) {
+        if (ImGui.button(Resources.getLocalizedText("return"))) {
             SceneManager.get().goBack();
         }
 
         ImGui.sameLine();
 
-        if (ImGui.button("Créer")) {
+        if (ImGui.button(Resources.getLocalizedText("create"))) {
             errors.clear();
 
             if (playerName.isEmpty()) {
-                errors.add("Veuillez entrer un nom de joueur !");
+                errors.add(Resources.getLocalizedText("playerName"));
             }
             if (villageName.isEmpty()) {
-                errors.add("Veuillez entrer un nom de village !");
+                errors.add(Resources.getLocalizedText("villageName"));
             }
 
             if (errors.isEmpty()) {

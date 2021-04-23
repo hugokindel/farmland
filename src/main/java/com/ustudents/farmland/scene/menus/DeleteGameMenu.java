@@ -36,7 +36,7 @@ public class DeleteGameMenu extends MenuScene{
             i++;
         }
 
-        buttonNames[Farmland.get().getSaves().size()] = "Retour";
+        buttonNames[Farmland.get().getSaves().size()] = Resources.getLocalizedText("goBack");
         buttonIds[Farmland.get().getSaves().size()] = "back";
         eventListeners[buttonNames.length-1] = (dataType, data) -> {
             changeScene(new SingleplayerMenu());

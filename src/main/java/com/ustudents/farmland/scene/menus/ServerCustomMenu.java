@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Color;
@@ -47,29 +48,29 @@ public class ServerCustomMenu extends MenuScene {
     @Override
     public void renderImGui() {
         ImGuiUtils.setNextWindowWithSizeCentered(550, 300, ImGuiCond.Appearing);
-        ImGui.begin("Rechercher un serveur");
+        ImGui.begin(Resources.getLocalizedText("researchServer"));
 
-        ImGui.text("Entrez l'adresse ip et le port du serveur:");
+        ImGui.text(Resources.getLocalizedText("enterIp"));
         ImGui.pushItemWidth(-1);
         ImGui.inputText("##label", address);
         ImGui.popItemWidth();
-        ImGui.text("Exemple: 127.0.0.1:8533");
+        ImGui.text(Resources.getLocalizedText("exampleServer"));
 
-        if (ImGui.button("Retour")) {
+        if (ImGui.button(Resources.getLocalizedText("return"))) {
             SceneManager.get().goBack();
         }
 
         ImGui.sameLine();
 
-        if (ImGui.button("Rejoindre")) {
+        if (ImGui.button(Resources.getLocalizedText("joinServer"))) {
             errors.clear();
 
             if (address.isEmpty()) {
-                errors.add("Veuillez entrer une adresse et un port!");
+                errors.add(Resources.getLocalizedText("correctInfo"));
             }
 
             if (!address.isEmpty() && address.get().split(":").length != 2) {
-                errors.add("Veuillez entrer un format valide!");
+                errors.add(Resources.getLocalizedText("correctFormat"));
             }
 
             if (errors.isEmpty()) {
@@ -89,7 +90,7 @@ public class ServerCustomMenu extends MenuScene {
                 } else {
                     Farmland.get().clientServerIp = null;
                     Farmland.get().clientServerPort = 0;
-                    errors.add("Ce serveur ne répond pas");
+                    errors.add(Resources.getLocalizedText("serverNotOk"));
                 }
             }
         }

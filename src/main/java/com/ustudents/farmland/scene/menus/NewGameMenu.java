@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -52,40 +53,40 @@ public class NewGameMenu extends MenuScene {
     @Override
     public void renderImGui() {
         ImGuiUtils.setNextWindowWithSizeCentered(550, 300, ImGuiCond.Appearing);
-        ImGui.begin("Nouvelle partie");
+        ImGui.begin(Resources.getLocalizedText(Resources.getLocalizedText("newGame")));
 
-        ImGui.text("Entrez les informations de la sauvegarde:");
-        ImGui.inputText("Nom de la partie", saveName);
-        ImGui.inputText("Votre nom de joueur", playerName);
-        ImGui.inputText("Votre nom de village", villageName);
-        ImGui.colorEdit4("Couleur de votre bannière", color);
-        ImGui.inputInt2("Taille de la carte", size);
-        ImGui.inputScalar("Graine de la carte", ImGuiDataType.S64, seed);
-        ImGui.sliderInt("Nombre de robots", numberOfBots, 0, 3);
+        ImGui.text(Resources.getLocalizedText("newGameDescription"));
+        ImGui.inputText(Resources.getLocalizedText("ngName"), saveName);
+        ImGui.inputText(Resources.getLocalizedText("ngPlayerName"), playerName);
+        ImGui.inputText(Resources.getLocalizedText("ngVillageName"), villageName);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngBannerColor"), color);
+        ImGui.inputInt2(Resources.getLocalizedText("ngMapSize"), size);
+        ImGui.inputScalar(Resources.getLocalizedText("ngMapSeed"), ImGuiDataType.S64, seed);
+        ImGui.sliderInt(Resources.getLocalizedText("ngNumBots"), numberOfBots, 0, 3);
 
-        if (ImGui.button("Retour")) {
+        if (ImGui.button(Resources.getLocalizedText("return"))) {
             SceneManager.get().goBack();
         }
 
         ImGui.sameLine();
 
-        if (ImGui.button("Créer")) {
+        if (ImGui.button("create")) {
             errors.clear();
 
             if (saveName.isEmpty()) {
-                errors.add("Veuillez entrer un nom de partie !");
+                errors.add(Resources.getLocalizedText("saveName"));
             }
             if (playerName.isEmpty()) {
-                errors.add("Veuillez entrer un nom de joueur !");
+                errors.add(Resources.getLocalizedText("playerName"));
             }
             if (villageName.isEmpty()) {
-                errors.add("Veuillez entrer un nom de village !");
+                errors.add(Resources.getLocalizedText("villageName"));
             }
             if (size[0] < 16 || size[1] < 16) {
-                errors.add("Veuillez entrer une taille de carte valide (>= 16) !");
+                errors.add(Resources.getLocalizedText("correctSize"));
             }
             if (seed.get() <= 0) {
-                errors.add("Veuillez entrer une graine valide (> 0) !");
+                errors.add(Resources.getLocalizedText("correctSeed)"));
             }
 
             if (errors.isEmpty()) {
