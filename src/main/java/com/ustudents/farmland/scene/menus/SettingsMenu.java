@@ -27,7 +27,7 @@ public class SettingsMenu extends MenuScene {
         buttonNames[1] = Resources.getLocalizedText("changeLanguage", Resources.getLocalizedText("language"));
         buttonIds[1] = "changeLanguage";
 
-        buttonNames[2] = "Commandes";
+        buttonNames[2] = Resources.getLocalizedText("commands");
         buttonIds[2] = "commands";
 
         buttonNames[3] = "Retour";

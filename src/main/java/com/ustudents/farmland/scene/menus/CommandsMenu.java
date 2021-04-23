@@ -96,7 +96,7 @@ public class CommandsMenu extends MenuScene{
 
     private void addTextNearButtons(GuiBuilder guiBuilder, String action){
         if(action.equals("goUp")){
-            GuiBuilder.TextData goUp = new GuiBuilder.TextData("Avancer : ");
+            GuiBuilder.TextData goUp = new GuiBuilder.TextData(Resources.getLocalizedText("goUp"));
             goUp.id = action;
             goUp.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
             goUp.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
@@ -106,7 +106,7 @@ public class CommandsMenu extends MenuScene{
         }
 
         if(action.equals("goDown")){
-            GuiBuilder.TextData goDown = new GuiBuilder.TextData("Reculer : ");
+            GuiBuilder.TextData goDown = new GuiBuilder.TextData(Resources.getLocalizedText("goDown"));
             goDown.id = action;
             goDown.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
             goDown.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
@@ -116,7 +116,7 @@ public class CommandsMenu extends MenuScene{
         }
 
         if(action.equals("goLeft")){
-            GuiBuilder.TextData goLeft = new GuiBuilder.TextData("Aller à gauche : ");
+            GuiBuilder.TextData goLeft = new GuiBuilder.TextData(Resources.getLocalizedText("goLeft"));
             goLeft.id = action;
             goLeft.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
             goLeft.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
@@ -126,7 +126,7 @@ public class CommandsMenu extends MenuScene{
         }
 
         if(action.equals("goRight")){
-            GuiBuilder.TextData goRight = new GuiBuilder.TextData("Aller à droite : ");
+            GuiBuilder.TextData goRight = new GuiBuilder.TextData(Resources.getLocalizedText("goRight"));
             goRight.id = action;
             goRight.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
             goRight.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
@@ -136,7 +136,7 @@ public class CommandsMenu extends MenuScene{
         }
 
         if(action.equals("showTerritory")){
-            GuiBuilder.TextData showTerritory = new GuiBuilder.TextData("Voir le territoire :  ");
+            GuiBuilder.TextData showTerritory = new GuiBuilder.TextData(Resources.getLocalizedText("showTerritory"));
             showTerritory.id = action;
             showTerritory.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
             showTerritory.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
@@ -146,7 +146,7 @@ public class CommandsMenu extends MenuScene{
         }
 
         if(action.equals("putItem")){
-            GuiBuilder.TextData putItem = new GuiBuilder.TextData("Poser des items :  ");
+            GuiBuilder.TextData putItem = new GuiBuilder.TextData(Resources.getLocalizedText("putItem"));
             putItem.id = action;
             putItem.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
             putItem.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
@@ -156,7 +156,7 @@ public class CommandsMenu extends MenuScene{
         }
 
         if(action.equals("getItem")){
-            GuiBuilder.TextData getItem = new GuiBuilder.TextData("Récupérer des items :  ");
+            GuiBuilder.TextData getItem = new GuiBuilder.TextData(Resources.getLocalizedText("getItem"));
             getItem.id = action;
             getItem.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
             getItem.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
@@ -166,7 +166,7 @@ public class CommandsMenu extends MenuScene{
         }
 
         if(action.equals("debugMenu")){
-            GuiBuilder.TextData debugMenu = new GuiBuilder.TextData("Debug : ");
+            GuiBuilder.TextData debugMenu = new GuiBuilder.TextData(Resources.getLocalizedText("debugMenu"));
             debugMenu.id = action;
             debugMenu.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
             debugMenu.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
@@ -176,7 +176,7 @@ public class CommandsMenu extends MenuScene{
         }
 
         if(action.equals("showPerfomance")){
-            GuiBuilder.TextData showPerfomance = new GuiBuilder.TextData("Perfomance :  ");
+            GuiBuilder.TextData showPerfomance = new GuiBuilder.TextData(Resources.getLocalizedText("showPerformance"));
             showPerfomance.id = action;
             showPerfomance.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
             showPerfomance.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);

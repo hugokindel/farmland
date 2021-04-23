@@ -148,23 +148,9 @@ public class GLFWInput extends EmptyInput {
             keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
             keyStates[eventData.key] = eventData.action;
             keyPressedStates[eventData.key] = eventData.action;
-        });
-
-        Window.get().getKeyStateChanged().add((dataType, data) -> {
-            KeyStateChangedEvent eventData = (KeyStateChangedEvent) data;
             Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
             if(currentScene instanceof CommandsMenu){
-                //((CommandsMenu)currentScene).selectedKeyBind = eventData.key;
                 ((CommandsMenu)currentScene).selectNewBind(true, eventData.key);
-            }
-        });
-
-        Window.get().getMouseButtonStateChanged().add((dataType, data) -> {
-            MouseButtonStateChangedEvent eventData = (MouseButtonStateChangedEvent) data;
-            Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
-            if(currentScene instanceof CommandsMenu){
-                //((CommandsMenu)currentScene).selectedButtonBind = eventData.button;
-                ((CommandsMenu)currentScene).selectNewBind(false, eventData.button);
             }
         });
 
@@ -181,6 +167,10 @@ public class GLFWInput extends EmptyInput {
             mouseButtons[eventData.button] = (eventData.action != GLFW.GLFW_RELEASE);
             mouseStates[eventData.button] = eventData.action;
             mousePressedStates[eventData.button] = eventData.action;
+            Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
+            if(currentScene instanceof CommandsMenu){
+                ((CommandsMenu)currentScene).selectNewBind(false, eventData.button);
+            }
         });
 
         Window.get().getScrollMoved().add((dataType, data) -> {
