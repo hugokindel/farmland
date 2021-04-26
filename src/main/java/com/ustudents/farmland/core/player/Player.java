@@ -86,7 +86,7 @@ public class Player {
     public Player() {
     }
 
-    public Player(String name, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, String typeOfPlayer) {
+    public Player(String name, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, Type type) {
         this.name = name;
         this.village = new Village(villageName);
         this.bannerColor = bannerColor;

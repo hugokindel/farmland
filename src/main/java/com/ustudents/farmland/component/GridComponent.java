@@ -313,8 +313,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                     new Vector2f(
                             transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
                             transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
-            spriteData.tint = Farmland.get().getLoadedSave().players.get(ownderId).color;
-            spriteData.tint = Farmland.get().getCurrentSave().players.get(ownderId).bannerColor;
+            spriteData.tint = Farmland.get().getLoadedSave().players.get(ownderId).bannerColor;
             spriteData.zIndex = rendererComponent.zIndex + 3;
 
             spritebatch.drawSprite(spriteData);
