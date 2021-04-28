@@ -79,7 +79,7 @@ public class ResultMenu extends MenuScene {
                     if (getGame().isConnectedToServer()) {
                         getGame().disconnectFromServer();
                     }
-                    changeScene(new MainMenu());
+                    changeScene(new MainMenu());*/
                 }
             };
         }
@@ -92,11 +92,11 @@ public class ResultMenu extends MenuScene {
     /**
      * Allow to remove an outdated game saved.
      */
-    private void removeSavedGame(){
+    private void removeSavedGame() {
         String filePath = Resources.getSavesDirectoryName() + "/" + this.currentSave.path;
         if(!new File(filePath).exists())return;
         try{
-            Files.delete(Path.of(filePath));
+            Files.delete(new File(filePath).toPath());
         }catch (Exception e){
             e.printStackTrace();
         }

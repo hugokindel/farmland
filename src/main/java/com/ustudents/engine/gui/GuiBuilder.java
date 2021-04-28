@@ -3,24 +3,21 @@ package com.ustudents.engine.gui;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.graphic.imgui.annotation.Viewable;
-import com.ustudents.engine.scene.component.graphics.RectangleComponent;
-import com.ustudents.engine.scene.component.graphics.SpriteComponent;
-import com.ustudents.engine.scene.ecs.Entity;
-import com.ustudents.engine.scene.ecs.Registry;
-import com.ustudents.engine.scene.component.core.TransformComponent;
-import com.ustudents.engine.scene.component.graphics.NineSlicedSpriteComponent;
-import com.ustudents.engine.scene.component.graphics.TextureComponent;
-import com.ustudents.engine.scene.component.graphics.UiRendererComponent;
-import com.ustudents.engine.scene.component.gui.ButtonComponent;
-import com.ustudents.engine.scene.component.gui.TextComponent;
+import com.ustudents.engine.ecs.component.graphic.RectangleComponent;
+import com.ustudents.engine.ecs.component.graphic.SpriteComponent;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.Registry;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
+import com.ustudents.engine.ecs.component.graphic.NineSlicedSpriteComponent;
+import com.ustudents.engine.ecs.component.graphic.UiRendererComponent;
+import com.ustudents.engine.ecs.component.gui.ButtonComponent;
+import com.ustudents.engine.ecs.component.gui.TextComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
-import org.w3c.dom.Text;
 
 @SuppressWarnings("unchecked")
 public class GuiBuilder {

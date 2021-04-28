@@ -8,8 +8,8 @@ import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.scene.SceneManager;
-import com.ustudents.engine.scene.ecs.Component;
-import com.ustudents.engine.scene.ecs.Entity;
+import com.ustudents.engine.ecs.Component;
+import com.ustudents.engine.ecs.Entity;
 import com.ustudents.engine.graphic.Camera;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -269,9 +269,7 @@ public class ImGuiTools {
 
         try {
             for (Field field : fields) {
-                if (!field.canAccess(component)) {
-                    field.setAccessible(true);
-                }
+                field.setAccessible(true);
 
                 String name = field.getName();
                 Class<?> type = field.getType();

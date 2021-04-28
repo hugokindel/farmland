@@ -4,10 +4,10 @@ import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.scene.ecs.Entity;
-import com.ustudents.engine.scene.component.audio.SoundComponent;
-import com.ustudents.engine.scene.component.core.TransformComponent;
-import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.component.audio.SoundComponent;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
+import com.ustudents.engine.ecs.component.graphic.WorldRendererComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
@@ -107,7 +107,7 @@ public abstract class MenuScene extends Scene {
 
         if (canGoBack) {
             try {
-                GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("goBack"), (dataType, data) -> {
+                GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("return"), (dataType, data) -> {
                     try {
                         SceneManager.get().goBack();
                     } catch (Exception e) {

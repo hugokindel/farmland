@@ -187,10 +187,8 @@ public class Resources {
             }
 
             try {
-                String vertexShaderCode = Files.readString(
-                        Paths.get(getShadersDirectory() + "/" + fileName + ".vert"));
-                String fragmentShaderCode = Files.readString(
-                        Paths.get(getShadersDirectory() + "/" + fileName + ".frag"));
+                String vertexShaderCode = FileUtil.readFileToString(getShadersDirectory() + "/" + fileName + ".vert");
+                String fragmentShaderCode = FileUtil.readFileToString(getShadersDirectory() + "/" + fileName + ".frag");
                 shaders.put(fileName, new Shader(vertexShaderCode, fragmentShaderCode));
             } catch (Exception e) {
                 e.printStackTrace();

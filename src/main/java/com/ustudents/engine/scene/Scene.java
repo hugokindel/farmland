@@ -2,13 +2,13 @@ package com.ustudents.engine.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.window.Window;
-import com.ustudents.engine.scene.ecs.Entity;
-import com.ustudents.engine.scene.ecs.System;
-import com.ustudents.engine.scene.system.BehaviourSystem;
-import com.ustudents.engine.scene.system.WorldRenderSystem;
-import com.ustudents.engine.scene.system.UiRenderSystem;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.System;
+import com.ustudents.engine.ecs.system.BehaviourSystem;
+import com.ustudents.engine.ecs.system.WorldRenderSystem;
+import com.ustudents.engine.ecs.system.UiRenderSystem;
 import com.ustudents.engine.graphic.Spritebatch;
-import com.ustudents.engine.scene.ecs.Registry;
+import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.graphic.Camera;
 import org.joml.Vector2i;
 

@@ -4,17 +4,16 @@ import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.audio.SoundManager;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.scene.component.audio.SoundComponent;
-import com.ustudents.engine.scene.ecs.Entity;
+import com.ustudents.engine.ecs.component.audio.SoundComponent;
+import com.ustudents.engine.ecs.Entity;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.scene.InGameScene;
 
 public class SettingsMenu extends MenuScene {
     @Override
     public void initialize() {
         SoundManager currentSoundManager = Farmland.get().getSoundManager();
-        String[] buttonNames = new String[3];
-        String[] buttonIds = new String[3];
+        String[] buttonNames = new String[2];
+        String[] buttonIds = new String[2];
 
         if(currentSoundManager.getNoSound()){
             buttonNames[0] = Resources.getLocalizedText("activateSound");
@@ -26,9 +25,6 @@ public class SettingsMenu extends MenuScene {
 
         buttonNames[1] = Resources.getLocalizedText("changeLanguage", Resources.getLocalizedText("language"));
         buttonIds[1] = "changeLanguage";
-
-        buttonNames[2] = Resources.getLocalizedText("return");
-        buttonIds[2] = "goBack";
 
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
@@ -52,14 +48,11 @@ public class SettingsMenu extends MenuScene {
                         Resources.chooseNextLanguage();
                         changeScene(new SettingsMenu());
                         break;
-                    case "goBack":
-                        changeScene(new MainMenu());
-                        break;
                 }
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, true);
 
         super.initialize();
     }

@@ -131,9 +131,11 @@ public class GLFWInput extends EmptyInput {
     private void setupCallbacks() {
         Window.get().getKeyStateChanged().add((dataType, data) -> {
             KeyStateChangedEvent eventData = (KeyStateChangedEvent) data;
-            keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
-            keyStates[eventData.key] = eventData.action;
-            keyPressedStates[eventData.key] = eventData.action;
+            if (eventData.key != -1) {
+                keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
+                keyStates[eventData.key] = eventData.action;
+                keyPressedStates[eventData.key] = eventData.action;
+            }
         });
 
         Window.get().getCursorMoved().add((dataType, data) -> {

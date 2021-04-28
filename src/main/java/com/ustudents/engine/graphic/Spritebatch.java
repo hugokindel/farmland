@@ -8,6 +8,7 @@ import org.joml.*;
 import org.lwjgl.BufferUtils;
 
 import java.lang.Math;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
@@ -247,7 +248,7 @@ public class Spritebatch {
                         putElement(data.get(i));
                     }
 
-                    glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.flip());
+                    glBufferSubData(GL_ARRAY_BUFFER, 0, (FloatBuffer) vertices.flip());
 
                     Texture lastTexture = data.get(0).texture;
                     int lastType = data.get(0).getType();

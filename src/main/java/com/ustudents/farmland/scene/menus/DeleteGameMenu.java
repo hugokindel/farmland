@@ -5,6 +5,7 @@ import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.Save;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -23,7 +24,7 @@ public class DeleteGameMenu extends MenuScene{
             eventListeners[i] = (dataType, data) -> {
                 Farmland.get().loadSave(Farmland.get().getSaveWithFilename(buttonIds[j].replace("Button", "")).name);
                 try {
-                    Files.delete(Path.of(Resources.getSavesDirectoryName() + "/" + save.path));
+                    Files.delete(new File(Resources.getSavesDirectoryName() + "/" + save.path).toPath());
                 }catch (Exception e){
                     e.printStackTrace();
                 }

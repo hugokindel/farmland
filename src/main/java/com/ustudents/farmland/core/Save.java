@@ -16,6 +16,7 @@ import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.Animal;
 import com.ustudents.farmland.core.item.Crop;
 import com.ustudents.farmland.core.item.Item;
+import com.ustudents.farmland.core.player.Bot;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.actions.EndTurnMessage;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
@@ -94,7 +95,7 @@ public class Save {
     public Boolean startWithBots;
 
     @JsonSerializable
-    public Integer botDifficulty;
+    public Bot.Difficulty difficulty;
 
     @JsonSerializable
     public List<Integer> deadPlayers;
@@ -109,9 +110,7 @@ public class Save {
 
     public Save() {}
 
-    public Save(String name, String playerName, String playerVillageName, Color playerBannerColor, Color bracesColor,
-                    Color shirtColor, Color hatColor, Color buttonColor, Vector2i mapSize, Long seed, int numberOfBots,
-                    int maxBorrow, int debtRate, int difficulty) {
+    public Save(String name, Vector2i mapSize, Long seed, int numberOfBots, int maxBorrow, int debtRate, Bot.Difficulty difficulty) {
         mapWidth = mapSize.x;
         mapHeight = mapSize.y;
         this.seed = seed;
@@ -124,7 +123,7 @@ public class Save {
         this.deadPlayers = new LinkedList<>();
         this.startWithBots = numberOfBots > 0;
         this.capacity = 1;
-        this.botDifficulty = difficulty;
+        this.difficulty = difficulty;
         this.turn = 0;
         this.turnTimePassed = 0;
         this.timePassed = 0;
@@ -132,8 +131,6 @@ public class Save {
         this.name = name;
         this.players = new ArrayList<>();
         this.random = new SeedRandom(seed);
-        this.players.add(new Player(playerName, playerVillageName, playerBannerColor, bracesColor, shirtColor, hatColor, buttonColor,"Humain"));
-        this.players.get(0).village.position = new Vector2f(5 + (mapSize.x / 2) * 24, 5 + (mapSize.y / 2) * 24);
         this.maxBorrow = maxBorrow;
         this.debtRate = debtRate;
 
@@ -180,7 +177,10 @@ public class Save {
         List<Vector2i> usedLocations = new ArrayList<>();
         usedLocations.add(new Vector2i(mapSize.x / 2 - 1, mapSize.y / 2 - 1));
         for (int i = 0; i < numberOfBots; i++) {
-            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1), generateColor(random, usedColors), Player.Type.Robot));
+            this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1),
+                    generateColor(random, usedColors), generateColor(random, new ArrayList<>()),
+                    generateColor(random, new ArrayList<>()), generateColor(random, new ArrayList<>()),
+                    generateColor(random, new ArrayList<>()), Player.Type.Robot));
             Vector2i villagePosition = generateMapLocation(random, usedLocations);
             this.players.get(i).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
             this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i);
@@ -197,9 +197,9 @@ public class Save {
         }
     }
 
-    public Save(String name, String playerName, String playerVillageName, Color playerColor, Vector2i mapSize, Long seed, int numberOfBots) {
-        this(name, mapSize, seed, numberOfBots);
-        addPlayer(playerName, playerVillageName, playerColor, Player.Type.Human);
+    public Save(String name, String playerName, String playerVillageName, Color playerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, Vector2i mapSize, Long seed, int numberOfBots, int maxBorrow, int debtRate, Bot.Difficulty difficulty) {
+        this(name, mapSize, seed, numberOfBots, maxBorrow, debtRate, difficulty);
+        addPlayer(playerName, playerVillageName, playerColor, bracesColor, shirtColor, hatColor, buttonColor, Player.Type.Human);
     }
 
     @JsonSerializableConstructor
@@ -208,9 +208,9 @@ public class Save {
         deadPlayers = new ArrayList<>();
     }
 
-    public void addPlayer(String playerName, String playerVillageName, Color playerColor, Player.Type type) {
+    public void addPlayer(String name, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, Player.Type type) {
         int playerId = getAvailableHumanId();
-        this.players.add(playerId, new Player(playerName, playerVillageName, playerColor, type));
+        this.players.add(playerId, new Player(name, villageName, bannerColor, bracesColor, shirtColor, hatColor, buttonColor, type));
         Vector2i villagePosition = generateMapLocation(random, getUsedLocations());
         this.players.get(playerId).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
         this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, playerId);
@@ -278,7 +278,7 @@ public class Save {
         return players.get(currentPlayerId);
     }
 
-    private Color generateColor(SeedRandom random, List<Color> usedColors, boolean needsToBeUnique) {
+    private Color generateColor(SeedRandom random, List<Color> usedColors) {
         while (true) {
             boolean unique = true;
 
@@ -288,19 +288,15 @@ public class Save {
             color.b = random.generateInRange(0, 255) / 255.0f;
             color.a = random.generateInRange(0, 255) / 255.0f;
 
-            if (needsToBeUnique) {
-                for (Color usedColor : usedColors) {
-                    if (color.equals(usedColor)) {
-                        unique = false;
-                        break;
-                    }
+            for (Color usedColor : usedColors) {
+                if (color.equals(usedColor)) {
+                    unique = false;
+                    break;
                 }
+            }
 
-                if (unique) {
-                    usedColors.add(color);
-                    return color;
-                }
-            } else {
+            if (unique) {
+                usedColors.add(color);
                 return color;
             }
         }
@@ -365,8 +361,8 @@ public class Save {
         List<Color> colors = new ArrayList<>();
 
         for (Player player : players) {
-            if (!colors.contains(player.color)) {
-                colors.add(player.color);
+            if (!colors.contains(player.bannerColor)) {
+                colors.add(player.bannerColor);
             }
         }
 
@@ -420,8 +416,8 @@ public class Save {
     }
     
     public void fillBuyItemDataBasePerTurn(){
-        buyItemDatabasePerTurn.add(List.copyOf(buyTurnItemDataBase));
-        sellItemDatabasePerTurn.add(List.copyOf(sellTurnItemDataBase));
+        buyItemDatabasePerTurn.add(new ArrayList<>(buyTurnItemDataBase));
+        sellItemDatabasePerTurn.add(new ArrayList<>(sellTurnItemDataBase));
     }
 
     public void fillTurnItemDataBase(Item item, boolean buyInventory){

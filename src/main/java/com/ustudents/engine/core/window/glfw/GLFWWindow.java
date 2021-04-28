@@ -47,7 +47,12 @@ public class GLFWWindow extends EmptyWindow {
         this.size = size;
         this.glslVersion = "";
 
-        GLFWErrorCallback.createPrint(System.err).set();
+        glfwSetErrorCallback(new GLFWErrorCallback() {
+            @Override
+            public void invoke(int error, long description) {
+                Out.println(error + ": " + description);
+            }
+        });
 
         if (!glfwInit()) {
             String errorMessage = "Unable to initialize glfw!";

@@ -31,6 +31,8 @@ public class Player {
         Robot
     }
 
+    public static final Color DEFAULT_BANNER_COLOR = new Color(1f, 0f, 0f, 1f);
+
     @JsonSerializable
     public String name;
 
@@ -255,8 +257,8 @@ public class Player {
     }
 
     public Item getCurrentItemFromInventory() {
-        if (selectedItemID != null) {
-            return getAllItemOfBoughtInventory().get(selectedItemID);
+        if (selectedItemId != null) {
+            return getAllItemOfBoughtInventory().get(selectedItemId);
         } else {
             return null;
         }
@@ -355,11 +357,11 @@ public class Player {
 
     public void buyItem(Item item, int quantity) {
         if (Game.get().hasAuthority()) {
-            setMoney(money - (item.value * quantity));
+            setMoney(money - (item.buyingValue * quantity));
 
             for (int i = 0; i < quantity; i++) {
                 addToInventory(item, "Buy");
-                Farmland.get().getLoadedSave().itemsTurn.add(item);
+                Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(Farmland.get().getLoadedSave().buyItemDatabasePerTurn.size() - 1).add(item);
             }
 
             Farmland.get().serverBroadcastSave();
@@ -371,8 +373,8 @@ public class Player {
     public void sellItem(String itemId, int quantity) {
         if (Game.get().hasAuthority()) {
             for (int i = 0; i < quantity; i++) {
-                setMoney(money + (int)(sellInventory.get(itemId).value/1.5));
-                deleteFromInventory(sellInventory.get(itemId), "Sell");
+                setMoney(money + (int)(getItemFromInventory(itemId).sellingValue/1.5));
+                deleteFromInventory(getItemFromInventory(itemId), "Sell");
             }
 
             Farmland.get().serverBroadcastSave();
@@ -395,7 +397,7 @@ public class Player {
 
     public void placeSelectedItem(Vector2i position) {
         if (Game.get().hasAuthority()) {
-            Item selectedItem = buyInventory.get(selectedItemId);
+            Item selectedItem = getItemFromInventory(selectedItemId);
             Item selectedItemClone = Item.clone(selectedItem);
             assert selectedItemClone != null;
             selectedItemClone.quantity = 1;

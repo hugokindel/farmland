@@ -3,9 +3,9 @@ package com.ustudents.engine.scene;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.scene.ecs.Component;
-import com.ustudents.engine.scene.ecs.Entity;
-import com.ustudents.engine.scene.ecs.Registry;
+import com.ustudents.engine.ecs.Component;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.Registry;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.utility.TypeUtil;
 

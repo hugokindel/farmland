@@ -209,6 +209,6 @@ public class Texture {
     }
 
     public static ByteBuffer byteArrayToBuffer(byte[] array) {
-        return ByteBuffer.allocateDirect(array.length).order(ByteOrder.nativeOrder()).put(array).flip();
+        return (ByteBuffer) ByteBuffer.allocateDirect(array.length).order(ByteOrder.nativeOrder()).put(array).flip();
     }
 }

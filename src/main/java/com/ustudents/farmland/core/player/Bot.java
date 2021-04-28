@@ -3,7 +3,6 @@ package com.ustudents.farmland.core.player;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.item.Animal;
-import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.system.Caravan;
 import com.ustudents.farmland.core.system.Research;
@@ -12,22 +11,28 @@ import com.ustudents.farmland.core.item.Item;
 import com.ustudents.farmland.scene.InGameScene;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Bot {
+    public enum Difficulty {
+        Easy,
+        Normal,
+        Hard,
+        Impossible
+    }
+
     public static void playTurn() {
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
         // TODO: seed
 
-        if (!Farmland.get().getCurrentSave().deadPlayers.contains(player.getId())) {
+        if (!Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
 
             SeedRandom random = new SeedRandom();
 
-            switch (Farmland.get().getCurrentSave().botDifficulty) {
-                case 0:
+            switch (Farmland.get().getLoadedSave().difficulty) {
+                case Easy:
                     int rd = random.generateInRange(0, 20);
                     if (rd < 5) {
                         buyLand(random);
@@ -36,7 +41,7 @@ public class Bot {
                     }
                     sellInventory();
                     break;
-                case 1:
+                case Normal:
                     int action = makeChoice();
                     if (action == 0) {
                         buyLand(random);
@@ -47,7 +52,7 @@ public class Bot {
                     }
                     sellInventory();
                     break;
-                case 2:
+                case Hard:
                     int action2 = makeChoice();
                     if (action2 == 0) {
                         int choice = random.generateInRange(0, 10);
@@ -62,7 +67,7 @@ public class Bot {
                     exportInventory();
                     sellInventory();
                     break;
-                case 3:
+                case Impossible:
                     Random rand = new Random();
                     boolean cantPayDebt = false;
                     if (player.debtMoney == 0 && rand.nextInt(100) <= 50) {
@@ -95,7 +100,7 @@ public class Bot {
     }
 
     public static void upgradeResearch(){
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         List<Cell> cells = player.getOwnedCells();
         if (!cells.isEmpty()) {
@@ -177,7 +182,7 @@ public class Bot {
                 return;
             }
 
-            List<Item> items = Farmland.get().getCurrentSave().getResourceDatabase().values().stream().filter(Objects::nonNull).collect(Collectors.toList());
+            List<Item> items = Farmland.get().getLoadedSave().getResourceDatabase().values().stream().filter(Objects::nonNull).collect(Collectors.toList());
             Item item = items.get(random.generateInRange(0, items.size() - 1));
 
             if (player.money < item.buyingValue*nb) {
@@ -207,10 +212,10 @@ public class Bot {
     }
 
     public static void sellInventory(){
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         for(Item item: player.getAllItemOfSellInventory().values()){
-            item.sellingValue = Farmland.get().getCurrentSave().getResourceDatabase().get(item.id).sellingValue;
+            item.sellingValue = Farmland.get().getLoadedSave().getResourceDatabase().get(item.id).sellingValue;
             fillTurnItemDataBasePerQuantity(item,false);
             player.money += item.quantity * item.sellingValue;
         }
@@ -220,37 +225,37 @@ public class Bot {
 
     private static void fillTurnItemDataBasePerQuantity(Item item, boolean buy){
         for(int i = 0; i < item.quantity; i++){
-            Farmland.get().getCurrentSave().fillTurnItemDataBase(Item.clone(item), buy);
+            Farmland.get().getLoadedSave().fillTurnItemDataBase(Item.clone(item), buy);
         }
     }
 
     public static void botTakesOutALoan(){
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         Random rand = new Random();
-        int maxBorrow = Farmland.get().getCurrentSave().maxBorrow;
+        int maxBorrow = Farmland.get().getLoadedSave().maxBorrow;
         int randValue = rand.nextInt(maxBorrow - maxBorrow/10);
         player.money += randValue;
         player.loanMoney = randValue + (int)(randValue*0.03f);
         player.debtMoney += randValue + (int)(randValue*0.03f);
-        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).onSelectedItemOrMoneyChanged();
-        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).leaderBoardUpdate();
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateMoneyItemLabel();
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateLeaderboard();
     }
 
     public static void payDebt(){
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         Random rand = new Random();
         int debt = player.debtMoney;
         int randValue = rand.nextInt(debt);
         player.money -= randValue;
         player.debtMoney -= randValue;
-        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).onSelectedItemOrMoneyChanged();
-        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).leaderBoardUpdate();
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateMoneyItemLabel();
+        ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateLeaderboard();
     }
 
     public static void exportInventory() {
-        Player player = Farmland.get().getCurrentSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         for (Item item : player.getAllItemOfSellInventory().values()) {
             int itemQuantity = item.quantity;

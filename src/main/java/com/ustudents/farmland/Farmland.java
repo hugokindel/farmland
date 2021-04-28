@@ -7,11 +7,10 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
-import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.core.Save;
-import com.ustudents.farmland.core.ServerConfig;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.player.Avatar;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.scene.menus.MainMenu;
@@ -41,7 +40,7 @@ public class Farmland extends Game {
     // SERVER SPECIFIC
     public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
 
-    public ServerConfig serverConfig;
+    public FarmlandServerConfig serverConfig;
 
     // CLIENT SPECIFIC
     public AtomicInteger clientPlayerId = new AtomicInteger(0);
@@ -217,9 +216,9 @@ public class Farmland extends Game {
 
     private void readServerConfig() {
         if (new File(Resources.getDataDirectory() + "/server.json").exists()) {
-            serverConfig = Json.deserialize(Resources.getDataDirectory() + "/server.json", ServerConfig.class);
+            serverConfig = Json.deserialize(Resources.getDataDirectory() + "/server.json", FarmlandServerConfig.class);
         } else {
-            serverConfig = new ServerConfig("Mon serveur", 1);
+            serverConfig = new FarmlandServerConfig("Mon serveur", 1);
         }
     }
 
@@ -310,12 +309,15 @@ public class Farmland extends Game {
     private void loadOrCreateServerSave() {
         if (!saves.containsKey("save-server.json")) {
             Save save = new Save(serverConfig.name, new Vector2i(16, 16),
-                    System.currentTimeMillis(), serverConfig.numberOfBots);
+                    System.currentTimeMillis(), serverConfig.numberOfBots, serverConfig.maximumLoanValue,
+                    serverConfig.debtRate, serverConfig.difficulty);
             save.path = "save-server.json";
             save.capacity = serverConfig.capacity;
 
             for (int i = 0; i < save.capacity; i++) {
-                save.addPlayer("", "", Color.RED, Player.Type.Undefined);
+                save.addPlayer("", "", Player.DEFAULT_BANNER_COLOR, Avatar.DEFAULT_BRACES_COLOR,
+                        Avatar.DEFAULT_SHIRT_COLOR, Avatar.DEFAULT_HAT_COLOR, Avatar.DEFAULT_BUTTONS_COLOR,
+                        Player.Type.Undefined);
             }
 
             saves.put("save-server.json", save);

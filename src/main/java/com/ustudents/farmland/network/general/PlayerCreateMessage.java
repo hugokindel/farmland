@@ -56,7 +56,7 @@ public class PlayerCreateMessage extends Message {
 
         currentSave.players.get(playerId).name = getPlayerName();
         currentSave.players.get(playerId).village.name = getVillageName();
-        currentSave.players.get(playerId).color = getBannerColor();
+        currentSave.players.get(playerId).bannerColor = getBannerColor();
         currentSave.players.get(playerId).type = Player.Type.Human;
 
         PlayerAddMessage message = new PlayerAddMessage(playerId);
