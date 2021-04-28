@@ -14,7 +14,6 @@ version = "1.0"
 repositories {
     // Maven repository.
     mavenCentral()
-    jcenter()
 }
 
 val os: OperatingSystem = OperatingSystem.current()
