@@ -83,8 +83,8 @@ public class Farmland extends Game {
         readServerConfig();
         server.getClientDisconnectedDispatcher().add((dataType, data) -> {
             if (serverPlayerIdPerClientId.containsKey(data.clientId)) {
-                Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Robot;
-                Farmland.get().getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
+                getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Robot;
+                getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
                 serverPlayerIdPerClientId.remove(data.clientId);
                 server.broadcast(new LoadSaveResponse(getLoadedSave()));
             }
@@ -156,7 +156,7 @@ public class Farmland extends Game {
 
     public void replaceLoadedSave(Save save, int playerId) {
         saves.put(loadedSaveId, save);
-        Farmland.get().getLoadedSave().localPlayerId = playerId;
+        getLoadedSave().localPlayerId = playerId;
         loadedSaveChanged.dispatch();
     }
 
@@ -165,14 +165,16 @@ public class Farmland extends Game {
     }
 
     public void loadSave(String saveId, int playerId) {
-        Farmland.get().loadedSaveId = saveId;
-        Farmland.get().getLoadedSave().localPlayerId = playerId;
+        loadedSaveId = saveId;
+        getLoadedSave().localPlayerId = playerId;
         loadedSaveChanged.dispatch();
     }
 
     public void unloadSave() {
-        Farmland.get().loadedSaveId = null;
-        loadedSaveChanged.dispatch();
+        if (loadedSaveId != null) {
+            loadedSaveId = null;
+            loadedSaveChanged.dispatch();
+        }
     }
 
     public Map<String, Item> getItemDatabase() {
@@ -210,7 +212,7 @@ public class Farmland extends Game {
 
     public void serverBroadcastSave() {
         if (Game.get().getNetMode() == NetMode.DedicatedServer) {
-            Farmland.get().getServer().broadcast(new LoadSaveResponse(Farmland.get().getLoadedSave()));
+            getServer().broadcast(new LoadSaveResponse(getLoadedSave()));
         }
     }
 
