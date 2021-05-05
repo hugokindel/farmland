@@ -87,7 +87,7 @@ public abstract class Game extends Runnable {
     protected final SceneManager sceneManager = new SceneManager();
 
     /** The sound manager (handle every sound sources). */
-    private final SoundManager soundManager;
+    private final SoundManager soundManager = new SoundManager();
 
     /** The ImGui manager (handle most debugging tools). */
     protected final ImGuiManager imGuiManager = new ImGuiManager();
@@ -133,8 +133,6 @@ public abstract class Game extends Runnable {
     /** Class constructor. */
     public Game() {
         game = this;
-
-        soundManager = new SoundManager();
     }
 
     /**

@@ -1128,15 +1128,17 @@ public class InGameScene extends Scene {
     }
 
     public void updateMoneyItemLabel() {
-        String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
-        String text = Resources.getLocalizedText("money", Farmland.get().getLoadedSave().getLocalPlayer().money);
-        if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
-            text += Resources.getLocalizedText("selected", Farmland.get().getItem(selectedId).name, Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity);
+        if (Game.get().getNetMode() == NetMode.Client || Game.get().getNetMode() == NetMode.Standalone) {
+            String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
+            String text = Resources.getLocalizedText("money", Farmland.get().getLoadedSave().getLocalPlayer().money);
+            if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
+                text += Resources.getLocalizedText("selected", Farmland.get().getItem(selectedId).name, Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity);
+            }
+            String text2 = "    " + Farmland.get().getLoadedSave().getCurrentPlayer().money;
+            getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
+            getEntityByName("MoneyLabel").getComponent(TextComponent.class).setText(text2);
+            moneyUpdate();
         }
-        String text2 = "    " + Farmland.get().getLoadedSave().getCurrentPlayer().money;
-        getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
-        getEntityByName("MoneyLabel").getComponent(TextComponent.class).setText(text2);
-        moneyUpdate();
     }
 
     public void moneyUpdate(){
