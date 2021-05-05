@@ -23,9 +23,15 @@ import java.util.Map;
 import java.util.Objects;
 
 public class CommandsMenu extends MenuScene{
+    int bindError;
 
-    /*public int selectedKeyBind;
-    public int selectedButtonBind;*/
+    public CommandsMenu(){
+        bindError = -1;
+    }
+
+    public CommandsMenu(int errorBind){
+        this.bindError = errorBind;
+    }
 
     @Override
     public void initialize() {
@@ -45,6 +51,8 @@ public class CommandsMenu extends MenuScene{
         showTextAndButton(guiBuilder, "getItem");
         showTextAndButton(guiBuilder, "debugMenu");
         showTextAndButton(guiBuilder, "showPerfomance");
+        if(bindError != -1)
+            displayBindError(guiBuilder);
         canGoBackButton(guiBuilder);
         reloadBindButton(guiBuilder);
 
@@ -300,12 +308,20 @@ public class CommandsMenu extends MenuScene{
     private String displayGoodKeyBind(int key){
         if(key >= 290 && key <= 302){
             return "F" + ((key%10) + 1);
-        }else if(key >= 32 && key <= 96 || key >= 320 && key <= 329) {
+        }else if(key >= 32 && key < 96 || key >= 320 && key <= 329) {
             return GLFW.glfwGetKeyName(key, GLFW.glfwGetKeyScancode(key));
         }else if(key == 341 || key == 345) {
-            return (key == 341) ? "LCtrl" : "RCtrl";
-        }else if(key == 342 || key == 346){
-            return (key == 342) ? "LAlt" : "RAlt";
+            if(key == 341)
+                return Resources.getLocalizedText("LCtrl");
+            else
+                return Resources.getLocalizedText("RCtrl");
+        }else if(key == 342 || key == 346) {
+            if (key == 342)
+                return Resources.getLocalizedText("LAlt");
+            else
+                return Resources.getLocalizedText("RAlt");
+        }else if(key == 96){
+            return Resources.getLocalizedText("GraveAccent");
         }else{
             return "[...]";
         }
@@ -313,13 +329,23 @@ public class CommandsMenu extends MenuScene{
 
     private String displayGoodMouseButtonBind(int mouseButton){
         if(mouseButton == 0)
-            return "Clique gauche";
+            return Resources.getLocalizedText("LMB");
         else if (mouseButton == 1)
-            return "Clique droit";
+            return Resources.getLocalizedText("RMB");
         else if (mouseButton > 1 && mouseButton <= 7)
-            return "Button " + (mouseButton + 1);
+            return Resources.getLocalizedText("Button") + (mouseButton + 1);
         else
             return "[...]";
+    }
+
+    private void displayBindError(GuiBuilder guiBuilder){
+        GuiBuilder.TextData bindError = new GuiBuilder.TextData(Resources.getLocalizedText("bindError" + this.bindError));
+        bindError.id = "bindError";
+        bindError.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Center);
+        bindError.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Center);
+        bindError.position = new Vector2f(0, -200);
+        bindError.color = Color.BLACK;
+        guiBuilder.addText(bindError);
     }
 
     private void canGoBackButton(GuiBuilder guiBuilder){
@@ -359,17 +385,25 @@ public class CommandsMenu extends MenuScene{
         String typeOfBind = typeOfBind(actionName);
         if (typeOfBind == null) return;
         Action currentAction = Resources.getConfig().commands.get(actionName);
+        Out.println(selectedBind);
         if(isKey){
-            if(selectedBind <= 0 || !bindNotAlreadyDefine(selectedBind, true)) return;
+            if(selectedBind <= 0 || !bindNotAlreadyDefine(selectedBind, true) || avoidKey(selectedBind)) {
+                changeScene(new CommandsMenu(2));
+                return;
+            }
         }else{
-            if(selectedBind < 0 || !bindNotAlreadyDefine(selectedBind, false)) return;
+            if(selectedBind < 0 || !bindNotAlreadyDefine(selectedBind, false)) {
+                changeScene(new CommandsMenu());
+                return;
+            }
         }
+        Out.println(selectedBind);
         currentAction.removeFirstBindInMapping();
         currentAction.addFirstBindInMapping(selectedBind, typeOfBind);
         changeScene(new CommandsMenu());
     }
 
-    private boolean bindNotAlreadyDefine(int key, boolean isKey){
+    public boolean bindNotAlreadyDefine(int key, boolean isKey){
         Map<String, Action> commands = Resources.getConfig().commands;
         for(String actionName: commands.keySet()){
             if(isKey == isKeyAction(actionName) && !commands.get(actionName).bindNotAlreadyDefine(key)){
@@ -379,7 +413,7 @@ public class CommandsMenu extends MenuScene{
         return true;
     }
 
-    private String searchAction(){
+    public String searchAction(){
         Map<String, Action> commands = Resources.getConfig().commands;
         for(String actionName: commands.keySet()){
             if(commands.get(actionName).firstBindInMappingIsRemoved()){
@@ -405,5 +439,7 @@ public class CommandsMenu extends MenuScene{
         return !(action.equals("putItem") || action.equals("getItem"));
     }
 
-
+    public boolean avoidKey(int key){
+        return displayGoodKeyBind(key).equals("[...]");
+    }
 }
