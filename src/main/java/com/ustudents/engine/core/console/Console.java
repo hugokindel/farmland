@@ -23,6 +23,7 @@ public class Console {
     private static final ImString userText = new ImString();
     private static final List<ConsolePrintData> inputs = new ArrayList<>();
     private static final List<ConsoleCommandData> listOfCommands = new ArrayList<>();
+    private static boolean forceFocus = false;
 
     private static Console instance;
 
@@ -102,8 +103,12 @@ public class Console {
 
             boolean reclaimFocus = false;
 
-            if (ImGui.inputText("Input", userText, ImGuiInputTextFlags.EnterReturnsTrue |
-                    ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.CallbackHistory)) {
+            if (forceFocus) {
+                reclaimFocus = true;
+                forceFocus = false;
+            }
+
+            if (ImGui.inputText("Input", userText, ImGuiInputTextFlags.EnterReturnsTrue)) {
                 if (!userText.get().isEmpty()) {
                     Out.printlnToFile("$> " + userText.get());
                     println("$> " + userText.get());
@@ -145,6 +150,10 @@ public class Console {
 
     public static void show() {
         showConsole.set(!showConsole.get());
+        userText.set("");
+        if (showConsole.get()) {
+            forceFocus = true;
+        }
     }
 
     public static boolean visible() {

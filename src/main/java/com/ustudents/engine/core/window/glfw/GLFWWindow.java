@@ -7,6 +7,8 @@ import com.ustudents.engine.core.console.Console;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
 import com.ustudents.engine.core.window.events.*;
 import com.ustudents.engine.graphic.RenderTarget;
+import com.ustudents.engine.graphic.imgui.ImGuiManager;
+import com.ustudents.engine.input.Key;
 import com.ustudents.engine.scene.SceneManager;
 import imgui.ImGui;
 import imgui.ImGuiIO;
@@ -268,6 +270,12 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetKeyCallback(windowHandle, new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    if (key != Key.GraveAccent) {
+                        Game.get().getImGuiManager().getImGuiGlfw().keyCallback(window, key, scancode, action, mods);
+                    }
+                }
+
                 keyStateChanged.dispatch(new KeyStateChangedEvent(key, scancode, action, mods));
             }
         });
@@ -275,6 +283,10 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetMouseButtonCallback(windowHandle, new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    Game.get().getImGuiManager().getImGuiGlfw().mouseButtonCallback(window, button, action, mods);
+                }
+
                 if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
                     final ImGuiIO io = ImGui.getIO();
 
@@ -298,6 +310,10 @@ public class GLFWWindow extends EmptyWindow {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
                 if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    Game.get().getImGuiManager().getImGuiGlfw().scrollCallback(window, xoffset, yoffset);
+                }
+
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
                     final ImGuiIO io = ImGui.getIO();
 
                     if (io.getWantCaptureMouse()) {
@@ -306,6 +322,26 @@ public class GLFWWindow extends EmptyWindow {
                 }
 
                 scrollMoved.dispatch(new ScrollMovedEvent(new Vector2f((float)xoffset, (float)yoffset)));
+            }
+        });
+
+        glfwSetCharCallback(windowHandle, new GLFWCharCallback() {
+            @Override
+            public void invoke(long window, int codepoint) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    if (codepoint != 178) { // GraveAccent
+                        Game.get().getImGuiManager().getImGuiGlfw().charCallback(window, codepoint);
+                    }
+                }
+            }
+        });
+
+        glfwSetMonitorCallback(new GLFWMonitorCallback() {
+            @Override
+            public void invoke(long monitor, int event) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    Game.get().getImGuiManager().getImGuiGlfw().monitorCallback(monitor, event);
+                }
             }
         });
     }

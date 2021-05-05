@@ -31,7 +31,7 @@ public class ImGuiManager {
 
         io.addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
         io.setConfigViewportsNoTaskBarIcon(true);
-        imGuiGlfw.init(windowHandle, true);
+        imGuiGlfw.init(windowHandle, false);
         imGuiGl3.init(glslVersion);
     }
 
