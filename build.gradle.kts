@@ -5,8 +5,6 @@ plugins {
     application
 }
 
-plugins.apply("java")
-
 // Project variables.
 group = "com.ustudents"
 version = "1.0"

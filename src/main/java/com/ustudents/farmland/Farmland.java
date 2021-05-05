@@ -14,6 +14,7 @@ import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Avatar;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
+import com.ustudents.farmland.scene.InGameScene;
 import com.ustudents.farmland.scene.menus.MainMenu;
 import org.joml.Vector2i;
 
@@ -89,6 +90,9 @@ public class Farmland extends Game {
                 getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
                 serverPlayerIdPerClientId.remove(data.clientId);
                 server.broadcast(new LoadSaveResponse(getLoadedSave()));
+                if (Game.get().getSceneManager().getCurrentScene() instanceof InGameScene && serverPlayerIdPerClientId.isEmpty()) {
+                    ((InGameScene)Game.get().getSceneManager().getCurrentScene()).setPause(true);
+                }
             }
         });
     }

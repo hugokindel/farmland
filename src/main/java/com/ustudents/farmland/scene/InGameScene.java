@@ -1203,6 +1203,7 @@ public class InGameScene extends Scene {
         this.inPause = inPause;
         pauseChanged.dispatch(new PauseChanged(inPause));
         ButtonComponent.disableInput = inPause;
+        Out.println("Pause changed: " + inPause);
     }
 
     public boolean getPause() {
