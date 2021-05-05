@@ -4,7 +4,7 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.console.Console;
+import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;

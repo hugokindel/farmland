@@ -1,8 +1,8 @@
 package com.ustudents.farmland;
 
-import com.ustudents.engine.core.console.Console;
-import com.ustudents.engine.core.console.ConsoleCommand;
-import com.ustudents.engine.core.console.ConsoleCommands;
+import com.ustudents.engine.graphic.imgui.console.Console;
+import com.ustudents.engine.graphic.imgui.console.ConsoleCommand;
+import com.ustudents.engine.graphic.imgui.console.ConsoleCommands;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.scene.menus.ResultMenu;
 

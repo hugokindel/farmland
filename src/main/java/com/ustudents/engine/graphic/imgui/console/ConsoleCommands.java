@@ -1,4 +1,4 @@
-package com.ustudents.engine.core.console;
+package com.ustudents.engine.graphic.imgui.console;
 
 public abstract class ConsoleCommands {
     @ConsoleCommand(description = "Shows this help message")

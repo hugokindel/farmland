@@ -1,10 +1,11 @@
-package com.ustudents.engine.graphic.imgui;
+package com.ustudents.engine.graphic.imgui.tools;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.audio.SoundSource;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Texture;
+import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.core.cli.option.Runnable;
 import com.ustudents.engine.scene.SceneManager;

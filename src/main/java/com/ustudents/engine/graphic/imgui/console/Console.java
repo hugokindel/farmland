@@ -1,8 +1,6 @@
-package com.ustudents.engine.core.console;
+package com.ustudents.engine.graphic.imgui.console;
 
-import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import imgui.ImGui;
@@ -12,7 +10,6 @@ import imgui.type.ImString;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Console {
@@ -108,7 +105,9 @@ public class Console {
                 forceFocus = false;
             }
 
-            if (ImGui.inputText("Input", userText, ImGuiInputTextFlags.EnterReturnsTrue)) {
+            ImGui.pushItemWidth(ImGui.getWindowWidth() - 30);
+
+            if (ImGui.inputText("", userText, ImGuiInputTextFlags.EnterReturnsTrue)) {
                 if (!userText.get().isEmpty()) {
                     Out.printlnToFile("$> " + userText.get());
                     println("$> " + userText.get());
@@ -122,13 +121,15 @@ public class Console {
                             e.printStackTrace();
                         }
                     } else {
-                        println(new ConsolePrintData("this is not a known command!", ConsolePrintData.Type.Error));
+                        printlnError("This is not a known command!");
                     }
 
                     userText.set("");
                     reclaimFocus = true;
                 }
             }
+
+            ImGui.popItemWidth();
 
             ImGui.setItemDefaultFocus();
 
@@ -164,24 +165,24 @@ public class Console {
         inputs.clear();
     }
 
-    public static void println(String text) {
-        inputs.add(new ConsolePrintData(text));
+    public static void println(ConsolePrintData data) {
+        inputs.add(data);
     }
 
-    public static void printlnWarning(String text) {
-        inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Warning));
+    public static void println(String text) {
+        inputs.add(new ConsolePrintData(text));
     }
 
     public static void printlnInfo(String text) {
         inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Info));
     }
 
-    public static void printlnError(String text) {
-        inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Error));
+    public static void printlnWarning(String text) {
+        inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Warning));
     }
 
-    public static void println(ConsolePrintData data) {
-        inputs.add(data);
+    public static void printlnError(String text) {
+        inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Error));
     }
 
     public static List<ConsoleCommandData> getListOfCommands() {

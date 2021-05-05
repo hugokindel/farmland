@@ -1,4 +1,4 @@
-package com.ustudents.engine.core.console;
+package com.ustudents.engine.graphic.imgui.console;
 
 import com.ustudents.engine.graphic.Color;
 

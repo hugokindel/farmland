@@ -1,4 +1,4 @@
-package com.ustudents.engine.core.console;
+package com.ustudents.engine.graphic.imgui.console;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
