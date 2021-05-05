@@ -502,6 +502,7 @@ public abstract class Game extends Runnable {
 
         if (Input.isKeyReleased(Key.GraveAccent) && Console.exists()) {
             Console.show();
+            window.actualizeCursorType();
         }
 
         if (getNetMode() == NetMode.DedicatedServer || getNetMode() == NetMode.ListenServer) {
@@ -540,7 +541,7 @@ public abstract class Game extends Runnable {
 
         window.swapBuffer();
 
-        if (!noImGui && (imGuiToolsEnabled || (SceneManager.getScene() != null && SceneManager.getScene().isForceImGuiEnabled()))) {
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
             sceneManager.renderImGui();
         }
 

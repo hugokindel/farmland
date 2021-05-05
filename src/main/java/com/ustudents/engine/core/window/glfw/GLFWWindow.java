@@ -162,7 +162,7 @@ public class GLFWWindow extends EmptyWindow {
 
     @Override
     public void actualizeCursorType() {
-        if (Game.get().isImGuiToolsEnabled()) {
+        if (Console.visible() || Game.get().isImGuiToolsEnabled()) {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
