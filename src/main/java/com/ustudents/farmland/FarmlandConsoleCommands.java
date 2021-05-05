@@ -1,15 +1,13 @@
 package com.ustudents.farmland;
 
-import com.ustudents.engine.Game;
 import com.ustudents.engine.core.console.Console;
 import com.ustudents.engine.core.console.ConsoleCommand;
-import com.ustudents.engine.core.console.ConsoleCommandData;
 import com.ustudents.engine.core.console.ConsoleCommands;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.scene.menus.ResultMenu;
 
 public class FarmlandConsoleCommands extends ConsoleCommands {
-    @ConsoleCommand(description = "Win the current game")
+    @ConsoleCommand(description = "Forcefully win the current game")
     public void win() {
         if (Farmland.get().getLoadedSave() == null) {
             Console.printlnWarning("You need to load a save to run this command!");
@@ -17,7 +15,7 @@ public class FarmlandConsoleCommands extends ConsoleCommands {
         }
 
         if (Farmland.get().isConnectedToServer()) {
-            Console.printlnWarning("You do not have the authority to use this command");
+            Console.printlnWarning("You do not have the authority to run this command!");
             return;
         }
 
