@@ -298,7 +298,7 @@ public class ImGuiTools {
                     value = field.get(component);
                 } else if (type.isAnnotationPresent(Viewable.class)) {
                     if (ImGui.treeNode(name)) {
-                        drawEditableFields(entityId, (Object)field.get(component));
+                        drawEditableFields(entityId, field.get(component));
                         ImGui.treePop();
                     }
                 }
