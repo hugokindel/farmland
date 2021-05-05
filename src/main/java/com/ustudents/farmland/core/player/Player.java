@@ -28,7 +28,7 @@ public class Player {
     public enum Type {
         Undefined,
         Human,
-        Robot
+        Bot
     }
 
     public static final Color DEFAULT_BANNER_COLOR = new Color(1f, 0f, 0f, 1f);

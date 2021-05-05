@@ -54,12 +54,12 @@ public class TurnTimerComponent extends BehaviourComponent {
         skipturn += dt;
 
         if (Game.get().hasAuthority()) {
-            if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().type == Player.Type.Robot) {
+            if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().type == Player.Type.Bot) {
                 Bot.playTurn();
                 skipmadepart1 = true;
             }
 
-            if (skipturn >= 2f && skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().type == Player.Type.Robot) {
+            if (skipturn >= 2f && skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().type == Player.Type.Bot) {
                 Farmland.get().getLoadedSave().endTurn();
             }
         }

@@ -5,7 +5,6 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.input.Input;
@@ -1028,7 +1027,7 @@ public class InGameScene extends Scene {
             for (int i = 0; i < Farmland.get().getLoadedSave().players.size(); i++) {
                 Player player = Farmland.get().getLoadedSave().players.get(i);
 
-                if (player.type == Player.Type.Robot && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
+                if (player.type == Player.Type.Bot && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
                     numberOfBots += 1;
 
                     if (player.money >= 1000) {

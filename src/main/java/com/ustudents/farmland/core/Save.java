@@ -25,6 +25,7 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.*;
 
 @JsonSerializable
@@ -45,10 +46,7 @@ public class Save {
     public Integer timePassed;
 
     @JsonSerializable
-    public Integer mapWidth;
-
-    @JsonSerializable
-    public Integer mapHeight;
+    public Vector2i mapSize;
 
     @JsonSerializable
     public Long seed;
@@ -111,8 +109,7 @@ public class Save {
     public Save() {}
 
     public Save(String name, Vector2i mapSize, Long seed, int numberOfBots, int maxBorrow, int debtRate, Bot.Difficulty difficulty) {
-        mapWidth = mapSize.x;
-        mapHeight = mapSize.y;
+        this.mapSize = mapSize;
         this.seed = seed;
 
         if (this.seed == null) {
@@ -180,7 +177,7 @@ public class Save {
             this.players.add(new Player("Robot " + (i + 1), "Village de Robot " + (i + 1),
                     generateColor(random, usedColors), generateColor(random, new ArrayList<>()),
                     generateColor(random, new ArrayList<>()), generateColor(random, new ArrayList<>()),
-                    generateColor(random, new ArrayList<>()), Player.Type.Robot));
+                    generateColor(random, new ArrayList<>()), Player.Type.Bot));
             Vector2i villagePosition = generateMapLocation(random, usedLocations);
             this.players.get(i).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
             this.cells.get(villagePosition.x).get(villagePosition.y).setOwned(true, i);
@@ -195,6 +192,13 @@ public class Save {
         if (Game.isDebugging()) {
             Out.printlnDebug("Savegame created.");
         }
+    }
+
+    public Save(Save save) {
+        this(save.name, save.players.get(0).name, save.players.get(0).village.name, save.players.get(0).bannerColor,
+                save.players.get(0).avatar.bracesColor, save.players.get(0).avatar.shirtColor,
+                save.players.get(0).avatar.hatColor, save.players.get(0).avatar.buttonsColor, save.mapSize, save.seed,
+                save.getNumberOfBots(), save.maxBorrow, save.debtRate, save.difficulty);
     }
 
     public Save(String name, String playerName, String playerVillageName, Color playerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, Vector2i mapSize, Long seed, int numberOfBots, int maxBorrow, int debtRate, Bot.Difficulty difficulty) {
@@ -339,7 +343,7 @@ public class Save {
 
     public boolean BotMeetCondition() {
         for(Player player : players) {
-            if(player.type == Player.Type.Robot && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
+            if(player.type == Player.Type.Bot && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
                 if (player.money <= 0 || (player.money >= 1000 && player.debtMoney <= 0)){
                     return true;
                 }
@@ -456,5 +460,31 @@ public class Save {
     public void clearTurnItemDatabase(){
         buyTurnItemDataBase.clear();
         sellTurnItemDataBase.clear();
+    }
+
+    public int getNumberOfBots() {
+        int i = 0;
+
+        for (Player player : players) {
+            if (player.type == Player.Type.Bot) {
+                i++;
+            }
+        }
+
+        return i;
+    }
+
+    public void removeFile() {
+        String filePath = Resources.getSavesDirectoryName() + "/" + path;
+
+        if(!new File(filePath).exists()) {
+            return;
+        }
+
+        try {
+            Files.delete(new File(filePath).toPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

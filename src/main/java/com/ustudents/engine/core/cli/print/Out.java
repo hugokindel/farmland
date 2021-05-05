@@ -268,7 +268,7 @@ public class Out {
      *
      * @param object The object (with toString()) to print.
      */
-    static void printToFile(Object object) {
+    public static void printToFile(Object object) {
         fileOutput.print(object);
     }
 
@@ -278,7 +278,7 @@ public class Out {
      *
      * @param object The object (with toString()) to print.
      */
-    static void printlnToFile(Object object) {
+    public static void printlnToFile(Object object) {
         fileOutput.println(object);
     }
 

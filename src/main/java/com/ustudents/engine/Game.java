@@ -7,6 +7,7 @@ import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.console.Console;
 import com.ustudents.engine.core.window.WindowSystemType;
 import com.ustudents.engine.core.window.glfw.GLFWWindow;
 import com.ustudents.engine.graphic.RenderSystemType;
@@ -499,6 +500,10 @@ public abstract class Game extends Runnable {
             }
         }
 
+        if (Input.isKeyReleased(Key.GraveAccent) && Console.exists()) {
+            Console.show();
+        }
+
         if (getNetMode() == NetMode.DedicatedServer || getNetMode() == NetMode.ListenServer) {
             if (!getServer().getMessagesToHandleOnMainThread().isEmpty()) {
                 Objects.requireNonNull(getServer().getMessagesToHandleOnMainThread().poll()).process();
@@ -526,7 +531,7 @@ public abstract class Game extends Runnable {
             resizeViewportAndCameras();
         }
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
             imGuiManager.startFrame();
         }
 
@@ -547,14 +552,20 @@ public abstract class Game extends Runnable {
             imGuiTools.renderImGui();
         }
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
+        if (!noImGui) {
+            if (Console.exists()) {
+                Console.renderImGui();
+            }
+        }
+
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
             imGuiManager.endFrame();
         }
 
         if (sceneManager.getCurrentScene() != null) {
             Spritebatch spritebatch = sceneManager.getCurrentScene().getSpritebatch();
 
-            if (noImGui || (!isImGuiToolsEnabled() && !SceneManager.getScene().isForceImGuiEnabled()) && sceneManager.getCurrentScene() != null &&
+            if (noImGui || (!isImGuiToolsEnabled() && !SceneManager.getScene().isForceImGuiEnabled()) && sceneManager.getCurrentScene() != null && !Console.visible() &&
                     cursorTexture != null && Input.getMousePos() != null) {
                 spritebatch.begin(sceneManager.getCurrentScene().getCursorCamera());
                 spritebatch.drawTexture(new Spritebatch.TextureData(cursorTexture, Input.getMousePos()) {{

@@ -80,7 +80,7 @@ public class Cell {
     }
 
     public boolean isOwnedByBot() {
-        return Farmland.get().getLoadedSave() != null && isOwned() && Farmland.get().getLoadedSave().players.get(ownerId).type == Player.Type.Robot;
+        return Farmland.get().getLoadedSave() != null && isOwned() && Farmland.get().getLoadedSave().players.get(ownerId).type == Player.Type.Bot;
     }
 
     public boolean isOwnedByHuman() {
@@ -88,7 +88,7 @@ public class Cell {
     }
 
     public boolean isOwnedByBot(Save save) {
-        return save != null && isOwned() && save.players.get(ownerId).type == Player.Type.Robot;
+        return save != null && isOwned() && save.players.get(ownerId).type == Player.Type.Bot;
     }
 
     public boolean hasItem() {

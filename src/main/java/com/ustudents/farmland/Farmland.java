@@ -4,6 +4,7 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.console.Console;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
@@ -57,6 +58,7 @@ public class Farmland extends Game {
     protected void initialize() {
         changeIcon("ui/farmland_logo.png");
         changeCursor("ui/cursor.png");
+        Console.create(new FarmlandConsoleCommands());
 
         loadConfig();
         loadTextures();
@@ -83,7 +85,7 @@ public class Farmland extends Game {
         readServerConfig();
         server.getClientDisconnectedDispatcher().add((dataType, data) -> {
             if (serverPlayerIdPerClientId.containsKey(data.clientId)) {
-                getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Robot;
+                getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Bot;
                 getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
                 serverPlayerIdPerClientId.remove(data.clientId);
                 server.broadcast(new LoadSaveResponse(getLoadedSave()));

@@ -3,6 +3,7 @@ package com.ustudents.engine.core.window.glfw;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.console.Console;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
 import com.ustudents.engine.core.window.events.*;
 import com.ustudents.engine.graphic.RenderTarget;
@@ -274,7 +275,7 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetMouseButtonCallback(windowHandle, new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
                     final ImGuiIO io = ImGui.getIO();
 
                     if (io.getWantCaptureMouse()) {
@@ -296,7 +297,7 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetScrollCallback(windowHandle, new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
-                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
                     final ImGuiIO io = ImGui.getIO();
 
                     if (io.getWantCaptureMouse()) {
