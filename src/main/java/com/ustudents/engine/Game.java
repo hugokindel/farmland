@@ -498,14 +498,16 @@ public abstract class Game extends Runnable {
     private void updateInternal() {
         timer.update();
 
-        if (Input.isKeyPressed(Key.F1)) {
+        //if (Input.isKeyPressed(Key.F1)) {
+        if (Input.isActionSuccessful("debugMenu")) {
             if (!forceDisableTools) {
                 imGuiToolsEnabled = !imGuiToolsEnabled;
                 window.actualizeCursorType();
             }
         }
 
-        if (Input.isKeyPressed(Key.F2)) {
+        //if (Input.isKeyPressed(Key.F2)) {
+        if (Input.isActionSuccessful("showPerfomance")) {
             if (!forceDisableTools) {
                 debugToolsEnabled = !debugToolsEnabled;
             }

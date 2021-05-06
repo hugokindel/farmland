@@ -157,12 +157,12 @@ public class ButtonComponent extends BehaviourComponent implements RenderableCom
         }
 
         if (focused) {
-            if (!down && Input.isMouseDown(MouseButton.Left)) {
+            if (!down && Input.isActionSuccessful("putItem")){
                 if (bypassDisableInput || !disableInput) {
                     down = true;
                     changeState = true;
                 }
-            } else if (down && !Input.isMouseDown(MouseButton.Left)) {
+            } else if (down && !Input.isActionSuccessful("putItem")){
                 if (bypassDisableInput || !disableInput) {
                     down = false;
                     event.dispatch();

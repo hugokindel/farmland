@@ -3,6 +3,8 @@ package com.ustudents.engine.core.json;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.core.json.annotation.JsonSerializableType;
+import com.ustudents.engine.input.Action;
+import com.ustudents.farmland.FarmlandConfig;
 import org.joml.*;
 
 import java.lang.reflect.Field;

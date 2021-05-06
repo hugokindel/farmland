@@ -16,19 +16,23 @@ public class PlayerMovementComponent extends BehaviourComponent {
     @Override
     public void update(float dt) {
         if (!((InGameScene) Game.get().getSceneManager().getCurrentScene()).inPause) {
-            if (Input.isKeyDown(Key.W) || Input.isKeyDown(Key.Up)) {
+            //if (Input.isKeyDown(Key.W) || Input.isKeyDown(Key.Up)) {
+            if (Input.isActionSuccessful("goUp")) {
                 getWorldCamera().moveTop(movementSpeed * dt);
             }
 
-            if (Input.isKeyDown(Key.S) || Input.isKeyDown(Key.Down)) {
+            //if (Input.isKeyDown(Key.S) || Input.isKeyDown(Key.Down)) {
+            if (Input.isActionSuccessful("goDown")) {
                 getWorldCamera().moveBottom(movementSpeed * dt);
             }
 
-            if (Input.isKeyDown(Key.A) || Input.isKeyDown(Key.Left)) {
+            //if (Input.isKeyDown(Key.A) || Input.isKeyDown(Key.Left)) {
+            if (Input.isActionSuccessful("goLeft")) {
                 getWorldCamera().moveLeft(movementSpeed * dt);
             }
 
-            if (Input.isKeyDown(Key.D) || Input.isKeyDown(Key.Right)) {
+            //if (Input.isKeyDown(Key.D) || Input.isKeyDown(Key.Right)) {
+            if (Input.isActionSuccessful("goRight")) {
                 getWorldCamera().moveRight(movementSpeed * dt);
             }
         }
