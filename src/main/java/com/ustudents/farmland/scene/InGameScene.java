@@ -493,7 +493,7 @@ public class InGameScene extends Scene {
         braces.position.x = 46;
         braces.region = avatarSprites.getSprite("layerBraces").getRegion();
         braces.zIndex = 1;
-        braces.tint = Farmland.get().getLoadedSave().players.get(0).avatar.bracesColor;
+        braces.tint = Farmland.get().getLoadedSave().getLocalPlayer().avatar.bracesColor;
         guiBuilder.addImage(braces);
 
         GuiBuilder.ImageData shirt = new GuiBuilder.ImageData(avatarSprites.getSprite("layerShirt").getTexture());
@@ -505,7 +505,7 @@ public class InGameScene extends Scene {
         shirt.position.x = 46;
         shirt.region = avatarSprites.getSprite("layerShirt").getRegion();
         shirt.zIndex = 1;
-        shirt.tint = Farmland.get().getLoadedSave().players.get(0).avatar.shirtColor;
+        shirt.tint = Farmland.get().getLoadedSave().getLocalPlayer().avatar.shirtColor;
         guiBuilder.addImage(shirt);
 
         GuiBuilder.ImageData hat = new GuiBuilder.ImageData(avatarSprites.getSprite("layerHat").getTexture());
@@ -517,7 +517,7 @@ public class InGameScene extends Scene {
         hat.position.x = 46;
         hat.region = avatarSprites.getSprite("layerHat").getRegion();
         hat.zIndex = 1;
-        hat.tint = Farmland.get().getLoadedSave().players.get(0).avatar.hatColor;
+        hat.tint = Farmland.get().getLoadedSave().getLocalPlayer().avatar.hatColor;
         guiBuilder.addImage(hat);
 
         GuiBuilder.ImageData buttons = new GuiBuilder.ImageData(avatarSprites.getSprite("layerButtons").getTexture());
@@ -529,7 +529,7 @@ public class InGameScene extends Scene {
         buttons.position.x = 46;
         buttons.region = avatarSprites.getSprite("layerButtons").getRegion();
         buttons.zIndex = 1;
-        buttons.tint = Farmland.get().getLoadedSave().players.get(0).avatar.buttonsColor;
+        buttons.tint = Farmland.get().getLoadedSave().getLocalPlayer().avatar.buttonsColor;
         guiBuilder.addImage(buttons);
     }
 
@@ -1149,7 +1149,7 @@ public class InGameScene extends Scene {
 
     public void updateTimer() {
         getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("timeRemaining", DateUtil.secondsToText(Save.timePerTurn - Farmland.get().getLoadedSave().turnTimePassed)));
-        getEntityByName("timePassedLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("timePassed",DateUtil.secondsToText(++Farmland.get().getLoadedSave().timePassed)));
+        getEntityByName("timePassedLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("timePassed", DateUtil.secondsToText(Farmland.get().getLoadedSave().timePassed)));
     }
 
     @Override

@@ -148,7 +148,6 @@ public class Console {
 
     public static void show() {
         showConsole.set(!showConsole.get());
-        userText.set("");
         if (showConsole.get()) {
             forceFocus = true;
         }

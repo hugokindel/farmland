@@ -190,7 +190,9 @@ public class GLFWInput extends EmptyInput {
         });
     }
 
-    private void resetKeyAndButton() {
+    @Override
+    public void resetKeyAndButton() {
+        Arrays.fill(keys, false);
         Arrays.fill(keyStates, -1);
         Arrays.fill(mouseStates, -1);
         Arrays.fill(keyPressedStates, -1);
