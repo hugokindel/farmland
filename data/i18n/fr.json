@@ -32,6 +32,8 @@
 		"RAlt": "AltD",
 		"showDebug": "Debug : ",
 		"showPerformance": "Performance :  ",
+		"developers": "Développeurs : ",
+		"thankForPlaying": "Merci d'avoir joué !",
 		"newGame": "Nouvelle partie",
 		"loadGame": "Charger une partie",
 		"removeGame": "Supprimer une partie",
