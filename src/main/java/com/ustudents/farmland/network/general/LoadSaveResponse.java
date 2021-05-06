@@ -5,10 +5,12 @@ import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.Save;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 // PROCESSED ON CLIENT
 @JsonSerializable
 public class LoadSaveResponse extends Message {
-    private static Save updatedSave = null;
+    private static AtomicReference<Save> updatedSave = null;
 
     @JsonSerializable
     Save save;
@@ -27,13 +29,20 @@ public class LoadSaveResponse extends Message {
 
     @Override
     public void process() {
-        updatedSave = getSave();
-        updatedSave.path = "save-server.json";
-        updatedSave.localPlayerId = Farmland.get().clientPlayerId.get();
+        updatedSave = new AtomicReference<>(getSave());
+
+        if (updatedSave.get() != null) {
+            updatedSave.get().path = "save-server.json";
+            updatedSave.get().localPlayerId = Farmland.get().clientPlayerId.get();
+        }
     }
 
     public static Save getUpdatedSaveGame() {
-        Save save = updatedSave;
+        if (updatedSave == null) {
+            return null;
+        }
+
+        Save save = updatedSave.get();
 
         if (save != null) {
             updatedSave = null;

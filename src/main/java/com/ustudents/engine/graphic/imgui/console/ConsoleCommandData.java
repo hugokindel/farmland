@@ -9,11 +9,13 @@ public class ConsoleCommandData {
     public String description;
     public Method method;
     public NetMode[] authority;
+    public String[] argDesc;
 
-    public ConsoleCommandData(String name, String description, Method method, NetMode[] authority) {
+    public ConsoleCommandData(String name, String description, Method method, NetMode[] authority, String[] argDesc) {
         this.name = name;
         this.description = description;
         this.method = method;
         this.authority = authority;
+        this.argDesc = argDesc;
     }
 }

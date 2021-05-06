@@ -1,6 +1,7 @@
 package com.ustudents.farmland.component;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
@@ -20,6 +21,8 @@ public class TurnTimerComponent extends BehaviourComponent {
     }
 
     public float time;
+
+    public float timePassed;
 
     public float timePerTurn;
 
@@ -52,6 +55,7 @@ public class TurnTimerComponent extends BehaviourComponent {
 
         time += dt;
         skipturn += dt;
+        timePassed += dt;
 
         if (Game.get().hasAuthority()) {
             if (skipturn >= 1f && !skipmadepart1 && Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().type == Player.Type.Bot) {
@@ -72,6 +76,11 @@ public class TurnTimerComponent extends BehaviourComponent {
             setTimeElapsed(0);
         } else if (Farmland.get().getLoadedSave() != null && time >= Farmland.get().getLoadedSave().turnTimePassed + 1) {
             setTimeElapsed(Farmland.get().getLoadedSave().turnTimePassed + 1);
+        }
+
+        if (Farmland.get().getLoadedSave() != null && timePassed >= 1) {
+            Farmland.get().getLoadedSave().timePassed += 1;
+            timePassed = 0;
         }
     }
 

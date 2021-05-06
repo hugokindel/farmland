@@ -41,15 +41,15 @@ public class SettingsMenu extends MenuScene {
                         Entity music = createEntityWithName("backgroundMusic");
                         music.keepOnLoad(true);
                         new SoundComponent(musicSound, true, true).play();
-                        changeScene(new SettingsMenu());
+                        changeScene(new SettingsMenu(), false);
                         break;
                     case "deactivateSound":
                         currentSoundManager.stopAll();
-                        changeScene(new SettingsMenu());
+                        changeScene(new SettingsMenu(), false);
                         break;
                     case "changeLanguage":
                         Resources.chooseNextLanguage();
-                        changeScene(new SettingsMenu());
+                        changeScene(new SettingsMenu(), false);
                         break;
                     case "commands":
                         changeScene(new SettingsKeybindMenu());

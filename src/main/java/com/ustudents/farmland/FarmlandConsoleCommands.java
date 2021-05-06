@@ -1,6 +1,8 @@
 package com.ustudents.farmland;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.graphic.imgui.console.ConsoleCommand;
@@ -8,8 +10,13 @@ import com.ustudents.engine.graphic.imgui.console.ConsoleCommands;
 import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.network.general.PauseMessage;
+import com.ustudents.farmland.network.general.ReceiveChatMessage;
+import com.ustudents.farmland.network.general.SendChatMessage;
 import com.ustudents.farmland.scene.InGameScene;
 import com.ustudents.farmland.scene.menus.ResultMenu;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 public class FarmlandConsoleCommands extends ConsoleCommands {
     public static boolean checkForSave() {
@@ -52,6 +59,33 @@ public class FarmlandConsoleCommands extends ConsoleCommands {
             }
         } else {
             Console.printlnWarning("No active game!");
+        }
+    }
+
+    @ConsoleCommand(description = "Say something", argsDescription = {"...text"})
+    public void say(Object... text) {
+        if (checkForSave()) {
+            return;
+        }
+
+        StringBuilder total = new StringBuilder();
+
+        for (Object el : text) {
+            total.append((String)el).append(" ");
+        }
+
+        if (total.length() > 0) {
+            total = new StringBuilder(total.substring(0, total.length() - 1));
+        }
+
+        if (Game.get().getSceneManager().getCurrentScene() instanceof InGameScene) {
+            Console.println(Resources.getLocalizedText("you") + ": " + total.toString());
+
+            if (Game.get().getNetMode() == NetMode.Client) {
+                Game.get().getClient().send(new SendChatMessage(Farmland.get().getLoadedSave().getLocalPlayer().name, total.toString()));
+            } else if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+                Game.get().getServer().broadcast(new ReceiveChatMessage("server", total.toString()));
+            }
         }
     }
 }

@@ -6,6 +6,8 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.core.player.Avatar;
+import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.general.PlayerCreateMessage;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -17,7 +19,11 @@ import java.util.List;
 public class ServerNewPlayerMenu extends MenuScene {
     ImString playerName = new ImString();
     ImString villageName = new ImString();
-    float[] color = {1, 0, 0, 1};
+    float[] bannerColor = Player.DEFAULT_BANNER_COLOR.toArray();
+    float[] bracesColor = Avatar.DEFAULT_BRACES_COLOR.toArray();
+    float[] shirtColor = Avatar.DEFAULT_SHIRT_COLOR.toArray();
+    float[] hatColor = Avatar.DEFAULT_HAT_COLOR.toArray();
+    float[] buttonsColor = Avatar.DEFAULT_BUTTONS_COLOR.toArray();
     List<String> errors = new ArrayList<>();
     int playerId;
 
@@ -49,13 +55,17 @@ public class ServerNewPlayerMenu extends MenuScene {
 
     @Override
     public void renderImGui() {
-        ImGuiUtils.setNextWindowWithSizeCentered(550, 300, ImGuiCond.Appearing);
+        ImGuiUtils.setNextWindowWithSizeCentered(650, 300, ImGuiCond.Appearing);
         ImGui.begin(Resources.getLocalizedText("createPlayer") + (playerId + 1));
 
         ImGui.text(Resources.getLocalizedText("newGameDescription"));
         ImGui.inputText(Resources.getLocalizedText("ngPlayerName"), playerName);
         ImGui.inputText(Resources.getLocalizedText("ngVillageName"), villageName);
-        ImGui.colorEdit4(Resources.getLocalizedText("ngBannerColor"), color);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngBannerColor"), bannerColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngSuitColor"), bracesColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngShirtColor"), shirtColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngHatColor"), hatColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngButtonsColor"), buttonsColor);
 
         if (ImGui.button(Resources.getLocalizedText("return"))) {
             SceneManager.get().goBack();
@@ -74,7 +84,24 @@ public class ServerNewPlayerMenu extends MenuScene {
             }
 
             if (errors.isEmpty()) {
-                Farmland.get().getClient().send(new PlayerCreateMessage(playerId, playerName.get(), villageName.get(), new Color(color[0], color[1], color[2], color[3])));
+                Color braces = new Color(bracesColor);
+                Color shirt = new Color(shirtColor);
+                Color hat = new Color(hatColor);
+                Color buttons = new Color(buttonsColor);
+
+                if (isColorClose(shirtColor, bracesColor)) {
+                    braces.contrast(10);
+                }
+
+                if (isColorClose(shirtColor, buttonsColor)) {
+                    buttons.contrast(10);
+                }
+
+                if (isColorClose(bracesColor, buttonsColor)) {
+                    buttons.contrast(10);
+                }
+
+                Farmland.get().getClient().send(new PlayerCreateMessage(playerId, playerName.get(), villageName.get(), new Color(bannerColor), braces, shirt, hat, buttons));
                 Farmland.get().clientPlayerId.set(playerId);
                 changeScene(new ServerWaitingPlayersMenu());
             }
@@ -85,5 +112,9 @@ public class ServerNewPlayerMenu extends MenuScene {
         }
 
         ImGui.end();
+    }
+
+    public boolean isColorClose(float[] color1, float[] color2) {
+        return new Color(color1).isCloseTo(new Color(color2));
     }
 }

@@ -1,14 +1,24 @@
 package com.ustudents.farmland.network.actions;
 
+import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
-import com.ustudents.farmland.Farmland;
 
-public class EndTurnMessage extends Message {
+@JsonSerializable
+public class PayLoanMessage extends Message {
+    @JsonSerializable
+    Integer amount;
+
+    public PayLoanMessage() {
+
+    }
+
+    public PayLoanMessage(int amount) {
+        this.amount = amount;
+    }
+
     @Override
     public void process() {
-        if (Farmland.get().getLoadedSave() != null) {
-            Farmland.get().getLoadedSave().endTurn();
-        }
+
     }
 
     @Override

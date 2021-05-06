@@ -18,4 +18,6 @@ public @interface ConsoleCommand {
 
     /** In which mode can this command be run. */
     NetMode[] authority() default {NetMode.Standalone, NetMode.Client, NetMode.ListenServer, NetMode.DedicatedServer};
+
+    String[] argsDescription() default "";
 }

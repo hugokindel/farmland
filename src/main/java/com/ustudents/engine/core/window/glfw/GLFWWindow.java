@@ -276,6 +276,18 @@ public class GLFWWindow extends EmptyWindow {
                     }
                 }
 
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    final ImGuiIO io = ImGui.getIO();
+
+                    if (io.getWantTextInput()) {
+                        if ((!Input.actionExists("showConsole") && key != Key.GraveAccent) || (Input.actionExists("showConsole") && key != Resources.getConfig().commands.get("showConsole").getFirstBindInMapping())) {
+                            Input.resetKeyAndButton();
+
+                            return;
+                        }
+                    }
+                }
+
                 keyStateChanged.dispatch(new KeyStateChangedEvent(key, scancode, action, mods));
             }
         });

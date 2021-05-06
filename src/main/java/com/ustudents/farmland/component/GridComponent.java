@@ -298,7 +298,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 if (cellIsOwned(x, y)) {
                     renderTerritoryCell("owned", x, y, spritebatch, rendererComponent, transformComponent, getCell(x, y).ownerId);
                 } else if (cellIsClosedToOwnedCellByLocalPlayer(x, y)) {
-                    renderTerritoryCell("notOwned", x, y, spritebatch, rendererComponent, transformComponent, 0);
+                    renderTerritoryCell("notOwned", x, y, spritebatch, rendererComponent, transformComponent, Farmland.get().getLoadedSave().localPlayerId);
                 }
             }
         }

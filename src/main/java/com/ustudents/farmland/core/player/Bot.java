@@ -70,12 +70,12 @@ public class Bot {
                 case Impossible:
                     Random rand = new Random();
                     boolean cantPayDebt = false;
-                    if (player.debtMoney == 0 && rand.nextInt(100) <= 50) {
+                    if (player.remainingDebt == 0 && rand.nextInt(100) <= 50) {
                         botTakesOutALoan();
                         cantPayDebt = true;
                     }
 
-                    if (player.debtMoney > 0 && !cantPayDebt) {
+                    if (player.remainingDebt > 0 && !cantPayDebt) {
                         payDebt();
                     }
                     int action3 = makeChoice();
@@ -106,8 +106,8 @@ public class Bot {
         if (!cells.isEmpty()) {
             for (int i = 0; i < cells.size(); i++){
                 if(cells.get(i).hasItem()){
-                    for (int y = 0; y < player.researchList.size(); y++){
-                        Research re = player.researchList.get(y);
+                    for (int y = 0; y < player.researches.size(); y++){
+                        Research re = player.researches.get(y);
                         if (re.getName().equals("Eleveur") && cells.get(i).item instanceof Animal){
                             player.money -= re.getPrice();
                             re.levelUp(10,1);
@@ -236,8 +236,8 @@ public class Bot {
         int maxBorrow = Farmland.get().getLoadedSave().maxBorrow;
         int randValue = rand.nextInt(maxBorrow - maxBorrow/10);
         player.money += randValue;
-        player.loanMoney = randValue + (int)(randValue*0.03f);
-        player.debtMoney += randValue + (int)(randValue*0.03f);
+        player.loan = randValue + (int)(randValue*0.03f);
+        player.remainingDebt += randValue + (int)(randValue*0.03f);
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateMoneyItemLabel();
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateLeaderboard();
     }
@@ -246,10 +246,10 @@ public class Bot {
         Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         Random rand = new Random();
-        int debt = player.debtMoney;
+        int debt = player.remainingDebt;
         int randValue = rand.nextInt(debt);
         player.money -= randValue;
-        player.debtMoney -= randValue;
+        player.remainingDebt -= randValue;
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateMoneyItemLabel();
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateLeaderboard();
     }
@@ -262,8 +262,8 @@ public class Bot {
             while (itemQuantity > 1) {
                 int fEffect = 0;
                 int eEffect = 0;
-                for (int i = 0; i < player.researchList.size(); i++) {
-                    Research re = player.researchList.get(i);
+                for (int i = 0; i < player.researches.size(); i++) {
+                    Research re = player.researches.get(i);
                     if (re.getName().equals("Fermier")) {
                         fEffect = re.getEffect();
                     } else if (re.getName().equals("Eleveur")) {
@@ -275,7 +275,7 @@ public class Bot {
                 int travelTime = 4;
                 int travelPrice = 10;
                 player.money -= travelPrice;
-                player.caravanList.add(new Caravan(sellValueOfCaravan, travelTime, item.id));
+                player.caravans.add(new Caravan(sellValueOfCaravan, travelTime, item.id));
                 Item itemCopy = Item.clone(item);
                 assert itemCopy != null;
                 itemCopy.quantity = itemQuantity/2;

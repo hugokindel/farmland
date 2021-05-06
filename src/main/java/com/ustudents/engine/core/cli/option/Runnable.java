@@ -191,7 +191,7 @@ public abstract class Runnable {
      * @param s2 The second string to compare.
      * @return the distance between s1 and s2.
      */
-    private static int calculateLevenshteinDistance(String s1, String s2) {
+    public static int calculateLevenshteinDistance(String s1, String s2) {
         if(s1.length() == 0) {
             return s2.length();
         } else if(s2.length() == 0) {

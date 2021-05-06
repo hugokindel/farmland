@@ -476,4 +476,14 @@ public class Farmland extends Game {
     private void saveConfig() {
         Resources.getConfig().game = Json.serialize(config);
     }
+
+    public boolean hasServerSave() {
+        for (Save save : saves.values()) {
+            if (save.path.startsWith("save-server")) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

@@ -365,7 +365,7 @@ public class SettingsKeybindMenu extends MenuScene{
     }
 
     private void canGoBackButton(GuiBuilder guiBuilder){
-        GuiBuilder.ButtonData goBack = new GuiBuilder.ButtonData("Retour", (dataType, data) -> {
+        GuiBuilder.ButtonData goBack = new GuiBuilder.ButtonData(Resources.getLocalizedText("return"), (dataType, data) -> {
             Farmland.get().reloadCustomizableCommands();
             SceneManager.get().goBack();
         });
@@ -377,7 +377,7 @@ public class SettingsKeybindMenu extends MenuScene{
     }
 
     private void reloadBindButton(GuiBuilder guiBuilder){
-        GuiBuilder.ButtonData reloadBind = new GuiBuilder.ButtonData("Réinitialiser les touches", (dataType, data) -> {
+        GuiBuilder.ButtonData reloadBind = new GuiBuilder.ButtonData(Resources.getLocalizedText("resetMapping"), (dataType, data) -> {
             Resources.getConfig().commands.clear();
             Farmland.get().initializeCommands(Resources.getConfig());
             changeScene(new SettingsKeybindMenu(), false);

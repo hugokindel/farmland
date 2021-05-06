@@ -63,4 +63,8 @@ public class EmptyInput {
     public void recalculateMousePosition() {
 
     }
+
+    public void resetKeyAndButton() {
+
+    }
 }

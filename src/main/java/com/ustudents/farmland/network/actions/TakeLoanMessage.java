@@ -1,28 +1,28 @@
-package com.ustudents.farmland.network.general;
+package com.ustudents.farmland.network.actions;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.scene.InGameScene;
+import org.joml.Vector2i;
 
-// PROCESSED ON CLIENT
 @JsonSerializable
-public class PauseMessage extends Message {
+public class TakeLoanMessage extends Message {
     @JsonSerializable
-    boolean inPause;
+    Integer amount;
 
-    public PauseMessage() {
+    public TakeLoanMessage() {
 
     }
 
-    public PauseMessage(boolean inPause) {
-        this.inPause = inPause;
+    public TakeLoanMessage(int amount) {
+        this.amount = amount;
     }
 
     @Override
     public void process() {
-        ((InGameScene)Game.get().getSceneManager().getCurrentScene()).setPause(inPause);
+        Farmland.get().getLoadedSave().getCurrentPlayer().takeLoan(amount);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class PauseMessage extends Message {
 
     @Override
     public ProcessingSide getProcessingSide() {
-        return ProcessingSide.Client;
+        return ProcessingSide.Server;
     }
 }

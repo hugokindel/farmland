@@ -95,4 +95,8 @@ public class Input {
     public static boolean actionExists(String name) {
         return Resources.getConfig().commands.containsKey(name);
     }
+
+    public static void resetKeyAndButton() {
+        inputManager.resetKeyAndButton();
+    }
 }

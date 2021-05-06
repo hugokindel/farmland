@@ -5,8 +5,6 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.utility.Pair;
-import com.ustudents.engine.utility.Triplet;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
@@ -17,10 +15,7 @@ import com.ustudents.farmland.core.system.Research;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @JsonSerializable
 @SuppressWarnings("unchecked")
@@ -46,10 +41,10 @@ public class Player {
     public Type type;
 
     @JsonSerializable
-    public Integer loanMoney;
+    public Integer loan;
 
     @JsonSerializable
-    public Integer debtMoney;
+    public Integer remainingDebt;
 
     @JsonSerializable
     public Color bannerColor;
@@ -76,10 +71,10 @@ public class Player {
     public List<Animal> soldAnimals;
 
     @JsonSerializable
-    public List<Caravan> caravanList;
+    public List<Caravan> caravans;
 
     @JsonSerializable
-    public List<Research> researchList;
+    public List<Research> researches;
 
     public EventDispatcher moneyChanged = new EventDispatcher();
 
@@ -95,12 +90,12 @@ public class Player {
         this.avatar = new Avatar(bracesColor, shirtColor, hatColor, buttonColor);
         this.money = 500;
         this.type = type;
-        this.loanMoney = 0;
-        this.debtMoney = 0;
-        this.caravanList = new ArrayList<>();
-        this.researchList = new ArrayList<>();
-        this.researchList.add(new Research("Fermier"));
-        this.researchList.add(new Research("Eleveur"));
+        this.loan = 0;
+        this.remainingDebt = 0;
+        this.caravans = new ArrayList<>();
+        this.researches = new ArrayList<>();
+        this.researches.add(new Research("Fermier"));
+        this.researches.add(new Research("Eleveur"));
         this.boughtCrops = new ArrayList<>();
         this.boughtAnimals = new ArrayList<>();
         this.soldCrops = new ArrayList<>();
@@ -345,6 +340,16 @@ public class Player {
         this.selectedItemId = selectedItemId;
     }
 
+    public Research findResearch(String name) {
+        for (Research research : researches) {
+            if (research.name.equals(name)) {
+                return research;
+            }
+        }
+
+        return null;
+    }
+
     public void selectItem(String itemId) {
         if (Game.get().hasAuthority()) {
             setSelectedItemId(itemId);
@@ -362,7 +367,8 @@ public class Player {
             for (int i = 0; i < quantity; i++) {
                 addToInventory(item, "Buy");
 
-                Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(Farmland.get().getLoadedSave().turn).add(item);
+                //Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(Farmland.get().getLoadedSave().turn).add(item);
+                Farmland.get().getLoadedSave().fillTurnItemDataBase(item, true);
             }
 
             Farmland.get().serverBroadcastSave();
@@ -373,10 +379,15 @@ public class Player {
 
     public void sellItem(String itemId, int quantity) {
         if (Game.get().hasAuthority()) {
-            for (int i = 0; i < quantity; i++) {
-                setMoney(money + (int)(getItemFromInventory(itemId).sellingValue/1.5));
-                deleteFromInventory(getItemFromInventory(itemId), "Sell");
+            money += Farmland.get().getLoadedSave().getResourceDatabase().get(itemId).sellingValue;
+
+            if (remainingDebt > 0) {
+                payLoan((Math.max(loan * (Farmland.get().getLoadedSave().debtRate / 100), 1)), false);
             }
+
+            Item item = Item.clone(getAllItemOfSellInventory().get(itemId));
+            Farmland.get().getLoadedSave().fillTurnItemDataBase(item, false);
+            deleteFromInventory(getAllItemOfSellInventory().get(itemId), "Sell");
 
             Farmland.get().serverBroadcastSave();
         } else {
@@ -416,6 +427,73 @@ public class Player {
             Farmland.get().serverBroadcastSave();
         } else {
             Game.get().getClient().send(new PlaceSelectedItemMessage(position));
+        }
+    }
+
+    public void takeLoan(int amount) {
+        if (Game.get().hasAuthority()) {
+            money += amount;
+            loan = amount + (int)(amount * 0.03f) + 1;
+            remainingDebt += amount + (int)(amount * 0.03f) + 1;
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new TakeLoanMessage(amount));
+        }
+    }
+
+    public void payLoan(int amount) {
+        payLoan(amount, true);
+    }
+
+    public void payLoan(int amount, boolean broadcast) {
+        if (Game.get().hasAuthority()) {
+            if (remainingDebt > 0) {
+                money -= amount;
+                remainingDebt -= amount;
+
+                if (remainingDebt <= 0) {
+                    remainingDebt = 0;
+                    loan = 0;
+                }
+            }
+
+            if (broadcast) {
+                Farmland.get().serverBroadcastSave();
+            }
+        } else {
+            Game.get().getClient().send(new PayLoanMessage(amount));
+        }
+    }
+
+    public void upgradeResearch(String name) {
+        if (Game.get().hasAuthority()) {
+            Out.println("Upgrade: " + name);
+            Research research = findResearch(name);
+
+            money -= research.getPrice();
+            research.levelUp(10, 1);
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new UpgradeResearch(name));
+        }
+    }
+
+    public void sendCaravan(int travelPrice, int travelTime, int sellValue, String itemId) {
+        if (Game.get().hasAuthority()) {
+            int itemQuantity = getAllItemOfSellInventory().get(itemId).quantity;
+
+            money -= travelPrice;
+            caravans.add(new Caravan(sellValue, travelTime, itemId));
+
+            for (int i = 0; i < itemQuantity / 2; i++) {
+                deleteFromInventory(getAllItemOfSellInventory().get(itemId), "Caravan");
+            }
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new SendCaravanMessage(travelPrice, travelTime, sellValue, itemId));
         }
     }
 }
