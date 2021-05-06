@@ -799,7 +799,7 @@ public class InGameScene extends Scene {
         }else{
             ImGui.text(Resources.getLocalizedText("products"));
 
-            for(Item item : Farmland.get().getResourceDatabase().values()){
+            for(Item item : Farmland.get().getLoadedSave().getResourceDatabase().values()){
                 if(ImGui.button(buyNickNameItem(item)) && playerMoney>=item.buyingValue){
                     Farmland.get().getLoadedSave().getLocalPlayer().buyItem(item, 1);
                     updateLeaderboard();
@@ -906,7 +906,7 @@ public class InGameScene extends Scene {
         }
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
-            if (!currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
+            if (Farmland.get().getLoadedSave() != null && !currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
                 getEntityByName("gameplayButtons").setEnabled(false);
                 if (showMarket.get()) {
                     shouldShowBackMarket = true;
@@ -986,7 +986,9 @@ public class InGameScene extends Scene {
     public boolean onCompletedTurnEnd(){
         Player currentPlayer = Farmland.get().getLoadedSave().getCurrentPlayer();
 
+        Out.println("InGameScene : " + Farmland.get().getLoadedSave().buyItemDatabasePerTurn);
         Farmland.get().getLoadedSave().fillBuyItemDataBasePerTurn();
+        Out.println("InGameScene : " + Farmland.get().getLoadedSave().buyItemDatabasePerTurn);
         economicComponent.changeValueOfRessource();
         Farmland.get().getLoadedSave().clearTurnItemDatabase();
 

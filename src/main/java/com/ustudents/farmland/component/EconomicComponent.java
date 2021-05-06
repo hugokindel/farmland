@@ -16,10 +16,12 @@ public class EconomicComponent {
     private boolean appearsInList;
 
     private int[] makeListOfTurn(List<List<Item>> listPerTurn){
+        Out.println(listPerTurn);
         int[] turnTab = new int[listPerTurn.size()];
         for(int i = 0; i < turnTab.length; i++){
             turnTab[i] = i;
         }
+        Out.println("Taille de turnTab : " + turnTab.length);
         return turnTab;
     }
 
@@ -52,6 +54,10 @@ public class EconomicComponent {
         int count = countWhereItemAppearsInList(Farmland.get().getLoadedSave().buyItemDatabasePerTurn, turnTab, item);
 
         int res = 0;
+        if(item.id.equals("corn")){
+            Out.println(item.buyingValue < item.initValue * 4 && appearsInList && count == 1);
+            Out.println(count);
+        }
 
         if(item.buyingValue > item.initValue / 4 && (!appearsInList && Farmland.get().getLoadedSave().turn > 0
                 && Farmland.get().getLoadedSave().turn%2 == 0)){
@@ -101,15 +107,6 @@ public class EconomicComponent {
  * To change the value of some items.
  */
     public void changeValueOfRessource(){
-        /*OLD: List<Item> itemsTurn = Farmland.get().getLoadedSave().itemsTurn;
-        Set<Item> setItemTurn = new HashSet<>(itemsTurn);
-        for(Item item:setItemTurn){
-            if (item != null) {
-                int lastItemSell = countItemPerList(item,lastItemTurn);
-                int turnItemSell = countItemPerList(item,itemsTurn);
-                int res = knowTheDifferenceBetweenTurn(turnItemSell,lastItemSell);
-                if(item.value + res >= item.initValue) item.value += res;
-            }*/
         for(Item item : Farmland.get().getLoadedSave().getResourceDatabase().values()){
             item.buyingValue += buyItem(item);
             item.sellingValue += sellItem(item);
