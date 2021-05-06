@@ -220,15 +220,15 @@ public class Server extends Controller {
         public void run() {
             Scanner scanner = new Scanner(System.in);
 
-            Out.println("To stop the server, press 'quit'.");
+            Out.println("To stop the server, type `quit`.");
+            Out.println("To see more informations, type `help`.");
 
             while (!Game.get().shouldQuit()) {
                 if (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
+                    Game.get().serverCommands.add(line);
 
                     if (line.equals("quit")) {
-                        Out.println("Quit command intercepted.");
-                        Game.get().quit();
                         break;
                     }
                 }

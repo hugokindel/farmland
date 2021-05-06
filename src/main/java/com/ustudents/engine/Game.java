@@ -31,7 +31,10 @@ import org.lwjgl.opengl.GL33;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.ustudents.engine.graphic.imgui.console.Console.getListOfCommands;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
 /** The main class of the project. */
@@ -110,6 +113,9 @@ public abstract class Game extends Runnable {
     /** Defines if debug tools should be enabled. */
     protected boolean debugToolsEnabled = false;
 
+    /** Forces to disable any debugging tools. */
+    private boolean forceDisableTools;
+
     /** Debugging tools. */
     protected final DebugTools debugTools = new DebugTools();
 
@@ -119,16 +125,19 @@ public abstract class Game extends Runnable {
     /** Custom cursor texture. */
     protected Texture cursorTexture;
 
+    /** Should we authorize ImGui docking. */
     protected boolean enableDocking;
-
-    protected Client client = new Client();
-
-    protected Server server = new Server();
 
     /** The game instance. */
     private static Game game;
 
-    private boolean forceDisableTools;
+    // SERVER SPECIFIC
+    protected Server server = new Server();
+
+    public ConcurrentLinkedQueue<String> serverCommands = new ConcurrentLinkedQueue<>();
+
+    // CLIENT SPECIFIC
+    protected Client client = new Client();
 
     /** Class constructor. */
     public Game() {
@@ -457,6 +466,10 @@ public abstract class Game extends Runnable {
                     delta += (now - lastTime) / ns;
                     lastTime = now;
                     while(delta >= 1){
+                        while (!serverCommands.isEmpty()) {
+                            Console.getListOfCommands();
+                            Console.tryExecuteCommand(serverCommands.poll());
+                        }
                         sceneManager.startFrame();
                         updateInternal();
                         timer.render();

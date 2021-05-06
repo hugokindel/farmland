@@ -1,8 +1,10 @@
 package com.ustudents.engine.graphic.imgui.console;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.network.NetMode;
 import imgui.ImGui;
 import imgui.flag.*;
 import imgui.type.ImBoolean;
@@ -10,6 +12,7 @@ import imgui.type.ImString;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Console {
@@ -111,19 +114,7 @@ public class Console {
                 if (!userText.get().isEmpty()) {
                     Out.printlnToFile("$> " + userText.get());
                     println("$> " + userText.get());
-
-                    getListOfCommands();
-
-                    if (listOfCommands.stream().anyMatch(command -> command.name.equals(userText.get()))) {
-                        try {
-                            listOfCommands.stream().filter(command -> command.name.equals(userText.get())).findFirst().get().method.invoke(get().consoleCommands);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        printlnError("This is not a known command!");
-                    }
-
+                    tryExecuteCommand(userText.get());
                     userText.set("");
                     reclaimFocus = true;
                 }
@@ -166,23 +157,43 @@ public class Console {
     }
 
     public static void println(ConsolePrintData data) {
-        inputs.add(data);
+        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+            Out.println(data.getText());
+        } else {
+            inputs.add(data);
+        }
     }
 
     public static void println(String text) {
-        inputs.add(new ConsolePrintData(text));
+        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+            Out.println(text);
+        } else {
+            inputs.add(new ConsolePrintData(text));
+        }
     }
 
     public static void printlnInfo(String text) {
-        inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Info));
+        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+            Out.printlnInfo(text);
+        } else {
+            inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Info));
+        }
     }
 
     public static void printlnWarning(String text) {
-        inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Warning));
+        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+            Out.printlnWarning(text);
+        } else {
+            inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Warning));
+        }
     }
 
     public static void printlnError(String text) {
-        inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Error));
+        if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+            Out.printlnError(text);
+        } else {
+            inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Error));
+        }
     }
 
     public static List<ConsoleCommandData> getListOfCommands() {
@@ -192,8 +203,9 @@ public class Console {
                     String name = method.getAnnotation(ConsoleCommand.class).name().isEmpty() ?
                             method.getName() : method.getAnnotation(ConsoleCommand.class).name();
                     String description = method.getAnnotation(ConsoleCommand.class).description();
+                    NetMode[] authority = method.getAnnotation(ConsoleCommand.class).authority();
 
-                    listOfCommands.add(new ConsoleCommandData(name, description, method));
+                    listOfCommands.add(new ConsoleCommandData(name, description, method, authority));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -218,5 +230,27 @@ public class Console {
         }
 
         return methods;
+    }
+
+    public static void tryExecuteCommand(String commandName) {
+        try {
+            getListOfCommands();
+
+            if (listOfCommands.stream().anyMatch(command -> command.name.equals(commandName))) {
+                for (ConsoleCommandData command : listOfCommands) {
+                    if (command.name.equals(commandName)) {
+                        if (Arrays.stream(command.authority).anyMatch(e -> e == Game.get().getNetMode())) {
+                            command.method.invoke(get().consoleCommands);
+                        } else {
+                            printlnError("You do not got authority to run this command!");
+                        }
+                    }
+                }
+            } else {
+                printlnError("This is not a known command!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

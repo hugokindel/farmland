@@ -1,5 +1,7 @@
 package com.ustudents.engine.graphic.imgui.console;
 
+import com.ustudents.engine.network.NetMode;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -13,4 +15,7 @@ public @interface ConsoleCommand {
 
     /** Description of the command. */
     String description() default "";
+
+    /** In which mode can this command be run. */
+    NetMode[] authority() default {NetMode.Standalone, NetMode.Client, NetMode.ListenServer, NetMode.DedicatedServer};
 }

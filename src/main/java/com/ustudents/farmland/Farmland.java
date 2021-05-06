@@ -9,6 +9,7 @@ import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.Json;
 import com.ustudents.engine.core.json.JsonReader;
 import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.scene.Scene;
 import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Avatar;
@@ -21,6 +22,7 @@ import org.joml.Vector2i;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -43,6 +45,8 @@ public class Farmland extends Game {
     public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
 
     public FarmlandServerConfig serverConfig;
+
+    public CopyOnWriteArrayList<String> serverCommands = new CopyOnWriteArrayList<>();
 
     // CLIENT SPECIFIC
     public AtomicInteger clientPlayerId = new AtomicInteger(0);
