@@ -401,7 +401,6 @@ public class SettingsKeybindMenu extends MenuScene{
         String typeOfBind = typeOfBind(actionName);
         if (typeOfBind == null) return;
         Action currentAction = Resources.getConfig().commands.get(actionName);
-        Out.println(selectedBind);
         if(isKey){
             if(selectedBind <= 0 || !bindNotAlreadyDefine(selectedBind, true) || avoidKey(selectedBind)) {
                 changeScene(new SettingsKeybindMenu(2), false);
@@ -413,7 +412,6 @@ public class SettingsKeybindMenu extends MenuScene{
                 return;
             }
         }
-        Out.println(selectedBind);
         currentAction.removeFirstBindInMapping();
         currentAction.addFirstBindInMapping(selectedBind, typeOfBind);
         changeScene(new SettingsKeybindMenu(), false);
