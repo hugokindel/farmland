@@ -1,6 +1,8 @@
 package com.ustudents.engine.graphic.imgui.console;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -10,10 +12,14 @@ import imgui.flag.*;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
+import static com.ustudents.engine.core.cli.option.Runnable.calculateLevenshteinDistance;
 
 public class Console {
     private ConsoleCommands consoleCommands;
@@ -39,33 +45,33 @@ public class Console {
     // In part from: https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp
     public static void renderImGui() {
         if (showConsole.get()) {
-            ImGuiUtils.setNextWindowWithSizeCentered(400, 400, ImGuiCond.Appearing);
+            ImGuiUtils.setNextWindowWithSizeCentered(700, 400, ImGuiCond.Appearing);
 
-            ImGui.begin("Console", showConsole);
+            ImGui.begin(Resources.getLocalizedText("console"), showConsole);
 
             if (ImGui.beginPopupContextItem()) {
-                if (ImGui.menuItem("Close")) {
+                if (ImGui.menuItem(Resources.getLocalizedText("consoleClose"))) {
                     showConsole.set(false);
                 }
 
                 ImGui.endPopup();
             }
 
-            ImGui.textWrapped("Enter `help` for more informations.");
+            ImGui.textWrapped(Resources.getLocalizedText("consoleEntHel"));
 
-            if (ImGui.smallButton("Clear")) {
+            if (ImGui.smallButton(Resources.getLocalizedText("consoleClear"))) {
                 clear();
             }
 
             ImGui.sameLine();
 
-            if (ImGui.beginPopup("Options")) {
-                ImGui.checkbox("Auto-scroll", autoScroll);
+            if (ImGui.beginPopup(Resources.getLocalizedText("consoleOptions"))) {
+                ImGui.checkbox(Resources.getLocalizedText("consoleAutoScroll"), autoScroll);
                 ImGui.endPopup();
             }
 
-            if (ImGui.smallButton("Options")) {
-                ImGui.openPopup("Options");
+            if (ImGui.smallButton(Resources.getLocalizedText("consoleOptions"))) {
+                ImGui.openPopup(Resources.getLocalizedText("consoleOptions"));
             }
 
             ImGui.separator();
@@ -74,7 +80,7 @@ public class Console {
             ImGui.beginChild("ScrollingRegion", 0, -footerHeightToReserve, false, ImGuiWindowFlags.HorizontalScrollbar);
 
             if (ImGui.beginPopupContextWindow()) {
-                if (ImGui.selectable("Clear")) {
+                if (ImGui.selectable(Resources.getLocalizedText("consoleClear"))) {
                     clear();
                 }
 
@@ -218,8 +224,9 @@ public class Console {
                             method.getName() : method.getAnnotation(ConsoleCommand.class).name();
                     String description = method.getAnnotation(ConsoleCommand.class).description();
                     NetMode[] authority = method.getAnnotation(ConsoleCommand.class).authority();
+                    String[] argDesc = method.getAnnotation(ConsoleCommand.class).argsDescription();
 
-                    listOfCommands.add(new ConsoleCommandData(name, description, method, authority));
+                    listOfCommands.add(new ConsoleCommandData(name, description, method, authority, argDesc));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -250,21 +257,63 @@ public class Console {
         try {
             getListOfCommands();
 
-            if (listOfCommands.stream().anyMatch(command -> command.name.equals(commandName))) {
-                for (ConsoleCommandData command : listOfCommands) {
-                    if (command.name.equals(commandName)) {
-                        if (Arrays.stream(command.authority).anyMatch(e -> e == Game.get().getNetMode())) {
-                            command.method.invoke(get().consoleCommands);
+            String[] split = commandName.split(" ");
+            String command = split[0];
+            List<String> args = new ArrayList<>(Arrays.asList(split).subList(1, split.length));
+
+            if (listOfCommands.stream().anyMatch(c -> c.name.equals(command))) {
+                for (ConsoleCommandData c : listOfCommands) {
+                    if (c.name.equals(command)) {
+                        if (Arrays.stream(c.authority).anyMatch(e -> e == Game.get().getNetMode())) {
+                            if (args.isEmpty()) {
+                                c.method.invoke(get().consoleCommands);
+                            } else {
+                                if (c.method.isVarArgs()) {
+                                    c.method.invoke(get().consoleCommands, new Object[] { args.toArray() });
+                                } else {
+                                    c.method.invoke(get().consoleCommands, args.toArray());
+                                }
+                            }
                         } else {
-                            printlnError("You do not have authority to run this command!");
+                            printlnError(Resources.getLocalizedText("consoleNoAuthority"));
                         }
                     }
                 }
             } else {
-                printlnError("This is not a known command!");
+                printlnError(Resources.getLocalizedText("consoleUnknown"));
+
+                String nearest = findNearestCommand(command, listOfCommands);
+
+                if (!nearest.isEmpty()) {
+                    printlnError(Resources.getLocalizedText("consoleMean", findNearestCommand(command, listOfCommands)));
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            if (e.getMessage().toLowerCase().contains("wrong number of arguments")) {
+                printlnError(Resources.getLocalizedText("consoleWrongNumArg"));
+            } else {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private static String findNearestCommand(String unknownOption, List<ConsoleCommandData> commands) {
+        int distance = -1;
+        String nearest = "";
+
+        for (ConsoleCommandData command : commands) {
+            int optionDistance = calculateLevenshteinDistance(unknownOption, command.name);
+
+            if (distance == -1 || optionDistance < distance) {
+                distance = optionDistance;
+                nearest = command.name;
+            }
+        }
+
+        if (!nearest.isEmpty()) {
+            return nearest;
+        }
+
+        return "";
     }
 }

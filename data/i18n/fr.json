@@ -138,6 +138,21 @@
 		"cities": "Ville",
 		"fence": "Enclos",
 		"crop": "Crop",
-		"resetMapping": "Réinitialiser les touches"
+		"resetMapping": "Réinitialiser les touches",
+		"you": "Vous",
+		"console": "Console",
+		"consoleEntHel": "Tapez `help` pour plus d'informations.",
+		"consoleClear": "Effacer",
+		"consoleOptions": "Options",
+		"consoleAutoScroll": "Auto-scroll",
+		"consoleNoAuthority": "Vous n'avez pas l'autorité pour exécuter cette commande !",
+		"consoleUnknown": "Cette commande est inconnue !",
+		"consoleWrongNumArg": "Cette commande a été appelé avec un nombre invalide d'arguments !",
+		"consoleErr": "Erreur :",
+		"consoleWar": "Attention :",
+		"consoleInfo": "Info :",
+		"consoleClose": "Fermer",
+        "consoleServer": "Serveur",
+        "consoleMean": "Vouliez-vous dire `{}` ?"
 	}
 }

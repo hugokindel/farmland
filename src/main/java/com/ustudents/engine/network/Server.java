@@ -223,8 +223,8 @@ public class Server extends Controller {
             Scanner scanner = new Scanner(System.in);
 
             Out.println("The server launched at your IP address with port " + Game.get().getServer().socket.getLocalPort());
-            Out.println("To stop the server, type `quit`.");
-            Out.println("To see more informations, type `help`.");
+            Out.println("To stop the server, enter `quit`.");
+            Out.println("To see more informations, enter `help`.");
 
             while (!Game.get().shouldQuit()) {
                 if (scanner.hasNextLine()) {

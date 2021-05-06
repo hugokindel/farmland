@@ -138,6 +138,21 @@
         "cities": "Cities",
         "fence": "Fence",
         "crop": "Crop",
-        "resetMapping": "Reset mapping"
+        "resetMapping": "Reset mapping",
+        "you": "You",
+        "console": "Console",
+        "consoleEntHel": "Enter `help` for more informations.",
+        "consoleClear": "Clear",
+        "consoleOptions": "Options",
+        "consoleAutoScroll": "Auto-scroll",
+        "consoleNoAuthority": "You do not have authority to run this command!",
+        "consoleUnknown": "This is not a known command!",
+        "consoleWrongNumArg": "This command was called with an invalid number of arguments!",
+        "consoleErr": "Error:",
+        "consoleWar": "Warning:",
+        "consoleInfo": "Info:",
+        "consoleClose": "Close",
+        "consoleServer": "Server",
+        "consoleMean": "Did you mean `{}` ?"
     }
 }

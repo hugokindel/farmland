@@ -1,5 +1,6 @@
 package com.ustudents.engine.graphic.imgui.console;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.Color;
 
 public class ConsolePrintData {
@@ -33,11 +34,11 @@ public class ConsolePrintData {
             case None:
                 return text;
             case Info:
-                return "Info: " + text;
+                return Resources.getLocalizedText("consoleInfo") + " " + text;
             case Warning:
-                return "Warning: " + text;
+                return Resources.getLocalizedText("consoleWar") + " " + text;
             case Error:
-                return "Error: " + text;
+                return Resources.getLocalizedText("consoleErr") + " " + text;
         }
 
         return text;
