@@ -30,7 +30,7 @@
     "RCtrl": "RCtrl",
     "LAlt": "LAlt",
     "RAlt": "RAlt",
-    "debugMenu": "Debug",
+    "showDebug": "Debug",
     "showPerformance": "Perfomance :  ",
     "newGame": "New game",
     "loadGame": "Load a game",

@@ -147,14 +147,14 @@ public class GLFWInput extends EmptyInput {
                 Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
                 if((currentScene instanceof SettingsKeybindMenu && ((SettingsKeybindMenu)currentScene).searchAction() != null &&
                         ((SettingsKeybindMenu)currentScene).avoidKey(eventData.key))) {
-                    currentScene.changeScene(new SettingsKeybindMenu(2));
+                    currentScene.changeScene(new SettingsKeybindMenu(2), false);
                 }else if(currentScene instanceof SettingsKeybindMenu &&
                         ((SettingsKeybindMenu)currentScene).bindNotAlreadyDefine(eventData.key, true)) {
                     ((SettingsKeybindMenu) currentScene).selectNewBind(true, eventData.key);
-                    currentScene.changeScene(new SettingsKeybindMenu());
+                    currentScene.changeScene(new SettingsKeybindMenu(), false);
                 }else if((currentScene instanceof SettingsKeybindMenu && ((SettingsKeybindMenu)currentScene).searchAction() != null &&
                         !((SettingsKeybindMenu)currentScene).bindNotAlreadyDefine(eventData.key, true))){
-                    currentScene.changeScene(new SettingsKeybindMenu(1)/*(((CommandsMenu) currentScene).searchAction())*/);
+                    currentScene.changeScene(new SettingsKeybindMenu(1), false/*(((CommandsMenu) currentScene).searchAction())*/);
                 }else{
                     keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
                     keyStates[eventData.key] = eventData.action;

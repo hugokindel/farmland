@@ -43,8 +43,9 @@ public class SettingsKeybindMenu extends MenuScene{
         showTextAndButton(guiBuilder, "showTerritory");
         showTextAndButton(guiBuilder, "putItem");
         showTextAndButton(guiBuilder, "getItem");
-        showTextAndButton(guiBuilder, "debugMenu");
+        showTextAndButton(guiBuilder, "showDebug");
         showTextAndButton(guiBuilder, "showPerfomance");
+        showTextAndButton(guiBuilder, "showConsole");
         if(bindError != -1)
             displayBindError(guiBuilder);
         canGoBackButton(guiBuilder);
@@ -81,7 +82,7 @@ public class SettingsKeybindMenu extends MenuScene{
         guiBuilder.addText(gameplayOptions);
 
         GuiBuilder.TextData OtherOptions = new GuiBuilder.TextData("Divers : ");
-        OtherOptions.id = "moveSection";
+        OtherOptions.id = "otherSection";
         OtherOptions.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
         OtherOptions.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
         OtherOptions.position = new Vector2f(-150, 115);
@@ -167,8 +168,8 @@ public class SettingsKeybindMenu extends MenuScene{
             guiBuilder.addText(getItem);
         }
 
-        if(action.equals("debugMenu")){
-            GuiBuilder.TextData debugMenu = new GuiBuilder.TextData(Resources.getLocalizedText("debugMenu"));
+        if(action.equals("showDebug")){
+            GuiBuilder.TextData debugMenu = new GuiBuilder.TextData(Resources.getLocalizedText("showDebug"));
             debugMenu.id = action;
             debugMenu.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
             debugMenu.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
@@ -185,6 +186,16 @@ public class SettingsKeybindMenu extends MenuScene{
             showPerfomance.position = new Vector2f(-210, 300);
             showPerfomance.color = Color.BLACK;
             guiBuilder.addText(showPerfomance);
+        }
+
+        if(action.equals("showConsole")){
+            GuiBuilder.TextData showConsole = new GuiBuilder.TextData("Console : ");
+            showConsole.id = action;
+            showConsole.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
+            showConsole.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
+            showConsole.position = new Vector2f(-220, 370);
+            showConsole.color = Color.BLACK;
+            guiBuilder.addText(showConsole);
         }
     }
 
@@ -276,7 +287,7 @@ public class SettingsKeybindMenu extends MenuScene{
             guiBuilder.addButton(getItem);
         }
 
-        if(action.equals("debugMenu")){
+        if(action.equals("showDebug")){
             GuiBuilder.ButtonData debugMenu = new GuiBuilder.ButtonData(key, (dataType, data) -> {
                 removeBind(action);
             });
@@ -296,6 +307,17 @@ public class SettingsKeybindMenu extends MenuScene{
             showPerfomance.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
             showPerfomance.position = new Vector2f(-90, 285); // y = 210
             guiBuilder.addButton(showPerfomance);
+        }
+
+        if(action.equals("showConsole")){
+            GuiBuilder.ButtonData showConsole = new GuiBuilder.ButtonData(key, (dataType, data) -> {
+                removeBind(action);
+            });
+            showConsole.id = action;
+            showConsole.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
+            showConsole.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
+            showConsole.position = new Vector2f(-90, 360); // y = 210
+            guiBuilder.addButton(showConsole);
         }
     }
 
@@ -358,7 +380,7 @@ public class SettingsKeybindMenu extends MenuScene{
         GuiBuilder.ButtonData reloadBind = new GuiBuilder.ButtonData("Réinitialiser les touches", (dataType, data) -> {
             Resources.getConfig().commands.clear();
             Farmland.get().initializeCommands(Resources.getConfig());
-            changeScene(new SettingsKeybindMenu());
+            changeScene(new SettingsKeybindMenu(), false);
         });
         reloadBind.id = "reloadBind";
         reloadBind.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Center);
@@ -370,7 +392,7 @@ public class SettingsKeybindMenu extends MenuScene{
     private void removeBind(String action){
         if(searchAction() == null)
             Resources.getConfig().commands.get(action).removeFirstBindInMapping();
-        changeScene(new SettingsKeybindMenu());
+        changeScene(new SettingsKeybindMenu(), false);
     }
 
     public void selectNewBind(boolean isKey, int selectedBind){
@@ -382,19 +404,19 @@ public class SettingsKeybindMenu extends MenuScene{
         Out.println(selectedBind);
         if(isKey){
             if(selectedBind <= 0 || !bindNotAlreadyDefine(selectedBind, true) || avoidKey(selectedBind)) {
-                changeScene(new SettingsKeybindMenu(2));
+                changeScene(new SettingsKeybindMenu(2), false);
                 return;
             }
         }else{
             if(selectedBind < 0 || !bindNotAlreadyDefine(selectedBind, false)) {
-                changeScene(new SettingsKeybindMenu());
+                changeScene(new SettingsKeybindMenu(), false);
                 return;
             }
         }
         Out.println(selectedBind);
         currentAction.removeFirstBindInMapping();
         currentAction.addFirstBindInMapping(selectedBind, typeOfBind);
-        changeScene(new SettingsKeybindMenu());
+        changeScene(new SettingsKeybindMenu(), false);
     }
 
     public boolean bindNotAlreadyDefine(int key, boolean isKey){
@@ -423,7 +445,7 @@ public class SettingsKeybindMenu extends MenuScene{
         actionName.equals("showTerritory") || actionName.equals("putItem") ||
         actionName.equals("getItem"))
             return "down";
-        else if(actionName.equals("debugMenu") || actionName.equals("showPerfomance")){
+        else if(actionName.equals("showDebug") || actionName.equals("showPerfomance") || actionName.equals("showConsole")){
             return "pressed";
         }
         return null;

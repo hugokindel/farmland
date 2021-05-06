@@ -315,7 +315,6 @@ public class Farmland extends Game {
             action.addMapping(KeyRight);
             config.commands.put("goRight", action);
         }
-
         if(!actions.containsKey("showTerritory")) {
             action = new Action();
             Mapping KeyCtrlG = new Mapping("keyboard");
@@ -326,7 +325,6 @@ public class Farmland extends Game {
             action.addMapping(KeyCtrlD);
             config.commands.put("showTerritory", action);
         }
-
         if(!actions.containsKey("putItem")) {
             action = new Action();
             Mapping leftMouseButton = new Mapping("mouse");
@@ -334,7 +332,6 @@ public class Farmland extends Game {
             action.addMapping(leftMouseButton);
             config.commands.put("putItem", action);
         }
-
         if(!actions.containsKey("getItem")) {
             action = new Action();
             Mapping RightMouseButton = new Mapping("mouse");
@@ -342,15 +339,13 @@ public class Farmland extends Game {
             action.addMapping(RightMouseButton);
             config.commands.put("getItem", action);
         }
-
-        if(!actions.containsKey("debugMenu")) {
+        if(!actions.containsKey("showDebug")) {
             action = new Action();
             Mapping debug = new Mapping("keyboard");
             debug.bindPressedAction(Key.F1);
             action.addMapping(debug);
-            config.commands.put("debugMenu", action);
+            config.commands.put("showDebug", action);
         }
-
         if(!actions.containsKey("showPerfomance")) {
             action = new Action();
             Mapping showPerfomance = new Mapping("keyboard");
@@ -358,14 +353,21 @@ public class Farmland extends Game {
             action.addMapping(showPerfomance);
             config.commands.put("showPerfomance", action);
         }
+        if(!actions.containsKey("showConsole")) {
+            action = new Action();
+            Mapping showConsole = new Mapping("keyboard");
+            showConsole.bindPressedAction(Key.GraveAccent);
+            action.addMapping(showConsole);
+            config.commands.put("showConsole", action);
+        }
     }
 
     public void reloadCustomizableCommands(){
         Map<String, Action> actions = Resources.getConfig().commands;
+
         if(actions.get("goUp").getFirstBindInMapping() <= 0){
             actions.get("goUp").addFirstBindInMapping(Key.W, "down");
         }
-
         if(actions.get("goDown").getFirstBindInMapping() <= 0){
             actions.get("goDown").addFirstBindInMapping(Key.S, "down");
         }
@@ -375,27 +377,24 @@ public class Farmland extends Game {
         if(actions.get("goRight").getFirstBindInMapping() <= 0){
             actions.get("goRight").addFirstBindInMapping(Key.D, "down");
         }
-
         if(actions.get("showTerritory").getFirstBindInMapping() <= 0){
             actions.get("showTerritory").addFirstBindInMapping(Key.D, "down");
         }
-
         if(actions.get("putItem").getFirstBindInMapping() <= 0){
             actions.get("putItem").addFirstBindInMapping(MouseButton.Left, "down");
         }
-
         if(actions.get("getItem").getFirstBindInMapping() <= 0){
             actions.get("getItem").addFirstBindInMapping(MouseButton.Right, "down");
         }
-
-        if(actions.get("debugMenu").getFirstBindInMapping() <= 0){
-            actions.get("debugMenu").addFirstBindInMapping(Key.F1, "pressed");
+        if(actions.get("showDebug").getFirstBindInMapping() <= 0){
+            actions.get("showDebug").addFirstBindInMapping(Key.F1, "pressed");
         }
-
         if(actions.get("showPerfomance").getFirstBindInMapping() <= 0){
             actions.get("showPerfomance").addFirstBindInMapping(Key.F2, "pressed");
         }
-
+        if(actions.get("showConsole").getFirstBindInMapping() <= 0){
+            actions.get("showConsole").addFirstBindInMapping(Key.GraveAccent, "pressed");
+        }
     }
 
     private void loadTextures() {

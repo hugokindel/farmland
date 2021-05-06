@@ -498,22 +498,20 @@ public abstract class Game extends Runnable {
     private void updateInternal() {
         timer.update();
 
-        //if (Input.isKeyPressed(Key.F1)) {
-        if (Input.isActionSuccessful("debugMenu")) {
+        if ((!Input.actionExists("showDebug") && Input.isKeyPressed(Key.F1)) || Input.isActionSuccessful("showDebug")) {
             if (!forceDisableTools) {
                 imGuiToolsEnabled = !imGuiToolsEnabled;
                 window.actualizeCursorType();
             }
         }
 
-        //if (Input.isKeyPressed(Key.F2)) {
-        if (Input.isActionSuccessful("showPerfomance")) {
+        if ((!Input.actionExists("showPerformance") && Input.isKeyPressed(Key.F2)) || Input.isActionSuccessful("showPerformance")) {
             if (!forceDisableTools) {
                 debugToolsEnabled = !debugToolsEnabled;
             }
         }
 
-        if (Input.isKeyReleased(Key.GraveAccent) && Console.exists()) {
+        if (Console.exists() && ((!Input.actionExists("showConsole") && Input.isKeyPressed(Key.F2)) || Input.isActionSuccessful("showConsole"))) {
             Console.show();
             window.actualizeCursorType();
         }
