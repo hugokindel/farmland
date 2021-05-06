@@ -4,6 +4,7 @@ import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 
+@JsonSerializable
 public class UpgradeResearch extends Message {
     @JsonSerializable
     String researchName;

@@ -12,11 +12,6 @@ import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.InGameScene;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class ResultMenu extends MenuScene {
     public Player currentPlayer;

@@ -2,6 +2,7 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.window.Window;
@@ -105,7 +106,7 @@ public class InGameScene extends Scene {
         initializeGui();
         initializeGameplay();
         economicComponent = new EconomicComponent();
-        checkPlayerFrame();
+        updatePlayerFrame();
         moneyUpdate();
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
@@ -657,7 +658,6 @@ public class InGameScene extends Scene {
                 player.loanMoney = 0;
                 ImGui.text("\n\n" + "Vous n'avez pas de dette à rembourser" + "\n\n");
             }
-
         }
     }
 
@@ -668,10 +668,12 @@ public class InGameScene extends Scene {
         for (int i = 0; i < player.researches.size(); i++){
             Research research = player.researches.get(i);
             if (ImGui.button("Améliorer " + research.getName() + "[" + research.getPrice() + "]") && player.money > research.getPrice()){
+                Out.println("Upgrade: " + research.getName());
                 player.upgradeResearch(research.getName());
 
                 updateMoneyItemLabel();
                 updateLeaderboard();
+                updatePlayerFrame();
             }
             ImGui.sameLine();
             ImGui.text( research.getName() + " niveau : " + research.getLevel() + " bonus de revente : " + research.getEffect());
@@ -940,12 +942,11 @@ public class InGameScene extends Scene {
                     showResearch.set(true);
                     shouldShowBackResearch = false;
                 }
-                checkPlayerFrame();
             }
         }
     }
 
-    public void checkPlayerFrame(){
+    public void updatePlayerFrame(){
         Player player = Farmland.get().getLoadedSave().getLocalPlayer();
         int fLevel = 0;
         int eLevel = 0;
@@ -1170,6 +1171,7 @@ public class InGameScene extends Scene {
                 updateMoneyItemLabel();
                 updateLeaderboard();
                 updateTimer();
+                updatePlayerFrame();
             }
         }
 

@@ -1,6 +1,7 @@
 package com.ustudents.farmland.core.player;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
@@ -455,6 +456,7 @@ public class Player {
 
     public void upgradeResearch(String name) {
         if (Game.get().hasAuthority()) {
+            Out.println("Upgrade: " + name);
             Research research = findResearch(name);
 
             money -= research.getPrice();
