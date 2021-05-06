@@ -1204,4 +1204,11 @@ public class InGameScene extends Scene {
     public boolean getPause() {
         return inPause;
     }
+
+    public void updateUi() {
+        updateMoneyItemLabel();
+        updateLeaderboard();
+        updateTimer();
+        updatePlayerFrame();
+    }
 }

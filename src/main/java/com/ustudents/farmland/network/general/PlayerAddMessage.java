@@ -49,6 +49,7 @@ public class PlayerAddMessage extends Message {
                 ((InGameScene)currentScene).setPause(false);
             }
 
+            Farmland.get().serverBroadcastSave();
             Farmland.get().getServer().send(getSenderId(), new PlayerAllPresentsMessage());
         }
     }

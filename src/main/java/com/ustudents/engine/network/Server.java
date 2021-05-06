@@ -108,6 +108,7 @@ public class Server extends Controller {
         if (Game.isDebugging()) {
             Out.printlnDebug("Message broadcasted");
         }
+
         super.send(new BroadcastMessage(new ArrayList<>(clients.keySet()), message));
     }
 
