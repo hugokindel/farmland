@@ -877,7 +877,6 @@ public class InGameScene extends Scene {
     }
 
     public void onTurnEnded() {
-        Out.println("On turn ended");
         Player currentPlayer = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         if(currentPlayer.debtMoney > 0)
@@ -1175,10 +1174,10 @@ public class InGameScene extends Scene {
                 if (!serverSave.currentPlayerId.equals(currentSave.currentPlayerId)) {
                     Farmland.get().getLoadedSave().turnEnded.dispatch();
                 }
-            }
 
-            updateMoneyItemLabel();
-            updateLeaderboard();
+                updateMoneyItemLabel();
+                updateLeaderboard();
+            }
         }
 
         if (Input.isMouseRelease(MouseButton.Right)) {

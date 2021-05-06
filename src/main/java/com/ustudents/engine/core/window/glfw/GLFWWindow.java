@@ -276,6 +276,14 @@ public class GLFWWindow extends EmptyWindow {
                     }
                 }
 
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    final ImGuiIO io = ImGui.getIO();
+
+                    if (io.getWantCaptureMouse()) {
+                        return;
+                    }
+                }
+
                 keyStateChanged.dispatch(new KeyStateChangedEvent(key, scancode, action, mods));
             }
         });
