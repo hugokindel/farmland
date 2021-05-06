@@ -12,7 +12,6 @@ import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.input.Action;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
-import com.ustudents.engine.scene.component.gui.ButtonComponent;
 import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
