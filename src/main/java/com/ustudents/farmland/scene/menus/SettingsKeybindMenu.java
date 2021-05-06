@@ -1,7 +1,5 @@
 package com.ustudents.farmland.scene.menus;
 
-import com.ustudents.engine.Game;
-import com.ustudents.engine.GameConfig;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
@@ -10,25 +8,22 @@ import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Origin;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.input.Action;
-import com.ustudents.engine.input.Input;
-import com.ustudents.engine.input.Key;
+import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.CallbackI;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
-public class CommandsMenu extends MenuScene{
+public class SettingsKeybindMenu extends MenuScene{
     int bindError;
 
-    public CommandsMenu(){
+    public SettingsKeybindMenu(){
         bindError = -1;
     }
 
-    public CommandsMenu(int errorBind){
+    public SettingsKeybindMenu(int errorBind){
         this.bindError = errorBind;
     }
 
@@ -350,7 +345,7 @@ public class CommandsMenu extends MenuScene{
     private void canGoBackButton(GuiBuilder guiBuilder){
         GuiBuilder.ButtonData goBack = new GuiBuilder.ButtonData("Retour", (dataType, data) -> {
             Farmland.get().reloadCustomizableCommands();
-            changeScene(new SettingsMenu());
+            SceneManager.get().goBack();
         });
         goBack.id = "goBack";
         goBack.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Center);
@@ -363,7 +358,7 @@ public class CommandsMenu extends MenuScene{
         GuiBuilder.ButtonData reloadBind = new GuiBuilder.ButtonData("Réinitialiser les touches", (dataType, data) -> {
             Resources.getConfig().commands.clear();
             Farmland.get().initializeCommands(Resources.getConfig());
-            changeScene(new CommandsMenu());
+            changeScene(new SettingsKeybindMenu());
         });
         reloadBind.id = "reloadBind";
         reloadBind.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Center);
@@ -375,7 +370,7 @@ public class CommandsMenu extends MenuScene{
     private void removeBind(String action){
         if(searchAction() == null)
             Resources.getConfig().commands.get(action).removeFirstBindInMapping();
-        changeScene(new CommandsMenu());
+        changeScene(new SettingsKeybindMenu());
     }
 
     public void selectNewBind(boolean isKey, int selectedBind){
@@ -387,19 +382,19 @@ public class CommandsMenu extends MenuScene{
         Out.println(selectedBind);
         if(isKey){
             if(selectedBind <= 0 || !bindNotAlreadyDefine(selectedBind, true) || avoidKey(selectedBind)) {
-                changeScene(new CommandsMenu(2));
+                changeScene(new SettingsKeybindMenu(2));
                 return;
             }
         }else{
             if(selectedBind < 0 || !bindNotAlreadyDefine(selectedBind, false)) {
-                changeScene(new CommandsMenu());
+                changeScene(new SettingsKeybindMenu());
                 return;
             }
         }
         Out.println(selectedBind);
         currentAction.removeFirstBindInMapping();
         currentAction.addFirstBindInMapping(selectedBind, typeOfBind);
-        changeScene(new CommandsMenu());
+        changeScene(new SettingsKeybindMenu());
     }
 
     public boolean bindNotAlreadyDefine(int key, boolean isKey){

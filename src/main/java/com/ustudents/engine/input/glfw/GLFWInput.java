@@ -1,6 +1,5 @@
 package com.ustudents.engine.input.glfw;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.window.events.CursorMovedEvent;
 import com.ustudents.engine.core.window.events.KeyStateChangedEvent;
@@ -10,8 +9,7 @@ import com.ustudents.engine.input.empty.EmptyInput;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.scene.menus.CommandsMenu;
-import com.ustudents.farmland.scene.menus.MenuScene;
+import com.ustudents.farmland.scene.menus.SettingsKeybindMenu;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
@@ -147,16 +145,16 @@ public class GLFWInput extends EmptyInput {
             KeyStateChangedEvent eventData = (KeyStateChangedEvent) data;
             if (eventData.key != -1) {
                 Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
-                if((currentScene instanceof CommandsMenu && ((CommandsMenu)currentScene).searchAction() != null &&
-                        ((CommandsMenu)currentScene).avoidKey(eventData.key))) {
-                    currentScene.changeScene(new CommandsMenu(2));
-                }else if(currentScene instanceof CommandsMenu &&
-                        ((CommandsMenu)currentScene).bindNotAlreadyDefine(eventData.key, true)) {
-                    ((CommandsMenu) currentScene).selectNewBind(true, eventData.key);
-                    currentScene.changeScene(new CommandsMenu());
-                }else if((currentScene instanceof CommandsMenu && ((CommandsMenu)currentScene).searchAction() != null &&
-                        !((CommandsMenu)currentScene).bindNotAlreadyDefine(eventData.key, true))){
-                    currentScene.changeScene(new CommandsMenu(1)/*(((CommandsMenu) currentScene).searchAction())*/);
+                if((currentScene instanceof SettingsKeybindMenu && ((SettingsKeybindMenu)currentScene).searchAction() != null &&
+                        ((SettingsKeybindMenu)currentScene).avoidKey(eventData.key))) {
+                    currentScene.changeScene(new SettingsKeybindMenu(2));
+                }else if(currentScene instanceof SettingsKeybindMenu &&
+                        ((SettingsKeybindMenu)currentScene).bindNotAlreadyDefine(eventData.key, true)) {
+                    ((SettingsKeybindMenu) currentScene).selectNewBind(true, eventData.key);
+                    currentScene.changeScene(new SettingsKeybindMenu());
+                }else if((currentScene instanceof SettingsKeybindMenu && ((SettingsKeybindMenu)currentScene).searchAction() != null &&
+                        !((SettingsKeybindMenu)currentScene).bindNotAlreadyDefine(eventData.key, true))){
+                    currentScene.changeScene(new SettingsKeybindMenu(1)/*(((CommandsMenu) currentScene).searchAction())*/);
                 }else{
                     keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
                     keyStates[eventData.key] = eventData.action;
@@ -176,11 +174,10 @@ public class GLFWInput extends EmptyInput {
         Window.get().getMouseButtonStateChanged().add((dataType, data) -> {
             MouseButtonStateChangedEvent eventData = (MouseButtonStateChangedEvent) data;
             Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
-            if(currentScene instanceof CommandsMenu &&
-                    ((CommandsMenu)currentScene).bindNotAlreadyDefine(eventData.button, false)){
-                ((CommandsMenu)currentScene).selectNewBind(false, eventData.button);
+            if(currentScene instanceof SettingsKeybindMenu &&
+                    ((SettingsKeybindMenu)currentScene).bindNotAlreadyDefine(eventData.button, false)){
+                ((SettingsKeybindMenu)currentScene).selectNewBind(false, eventData.button);
             }else{
-                Out.println(eventData.button);
                 mouseButtons[eventData.button] = (eventData.action != GLFW.GLFW_RELEASE);
                 mouseStates[eventData.button] = eventData.action;
                 mousePressedStates[eventData.button] = eventData.action;

@@ -52,7 +52,7 @@ public class SettingsMenu extends MenuScene {
                         changeScene(new SettingsMenu());
                         break;
                     case "commands":
-                        changeScene(new CommandsMenu());
+                        changeScene(new SettingsKeybindMenu());
                         break;
                 }
             };
