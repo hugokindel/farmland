@@ -91,4 +91,8 @@ public class Input {
     public static int findKey(){
         return ((GLFWInput)inputManager).findKey();
     }
+
+    public static boolean actionExists(String name) {
+        return Resources.getConfig().commands.containsKey(name);
+    }
 }

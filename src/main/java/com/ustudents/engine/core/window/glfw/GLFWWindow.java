@@ -7,6 +7,7 @@ import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
 import com.ustudents.engine.core.window.events.*;
 import com.ustudents.engine.graphic.RenderTarget;
+import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.scene.SceneManager;
 import imgui.ImGui;
@@ -270,7 +271,7 @@ public class GLFWWindow extends EmptyWindow {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
-                    if (key != Key.GraveAccent) {
+                    if ((!Input.actionExists("showConsole") && key != Key.GraveAccent) || (Input.actionExists("showConsole") && key != Resources.getConfig().commands.get("showConsole").getFirstBindInMapping())) {
                         Game.get().getImGuiManager().getImGuiGlfw().keyCallback(window, key, scancode, action, mods);
                     }
                 }
@@ -328,7 +329,14 @@ public class GLFWWindow extends EmptyWindow {
             @Override
             public void invoke(long window, int codepoint) {
                 if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
-                    if (codepoint != 178) { // GraveAccent
+                    if ((!Input.actionExists("showConsole") && codepoint !=
+                            Objects.requireNonNull(glfwGetKeyName(Key.GraveAccent,
+                                    glfwGetKeyScancode(Key.GraveAccent))).charAt(0)) ||
+                            (Input.actionExists("showConsole") && codepoint !=
+                                    Objects.requireNonNull(glfwGetKeyName(Resources.getConfig().commands.
+                                            get("showConsole").getFirstBindInMapping(),
+                                            glfwGetKeyScancode(Resources.getConfig().
+                                                    commands.get("showConsole").getFirstBindInMapping()))).charAt(0))) {
                         Game.get().getImGuiManager().getImGuiGlfw().charCallback(window, codepoint);
                     }
                 }

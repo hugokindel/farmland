@@ -30,7 +30,7 @@
 		"RCtrl": "CtrlD",
 		"LAlt": "AltG",
 		"RAlt": "AltD",
-		"debugMenu": "Debug : ",
+		"showDebug": "Debug : ",
 		"showPerformance": "Performance :  ",
 		"newGame": "Nouvelle partie",
 		"loadGame": "Charger une partie",
