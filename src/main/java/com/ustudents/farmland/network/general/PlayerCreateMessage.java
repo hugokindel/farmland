@@ -22,15 +22,31 @@ public class PlayerCreateMessage extends Message {
     @JsonSerializable
     Color bannerColor;
 
+    @JsonSerializable
+    Color bracesColor;
+
+    @JsonSerializable
+    Color shirtColor;
+
+    @JsonSerializable
+    Color hatColor;
+
+    @JsonSerializable
+    Color buttonsColor;
+
     public PlayerCreateMessage() {
 
     }
 
-    public PlayerCreateMessage(int playerId, String playerName, String villageName, Color bannerColor) {
+    public PlayerCreateMessage(int playerId, String playerName, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonsColor) {
         this.playerId = playerId;
         this.playerName = playerName;
         this.villageName = villageName;
         this.bannerColor = bannerColor;
+        this.bracesColor = bracesColor;
+        this.shirtColor = shirtColor;
+        this.hatColor = hatColor;
+        this.buttonsColor = buttonsColor;
     }
 
     public int getPlayerId() {
@@ -57,6 +73,10 @@ public class PlayerCreateMessage extends Message {
         currentSave.players.get(playerId).name = getPlayerName();
         currentSave.players.get(playerId).village.name = getVillageName();
         currentSave.players.get(playerId).bannerColor = getBannerColor();
+        currentSave.players.get(playerId).avatar.bracesColor = bracesColor;
+        currentSave.players.get(playerId).avatar.shirtColor = shirtColor;
+        currentSave.players.get(playerId).avatar.hatColor = hatColor;
+        currentSave.players.get(playerId).avatar.buttonsColor = buttonsColor;
         currentSave.players.get(playerId).type = Player.Type.Human;
 
         PlayerAddMessage message = new PlayerAddMessage(playerId);

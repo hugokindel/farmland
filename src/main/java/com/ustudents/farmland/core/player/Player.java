@@ -1,12 +1,9 @@
 package com.ustudents.farmland.core.player;
 
 import com.ustudents.engine.Game;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.graphic.Color;
-import com.ustudents.engine.utility.Pair;
-import com.ustudents.engine.utility.Triplet;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.component.GridComponent;
 import com.ustudents.farmland.core.grid.Cell;
@@ -17,10 +14,7 @@ import com.ustudents.farmland.core.system.Research;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @JsonSerializable
 @SuppressWarnings("unchecked")
@@ -76,10 +70,10 @@ public class Player {
     public List<Animal> soldAnimals;
 
     @JsonSerializable
-    public List<Caravan> caravanList;
+    public List<Caravan> caravans;
 
     @JsonSerializable
-    public List<Research> researchList;
+    public List<Research> researches;
 
     public EventDispatcher moneyChanged = new EventDispatcher();
 
@@ -97,10 +91,10 @@ public class Player {
         this.type = type;
         this.loanMoney = 0;
         this.debtMoney = 0;
-        this.caravanList = new ArrayList<>();
-        this.researchList = new ArrayList<>();
-        this.researchList.add(new Research("Fermier"));
-        this.researchList.add(new Research("Eleveur"));
+        this.caravans = new ArrayList<>();
+        this.researches = new ArrayList<>();
+        this.researches.add(new Research("Fermier"));
+        this.researches.add(new Research("Eleveur"));
         this.boughtCrops = new ArrayList<>();
         this.boughtAnimals = new ArrayList<>();
         this.soldCrops = new ArrayList<>();
@@ -345,6 +339,16 @@ public class Player {
         this.selectedItemId = selectedItemId;
     }
 
+    public Research findResearch(String name) {
+        for (Research research : researches) {
+            if (research.name.equals(name)) {
+                return research;
+            }
+        }
+
+        return null;
+    }
+
     public void selectItem(String itemId) {
         if (Game.get().hasAuthority()) {
             setSelectedItemId(itemId);
@@ -416,6 +420,66 @@ public class Player {
             Farmland.get().serverBroadcastSave();
         } else {
             Game.get().getClient().send(new PlaceSelectedItemMessage(position));
+        }
+    }
+
+    public void takeLoan(int amount) {
+        if (Game.get().hasAuthority()) {
+            money += amount;
+            loanMoney = amount + (int)(amount * 0.03f) + 1;
+            debtMoney += amount + (int)(amount * 0.03f) + 1;
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new TakeLoanMessage(amount));
+        }
+    }
+
+    public void payLoan(int amount) {
+        if (Game.get().hasAuthority()) {
+            if (debtMoney > 0) {
+                money -= amount;
+                debtMoney -= amount;
+
+                if (debtMoney <= 0) {
+                    debtMoney = 0;
+                    loanMoney = 0;
+                }
+            }
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new PayLoanMessage(amount));
+        }
+    }
+
+    public void upgradeResearch(String name) {
+        if (Game.get().hasAuthority()) {
+            Research research = findResearch(name);
+
+            money -= research.getPrice();
+            research.levelUp(10, 1);
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new UpgradeResearch(name));
+        }
+    }
+
+    public void sendCaravan(int travelPrice, int travelTime, int sellValue, String itemId) {
+        if (Game.get().hasAuthority()) {
+            int itemQuantity = getAllItemOfSellInventory().get(itemId).quantity;
+
+            money -= travelPrice;
+            caravans.add(new Caravan(sellValue, travelTime, itemId));
+
+            for (int i = 0; i < itemQuantity / 2; i++) {
+                deleteFromInventory(getAllItemOfSellInventory().get(itemId), "Caravan");
+            }
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new SendCaravanMessage(travelPrice, travelTime, sellValue, itemId));
         }
     }
 }

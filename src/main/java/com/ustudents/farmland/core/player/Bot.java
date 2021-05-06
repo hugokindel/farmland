@@ -106,8 +106,8 @@ public class Bot {
         if (!cells.isEmpty()) {
             for (int i = 0; i < cells.size(); i++){
                 if(cells.get(i).hasItem()){
-                    for (int y = 0; y < player.researchList.size(); y++){
-                        Research re = player.researchList.get(y);
+                    for (int y = 0; y < player.researches.size(); y++){
+                        Research re = player.researches.get(y);
                         if (re.getName().equals("Eleveur") && cells.get(i).item instanceof Animal){
                             player.money -= re.getPrice();
                             re.levelUp(10,1);
@@ -262,8 +262,8 @@ public class Bot {
             while (itemQuantity > 1) {
                 int fEffect = 0;
                 int eEffect = 0;
-                for (int i = 0; i < player.researchList.size(); i++) {
-                    Research re = player.researchList.get(i);
+                for (int i = 0; i < player.researches.size(); i++) {
+                    Research re = player.researches.get(i);
                     if (re.getName().equals("Fermier")) {
                         fEffect = re.getEffect();
                     } else if (re.getName().equals("Eleveur")) {
@@ -275,7 +275,7 @@ public class Bot {
                 int travelTime = 4;
                 int travelPrice = 10;
                 player.money -= travelPrice;
-                player.caravanList.add(new Caravan(sellValueOfCaravan, travelTime, item.id));
+                player.caravans.add(new Caravan(sellValueOfCaravan, travelTime, item.id));
                 Item itemCopy = Item.clone(item);
                 assert itemCopy != null;
                 itemCopy.quantity = itemQuantity/2;

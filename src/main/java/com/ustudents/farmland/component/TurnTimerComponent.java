@@ -1,6 +1,7 @@
 package com.ustudents.farmland.component;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;

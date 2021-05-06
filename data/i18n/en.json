@@ -103,7 +103,7 @@
     "seeCaravans": " View of your caravans: \n\n",
     "caravansFor": "Caravans for {} pieces : {} remaining turns",
     "possess": "Possessed",
-    "resellPrice": "Resale price: ",
+    "resellPrice": "Resale price: {}",
     "products": "In-store items: \n\n",
     "seedOf": "Seed of ",
     "selected": "\n\nSelected: {} (x{})",

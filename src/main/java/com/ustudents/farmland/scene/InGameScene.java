@@ -2,7 +2,6 @@ package com.ustudents.farmland.scene;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.window.Window;
@@ -392,7 +391,7 @@ public class InGameScene extends Scene {
         guiBuilder.addText(textData);
 
         String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
-        String text = Resources.getLocalizedText("money", Farmland.get().getLoadedSave().getLocalPlayer().money);
+        String text = "";
         if (selectedId != null) {
             text += Resources.getLocalizedText("\n\nselect") + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity + ")";
         }
@@ -563,7 +562,7 @@ public class InGameScene extends Scene {
         }
 
         if (showCaravan.get()) {
-            ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
+            ImGuiUtils.setNextWindowWithSizeCentered(600, 300, ImGuiCond.Appearing);
 
             ImGui.begin(Resources.getLocalizedText("caravans"), showCaravan);
             ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getLocalPlayer().money + "\n\n"));
@@ -617,9 +616,7 @@ public class InGameScene extends Scene {
                         selectBorrow.set(maxBorrow);
                 }else{
                     if(ImGui.button("Confirmer")){
-                        player.money+= selectBorrow.get();
-                        player.loanMoney = selectBorrow.get() + (int)(selectBorrow.get()*0.03f) + 1;
-                        player.debtMoney += selectBorrow.get() + (int)(selectBorrow.get()*0.03f) + 1;
+                        player.takeLoan(selectBorrow.get());
                         updateMoneyItemLabel();
                         updateLeaderboard();
                         selectBorrow.set(maxBorrow/10);
@@ -646,8 +643,7 @@ public class InGameScene extends Scene {
                         selectBorrow.set(player.debtMoney);
                 }else{
                     if(ImGui.button("Confirmer")){
-                        player.money -= selectBorrow.get();
-                        player.debtMoney -= selectBorrow.get();
+                        player.payLoan(selectBorrow.get());
                         updateMoneyItemLabel();
                         updateLeaderboard();
                         selectBorrow.set(1);
@@ -669,11 +665,13 @@ public class InGameScene extends Scene {
         Player player = Farmland.get().getLoadedSave().getLocalPlayer();
 
         ImGui.text("Recherches : \n\n");
-        for (int i = 0; i < player.researchList.size(); i++){
-            Research research = player.researchList.get(i);
+        for (int i = 0; i < player.researches.size(); i++){
+            Research research = player.researches.get(i);
             if (ImGui.button("Améliorer " + research.getName() + "[" + research.getPrice() + "]") && player.money > research.getPrice()){
-                player.setMoney(player.money - research.getPrice());
-                research.levelUp(10,1);
+                player.upgradeResearch(research.getName());
+
+                updateMoneyItemLabel();
+                updateLeaderboard();
             }
             ImGui.sameLine();
             ImGui.text( research.getName() + " niveau : " + research.getLevel() + " bonus de revente : " + research.getEffect());
@@ -706,8 +704,8 @@ public class InGameScene extends Scene {
                     if (currentQuantity > 1) {
                         int fEffect = 0;
                         int eEffect = 0;
-                        for (int i = 0; i < player.researchList.size(); i++){
-                            Research re = player.researchList.get(i);
+                        for (int i = 0; i < player.researches.size(); i++){
+                            Research re = player.researches.get(i);
                             if (re.getName().equals("Fermier")){
                                 fEffect = re.getEffect();
                             } else if (re.getName().equals("Eleveur")){
@@ -721,11 +719,7 @@ public class InGameScene extends Scene {
                         int travelTime = 4;
                         int travelPrice = 10;
                         if (ImGui.button(Resources.getLocalizedText("sended") + playerInventory.get(item).name + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
-                            player.setMoney(playerMoney - travelPrice);
-                            player.caravanList.add(new Caravan(sellValueOfCaravan,travelTime,item));
-                            for (int i = 0; i < currentQuantity / 2; i++) {
-                                player.deleteFromInventory(playerInventory.get(item), "Caravan");
-                            }
+                            player.sendCaravan(travelPrice, travelTime, sellValueOfCaravan, item);
                         }
                         ImGui.sameLine();
                         if (playerInventory.get(item) == null) {
@@ -734,21 +728,21 @@ public class InGameScene extends Scene {
                             ImGui.text(playerInventory.get(item).name + " x" + currentQuantity / 2);
                         }
                         ImGui.sameLine();
-                        ImGui.text(Resources.getLocalizedText("sellingPrice") + sellValueOfCaravan + Resources.getLocalizedText("estimatedtime") + travelTime);
+                        ImGui.text(Resources.getLocalizedText("sellingPrice") + sellValueOfCaravan + Resources.getLocalizedText("estimatedTime") + travelTime);
                     } else {
                         ImGui.text(Resources.getLocalizedText("lackOf") + playerInventory.get(item).name + Resources.getLocalizedText("sent"));
                     }
                 }
             }
         } else {
-            if (player.caravanList.isEmpty()){
+            if (player.caravans.isEmpty()){
                 ImGui.text(Resources.getLocalizedText("noCaravans"));
             } else {
                 ImGui.text(Resources.getLocalizedText("seeCaravans"));
 
-                for (int i = 0; i < player.caravanList.size() ; i++){
-                    Caravan caravan = player.caravanList.get(i);
-                    ImGui.text(Resources.getLocalizedText("caravansFor", caravan.getReward(), caravan.getTotalTurn()));
+                for (int i = 0; i < player.caravans.size() ; i++){
+                    Caravan caravan = player.caravans.get(i);
+                    ImGui.text(Resources.getLocalizedText("caravansFor", caravan.getReward(), caravan.getTotalTurn() - caravan.getTravelTurn()));
                 }
             }
         }
@@ -863,24 +857,19 @@ public class InGameScene extends Scene {
         }
     }
 
-    public void decreasePlayerDept(Player currentPlayer, float percent){
-        percent = percent/100;
-        int value = Math.max((int)(currentPlayer.loanMoney*percent), 1);
-        if(currentPlayer.debtMoney >= value){
-            currentPlayer.debtMoney -= value;
-            currentPlayer.setMoney(currentPlayer.money - value);
-        }else{
-            currentPlayer.setMoney(currentPlayer.money - currentPlayer.debtMoney);
-            currentPlayer.debtMoney = 0;
-        }
+    public void decreasePlayerDept(Player player, float percent){
+        player.payLoan(Math.max((int)(player.loanMoney * (percent / 100)), 1));
+
         updateLeaderboard();
+        updateMoneyItemLabel();
     }
 
     public void onTurnEnded() {
         Player currentPlayer = Farmland.get().getLoadedSave().getCurrentPlayer();
 
-        if(currentPlayer.debtMoney > 0)
+        if(currentPlayer.debtMoney > 0) {
             decreasePlayerDept(currentPlayer, Farmland.get().getLoadedSave().debtRate);
+        }
 
         if (!Farmland.get().getLoadedSave().deadPlayers.contains(currentPlayer.getId())) {
             getEntityByName("stateLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("turnInfo", (Farmland.get().getLoadedSave().turn + 1), Farmland.get().getLoadedSave().getCurrentPlayer().name));
@@ -888,7 +877,6 @@ public class InGameScene extends Scene {
         }
 
         if (Game.get().hasAuthority() && Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(0)) {
-            //checkCaravan();
             for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
                 for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
                     Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
@@ -961,8 +949,8 @@ public class InGameScene extends Scene {
         Player player = Farmland.get().getLoadedSave().getLocalPlayer();
         int fLevel = 0;
         int eLevel = 0;
-        for (int i = 0; i < player.researchList.size(); i++){
-            Research re = player.researchList.get(i);
+        for (int i = 0; i < player.researches.size(); i++){
+            Research re = player.researches.get(i);
             if (re.getName().equals("Fermier")){
                 fLevel = re.getLevel();
             } else if (re.getName().equals("Eleveur")){
@@ -972,25 +960,25 @@ public class InGameScene extends Scene {
 
         if (eLevel > 4){
             if (fLevel > 4){
-                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2breeder2.png")));
+                getEntityByName("frameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2breeder2.png")));
             } else if (fLevel > 2){
-                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmerbreeder2.png")));
+                getEntityByName("frameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmerbreeder2.png")));
             } else {
-                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/breeder2.png")));
+                getEntityByName("frameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/breeder2.png")));
             }
         } else if (eLevel > 2){
             if (fLevel > 4){
-                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2breeder.png")));
+                getEntityByName("frameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2breeder.png")));
             } else if (fLevel > 2){
-                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmerbreeder.png")));
+                getEntityByName("frameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmerbreeder.png")));
             } else {
-                getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/breeder.png")));
+                getEntityByName("frameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/breeder.png")));
             }
         } else if (fLevel > 4){
-            getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2.png")));
+            getEntityByName("frameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer2.png")));
 
         } else if (fLevel > 2){
-            getEntityByName("FrameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer.png")));
+            getEntityByName("frameImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/farmer.png")));
         }
     }
 
@@ -1102,27 +1090,30 @@ public class InGameScene extends Scene {
 
     public void updateLeaderboard(){
         List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getLoadedSave().players);
-        String leaderBoard = Resources.getLocalizedText("leaderboard");
+        StringBuilder leaderBoard = new StringBuilder(Resources.getLocalizedText("leaderboard"));
         for (Player player : leaderBoardList) {
-            leaderBoard += "\n\n" + player.name + " : " + (Farmland.get().getLoadedSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
+            leaderBoard.append("\n\n").append(player.name).append(" : ").append(Farmland.get().getLoadedSave().deadPlayers.contains(player.getId()) ? "dead" : player.money);
         }
-        getEntityByName("LeaderBoardLabel").getComponent(TextComponent.class).setText(leaderBoard);
+        getEntityByName("LeaderBoardLabel").getComponent(TextComponent.class).setText(leaderBoard.toString());
     }
 
-    public void checkCaravan(){
-        Player currentPlayer = Farmland.get().getLoadedSave().getCurrentPlayer();
-        if (!currentPlayer.caravanList.isEmpty()){
+    public void checkCaravan() {
+        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
+
+        if (!player.caravans.isEmpty()){
             List<Caravan> toDelete = new ArrayList<>();
 
-            for (int i = 0; i < currentPlayer.caravanList.size() ; i++){
-                Caravan caravan = currentPlayer.caravanList.get(i);
+            for (int i = 0; i < player.caravans.size() ; i++) {
+                Caravan caravan = player.caravans.get(i);
+
                 caravan.turnDone();
-                if (caravan.hasArrived()){
-                    currentPlayer.setMoney(currentPlayer.money + caravan.getReward());
-                    toDelete.add(currentPlayer.caravanList.get(i));
+
+                if (caravan.hasArrived()) {
+                    player.setMoney(player.money + caravan.getReward());
+                    toDelete.add(player.caravans.get(i));
                 }
 
-                currentPlayer.caravanList.removeAll(toDelete);
+                player.caravans.removeAll(toDelete);
             }
         }
     }
@@ -1130,7 +1121,7 @@ public class InGameScene extends Scene {
     public void updateMoneyItemLabel() {
         if (Game.get().getNetMode() == NetMode.Client || Game.get().getNetMode() == NetMode.Standalone) {
             String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
-            String text = Resources.getLocalizedText("money", Farmland.get().getLoadedSave().getLocalPlayer().money);
+            String text = "";
             if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null && Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().containsKey(selectedId)) {
                 text += Resources.getLocalizedText("selected", Farmland.get().getItem(selectedId).name, Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity);
             }
