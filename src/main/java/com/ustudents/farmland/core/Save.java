@@ -146,6 +146,8 @@ public class Save {
         buyTurnItemDataBase = new ArrayList<>();
         sellItemDatabasePerTurn = new ArrayList<>();
         sellTurnItemDataBase = new ArrayList<>();
+        buyItemDatabasePerTurn.add(new ArrayList<>(buyTurnItemDataBase));
+        sellItemDatabasePerTurn.add(new ArrayList<>(sellTurnItemDataBase));
 
         this.cells = new ArrayList<>();
 
@@ -214,6 +216,7 @@ public class Save {
 
     public void addPlayer(String name, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, Player.Type type) {
         int playerId = getAvailableHumanId();
+        Out.println("Attributed id: " + playerId);
         this.players.add(playerId, new Player(name, villageName, bannerColor, bracesColor, shirtColor, hatColor, buttonColor, type));
         Vector2i villagePosition = generateMapLocation(random, getUsedLocations());
         this.players.get(playerId).village.position = new Vector2f(5 + villagePosition.x * 24, 5 + villagePosition.y * 24);
@@ -401,7 +404,7 @@ public class Save {
         int i = 0;
 
         for (Player player : players) {
-            if (player.type == Player.Type.Human) {
+            if (player.type == Player.Type.Undefined) {
                 i++;
             }
         }

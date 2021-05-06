@@ -361,7 +361,8 @@ public class Player {
 
             for (int i = 0; i < quantity; i++) {
                 addToInventory(item, "Buy");
-                Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(Farmland.get().getLoadedSave().buyItemDatabasePerTurn.size() - 1).add(item);
+
+                Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(Farmland.get().getLoadedSave().turn).add(item);
             }
 
             Farmland.get().serverBroadcastSave();
@@ -404,7 +405,9 @@ public class Player {
 
             Farmland.get().getLoadedSave().getCell(position).setItem(selectedItemClone);
 
-            if (Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(selectedItem, "Buy")) {
+            Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(selectedItem, "Buy");
+
+            if (getItemFromInventory(selectedItem.id) == null) {
                 Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
             }
 

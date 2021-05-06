@@ -9,8 +9,10 @@ import com.ustudents.engine.network.messages.DisconnectMessage;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.engine.utility.Pair;
 
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -220,6 +222,7 @@ public class Server extends Controller {
         public void run() {
             Scanner scanner = new Scanner(System.in);
 
+            Out.println("The server launched at your IP address with port " + Game.get().getServer().socket.getLocalPort());
             Out.println("To stop the server, type `quit`.");
             Out.println("To see more informations, type `help`.");
 

@@ -1132,7 +1132,7 @@ public class InGameScene extends Scene {
         if (Game.get().getNetMode() == NetMode.Client || Game.get().getNetMode() == NetMode.Standalone) {
             String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
             String text = Resources.getLocalizedText("money", Farmland.get().getLoadedSave().getLocalPlayer().money);
-            if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
+            if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null && Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().containsKey(selectedId)) {
                 text += Resources.getLocalizedText("selected", Farmland.get().getItem(selectedId).name, Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity);
             }
             String text2 = "    " + Farmland.get().getLoadedSave().getCurrentPlayer().money;
