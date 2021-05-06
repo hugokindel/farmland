@@ -36,7 +36,12 @@ public class NewGameMenu extends MenuScene {
     ImLong seed = new ImLong(System.currentTimeMillis());
     List<String> errors = new ArrayList<>();
     int[] numberOfBots = new int[1];
-    String[] difficulties = { "Facile", "Normal", "Difficile", "Impossible" };
+    String[] difficulties = {
+            Resources.getLocalizedText("diffEasy"),
+            Resources.getLocalizedText("diffNormal"),
+            Resources.getLocalizedText("diffHard"),
+            Resources.getLocalizedText("diffImpossible")
+    };
     ImInt currentDifficulty = new ImInt(1);
     ImInt percentDebt = new ImInt(10);
     ImInt maxBorrow = new ImInt(100);
@@ -73,16 +78,16 @@ public class NewGameMenu extends MenuScene {
         ImGui.inputText(Resources.getLocalizedText("ngPlayerName"), playerName);
         ImGui.inputText(Resources.getLocalizedText("ngVillageName"), villageName);
         ImGui.colorEdit4(Resources.getLocalizedText("ngBannerColor"), bannerColor);
-        ImGui.colorEdit4("Couleur de votre combinaison à bretelles", bracesColor);
-        ImGui.colorEdit4("Couleur de votre chemise", shirtColor);
-        ImGui.colorEdit4("Couleur de votre chapeau", hatColor);
-        ImGui.colorEdit4("Couleur de vos boutons de bretelles", buttonsColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngSuitColor"), bracesColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngShirtColor"), shirtColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngHatColor"), hatColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngButtonsColor"), buttonsColor);
         ImGui.inputInt2(Resources.getLocalizedText("ngMapSize"), size);
         ImGui.inputScalar(Resources.getLocalizedText("ngMapSeed"), ImGuiDataType.S64, seed);
         ImGui.sliderInt(Resources.getLocalizedText("ngNumBots"), numberOfBots, 0, 3);
-        ImGui.combo("Difficulté des robots", currentDifficulty, difficulties, difficulties.length);
-        ImGui.inputInt("Somme maximal à emprunter", maxBorrow,100);
-        ImGui.inputInt("Taux de remboursement de l'emprunt", percentDebt,10);
+        ImGui.combo(Resources.getLocalizedText("ngDiff"), currentDifficulty, difficulties, difficulties.length);
+        ImGui.inputInt(Resources.getLocalizedText("ngMaxLoan"), maxBorrow,100);
+        ImGui.inputInt(Resources.getLocalizedText("ngLoanPer"), percentDebt,10);
 
         if (maxBorrow.get() < 100 || maxBorrow.get()%100 != 0 || maxBorrow.get()%10 != 0)
             maxBorrow.set(100);
@@ -102,7 +107,7 @@ public class NewGameMenu extends MenuScene {
 
         ImGui.sameLine();
 
-        if (ImGui.button("create")) {
+        if (ImGui.button(Resources.getLocalizedText("create"))) {
             errors.clear();
 
             if (saveName.isEmpty()) {

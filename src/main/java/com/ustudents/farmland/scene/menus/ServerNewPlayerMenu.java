@@ -62,10 +62,10 @@ public class ServerNewPlayerMenu extends MenuScene {
         ImGui.inputText(Resources.getLocalizedText("ngPlayerName"), playerName);
         ImGui.inputText(Resources.getLocalizedText("ngVillageName"), villageName);
         ImGui.colorEdit4(Resources.getLocalizedText("ngBannerColor"), bannerColor);
-        ImGui.colorEdit4("Couleur de votre combinaison à bretelles", bracesColor);
-        ImGui.colorEdit4("Couleur de votre chemise", shirtColor);
-        ImGui.colorEdit4("Couleur de votre chapeau", hatColor);
-        ImGui.colorEdit4("Couleur de vos boutons de bretelles", buttonsColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngSuitColor"), bracesColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngShirtColor"), shirtColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngHatColor"), hatColor);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngButtonsColor"), buttonsColor);
 
         if (ImGui.button(Resources.getLocalizedText("return"))) {
             SceneManager.get().goBack();

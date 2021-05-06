@@ -40,9 +40,20 @@
 		"ngPlayerName": "Votre nom de joueur",
 		"ngVillageName": "Votre nom de village",
 		"ngBannerColor": "Couleur de votre bannière",
+		"ngSuitColor": "Couleur de votre combinaison à bretelles",
+		"ngShirtColor": "Couleur de votre chemise",
+		"ngHatColor": "Couleur de votre chapeau",
+		"ngButtonsColor": "Couleur de vos boutons de bretelles",
 		"ngMapSize": "Taille de la carte",
 		"ngMapSeed": "Graine de la carte",
 		"ngNumBots": "Nombre de robots",
+		"ngDiff": "Difficulté des robots",
+		"ngMaxLoan": "Somme maximal à emprunter",
+		"ngLoanPer": "Taux de remboursement de l'emprunt",
+		"diffEasy": "Facile",
+		"diffNormal": "Normal",
+		"diffHard": "Difficile",
+		"diffImpossible": "Impossible",
 		"return": "Retour",
 		"create": "Créer",
 		"research": "Recherche",
@@ -123,6 +134,7 @@
 		"mountain": "Montagne",
 		"cities": "Ville",
 		"fence": "Enclos",
-		"crop": "Crop"
+		"crop": "Crop",
+		"resetMapping": "Réinitialiser les touches"
 	}
 }
