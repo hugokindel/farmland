@@ -24,6 +24,7 @@ public class Console {
     private static final List<ConsolePrintData> inputs = new ArrayList<>();
     private static final List<ConsoleCommandData> listOfCommands = new ArrayList<>();
     private static boolean forceFocus = false;
+    private static boolean scrollToBottom = false;
 
     private static Console instance;
 
@@ -96,6 +97,11 @@ public class Console {
                 }
             }
 
+            if (scrollToBottom || (autoScroll.get() && ImGui.getScrollY() >= ImGui.getScrollMaxY())) {
+                ImGui.setScrollHereY(1.0f);
+                scrollToBottom = false;
+            }
+
             ImGui.popStyleVar();
             ImGui.endChild();
 
@@ -116,6 +122,7 @@ public class Console {
                     tryExecuteCommand(userText.get());
                     userText.set("");
                     reclaimFocus = true;
+                    scrollToBottom = true;
                 }
             }
 
