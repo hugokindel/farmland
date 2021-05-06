@@ -5,7 +5,6 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.scene.Scene;
-import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -27,7 +26,7 @@ public class DebugTools {
 
     public void render() {
         if (statisticsEnabled || gridEnabled) {
-            Scene scene = Farmland.get().getSceneManager().getCurrentScene();
+            Scene scene = Game.get().getSceneManager().getCurrentScene();
             Spritebatch spritebatch = scene.getSpritebatch();
 
             spritebatch.begin(scene.getUiCamera());
@@ -48,7 +47,7 @@ public class DebugTools {
             }
 
             if (gridEnabled) {
-                Vector2i windowSize = Farmland.get().getWindow().getSize();
+                Vector2i windowSize = Game.get().getWindow().getSize();
 
                 spritebatch.drawLine(new Spritebatch.LineData(
                         new Vector2f(0, (float)windowSize.y / 2),

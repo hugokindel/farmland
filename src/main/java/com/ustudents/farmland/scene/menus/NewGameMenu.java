@@ -1,12 +1,16 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
+import com.ustudents.farmland.core.Save;
+import com.ustudents.farmland.core.player.Avatar;
+import com.ustudents.farmland.core.player.Bot;
+import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.scene.InGameScene;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -23,16 +27,17 @@ public class NewGameMenu extends MenuScene {
     ImString saveName = new ImString();
     ImString playerName = new ImString();
     ImString villageName = new ImString();
-    float[] bannerColor = {1, 0, 0, 1};
-    float[] bracesColor = {0.7098f, 0.2745f, 0.3921f, 1f};
-    float[] shirtColor = {0.2627f, 0.5607f, 0.4392f, 1f};
-    float[] hatColor = {0.7098f, 0.2745f, 0.3921f, 1f};
-    float[] buttonsColor = {0.9843f, 0.7764f, 0.2117f, 1f};
+    float[] bannerColor = Player.DEFAULT_BANNER_COLOR.toArray();
+    float[] bracesColor = Avatar.DEFAULT_BRACES_COLOR.toArray();
+    float[] shirtColor = Avatar.DEFAULT_SHIRT_COLOR.toArray();
+    float[] hatColor = Avatar.DEFAULT_HAT_COLOR.toArray();
+    float[] buttonsColor = Avatar.DEFAULT_BUTTONS_COLOR.toArray();
     int[] size = {16, 16};
     ImLong seed = new ImLong(System.currentTimeMillis());
     List<String> errors = new ArrayList<>();
     int[] numberOfBots = new int[1];
-    int[] difficulty = {1};
+    String[] difficulties = { "Facile", "Normal", "Difficile", "Impossible" };
+    ImInt currentDifficulty = new ImInt(1);
     ImInt percentDebt = new ImInt(10);
     ImInt maxBorrow = new ImInt(100);
 
@@ -61,23 +66,23 @@ public class NewGameMenu extends MenuScene {
     @Override
     public void renderImGui() {
         ImGuiUtils.setNextWindowWithSizeCentered(850, 400, ImGuiCond.Appearing);
-        ImGui.begin("Nouvelle partie");
+        ImGui.begin(Resources.getLocalizedText(Resources.getLocalizedText("newGame")));
 
-        ImGui.text("Entrez les informations de la sauvegarde:");
-        ImGui.inputText("Nom de la partie", saveName);
-        ImGui.inputText("Votre nom de joueur", playerName);
-        ImGui.inputText("Votre nom de village", villageName);
-        ImGui.colorEdit4("Couleur de votre bannière", bannerColor);
+        ImGui.text(Resources.getLocalizedText("newGameDescription"));
+        ImGui.inputText(Resources.getLocalizedText("ngName"), saveName);
+        ImGui.inputText(Resources.getLocalizedText("ngPlayerName"), playerName);
+        ImGui.inputText(Resources.getLocalizedText("ngVillageName"), villageName);
+        ImGui.colorEdit4(Resources.getLocalizedText("ngBannerColor"), bannerColor);
         ImGui.colorEdit4("Couleur de votre combinaison à bretelles", bracesColor);
         ImGui.colorEdit4("Couleur de votre chemise", shirtColor);
         ImGui.colorEdit4("Couleur de votre chapeau", hatColor);
         ImGui.colorEdit4("Couleur de vos boutons de bretelles", buttonsColor);
-        ImGui.inputInt2("Taille de la carte", size);
-        ImGui.inputScalar("Graine de la carte", ImGuiDataType.S64, seed);
-        ImGui.sliderInt("Nombre de robots", numberOfBots, 0, 3);
-        ImGui.sliderInt("difficulté des robots",difficulty,0,3);
+        ImGui.inputInt2(Resources.getLocalizedText("ngMapSize"), size);
+        ImGui.inputScalar(Resources.getLocalizedText("ngMapSeed"), ImGuiDataType.S64, seed);
+        ImGui.sliderInt(Resources.getLocalizedText("ngNumBots"), numberOfBots, 0, 3);
+        ImGui.combo("Difficulté des robots", currentDifficulty, difficulties, difficulties.length);
         ImGui.inputInt("Somme maximal à emprunter", maxBorrow,100);
-        ImGui.inputInt("taux de remboursement de l'emprunt", percentDebt,10);
+        ImGui.inputInt("Taux de remboursement de l'emprunt", percentDebt,10);
 
         if (maxBorrow.get() < 100 || maxBorrow.get()%100 != 0 || maxBorrow.get()%10 != 0)
             maxBorrow.set(100);
@@ -91,29 +96,29 @@ public class NewGameMenu extends MenuScene {
         if (percentDebt.get() > 30)
             percentDebt.set(30);
 
-        if (ImGui.button("Retour")) {
+        if (ImGui.button(Resources.getLocalizedText("return"))) {
             SceneManager.get().goBack();
         }
 
         ImGui.sameLine();
 
-        if (ImGui.button("Créer")) {
+        if (ImGui.button("create")) {
             errors.clear();
 
             if (saveName.isEmpty()) {
-                errors.add("Veuillez entrer un nom de partie !");
+                errors.add(Resources.getLocalizedText("saveName"));
             }
             if (playerName.isEmpty()) {
-                errors.add("Veuillez entrer un nom de joueur !");
+                errors.add(Resources.getLocalizedText("playerName"));
             }
             if (villageName.isEmpty()) {
-                errors.add("Veuillez entrer un nom de village !");
+                errors.add(Resources.getLocalizedText("villageName"));
             }
             if (size[0] < 16 || size[1] < 16) {
-                errors.add("Veuillez entrer une taille de carte valide (>= 16) !");
+                errors.add(Resources.getLocalizedText("correctSize"));
             }
             if (seed.get() <= 0) {
-                errors.add("Veuillez entrer une graine valide (> 0) !");
+                errors.add(Resources.getLocalizedText("correctSeed)"));
             }
 
             if (errors.isEmpty()) {
@@ -134,15 +139,16 @@ public class NewGameMenu extends MenuScene {
                     buttons.contrast(10);
                 }
 
-                SaveGame saveGame = new SaveGame(saveName.get(), playerName.get(), villageName.get(),
+                Save save = new Save(saveName.get(), playerName.get(), villageName.get(),
                         new Color(bannerColor), braces, shirt, hat, buttons,
-                        new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0], maxBorrow.get(), percentDebt.get(),difficulty[0]);
+                        new Vector2i(size[0], size[1]), seed.get(), numberOfBots[0], maxBorrow.get(), percentDebt.get(), Bot.Difficulty.values()[currentDifficulty.get()]);
 
-                Farmland.get().getSaveGames().put(saveGame.name, saveGame);
-                Farmland.get().saveId = saveGame.name;
-                Farmland.get().saveSavedGames();
+                Farmland.get().getSaves().put(save.name, save);
+                Farmland.get().loadSave(save.name);
+                Farmland.get().writeAllSaves();
 
-                SceneManager.get().getTypeOfLastScene();
+                SceneManager.get().popTypeOfLastScene();
+
                 changeScene(new InGameScene());
             }
         }

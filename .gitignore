@@ -6,6 +6,9 @@ data/server.json
 data/saves/
 imgui.ini
 *.log
+settings.json
+server.json
+logs
 
 # macOS
 .DS_Store

@@ -5,7 +5,9 @@ import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
 import com.ustudents.engine.graphic.Sprite;
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.player.Player;
 import org.joml.Vector4f;
 
 import java.util.Map;
@@ -70,7 +72,23 @@ public class Cell {
     }
 
     public boolean isOwnedByCurrentPlayer() {
-        return ownerId == 0;
+        return Farmland.get().getLoadedSave() != null && ownerId.equals(Farmland.get().getLoadedSave().currentPlayerId);
+    }
+
+    public boolean isOwnedByLocalPlayer() {
+        return Farmland.get().getLoadedSave() != null && ownerId.equals(Farmland.get().getLoadedSave().localPlayerId);
+    }
+
+    public boolean isOwnedByBot() {
+        return Farmland.get().getLoadedSave() != null && isOwned() && Farmland.get().getLoadedSave().players.get(ownerId).type == Player.Type.Bot;
+    }
+
+    public boolean isOwnedByHuman() {
+        return Farmland.get().getLoadedSave() != null && isOwned() && Farmland.get().getLoadedSave().players.get(ownerId).type == Player.Type.Human;
+    }
+
+    public boolean isOwnedByBot(Save save) {
+        return save != null && isOwned() && save.players.get(ownerId).type == Player.Type.Bot;
     }
 
     public boolean hasItem() {

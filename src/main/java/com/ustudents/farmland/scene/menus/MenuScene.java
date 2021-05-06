@@ -4,10 +4,10 @@ import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.scene.ecs.Entity;
-import com.ustudents.engine.scene.component.audio.SoundComponent;
-import com.ustudents.engine.scene.component.core.TransformComponent;
-import com.ustudents.engine.scene.component.graphics.WorldRendererComponent;
+import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.ecs.component.audio.SoundComponent;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
+import com.ustudents.engine.ecs.component.graphic.WorldRendererComponent;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.scene.Scene;
@@ -53,9 +53,9 @@ public abstract class MenuScene extends Scene {
         getWorldCamera().enableInput(false);
 
         NineSlicedSprite gridBackground = new NineSlicedSprite(Resources.loadSpritesheet("ui/map_background.json"));
-        Texture cellBackground = Resources.loadTexture("map/grass.png");
+        Texture cellBackground = Resources.loadTexture("terrain/grass.png");
         AnimatedSprite selectionCursor = new AnimatedSprite(Resources.loadSpritesheet("ui/map_cell_cursor.json"));
-        Spritesheet territoryTexture = Resources.loadSpritesheet("ui/map_territory_indicator.json");
+        Spritesheet territoryTexture = Resources.loadSpritesheet("ui/map_territory_indicator_white.json");
 
         if (!hasEntityWithName("grid")) {
             Entity grid = createEntityWithName("grid");
@@ -107,7 +107,7 @@ public abstract class MenuScene extends Scene {
 
         if (canGoBack) {
             try {
-                GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Retour", (dataType, data) -> {
+                GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("return"), (dataType, data) -> {
                     try {
                         SceneManager.get().goBack();
                     } catch (Exception e) {
@@ -126,7 +126,7 @@ public abstract class MenuScene extends Scene {
         }
 
         if (canGoToMainMenu) {
-            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Menu principal", (dataType, data) -> changeScene(new MainMenu(), false));
+            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("mainMenu"), (dataType, data) -> changeScene(new MainMenu(), false));
             buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
             buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
             buttonData.position = new Vector2f(0, 250 + i * 75);
@@ -136,7 +136,7 @@ public abstract class MenuScene extends Scene {
         }
 
         if (canQuit) {
-            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Quitter", (dataType, data) -> quit());
+            GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("quit"), (dataType, data) -> quit());
             buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
             buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
             buttonData.position = new Vector2f(0, 250 + i * 75);
@@ -146,7 +146,7 @@ public abstract class MenuScene extends Scene {
 
         Font debugFont = Resources.loadFont("ui/debug.ttf", 16);
 
-        GuiBuilder.TextData textData = new GuiBuilder.TextData("Version: " + Farmland.class.getAnnotation(Command.class).version());
+        GuiBuilder.TextData textData = new GuiBuilder.TextData(Resources.getLocalizedText("version", Farmland.class.getAnnotation(Command.class).version()));
         textData.font = debugFont;
         textData.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Left);
         textData.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Left);

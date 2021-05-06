@@ -1,5 +1,6 @@
 package com.ustudents.engine.graphic;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.core.cli.print.Out;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
@@ -29,13 +30,17 @@ public class Shader {
     private boolean destroyed;
 
     public Shader(String vertexShader, String fragmentShader) {
-        compileProgram(vertexShader, fragmentShader);
+        if (Game.get().canRender()) {
+            compileProgram(vertexShader, fragmentShader);
+        }
         destroyed = false;
     }
 
     public void destroy() {
         if (!destroyed) {
-            destroyProgram();
+            if (Game.get().canRender()) {
+                destroyProgram();
+            }
             destroyed = true;
         }
     }

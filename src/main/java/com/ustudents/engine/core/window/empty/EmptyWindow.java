@@ -4,6 +4,7 @@ import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.window.events.*;
 import org.joml.Vector2i;
 
+@SuppressWarnings("unchecked")
 public class EmptyWindow {
     public EventDispatcher sizeChanged = new EventDispatcher(SizeChangedEvent.class);
 

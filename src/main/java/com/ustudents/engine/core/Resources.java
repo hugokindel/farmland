@@ -1,6 +1,7 @@
 package com.ustudents.engine.core;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.GameConfig;
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.json.Json;
@@ -8,15 +9,15 @@ import com.ustudents.engine.graphic.Font;
 import com.ustudents.engine.graphic.Shader;
 import com.ustudents.engine.graphic.Spritesheet;
 import com.ustudents.engine.graphic.Texture;
-import com.ustudents.engine.core.json.JsonReader;
-import com.ustudents.engine.core.json.JsonWriter;
+import com.ustudents.engine.i18n.Language;
 import com.ustudents.engine.utility.FileUtil;
-import org.joml.Vector2i;
+import com.ustudents.engine.utility.StringUtil;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -29,18 +30,20 @@ public class Resources {
     private static final String texturesDirectoryName = "textures";
     private static final String fontsDirectoryName = "fonts";
     private static final String soundsDirectoryName = "sounds";
-    private static final String itemsDirectoryName = "items";
     private static final String savesDirectoryName = "saves";
+    private static final String localizationsDirectoryName = "i18n";
     private static final String settingsFilename = "settings.json";
     private static final ReentrantReadWriteLock settingsLock = new ReentrantReadWriteLock();
     private static final Lock settingsReadLock = settingsLock.readLock();
     private static final Lock settingsWriteLock = settingsLock.writeLock();
-    private static Map<String, Object> settings;
     private static Map<String, Shader> shaders;
+    private static Map<String, Language> languages;
     private static Map<String, Texture> textures;
     private static Map<String, Sound> sounds;
     private static Map<String, Map<Integer, Font>> fonts;
     private static Map<String, Spritesheet> spritesheets;
+    private static GameConfig config;
+    private static List<String> languagesList;
 
     /**
      * Gets the data directory's path.
@@ -80,10 +83,6 @@ public class Resources {
         return createPathIfNeeded(getDataDirectory() + "/" + savesDirectoryName);
     }
 
-    public static String getItemsDirectoryName(){
-        return createPathIfNeeded(getDataDirectory() + "/" + itemsDirectoryName);
-    }
-
     /**
      * Creates a path if needed.
      *
@@ -101,41 +100,10 @@ public class Resources {
         return null;
     }
 
-    /**
-     * Gets a specific setting.
-     *
-     * @param name The name of the setting.
-     * @return the object containing the setting's value.
-     */
-    public static Object getSetting(String name) {
-        settingsReadLock.lock();
-
-        try {
-            return settings.get(name);
-        } finally {
-            settingsReadLock.unlock();
-        }
-    }
-
-    /**
-     * Sets the specific setting with the given value.
-     *
-     * @param name The name of the setting.
-     * @param value The value of use.
-     */
-    public static void setSetting(String name, Object value) {
-       settingsWriteLock.lock();
-
-       try {
-           settings.put(name, value);
-       } finally {
-           settingsWriteLock.unlock();
-       }
-    }
-
     /** Loads everything. */
-    public static void loadSettingsAndInitialize() {
-        loadSettings();
+    public static void loadAndInitialize() {
+        loadConfig();
+        loadLanguages();
 
         shaders = new HashMap<>();
         textures = new HashMap<>();
@@ -181,21 +149,19 @@ public class Resources {
 
         spritesheets.clear();
 
-        saveSettings();
+        saveConfig();
     }
 
     /** Loads the settings into memory. */
-    private static void loadSettings() {
-        if (settings == null) {
+    private static void loadConfig() {
+        if (config == null) {
             try {
                 File file = new File(getDataDirectory() + "/" + settingsFilename);
 
                 if (file.exists()) {
-                    settings = JsonReader.readMap(getDataDirectory() + "/" + settingsFilename);
+                    config = Json.deserialize(getDataDirectory() + "/" + settingsFilename, GameConfig.class);
                 } else {
-                    settings = new HashMap<>();
-                    settings.put("vsync", true);
-                    settings.put("windowSize", new Vector2i(1280, 720));
+                    config = new GameConfig();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -204,10 +170,10 @@ public class Resources {
     }
 
     /** Saves the settings on the hard drive. */
-    private static void saveSettings() {
+    private static void saveConfig() {
         try {
-            if (settings != null) {
-                JsonWriter.writeToFile(getDataDirectory() + "/" + settingsFilename, settings);
+            if (config != null) {
+                Json.serialize(getDataDirectory() + "/" + settingsFilename, config);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -221,10 +187,8 @@ public class Resources {
             }
 
             try {
-                String vertexShaderCode = Files.readString(
-                        Paths.get(getShadersDirectory() + "/" + fileName + ".vert"));
-                String fragmentShaderCode = Files.readString(
-                        Paths.get(getShadersDirectory() + "/" + fileName + ".frag"));
+                String vertexShaderCode = FileUtil.readFileToString(getShadersDirectory() + "/" + fileName + ".vert");
+                String fragmentShaderCode = FileUtil.readFileToString(getShadersDirectory() + "/" + fileName + ".frag");
                 shaders.put(fileName, new Shader(vertexShaderCode, fragmentShaderCode));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -418,5 +382,42 @@ public class Resources {
     
     public static Spritesheet getSpritesheet(String filePath) {
         return spritesheets.get(filePath);
+    }
+
+    public static GameConfig getConfig() {
+        return config;
+    }
+
+    public static void loadLanguages() {
+        languages = new HashMap<>();
+        languagesList = new ArrayList<>();
+
+        for (final File fileEntry : new File(getDataDirectory() + "/" + localizationsDirectoryName).listFiles()) {
+            languagesList.add(FileUtil.getFileNameWithoutExtension(fileEntry));
+            languages.put(FileUtil.getFileNameWithoutExtension(fileEntry), Json.deserialize(fileEntry.getAbsolutePath(), Language.class));
+        }
+    }
+
+    public static String getLocalizedText(String textId, Object... values) {
+        if (languages.containsKey(config.language) && languages.get(config.language).content.containsKey(textId)) {
+            return StringUtil.parseValuesFromString(languages.get(config.language).content.get(textId), values, textId);
+        }
+
+        return textId;
+    }
+
+    public static void chooseNextLanguage() {
+        for (int i = 0; i < languagesList.size(); i++) {
+            if (languagesList.get(i).equals(config.language)) {
+                if (i+1 >= languagesList.size()) {
+                    config.language = languagesList.get(0);
+                    break;
+                }
+                else{
+                    config.language = languagesList.get(i+1);
+                    break;
+                }
+            }
+        }
     }
 }

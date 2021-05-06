@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.farmland.Farmland;
 
@@ -10,12 +11,16 @@ public class SingleplayerMenu extends MenuScene {
         String[] buttonIds;
         EventListener[] eventListeners;
 
-        if (Farmland.get().getSaveGames().size() > 0) {
-            buttonNames = new String[] {"Nouvelle partie", "Charger partie", "Supprimer une partie", "Retour"};
-            buttonIds = new String[] {"newButton", "loadButton", "deleteButton", "backButton"};
+        if (Farmland.get().getSaves().size() > 0) {
+            buttonNames = new String[] {
+                    Resources.getLocalizedText("newGame"),
+                    Resources.getLocalizedText("loadGame"),
+                    Resources.getLocalizedText("removeGame")
+            };
+            buttonIds = new String[] {"newButton", "loadButton", "deleteButton"};
         } else {
-            buttonNames = new String[] {"Nouvelle partie", "Retour"};
-            buttonIds = new String[] {"newButton", "backButton"};
+            buttonNames = new String[] {Resources.getLocalizedText("newGame")};
+            buttonIds = new String[] {"newButton"};
         }
 
         eventListeners = new EventListener[buttonNames.length];
@@ -33,14 +38,11 @@ public class SingleplayerMenu extends MenuScene {
                     case "deleteButton":
                         changeScene(new DeleteGameMenu());
                         break;
-                    case "backButton":
-                        changeScene(new MainMenu());
-                        break;
                 }
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, true);
 
         super.initialize();
     }

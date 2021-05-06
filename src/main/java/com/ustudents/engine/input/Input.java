@@ -1,10 +1,13 @@
 package com.ustudents.engine.input;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.input.empty.EmptyInput;
 import com.ustudents.engine.input.glfw.GLFWInput;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
+
+import java.util.Map;
 
 public class Input {
     private static EmptyInput inputManager;
@@ -76,5 +79,16 @@ public class Input {
 
     public static void recalculateMousePosition() {
         inputManager.recalculateMousePosition();
+    }
+
+    public static boolean isActionSuccessful(String action){
+        if(Resources.getConfig().commands.containsKey(action)){
+            return Resources.getConfig().commands.get(action).OneMappingIsSuccessful();
+        }
+        return false;
+    }
+
+    public static int findKey(){
+        return ((GLFWInput)inputManager).findKey();
     }
 }

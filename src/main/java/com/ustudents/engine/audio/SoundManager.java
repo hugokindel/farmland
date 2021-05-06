@@ -9,19 +9,20 @@ public class SoundManager {
     private EmptySoundManager soundManager;
     private boolean noSound;
 
-    public SoundManager() {
+    public void initialize() {
         switch (Game.get().getSoundSystemType()) {
             case Empty:
                 soundManager = new EmptySoundManager();
                 break;
             case OpenAL:
                 soundManager = new ALSoundManager();
+
+                if (!soundManager.initialize()) {
+                    soundManager = new EmptySoundManager();
+                }
+
                 break;
         }
-    }
-
-    public void initialize() {
-        soundManager.initialize();
     }
 
     public void destroy() {

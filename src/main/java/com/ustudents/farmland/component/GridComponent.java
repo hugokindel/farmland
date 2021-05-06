@@ -1,9 +1,10 @@
 package com.ustudents.farmland.component;
 
-import com.ustudents.engine.core.event.EventDispatcher;
-import com.ustudents.engine.scene.component.core.BehaviourComponent;
-import com.ustudents.engine.scene.component.core.TransformComponent;
-import com.ustudents.engine.scene.component.graphics.*;
+import com.ustudents.engine.Game;
+import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.ecs.component.core.BehaviourComponent;
+import com.ustudents.engine.ecs.component.core.TransformComponent;
+import com.ustudents.engine.ecs.component.graphic.*;
 import com.ustudents.engine.graphic.*;
 import com.ustudents.engine.graphic.imgui.annotation.Viewable;
 import com.ustudents.engine.input.Input;
@@ -12,7 +13,7 @@ import com.ustudents.engine.input.MouseButton;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.grid.Cell;
-import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.scene.InGameScene;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -20,6 +21,7 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class GridComponent extends BehaviourComponent implements RenderableComponent {
     @Viewable
     public Vector2i gridSize;
@@ -39,8 +41,6 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     @Viewable
     public List<List<Cell>> cells;
 
-    public EventDispatcher onItemUsed = new EventDispatcher();
-
     private Vector2i currentSelectedCell;
 
     private Vector2i cellSize;
@@ -58,7 +58,6 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         this.cellBackground = cellBackground;
         this.selectionCursor = selectionCursor;
         this.territoryTexture = territoryTexture;
-        this.cells = new ArrayList<>();
         this.currentSelectedCell = new Vector2i(-1, -1);
         this.cellSize = cellSize;
         this.gridBackgroundSideSize = new Vector2i(5, 5);
@@ -68,37 +67,9 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     @Override
     public void initialize() {
-        SeedRandom random = new SeedRandom();
-        TransformComponent transformComponent = getEntity().getComponent(TransformComponent.class);
+        recalculateCells();
 
-        if (Farmland.get().getCurrentSave() == null) {
-            for (int x = 0; x < gridSize.x; x++) {
-                this.cells.add(new ArrayList<>());
-
-                for (int y = 0; y < gridSize.y; y++) {
-                    Vector2f spriteRegion = new Vector2f(
-                            cellSize.x * random.generateInRange(1, 120 / cellSize.x),
-                            cellSize.y * random.generateInRange(1, 120 / cellSize.y));
-                    Sprite sprite = new Sprite(cellBackground,
-                            new Vector4f(spriteRegion.x, spriteRegion.y, cellSize.x, cellSize.y));
-                    Vector4f viewRectangle = new Vector4f(
-                            transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x,
-                            transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y,
-                            transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + cellSize.x,
-                            transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + cellSize.y);
-
-                    this.cells.get(x).add(new Cell(sprite, viewRectangle));
-                }
-            }
-        } else {
-            for (int x = 0; x < gridSize.x; x++) {
-                this.cells.add(new ArrayList<>());
-
-                for (int y = 0; y < gridSize.y; y++) {
-                    this.cells.get(x).add(Farmland.get().getCurrentSave().cells.get(x).get(y));
-                }
-            }
-        }
+        Farmland.get().loadedSaveChanged.add((dataType, data) -> recalculateCells());
     }
 
     @Override
@@ -111,26 +82,28 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         camera.setMinimalY(transformComponent.position.x + gridBackgroundSideSize.y);
         camera.setMaximalY(transformComponent.position.y + gridBackgroundSideSize.y + gridSize.x * cellSize.y);
 
-        if (Farmland.get().getCurrentSave() == null) {
+        if (Farmland.get().getLoadedSave() == null) {
             camera.centerOnPosition(new Vector2f(
                     transformComponent.position.x + gridBackgroundSideSize.x + (gridSize.x * cellSize.x) / 2.0f,
                     transformComponent.position.y + gridBackgroundSideSize.y + (gridSize.y * cellSize.y) / 2.0f));
         } else {
-            if (Farmland.get().getCurrentSave().players.get(0).position != null) {
-                camera.centerOnPosition(new Vector2f(
-                        Farmland.get().getCurrentSave().players.get(0).position.x,
-                        Farmland.get().getCurrentSave().players.get(0).position.y));
-            } else {
-                camera.centerOnPosition(new Vector2f(
-                        Farmland.get().getCurrentSave().players.get(0).village.position.x,
-                        Farmland.get().getCurrentSave().players.get(0).village.position.y));
+            if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
+                if (Farmland.get().getLoadedSave().getLocalPlayer().position != null) {
+                    camera.centerOnPosition(new Vector2f(
+                            Farmland.get().getLoadedSave().getLocalPlayer().position.x,
+                            Farmland.get().getLoadedSave().getLocalPlayer().position.y));
+                } else {
+                    camera.centerOnPosition(new Vector2f(
+                            Farmland.get().getLoadedSave().getLocalPlayer().village.position.x + 24,
+                            Farmland.get().getLoadedSave().getLocalPlayer().village.position.y + 24));
+                }
             }
         }
 
         camera.moved.add((dataType, data) -> {
             Camera.PositionChanged eventData = (Camera.PositionChanged) data;
-            if (Farmland.get().getCurrentSave() != null) {
-                Farmland.get().getCurrentSave().players.get(0).position = new Vector2f(eventData.position.x, eventData.position.y);
+            if (Farmland.get().getLoadedSave() != null) {
+                Farmland.get().getLoadedSave().getLocalPlayer().position = new Vector2f(eventData.position.x, eventData.position.y);
             }
         });
     }
@@ -139,52 +112,41 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     public void update(float dt) {
         selectionCursor.update(dt);
 
-        showTypeOfTerritory = Input.isKeyDown(Key.LeftControl) || Input.isKeyDown(Key.RightControl);
+        //showTypeOfTerritory = Input.isKeyDown(Key.LeftControl) || Input.isKeyDown(Key.RightControl);
+        showTypeOfTerritory = Input.isActionSuccessful("showTerritory");
 
         if (currentSelectedCell.x == -1 || !Input.isMouseInWorldViewRect(
-                cells.get(currentSelectedCell.x).get(currentSelectedCell.y).viewRectangle)) {
+                getCell(currentSelectedCell).viewRectangle)) {
             updateCurrentSelectedCell();
         }
 
-        if (selectionCursorEnabled && currentSelectedCell.x != -1 &&
+        if (selectionDrawingEnabled() && currentSelectedCell.x != -1 &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
-                Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
-                cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).ownerId.equals(0) &&
-                Farmland.get().getCurrentSave().players.get(0).selectedItemID != null
-                && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem()) {
-            Item currentItem = Farmland.get().getCurrentSave().players.get(0).getCurrentItemFromInventory();
-            Item clone = Item.clone(currentItem);
-            assert clone != null;
-            clone.quantity = 1;
-            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setItem(clone);
-            if (Farmland.get().getCurrentSave().players.get(0).deleteFromInventory(currentItem, "Buy")) {
-                Farmland.get().getCurrentSave().players.get(0).selectedItemID = null;
-            }
-            if(Farmland.get().getCurrentSave().getCurrentPlayer().getAllItemOfBoughtInventory().get(Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID) == null){
-                Farmland.get().getCurrentSave().getCurrentPlayer().selectedItemID = null;
-            }
-            onItemUsed.dispatch();
+                Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId()) &&
+                cellIsOwnedByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) && getCell(currentSelectedCell).isOwnedByCurrentPlayer() &&
+                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null
+                && !getCell(currentSelectedCell).hasItem()) {
+            Farmland.get().getLoadedSave().getLocalPlayer().placeSelectedItem(currentSelectedCell);
         }
 
-        if (selectionCursorEnabled && currentSelectedCell.x != -1 && showTypeOfTerritory &&
+        if (selectionDrawingEnabled() && currentSelectedCell.x != -1 && showTypeOfTerritory &&
                 !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
                 Input.isMousePressed(MouseButton.Left) &&
-                Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0) &&
-                !cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) &&
-                cellIsClosedToOwnedCell(currentSelectedCell.x, currentSelectedCell.y) &&
-                Farmland.get().getCurrentSave().currentPlayerId == 0
-                && Farmland.get().getCurrentSave().players.get(0).money >= 25) {
-            cells.get(currentSelectedCell.x).get(currentSelectedCell.y).setOwned(true, 0);
-            int takeMoney = Farmland.get().getCurrentSave().players.get(0).money - 25;
-            Farmland.get().getCurrentSave().players.get(0).setMoney(Math.max(takeMoney, 0));
+                Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId()) &&
+                Farmland.get().getLoadedSave().getLocalPlayer().getCurrentItemFromInventory() == null &&
+                !cellIsOwnedByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) &&
+                cellIsClosedToOwnedCellByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) &&
+                Farmland.get().getLoadedSave().currentPlayerId.equals(Farmland.get().getLoadedSave().localPlayerId)
+                && Farmland.get().getLoadedSave().getLocalPlayer().money >= 25) {
+            Farmland.get().getLoadedSave().getLocalPlayer().buyCell(currentSelectedCell);
         }
     }
 
     public void updateCurrentSelectedCell() {
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
-                Cell cell = cells.get(x).get(y);
+                Cell cell = getCell(x, y);
 
                 if (Input.isMouseInWorldViewRect(cell.viewRectangle)) {
                     currentSelectedCell = new Vector2i(x, y);
@@ -201,15 +163,15 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         renderItems(spritebatch, rendererComponent, transformComponent);
         renderCells(spritebatch, rendererComponent, transformComponent);
 
-        if (selectionCursorEnabled && currentSelectedCell.x != -1) {
+        if (selectionDrawingEnabled() && currentSelectedCell.x != -1) {
             renderSelectionCursor(spritebatch, rendererComponent, transformComponent);
 
-            if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().getCurrentPlayer().getId().equals(0)) {
+            if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().isLocalPlayerTurn()) {
                 renderSelectedItem(spritebatch, rendererComponent, transformComponent);
             }
         }
 
-        if (selectionCursorEnabled && showTypeOfTerritory) {
+        if (selectionDrawingEnabled() && showTypeOfTerritory) {
             renderTerritory(spritebatch, rendererComponent, transformComponent);
         }
     }
@@ -223,14 +185,25 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     }
 
     public boolean cellIsOwned(int x, int y) {
-        return cells.get(x).get(y).isOwned();
+        return getCell(x, y).isOwned();
+    }
+
+    public boolean cellIsOwnedByLocalPlayer(int x, int y) {
+        return getCell(x, y).isOwnedByLocalPlayer();
     }
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
-        return (x < gridSize.x - 1 && cells.get(x + 1).get(y).isOwnedByCurrentPlayer()) ||
-                (x > 0 && cells.get(x - 1).get(y).isOwnedByCurrentPlayer()) ||
-                (y < gridSize.y - 1 && cells.get(x).get(y + 1).isOwnedByCurrentPlayer()) ||
-                (y > 0 && cells.get(x).get(y - 1).isOwnedByCurrentPlayer());
+        return (x < gridSize.x - 1 && getCell(x + 1, y).isOwned()) ||
+                (x > 0 && getCell(x - 1, y).isOwned()) ||
+                (y < gridSize.y - 1 && getCell(x, y + 1).isOwned()) ||
+                (y > 0 && getCell(x, y - 1).isOwned());
+    }
+
+    public boolean cellIsClosedToOwnedCellByLocalPlayer(int x, int y) {
+        return (x < gridSize.x - 1 && getCell(x + 1, y).isOwnedByLocalPlayer()) ||
+                (x > 0 && getCell(x - 1, y).isOwnedByLocalPlayer()) ||
+                (y < gridSize.y - 1 && getCell(x, y + 1).isOwnedByLocalPlayer()) ||
+                (y > 0 && getCell(x, y - 1).isOwnedByLocalPlayer());
     }
 
     private void renderBackground(Spritebatch spritebatch, RendererComponent rendererComponent,
@@ -249,7 +222,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
                 Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
-                        cells.get(x).get(y).sprite,
+                        getCell(x, y).sprite,
                         new Vector2f(
                                 transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x,
                                 transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y));
@@ -264,7 +237,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                              TransformComponent transformComponent) {
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
-                Cell cell = cells.get(x).get(y);
+                Cell cell = getCell(x, y);
 
                 if (cell.hasItem()) {
                     Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
@@ -298,9 +271,9 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderSelectedItem(Spritebatch spritebatch, RendererComponent rendererComponent,
                                     TransformComponent transformComponent) {
-        if (Farmland.get().getCurrentSave() != null && Farmland.get().getCurrentSave().players.get(0).selectedItemID != null) {
+        if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
             Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
-                    Farmland.get().getItem(Farmland.get().getCurrentSave().players.get(0).selectedItemID).getSprite(),
+                    Farmland.get().getItem(Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId).getSprite(),
                     new Vector2f(
                             transformComponent.position.x + gridBackgroundSideSize.x +
                                     currentSelectedCell.x * cellSize.x,
@@ -308,7 +281,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                                     currentSelectedCell.y * cellSize.y));
             spriteData.zIndex = rendererComponent.zIndex + 5;
 
-            if (cellIsOwned(currentSelectedCell.x, currentSelectedCell.y) && !cells.get(currentSelectedCell.x).get(currentSelectedCell.y).hasItem() && cells.get(currentSelectedCell.x).get(currentSelectedCell.y).ownerId.equals(0)) {
+            if (cellIsOwnedByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) && !getCell(currentSelectedCell).hasItem() && getCell(currentSelectedCell).isOwnedByCurrentPlayer()) {
                 spriteData.tint = Color.GREEN;
             } else {
                 spriteData.tint = Color.RED;
@@ -323,8 +296,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         for (int x = 0; x < gridSize.x; x++) {
             for (int y = 0; y < gridSize.y; y++) {
                 if (cellIsOwned(x, y)) {
-                    renderTerritoryCell("owned", x, y, spritebatch, rendererComponent, transformComponent, cells.get(x).get(y).ownerId);
-                } else if (cellIsClosedToOwnedCell(x, y)) {
+                    renderTerritoryCell("owned", x, y, spritebatch, rendererComponent, transformComponent, getCell(x, y).ownerId);
+                } else if (cellIsClosedToOwnedCellByLocalPlayer(x, y)) {
                     renderTerritoryCell("notOwned", x, y, spritebatch, rendererComponent, transformComponent, 0);
                 }
             }
@@ -333,16 +306,58 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderTerritoryCell(String type, int x, int y, Spritebatch spritebatch,
                                      RendererComponent rendererComponent, TransformComponent transformComponent, int ownderId) {
-        if (Farmland.get().getCurrentSave() != null) {
+        if (Farmland.get().getLoadedSave() != null) {
             Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
                     territoryTexture.getSprite(type),
                     new Vector2f(
                             transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + 1,
                             transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + 1));
-            spriteData.tint = Farmland.get().getCurrentSave().players.get(ownderId).bannerColor;
+            spriteData.tint = Farmland.get().getLoadedSave().players.get(ownderId).bannerColor;
             spriteData.zIndex = rendererComponent.zIndex + 3;
 
             spritebatch.drawSprite(spriteData);
         }
+    }
+
+    private Cell getCell(int x, int y) {
+        return cells == null ? Farmland.get().getLoadedSave().getCell(x, y) : cells.get(x).get(y);
+    }
+
+    private Cell getCell(Vector2i position) {
+        return cells == null ? Farmland.get().getLoadedSave().getCell(position) : cells.get(position.x).get(position.y);
+    }
+
+    private void recalculateCells() {
+        SeedRandom random = new SeedRandom();
+        TransformComponent transformComponent = getEntity().getComponentSafe(TransformComponent.class);
+
+        if (transformComponent != null) {
+            if (Farmland.get().getNetMode() == NetMode.DedicatedServer || Farmland.get().getLoadedSave() == null) {
+                cells = new ArrayList<>();
+
+                for (int x = 0; x < gridSize.x; x++) {
+                    this.cells.add(new ArrayList<>());
+
+                    for (int y = 0; y < gridSize.y; y++) {
+                        Vector2f spriteRegion = new Vector2f(
+                                cellSize.x * random.generateInRange(1, 120 / cellSize.x),
+                                cellSize.y * random.generateInRange(1, 120 / cellSize.y));
+                        Sprite sprite = new Sprite(cellBackground,
+                                new Vector4f(spriteRegion.x, spriteRegion.y, cellSize.x, cellSize.y));
+                        Vector4f viewRectangle = new Vector4f(
+                                transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x,
+                                transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y,
+                                transformComponent.position.x + gridBackgroundSideSize.x + x * cellSize.x + cellSize.x,
+                                transformComponent.position.y + gridBackgroundSideSize.y + y * cellSize.y + cellSize.y);
+
+                        this.cells.get(x).add(new Cell(sprite, viewRectangle));
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean selectionDrawingEnabled() {
+        return selectionCursorEnabled && (!(Game.get().getSceneManager().getCurrentScene() instanceof InGameScene) || !((InGameScene) Game.get().getSceneManager().getCurrentScene()).inPause);
     }
 }

@@ -14,8 +14,8 @@ public class EmptySoundManager {
         sources = new HashSet<>();
     }
 
-    public void initialize() {
-
+    public boolean initialize() {
+        return true;
     }
 
     public void destroy() {

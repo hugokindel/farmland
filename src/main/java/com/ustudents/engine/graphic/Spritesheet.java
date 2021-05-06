@@ -31,15 +31,9 @@ public class Spritesheet {
 
     @JsonSerializableConstructor
     public void deserialize(Map<String, Object> json) {
-        sprites = new HashMap<>(sprites);
         spritePerName = new HashMap<>();
         texture = Resources.loadTexture(path);
         animations = new HashMap<>();
-
-        for (Map.Entry<String, Vector4f> entry : sprites.entrySet()) {
-            Map<String, Long> value = (Map<String, Long>)entry.getValue();
-            sprites.put(entry.getKey(), new Vector4f(value.get("x"), value.get("y"), value.get("z"), value.get("w")));
-        }
 
         for (Map.Entry<String, Vector4f> entry : sprites.entrySet()) {
             spritePerName.put(entry.getKey(), new Sprite(texture, entry.getValue()));

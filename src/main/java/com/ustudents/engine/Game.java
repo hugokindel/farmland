@@ -7,6 +7,7 @@ import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.core.window.WindowSystemType;
 import com.ustudents.engine.core.window.glfw.GLFWWindow;
 import com.ustudents.engine.graphic.RenderSystemType;
@@ -14,11 +15,12 @@ import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.debug.DebugTools;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;
-import com.ustudents.engine.graphic.imgui.ImGuiTools;
+import com.ustudents.engine.graphic.imgui.tools.ImGuiTools;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.InputSystemType;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.network.*;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
@@ -27,9 +29,13 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL33;
 
-import java.net.DatagramPacket;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static com.ustudents.engine.graphic.imgui.console.Console.getListOfCommands;
+import static org.lwjgl.glfw.GLFW.glfwInit;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
@@ -84,7 +90,7 @@ public abstract class Game extends Runnable {
     protected final SceneManager sceneManager = new SceneManager();
 
     /** The sound manager (handle every sound sources). */
-    private final SoundManager soundManager;
+    private final SoundManager soundManager = new SoundManager();
 
     /** The ImGui manager (handle most debugging tools). */
     protected final ImGuiManager imGuiManager = new ImGuiManager();
@@ -107,6 +113,9 @@ public abstract class Game extends Runnable {
     /** Defines if debug tools should be enabled. */
     protected boolean debugToolsEnabled = false;
 
+    /** Forces to disable any debugging tools. */
+    private boolean forceDisableTools;
+
     /** Debugging tools. */
     protected final DebugTools debugTools = new DebugTools();
 
@@ -116,22 +125,23 @@ public abstract class Game extends Runnable {
     /** Custom cursor texture. */
     protected Texture cursorTexture;
 
+    /** Should we authorize ImGui docking. */
     protected boolean enableDocking;
-
-    protected ServerThread serverThread;
-
-    protected ServerCliThread serverCliThread;
 
     /** The game instance. */
     private static Game game;
 
-    private boolean forceDisableTools;
+    // SERVER SPECIFIC
+    protected Server server = new Server();
+
+    public ConcurrentLinkedQueue<String> serverCommands = new ConcurrentLinkedQueue<>();
+
+    // CLIENT SPECIFIC
+    protected Client client = new Client();
 
     /** Class constructor. */
     public Game() {
         game = this;
-
-        soundManager = new SoundManager();
     }
 
     /**
@@ -291,7 +301,7 @@ public abstract class Game extends Runnable {
      */
     public void setVsync(boolean vsync) {
         this.vsync = vsync;
-        Resources.setSetting("vsync", vsync);
+        Resources.getConfig().useVsync = vsync;
         window.setVsync(vsync);
     }
 
@@ -312,7 +322,7 @@ public abstract class Game extends Runnable {
     }
 
     public NetMode getNetMode() {
-        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : Client.clientId != -1 ? NetMode.Client : NetMode.Standalone);
+        return dedicatedServerEnabled ? NetMode.DedicatedServer : (listenServerEnabled ? NetMode.ListenServer : client.isAlive() ? NetMode.Client : NetMode.Standalone);
     }
 
     public boolean canRender() {
@@ -321,7 +331,7 @@ public abstract class Game extends Runnable {
 
     // if true Dedicated Server, Listen Server, Standalone, false Client
     public boolean hasAuthority() {
-        return dedicatedServerEnabled || listenServerEnabled || Client.clientId == -1;
+        return dedicatedServerEnabled || listenServerEnabled || !client.isAlive();
     }
 
     // if true Listen Server, Client, Standalone, false Dedicated Server
@@ -331,12 +341,11 @@ public abstract class Game extends Runnable {
 
     // if true Client, false Standalone
     public boolean isConnectedToServer() {
-        return Client.clientId != -1;
+        return client.isAlive();
     }
 
     public void disconnectFromServer() {
-        Client.commandDisconnect();
-        Client.closeSocket();
+        client.stop();
     }
 
     public void disableTools() {
@@ -376,32 +385,38 @@ public abstract class Game extends Runnable {
 
     }
 
-    public Packet onServerHandleRequest(Packet packet) {
-        return null;
-    }
-
     public void onServerDestroyed() {
 
     }
 
     /** Initialize everything. */
     public void initializeInternals(String[] args) {
+        Thread.currentThread().setName("MainThread");
+
         if (isDebugging()) {
             Out.printlnDebug("Initializing...");
         }
 
-        Resources.loadSettingsAndInitialize();
+        Resources.loadAndInitialize();
 
         if (!Arrays.asList(args).contains("--vsync")) {
-            vsync = (Boolean)Resources.getSetting("vsync");
+            vsync = Resources.getConfig().useVsync;
         }
 
         String commandName = getClass().getAnnotation(Command.class).name();
         window.initialize(
                 commandName.substring(0, 1).toUpperCase() + commandName.substring(1),
-                new Vector2i(1280, 720),
+                Resources.getConfig().windowSize,
                 vsync
         );
+
+        if (getNetMode() == NetMode.DedicatedServer) {
+            if (!glfwInit()) {
+                String errorMessage = "Unable to initialize glfw!";
+                Out.printlnError(errorMessage);
+                throw new IllegalStateException(errorMessage);
+            }
+        }
 
         Input.initialize();
 
@@ -419,14 +434,16 @@ public abstract class Game extends Runnable {
         }
 
         if (getNetMode() == NetMode.DedicatedServer) {
-            serverThread = new ServerThread();
-            serverThread.start();
-
-            serverCliThread = new ServerCliThread();
-            serverCliThread.start();
+            server.start();
+            onServerStarted();
+            Out.println("Waiting for world initialization...");
         }
 
         initialize();
+
+        if (getNetMode() == NetMode.DedicatedServer) {
+            Out.println("World initialized.");
+        }
 
         window.show(true);
 
@@ -440,37 +457,78 @@ public abstract class Game extends Runnable {
         window.pollEvents();
 
         while (!shouldQuit()) {
-            sceneManager.startFrame();
-            updateInternal();
-
-            if (canRender()) {
-                renderInternal();
+            if (getNetMode() == NetMode.DedicatedServer) {
+                long lastTime = System.nanoTime();
+                final double ns = 1000000000.0 / 128.0;
+                double delta = 0;
+                while(!shouldQuit) {
+                    long now = System.nanoTime();
+                    delta += (now - lastTime) / ns;
+                    lastTime = now;
+                    while(delta >= 1){
+                        while (!serverCommands.isEmpty()) {
+                            Console.getListOfCommands();
+                            Console.tryExecuteCommand(serverCommands.poll());
+                        }
+                        sceneManager.startFrame();
+                        updateInternal();
+                        timer.render();
+                        sceneManager.endFrame();
+                        window.pollEvents();
+                        delta--;
+                    }
+                }
+            } else {
+                sceneManager.startFrame();
+                updateInternal();
+                if (canRender()) {
+                    renderInternal();
+                }
+                sceneManager.endFrame();
+                window.pollEvents();
             }
-
-            sceneManager.endFrame();
-            window.pollEvents();
         }
+    }
+
+    public static boolean isMainThread() {
+        return Thread.currentThread().getName().equals("GameMainThread");
     }
 
     /** Updates the game logic. */
     private void updateInternal() {
         timer.update();
 
-        if (Input.isKeyPressed(Key.F1)) {
+        //if (Input.isKeyPressed(Key.F1)) {
+        if (Input.isActionSuccessful("debugMenu")) {
             if (!forceDisableTools) {
                 imGuiToolsEnabled = !imGuiToolsEnabled;
                 window.actualizeCursorType();
             }
         }
 
-        if (Input.isKeyPressed(Key.F2)) {
+        //if (Input.isKeyPressed(Key.F2)) {
+        if (Input.isActionSuccessful("showPerfomance")) {
             if (!forceDisableTools) {
                 debugToolsEnabled = !debugToolsEnabled;
             }
         }
 
-        float dt = timer.getDeltaTime();
+        if (Input.isKeyReleased(Key.GraveAccent) && Console.exists()) {
+            Console.show();
+            window.actualizeCursorType();
+        }
 
+        if (getNetMode() == NetMode.DedicatedServer || getNetMode() == NetMode.ListenServer) {
+            if (!getServer().getMessagesToHandleOnMainThread().isEmpty()) {
+                Objects.requireNonNull(getServer().getMessagesToHandleOnMainThread().poll()).process();
+            }
+        } else if (getNetMode() == NetMode.ListenServer || getNetMode() == NetMode.Client) {
+            if (!getClient().getMessagesToHandleOnMainThread().isEmpty()) {
+                Objects.requireNonNull(getClient().getMessagesToHandleOnMainThread().poll()).process();
+            }
+        }
+
+        float dt = timer.getDeltaTime();
         sceneManager.update(dt);
         update(dt);
         Input.update(dt);
@@ -487,7 +545,7 @@ public abstract class Game extends Runnable {
             resizeViewportAndCameras();
         }
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
             imGuiManager.startFrame();
         }
 
@@ -496,7 +554,7 @@ public abstract class Game extends Runnable {
 
         window.swapBuffer();
 
-        if (!noImGui && (imGuiToolsEnabled || (SceneManager.getScene() != null && SceneManager.getScene().isForceImGuiEnabled()))) {
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
             sceneManager.renderImGui();
         }
 
@@ -508,14 +566,20 @@ public abstract class Game extends Runnable {
             imGuiTools.renderImGui();
         }
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
+        if (!noImGui) {
+            if (Console.exists()) {
+                Console.renderImGui();
+            }
+        }
+
+        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
             imGuiManager.endFrame();
         }
 
         if (sceneManager.getCurrentScene() != null) {
             Spritebatch spritebatch = sceneManager.getCurrentScene().getSpritebatch();
 
-            if (noImGui || (!isImGuiToolsEnabled() && !SceneManager.getScene().isForceImGuiEnabled()) && sceneManager.getCurrentScene() != null &&
+            if (noImGui || (!isImGuiToolsEnabled() && !SceneManager.getScene().isForceImGuiEnabled()) && sceneManager.getCurrentScene() != null && !Console.visible() &&
                     cursorTexture != null && Input.getMousePos() != null) {
                 spritebatch.begin(sceneManager.getCurrentScene().getCursorCamera());
                 spritebatch.drawTexture(new Spritebatch.TextureData(cursorTexture, Input.getMousePos()) {{
@@ -530,17 +594,14 @@ public abstract class Game extends Runnable {
 
     /** Destroy everything. */
     public void destroyInternals() {
-        if (Client.isConnectedToServer()) {
+        if (client.isAlive()) {
             disconnectFromServer();
         }
 
         try {
-            if (serverCliThread != null && serverCliThread.isAlive()) {
-                serverCliThread.join();
-            }
-            if (serverThread != null && serverThread.isAlive()) {
-                ServerThread.closeSocket();
-                serverThread.join();
+            if (server.isAlive()) {
+                server.stop();
+                onServerDestroyed();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -581,5 +642,13 @@ public abstract class Game extends Runnable {
             scene.getUiCamera().resize(size.x, size.y);
             shouldResize = false;
         }
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public Server getServer() {
+        return server;
     }
 }

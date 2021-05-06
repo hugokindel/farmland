@@ -48,13 +48,13 @@ public class EconomicComponent {
 
     private int buyItem(Item item){
 
-        int[] turnTab = makeListOfTurn(Farmland.get().getCurrentSave().buyItemDatabasePerTurn);
-        int count = countWhereItemAppearsInList(Farmland.get().getCurrentSave().buyItemDatabasePerTurn, turnTab, item);
+        int[] turnTab = makeListOfTurn(Farmland.get().getLoadedSave().buyItemDatabasePerTurn);
+        int count = countWhereItemAppearsInList(Farmland.get().getLoadedSave().buyItemDatabasePerTurn, turnTab, item);
 
         int res = 0;
 
-        if(item.buyingValue > item.initValue / 4 && (!appearsInList && Farmland.get().getCurrentSave().turn > 0
-                && Farmland.get().getCurrentSave().turn%2 == 0)){
+        if(item.buyingValue > item.initValue / 4 && (!appearsInList && Farmland.get().getLoadedSave().turn > 0
+                && Farmland.get().getLoadedSave().turn%2 == 0)){
             if(item instanceof Crop){
                 res = -1;
             }else if(item instanceof Animal){
@@ -62,7 +62,7 @@ public class EconomicComponent {
             }
 
         }else if(item.buyingValue < item.initValue * 4 && appearsInList && count == 1){
-            int previouslyBought = Objects.requireNonNull(existInList(Farmland.get().getCurrentSave().buyItemDatabasePerTurn.get(turnTab[turnTab.length - 1]), item)).quantity;
+            int previouslyBought = Objects.requireNonNull(existInList(Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(turnTab[turnTab.length - 1]), item)).quantity;
             if(item instanceof Crop) {
                 res = 1 + previouslyBought/4;
             }else if(item instanceof Animal){
@@ -74,19 +74,19 @@ public class EconomicComponent {
 
     private int sellItem(Item item){
 
-        int[] turnTab = makeListOfTurn(Farmland.get().getCurrentSave().sellItemDatabasePerTurn);
-        int count = countWhereItemAppearsInList(Farmland.get().getCurrentSave().sellItemDatabasePerTurn, turnTab, item);
+        int[] turnTab = makeListOfTurn(Farmland.get().getLoadedSave().sellItemDatabasePerTurn);
+        int count = countWhereItemAppearsInList(Farmland.get().getLoadedSave().sellItemDatabasePerTurn, turnTab, item);
 
         int res = 0;
-        if(item.sellingValue < item.initValue * 4 && (!appearsInList && Farmland.get().getCurrentSave().turn > 0
-                && Farmland.get().getCurrentSave().turn%2 == 0)){
+        if(item.sellingValue < item.initValue * 4 && (!appearsInList && Farmland.get().getLoadedSave().turn > 0
+                && Farmland.get().getLoadedSave().turn%2 == 0)){
             if(item instanceof Crop){
                 res = 1;
             }else if(item instanceof Animal){
                 res = 3;
             }
         }else if(item.sellingValue > item.initValue/4  && appearsInList && count == 1){
-            int previouslySold = Objects.requireNonNull(existInList(Farmland.get().getCurrentSave().sellItemDatabasePerTurn.get(turnTab[turnTab.length - 1]), item)).quantity;
+            int previouslySold = Objects.requireNonNull(existInList(Farmland.get().getLoadedSave().sellItemDatabasePerTurn.get(turnTab[turnTab.length - 1]), item)).quantity;
             if(item instanceof Crop) {
                 res = -(1 + previouslySold/4);
             }else if(item instanceof Animal){
@@ -101,7 +101,16 @@ public class EconomicComponent {
  * To change the value of some items.
  */
     public void changeValueOfRessource(){
-        for(Item item : Farmland.get().getCurrentSave().getResourceDatabase().values()){
+        /*OLD: List<Item> itemsTurn = Farmland.get().getLoadedSave().itemsTurn;
+        Set<Item> setItemTurn = new HashSet<>(itemsTurn);
+        for(Item item:setItemTurn){
+            if (item != null) {
+                int lastItemSell = countItemPerList(item,lastItemTurn);
+                int turnItemSell = countItemPerList(item,itemsTurn);
+                int res = knowTheDifferenceBetweenTurn(turnItemSell,lastItemSell);
+                if(item.value + res >= item.initValue) item.value += res;
+            }*/
+        for(Item item : Farmland.get().getLoadedSave().getResourceDatabase().values()){
             item.buyingValue += buyItem(item);
             item.sellingValue += sellItem(item);
         }

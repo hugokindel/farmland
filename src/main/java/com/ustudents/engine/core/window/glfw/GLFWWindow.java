@@ -3,12 +3,12 @@ package com.ustudents.engine.core.window.glfw;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
-import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
 import com.ustudents.engine.core.window.events.*;
 import com.ustudents.engine.graphic.RenderTarget;
+import com.ustudents.engine.input.Key;
 import com.ustudents.engine.scene.SceneManager;
-import com.ustudents.farmland.Farmland;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import org.joml.Vector2f;
@@ -31,6 +31,7 @@ import static org.lwjgl.stb.STBImage.stbi_load;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+@SuppressWarnings("unchecked")
 public class GLFWWindow extends EmptyWindow {
     private String name;
 
@@ -48,9 +49,14 @@ public class GLFWWindow extends EmptyWindow {
         this.size = size;
         this.glslVersion = "";
 
-        GLFWErrorCallback.createPrint(System.err).set();
+        glfwSetErrorCallback(new GLFWErrorCallback() {
+            @Override
+            public void invoke(int error, long description) {
+                Out.println(error + ": " + description);
+            }
+        });
 
-        if ( !glfwInit() ) {
+        if (!glfwInit()) {
             String errorMessage = "Unable to initialize glfw!";
             Out.printlnError(errorMessage);
             throw new IllegalStateException(errorMessage);
@@ -156,7 +162,7 @@ public class GLFWWindow extends EmptyWindow {
 
     @Override
     public void actualizeCursorType() {
-        if (Game.get().isImGuiToolsEnabled()) {
+        if (Console.visible() || Game.get().isImGuiToolsEnabled()) {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -263,13 +269,11 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetKeyCallback(windowHandle, new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                /*if (Farmland.get().isImGuiEnabled() && (Farmland.get().isImGuiToolsEnabled() || SceneManager.getScene().isForceImGuiEnabled())) {
-                    final ImGuiIO io = ImGui.getIO();
-
-                    if (io.getWantCaptureKeyboard()) {
-                        return;
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    if (key != Key.GraveAccent) {
+                        Game.get().getImGuiManager().getImGuiGlfw().keyCallback(window, key, scancode, action, mods);
                     }
-                }*/
+                }
 
                 keyStateChanged.dispatch(new KeyStateChangedEvent(key, scancode, action, mods));
             }
@@ -278,7 +282,11 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetMouseButtonCallback(windowHandle, new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    Game.get().getImGuiManager().getImGuiGlfw().mouseButtonCallback(window, button, action, mods);
+                }
+
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
                     final ImGuiIO io = ImGui.getIO();
 
                     if (io.getWantCaptureMouse()) {
@@ -300,7 +308,11 @@ public class GLFWWindow extends EmptyWindow {
         glfwSetScrollCallback(windowHandle, new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
-                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled())) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    Game.get().getImGuiManager().getImGuiGlfw().scrollCallback(window, xoffset, yoffset);
+                }
+
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
                     final ImGuiIO io = ImGui.getIO();
 
                     if (io.getWantCaptureMouse()) {
@@ -309,6 +321,26 @@ public class GLFWWindow extends EmptyWindow {
                 }
 
                 scrollMoved.dispatch(new ScrollMovedEvent(new Vector2f((float)xoffset, (float)yoffset)));
+            }
+        });
+
+        glfwSetCharCallback(windowHandle, new GLFWCharCallback() {
+            @Override
+            public void invoke(long window, int codepoint) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    if (codepoint != 178) { // GraveAccent
+                        Game.get().getImGuiManager().getImGuiGlfw().charCallback(window, codepoint);
+                    }
+                }
+            }
+        });
+
+        glfwSetMonitorCallback(new GLFWMonitorCallback() {
+            @Override
+            public void invoke(long monitor, int event) {
+                if (Game.get().isImGuiEnabled() && (Game.get().isImGuiToolsEnabled() || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                    Game.get().getImGuiManager().getImGuiGlfw().monitorCallback(monitor, event);
+                }
             }
         });
     }

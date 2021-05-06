@@ -149,6 +149,10 @@ public class Color {
         return new ColorHsla(h, s, l, a);
     }
 
+    public float[] toArray() {
+        return new float[] { r, g, b, a };
+    }
+
     public void darken(int percent) {
         set(toHsla().darken(percent).toRgba());
     }

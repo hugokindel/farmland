@@ -1,19 +1,24 @@
 package com.ustudents.farmland.scene.menus;
 
-import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.core.window.Window;
-import com.ustudents.engine.graphic.Color;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.Farmland;
-import imgui.ImGui;
-import imgui.ImVec2;
+import com.ustudents.farmland.scene.InGameScene;
 
 public class MainMenu extends MenuScene {
     @Override
     public void initialize() {
-        Farmland.get().saveId = null;
+        if (Farmland.get().getNetMode() == NetMode.Standalone) {
+            Farmland.get().unloadSave();
+        }
 
-        String[] buttonNames = {"Solo", "Multijoueur", "Paramètres", "Crédits"};
+        String[] buttonNames = {
+                Resources.getLocalizedText("singleplayer"),
+                Resources.getLocalizedText("multiplayer"),
+                Resources.getLocalizedText("settings"),
+                Resources.getLocalizedText("credits")
+        };
         String[] buttonIds = {"singleplayerButton", "multiplayerButton", "settingsButton", "creditsButton"};
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
@@ -37,13 +42,17 @@ public class MainMenu extends MenuScene {
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, true, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, true,
+                false);
 
         super.initialize();
     }
 
     @Override
     public void update(float dt) {
-
+        if (Farmland.get().getNetMode() == NetMode.DedicatedServer &&
+                Farmland.get().serverPlayerIdPerClientId.size() == Farmland.get().getLoadedSave().capacity) {
+            changeScene(new InGameScene());
+        }
     }
 }

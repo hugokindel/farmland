@@ -133,6 +133,13 @@ public class JsonReader {
         return null;
     }
 
+    public static Map<String, Object> readMapThatThrow(InputStream file) throws Exception {
+        JsonReader reader = new JsonReader(file);
+        Map<String, Object> map = reader.parseMap();
+        reader.reader.close();
+        return map;
+    }
+
     /**
      * Read the file given in the constructor.
      *

@@ -1,34 +1,38 @@
 package com.ustudents.farmland.scene.menus;
 
-import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.core.json.Json;
-import com.ustudents.engine.network.Client;
+import com.ustudents.engine.network.Controller;
 import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.core.SaveGame;
-import com.ustudents.farmland.scene.InGameScene;
-
-import java.util.Map;
+import com.ustudents.farmland.network.general.GameInformationsRequest;
+import com.ustudents.farmland.network.general.GameInformationsResponse;
 
 @SuppressWarnings("unchecked")
 public class ServersListMenu extends MenuScene {
     @Override
     public void initialize() {
-        boolean localServerExists;
+        if (Farmland.get().isConnectedToServer()) {
+            Farmland.get().disconnectFromServer();
+        }
 
-        localServerExists = Client.commandExists();
+        if (!Farmland.get().getClient().isAlive()) {
+            Farmland.get().getClient().start(100);
+        }
+
+        boolean localServerExists = Farmland.get().getClient().isAlive();
 
         int i = 0;
         String[] buttonNames;
         String[] buttonIds;
 
         if (localServerExists) {
-            buttonNames = new String[] {"Serveur local", "Recharger"};
-            buttonIds = new String[] {"localButton", "reloadButton"};
+            GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
+            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", Resources.getLocalizedText("researchServer"), Resources.getLocalizedText("reloadServer")};
+            buttonIds = new String[] {"localButton", "addressButton", "reloadButton"};
         } else {
-            buttonNames = new String[] {"Recharger"};
-            buttonIds = new String[] {"reloadButton"};
+            buttonNames = new String[] {Resources.getLocalizedText("researchServer"), Resources.getLocalizedText("reloadServer")};
+            buttonIds = new String[] {"addressButton", "reloadButton"};
         }
 
         EventListener[] eventListeners = new EventListener[buttonNames.length];
@@ -38,21 +42,18 @@ public class ServersListMenu extends MenuScene {
             eventListeners[i] = (dataType, data) -> {
                 switch (buttonIds[j]) {
                     case "localButton":
-                        if (Client.isConnectedToServer()) {
-                            Client.commandDisconnect();
+                        Out.println("Connected to server");
+                        Farmland.get().clientServerIp = Controller.DEFAULT_ADDRESS;
+                        Farmland.get().clientServerPort = Controller.DEFAULT_PORT;
+                        changeScene(new ServerWaitingRoomMenu());
+
+                        break;
+                    case "addressButton":
+                        if (Farmland.get().isConnectedToServer()) {
+                            Farmland.get().disconnectFromServer();
                         }
-                        Client.commandConnect();
 
-                        Out.println("Connected to server with ID: " + Client.clientId);
-
-                        Map<String, Object> answer = Client.request("loadWorld");
-                        SaveGame saveGame = Json.deserialize((Map<String, Object>)answer.get("world"), SaveGame.class);
-                        assert saveGame != null;
-                        saveGame.path = "save-server.json";
-                        Farmland.get().getSaveGames().put(saveGame.name, saveGame);
-                        Farmland.get().saveId = saveGame.name;
-                        changeScene(new InGameScene());
-
+                        changeScene(new ServerCustomMenu());
                         break;
                     case "reloadButton":
                         changeScene(new ServersListMenu(), false);
@@ -64,5 +65,12 @@ public class ServersListMenu extends MenuScene {
         initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, true);
 
         super.initialize();
+    }
+
+    @Override
+    public void destroy() {
+        if (Farmland.get().isConnectedToServer()) {
+            Farmland.get().disconnectFromServer();
+        }
     }
 }
