@@ -82,7 +82,7 @@ public class NewGameMenu extends MenuScene {
         ImGui.sliderInt(Resources.getLocalizedText("ngNumBots"), numberOfBots, 0, 3);
         ImGui.combo("Difficulté des robots", currentDifficulty, difficulties, difficulties.length);
         ImGui.inputInt("Somme maximal à emprunter", maxBorrow,100);
-        ImGui.inputInt("taux de remboursement de l'emprunt", percentDebt,10);
+        ImGui.inputInt("Taux de remboursement de l'emprunt", percentDebt,10);
 
         if (maxBorrow.get() < 100 || maxBorrow.get()%100 != 0 || maxBorrow.get()%10 != 0)
             maxBorrow.set(100);

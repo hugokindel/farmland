@@ -110,11 +110,7 @@ public class InGameScene extends Scene {
         moneyUpdate();
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
-            getEntityByName("endTurnButton").setEnabled(false);
-            getEntityByName("inventoryButton").setEnabled(false);
-            getEntityByName("marketButton").setEnabled(false);
-            getEntityByName("caravanButton").setEnabled(false);
-            getEntityByName("researchButton").setEnabled(false);
+            getEntityByName("gameplayButtons").setEnabled(false);
         }
     }
 
@@ -148,10 +144,12 @@ public class InGameScene extends Scene {
     public void initializeGui() {
         GuiBuilder guiBuilder = new GuiBuilder();
 
+        getEntityByName("canvas").createChildWithName("gameplayButtons");
 
         Texture researchTexture = Resources.loadTexture("ui/research.png");
         GuiBuilder.ImageData imageDataResearch= new GuiBuilder.ImageData(researchTexture);
-        imageDataResearch.id = "ResearchImage";
+        imageDataResearch.id = "researchButtonImage";
+        imageDataResearch.parentId = "gameplayButtons";
         imageDataResearch.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataResearch.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         imageDataResearch.position = new Vector2f(-642, -110);
@@ -161,7 +159,8 @@ public class InGameScene extends Scene {
 
         Texture caravanTexture = Resources.loadTexture("ui/caravan.png");
         GuiBuilder.ImageData imageDataCaravan= new GuiBuilder.ImageData(caravanTexture);
-        imageDataCaravan.id = "ResearchImage";
+        imageDataCaravan.id = "caravanButtonImage";
+        imageDataCaravan.parentId = "gameplayButtons";
         imageDataCaravan.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataCaravan.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         imageDataCaravan.position = new Vector2f(-465, -110);
@@ -171,7 +170,8 @@ public class InGameScene extends Scene {
 
         Texture inventoryTexture = Resources.loadTexture("ui/inventory.png");
         GuiBuilder.ImageData imageDataInventory= new GuiBuilder.ImageData(inventoryTexture);
-        imageDataInventory.id = "ResearchImage";
+        imageDataInventory.id = "inventoryButtonImage";
+        imageDataInventory.parentId = "gameplayButtons";
         imageDataInventory.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataInventory.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         imageDataInventory.position = new Vector2f(-145, -110);
@@ -182,7 +182,8 @@ public class InGameScene extends Scene {
 
         Texture marketTexture = Resources.loadTexture("ui/market.png");
         GuiBuilder.ImageData imageDataMarket= new GuiBuilder.ImageData(marketTexture);
-        imageDataMarket.id = "ResearchImage";
+        imageDataMarket.id = "marketButtonImage";
+        imageDataMarket.parentId = "gameplayButtons";
         imageDataMarket.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataMarket.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         imageDataMarket.position = new Vector2f(-320, -112);
@@ -192,7 +193,8 @@ public class InGameScene extends Scene {
 
         Texture turnEndTexture = Resources.loadTexture("ui/time.png");
         GuiBuilder.ImageData imageDataTurnEnd= new GuiBuilder.ImageData(turnEndTexture);
-        imageDataTurnEnd.id = "ResearchImage";
+        imageDataTurnEnd.id = "turnEndButtonImage";
+        imageDataTurnEnd.parentId = "gameplayButtons";
         imageDataTurnEnd.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataTurnEnd.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         imageDataTurnEnd.position = new Vector2f(40, -114);
@@ -202,7 +204,8 @@ public class InGameScene extends Scene {
 
         Texture bankTexture = Resources.loadTexture("ui/bank.png");
         GuiBuilder.ImageData imageDataBank= new GuiBuilder.ImageData(bankTexture);
-        imageDataBank.id = "ResearchImage";
+        imageDataBank.id = "bankButtonImage";
+        imageDataBank.parentId = "gameplayButtons";
         imageDataBank.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataBank.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         imageDataBank.position = new Vector2f(-800, -110);
@@ -212,7 +215,7 @@ public class InGameScene extends Scene {
 
         Texture frameTexture = Resources.loadTexture("ui/frame.png");
         GuiBuilder.ImageData imageDataFrame = new GuiBuilder.ImageData(frameTexture);
-        imageDataFrame.id = "FrameImage";
+        imageDataFrame.id = "frameImage";
         imageDataFrame.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         imageDataFrame.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
         imageDataFrame.scale = new Vector2f(3f, 3f);
@@ -282,6 +285,7 @@ public class InGameScene extends Scene {
             Farmland.get().getLoadedSave().endTurn();
         });
         buttonData.id = "endTurnButton";
+        buttonData.parentId = "gameplayButtons";
         buttonData.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData.position = new Vector2f(-10, -10);
@@ -291,6 +295,7 @@ public class InGameScene extends Scene {
             showInventory.set(!showInventory.get());
         });
         buttonData1.id = "inventoryButton";
+        buttonData1.parentId = "gameplayButtons";
         buttonData1.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData1.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData1.position = new Vector2f(-220, -10);
@@ -300,6 +305,7 @@ public class InGameScene extends Scene {
             showMarket.set(!showMarket.get());
         });
         buttonData3.id = "marketButton";
+        buttonData3.parentId = "gameplayButtons";
         buttonData3.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData3.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData3.position = new Vector2f(-400, -8);
@@ -309,6 +315,7 @@ public class InGameScene extends Scene {
             showCaravan.set(!showCaravan.get());
         });
         buttonDataC.id = "caravanButton";
+        buttonDataC.parentId = "gameplayButtons";
         buttonDataC.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonDataC.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonDataC.position = new Vector2f(-535, -10);
@@ -318,6 +325,7 @@ public class InGameScene extends Scene {
             showResearch.set(!showResearch.get());
         });
         buttonDataR.id = "researchButton";
+        buttonDataR.parentId = "gameplayButtons";
         buttonDataR.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonDataR.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonDataR.position = new Vector2f(-715, -10);
@@ -327,6 +335,7 @@ public class InGameScene extends Scene {
             showBank.set(!showBank.get());
         });
         buttonDataB.id = "bankButton";
+        buttonDataB.parentId = "gameplayButtons";
         buttonDataB.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonDataB.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonDataB.position = new Vector2f(-880, -10);
@@ -909,11 +918,7 @@ public class InGameScene extends Scene {
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
             if (!currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
-                getEntityByName("endTurnButton").setEnabled(false);
-                getEntityByName("inventoryButton").setEnabled(false);
-                getEntityByName("marketButton").setEnabled(false);
-                getEntityByName("caravanButton").setEnabled(false);
-                getEntityByName("researchButton").setEnabled(false);
+                getEntityByName("gameplayButtons").setEnabled(false);
                 if (showMarket.get()) {
                     shouldShowBackMarket = true;
                 }
@@ -931,11 +936,7 @@ public class InGameScene extends Scene {
                 showCaravan.set(false);
                 showResearch.set(false);
             } else {
-                getEntityByName("endTurnButton").setEnabled(true);
-                getEntityByName("inventoryButton").setEnabled(true);
-                getEntityByName("marketButton").setEnabled(true);
-                getEntityByName("caravanButton").setEnabled(true);
-                getEntityByName("researchButton").setEnabled(true);
+                getEntityByName("gameplayButtons").setEnabled(true);
                 if (shouldShowBackInventory) {
                     showInventory.set(true);
                     shouldShowBackInventory = false;
@@ -1203,7 +1204,6 @@ public class InGameScene extends Scene {
         this.inPause = inPause;
         pauseChanged.dispatch(new PauseChanged(inPause));
         ButtonComponent.disableInput = inPause;
-        Out.println("Pause changed: " + inPause);
     }
 
     public boolean getPause() {

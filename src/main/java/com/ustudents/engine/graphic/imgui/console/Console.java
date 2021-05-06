@@ -257,7 +257,7 @@ public class Console {
                         if (Arrays.stream(command.authority).anyMatch(e -> e == Game.get().getNetMode())) {
                             command.method.invoke(get().consoleCommands);
                         } else {
-                            printlnError("You do not got authority to run this command!");
+                            printlnError("You do not have authority to run this command!");
                         }
                     }
                 }

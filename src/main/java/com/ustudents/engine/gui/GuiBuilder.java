@@ -73,6 +73,8 @@ public class GuiBuilder {
         public String text;
 
         public String id;
+        
+        public String parentId;
 
         public Font font;
 
@@ -110,6 +112,8 @@ public class GuiBuilder {
         public String id;
 
         public Vector2f position;
+        
+        public String parentId;
 
         public Vector2f scale;
 
@@ -273,7 +277,12 @@ public class GuiBuilder {
     }
 
     public void addButton(ButtonData data) {
-        Entity button = canvas.createChildWithName(data.id);
+        Entity button;
+        if (data.parentId == null || data.parentId.isEmpty()) {
+            button = canvas.createChildWithName(data.id);
+        } else {
+            button = registry.getEntityByName(data.parentId).createChildWithName(data.id);
+        }
         TransformComponent transformComponent = createScaledComponent(data.scale, data.applyGlobalScaling);
         buttonPosition(data, transformComponent);
         Window.get().getSizeChanged().add((dataType, windowData) -> buttonPosition(data, transformComponent));
@@ -283,7 +292,12 @@ public class GuiBuilder {
     }
 
     public void addImage(ImageData data) {
-        Entity image = canvas.createChildWithName(data.id);
+        Entity image;
+        if (data.parentId == null || data.parentId.isEmpty()) {
+            image = canvas.createChildWithName(data.id);
+        } else {
+            image = registry.getEntityByName(data.parentId).createChildWithName(data.id);
+        }
         TransformComponent transformComponent = createScaledComponent(data.scale, data.applyGlobalScaling);
         imagePosition(data, transformComponent);
         Window.get().getSizeChanged().add((dataType, windowData) -> imagePosition(data, transformComponent));

@@ -407,6 +407,10 @@ public class Registry {
      * @param enable If we should enable it or not.
      */
     public void setEnabledEntity(Entity entity, boolean enable) {
+        if (enable == entity.isEnabled()) {
+            return;
+        }
+
         if (enable) {
             enabledEntities.add(entity);
             disabledEntities.remove(entity);
@@ -415,6 +419,10 @@ public class Registry {
             enabledEntities.remove(entity);
             disabledEntities.add(entity);
             entitiesToBeRemovedFromSystems.add(entity);
+        }
+
+        for (Entity child : entity.getChildren()) {
+            child.setEnabled(enable);
         }
     }
 
