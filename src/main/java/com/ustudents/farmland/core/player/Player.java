@@ -41,10 +41,10 @@ public class Player {
     public Type type;
 
     @JsonSerializable
-    public Integer loanMoney;
+    public Integer loan;
 
     @JsonSerializable
-    public Integer debtMoney;
+    public Integer remainingDebt;
 
     @JsonSerializable
     public Color bannerColor;
@@ -90,8 +90,8 @@ public class Player {
         this.avatar = new Avatar(bracesColor, shirtColor, hatColor, buttonColor);
         this.money = 500;
         this.type = type;
-        this.loanMoney = 0;
-        this.debtMoney = 0;
+        this.loan = 0;
+        this.remainingDebt = 0;
         this.caravans = new ArrayList<>();
         this.researches = new ArrayList<>();
         this.researches.add(new Research("Fermier"));
@@ -367,7 +367,8 @@ public class Player {
             for (int i = 0; i < quantity; i++) {
                 addToInventory(item, "Buy");
 
-                Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(Farmland.get().getLoadedSave().turn).add(item);
+                //Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(Farmland.get().getLoadedSave().turn).add(item);
+                Farmland.get().getLoadedSave().fillTurnItemDataBase(item, true);
             }
 
             Farmland.get().serverBroadcastSave();
@@ -378,10 +379,15 @@ public class Player {
 
     public void sellItem(String itemId, int quantity) {
         if (Game.get().hasAuthority()) {
-            for (int i = 0; i < quantity; i++) {
-                setMoney(money + (int)(getItemFromInventory(itemId).sellingValue/1.5));
-                deleteFromInventory(getItemFromInventory(itemId), "Sell");
+            money += Farmland.get().getLoadedSave().getResourceDatabase().get(itemId).sellingValue;
+
+            if (remainingDebt > 0) {
+                payLoan((Math.max(loan * (Farmland.get().getLoadedSave().debtRate / 100), 1)), false);
             }
+
+            Item item = Item.clone(getAllItemOfSellInventory().get(itemId));
+            Farmland.get().getLoadedSave().fillTurnItemDataBase(item, false);
+            deleteFromInventory(getAllItemOfSellInventory().get(itemId), "Sell");
 
             Farmland.get().serverBroadcastSave();
         } else {
@@ -427,8 +433,8 @@ public class Player {
     public void takeLoan(int amount) {
         if (Game.get().hasAuthority()) {
             money += amount;
-            loanMoney = amount + (int)(amount * 0.03f) + 1;
-            debtMoney += amount + (int)(amount * 0.03f) + 1;
+            loan = amount + (int)(amount * 0.03f) + 1;
+            remainingDebt += amount + (int)(amount * 0.03f) + 1;
 
             Farmland.get().serverBroadcastSave();
         } else {
@@ -437,18 +443,24 @@ public class Player {
     }
 
     public void payLoan(int amount) {
-        if (Game.get().hasAuthority()) {
-            if (debtMoney > 0) {
-                money -= amount;
-                debtMoney -= amount;
+        payLoan(amount, true);
+    }
 
-                if (debtMoney <= 0) {
-                    debtMoney = 0;
-                    loanMoney = 0;
+    public void payLoan(int amount, boolean broadcast) {
+        if (Game.get().hasAuthority()) {
+            if (remainingDebt > 0) {
+                money -= amount;
+                remainingDebt -= amount;
+
+                if (remainingDebt <= 0) {
+                    remainingDebt = 0;
+                    loan = 0;
                 }
             }
 
-            Farmland.get().serverBroadcastSave();
+            if (broadcast) {
+                Farmland.get().serverBroadcastSave();
+            }
         } else {
             Game.get().getClient().send(new PayLoanMessage(amount));
         }

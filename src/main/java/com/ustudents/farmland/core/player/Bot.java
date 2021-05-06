@@ -70,12 +70,12 @@ public class Bot {
                 case Impossible:
                     Random rand = new Random();
                     boolean cantPayDebt = false;
-                    if (player.debtMoney == 0 && rand.nextInt(100) <= 50) {
+                    if (player.remainingDebt == 0 && rand.nextInt(100) <= 50) {
                         botTakesOutALoan();
                         cantPayDebt = true;
                     }
 
-                    if (player.debtMoney > 0 && !cantPayDebt) {
+                    if (player.remainingDebt > 0 && !cantPayDebt) {
                         payDebt();
                     }
                     int action3 = makeChoice();
@@ -236,8 +236,8 @@ public class Bot {
         int maxBorrow = Farmland.get().getLoadedSave().maxBorrow;
         int randValue = rand.nextInt(maxBorrow - maxBorrow/10);
         player.money += randValue;
-        player.loanMoney = randValue + (int)(randValue*0.03f);
-        player.debtMoney += randValue + (int)(randValue*0.03f);
+        player.loan = randValue + (int)(randValue*0.03f);
+        player.remainingDebt += randValue + (int)(randValue*0.03f);
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateMoneyItemLabel();
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateLeaderboard();
     }
@@ -246,10 +246,10 @@ public class Bot {
         Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         Random rand = new Random();
-        int debt = player.debtMoney;
+        int debt = player.remainingDebt;
         int randValue = rand.nextInt(debt);
         player.money -= randValue;
-        player.debtMoney -= randValue;
+        player.remainingDebt -= randValue;
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateMoneyItemLabel();
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateLeaderboard();
     }

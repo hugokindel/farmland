@@ -605,15 +605,15 @@ public class InGameScene extends Scene {
         }
 
         if(!refundMenu){
-            if(player.debtMoney == 0){
-                player.loanMoney = 0;
-                ImGui.text("\n\n" + "Maximum d'emprunt : " + player.debtMoney+ "/" + maxBorrow +"\n\n");
+            if(player.remainingDebt == 0){
+                player.loan = 0;
+                ImGui.text("\n\n" + "Maximum d'emprunt : " + player.remainingDebt + "/" + maxBorrow +"\n\n");
                 ImGui.inputInt("Somme à emprunter", selectBorrow,maxBorrow/10);
                 ImGui.text("Valeur d'emprunt sélectionné: " + selectBorrow.get() + "\n\n\n\n");
                 if(!(selectBorrow.get() >= 5 && selectBorrow.get() <= maxBorrow)) {
                     if (selectBorrow.get() < 5)
                         selectBorrow.set(maxBorrow/10);
-                    else if (selectBorrow.get() > player.debtMoney)
+                    else if (selectBorrow.get() > player.remainingDebt)
                         selectBorrow.set(maxBorrow);
                 }else{
                     if(ImGui.button("Confirmer")){
@@ -628,20 +628,20 @@ public class InGameScene extends Scene {
                     }
                 }
             }else{
-                ImGui.text("\n\n" + "Somme à payer : " + player.debtMoney + " pièces d'or \n\n");
+                ImGui.text("\n\n" + "Somme à payer : " + player.remainingDebt + " pièces d'or \n\n");
                 ImGui.text("\n\n" + "Vous devez rembourser votre emprunt !" + "\n\n");
             }
 
         }else{
-            if(player.debtMoney > 0) {
-                ImGui.text("\n\n" + "Votre dette : " + player.debtMoney + " pièces d'or \n\n");
+            if(player.remainingDebt > 0) {
+                ImGui.text("\n\n" + "Votre dette : " + player.remainingDebt + " pièces d'or \n\n");
                 ImGui.inputInt("Somme à emprunter", selectBorrow,maxBorrow/10);
                 ImGui.text("Valeur de remboursement sélectionné: " + selectBorrow.get() + "\n\n\n\n");
-                if(!(selectBorrow.get() >= 1 && selectBorrow.get() <= player.debtMoney)) {
+                if(!(selectBorrow.get() >= 1 && selectBorrow.get() <= player.remainingDebt)) {
                     if (selectBorrow.get() < 0)
                         selectBorrow.set(1);
-                    else if (selectBorrow.get() > player.debtMoney)
-                        selectBorrow.set(player.debtMoney);
+                    else if (selectBorrow.get() > player.remainingDebt)
+                        selectBorrow.set(player.remainingDebt);
                 }else{
                     if(ImGui.button("Confirmer")){
                         player.payLoan(selectBorrow.get());
@@ -655,7 +655,7 @@ public class InGameScene extends Scene {
                     }
                 }
             }else{
-                player.loanMoney = 0;
+                player.loan = 0;
                 ImGui.text("\n\n" + "Vous n'avez pas de dette à rembourser" + "\n\n");
             }
         }
@@ -777,11 +777,9 @@ public class InGameScene extends Scene {
 
             for (String item: uniqueItems){
                 if (ImGui.button(sellnickNameItem(playerInventory.get(item)))) {
-                    player.setMoney(playerMoney + Farmland.get().getLoadedSave().getResourceDatabase().get(item).sellingValue);
-                    if(player.debtMoney > 0)
-                        decreasePlayerDept(player, Farmland.get().getLoadedSave().debtRate);
-                    toDelete.add(playerInventory.get(item));
-                    Farmland.get().getLoadedSave().fillTurnItemDataBase(Item.clone(playerInventory.get(item)), false);
+                    player.sellItem(item, 1);
+
+                    updateMoneyItemLabel();
                     updateLeaderboard();
                 }
                 ImGui.sameLine();
@@ -799,6 +797,7 @@ public class InGameScene extends Scene {
         }else{
             ImGui.text(Resources.getLocalizedText("products"));
 
+            //for(Item item : Farmland.get().getResourceDatabase().values()){.
             for(Item item : Farmland.get().getResourceDatabase().values()){
                 if(ImGui.button(buyNickNameItem(item)) && playerMoney>=item.buyingValue){
                     Farmland.get().getLoadedSave().getLocalPlayer().buyItem(item, 1);
@@ -860,7 +859,7 @@ public class InGameScene extends Scene {
     }
 
     public void decreasePlayerDept(Player player, float percent){
-        player.payLoan(Math.max((int)(player.loanMoney * (percent / 100)), 1));
+        player.payLoan(Math.max((int)(player.loan * (percent / 100)), 1));
 
         updateLeaderboard();
         updateMoneyItemLabel();
@@ -869,7 +868,7 @@ public class InGameScene extends Scene {
     public void onTurnEnded() {
         Player currentPlayer = Farmland.get().getLoadedSave().getCurrentPlayer();
 
-        if(currentPlayer.debtMoney > 0) {
+        if(currentPlayer.remainingDebt > 0) {
             decreasePlayerDept(currentPlayer, Farmland.get().getLoadedSave().debtRate);
         }
 
@@ -906,7 +905,8 @@ public class InGameScene extends Scene {
         }
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
-            if (!currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
+            //if (!currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
+            if (Farmland.get().getLoadedSave() != null && !currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
                 getEntityByName("gameplayButtons").setEnabled(false);
                 if (showMarket.get()) {
                     shouldShowBackMarket = true;

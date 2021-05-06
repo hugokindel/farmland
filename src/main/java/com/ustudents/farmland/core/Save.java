@@ -146,8 +146,8 @@ public class Save {
         buyTurnItemDataBase = new ArrayList<>();
         sellItemDatabasePerTurn = new ArrayList<>();
         sellTurnItemDataBase = new ArrayList<>();
-        buyItemDatabasePerTurn.add(new ArrayList<>(buyTurnItemDataBase));
-        sellItemDatabasePerTurn.add(new ArrayList<>(sellTurnItemDataBase));
+        //buyItemDatabasePerTurn.add(new ArrayList<>(buyTurnItemDataBase));
+        //sellItemDatabasePerTurn.add(new ArrayList<>(sellTurnItemDataBase));
 
         this.cells = new ArrayList<>();
 
@@ -334,7 +334,7 @@ public class Save {
     public boolean PlayerMeetCondition() {
         for(Player player : players) {
             if(player.type == Player.Type.Human) {
-                return player.money <= 0 || (player.money >= 1000 && player.debtMoney <= 0);
+                return player.money <= 0 || (player.money >= 1000 && player.remainingDebt <= 0);
             }
         }
 
@@ -344,7 +344,7 @@ public class Save {
     public boolean BotMeetCondition() {
         for(Player player : players) {
             if(player.type == Player.Type.Bot && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
-                if (player.money <= 0 || (player.money >= 1000 && player.debtMoney <= 0)){
+                if (player.money <= 0 || (player.money >= 1000 && player.remainingDebt <= 0)){
                     return true;
                 }
             }
