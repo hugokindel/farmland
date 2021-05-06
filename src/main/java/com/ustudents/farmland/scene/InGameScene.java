@@ -78,7 +78,7 @@ public class InGameScene extends Scene {
     public boolean inPause = false;
 
     public EventDispatcher<PauseChanged> pauseChanged = new EventDispatcher<>();
-    
+
     public boolean refundMenu;
 
     @Override
@@ -535,7 +535,7 @@ public class InGameScene extends Scene {
 
     public void initializeGameplay() {
         Farmland.get().getLoadedSave().turnEnded.add((dataType, data) -> onTurnEnded());
-        getEntityByName("grid").getComponent(TurnTimerComponent.class).secondElapsed.add(((dataType, data) -> onSecondElapsed(((TurnTimerComponent.SecondElapsed)data).numberOfSecondElapsed)));
+        getEntityByName("grid").getComponent(TurnTimerComponent.class).secondElapsed.add(((dataType, data) -> updateTimer()));
     }
 
     @Override
@@ -909,7 +909,7 @@ public class InGameScene extends Scene {
                     }
                 }
             }
-          
+
             if (!onCompletedTurnEnd()){
                 updateLeaderboard();
             }
@@ -1122,7 +1122,7 @@ public class InGameScene extends Scene {
                     toDelete.add(currentPlayer.caravanList.get(i));
                 }
 
-            currentPlayer.caravanList.removeAll(toDelete);
+                currentPlayer.caravanList.removeAll(toDelete);
             }
         }
     }
@@ -1155,8 +1155,8 @@ public class InGameScene extends Scene {
         }
     }
 
-    public void onSecondElapsed(int secondsElapsed) {
-        getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("timeRemaining", DateUtil.secondsToText(Save.timePerTurn - secondsElapsed)));
+    public void updateTimer() {
+        getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("timeRemaining", DateUtil.secondsToText(Save.timePerTurn - Farmland.get().getLoadedSave().turnTimePassed)));
     }
 
     @Override
@@ -1171,12 +1171,14 @@ public class InGameScene extends Scene {
 
                 Farmland.get().saves.put(Farmland.get().loadedSaveId, serverSave);
 
-                if (!serverSave.currentPlayerId.equals(currentSave.currentPlayerId)) {
+                if (!serverSave.currentPlayerId.equals(currentSave.currentPlayerId) || !serverSave.turn.equals(currentSave.turn)) {
                     Farmland.get().getLoadedSave().turnEnded.dispatch();
                 }
 
+
                 updateMoneyItemLabel();
                 updateLeaderboard();
+                updateTimer();
             }
         }
 
