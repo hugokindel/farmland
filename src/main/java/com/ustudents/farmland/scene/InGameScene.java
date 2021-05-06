@@ -405,7 +405,7 @@ public class InGameScene extends Scene {
 
         guiBuilder.addText(textData2);
 
-        String text2 = "    " + Farmland.get().getLoadedSave().getCurrentPlayer().money;
+        String text2 = "    " + Farmland.get().getLoadedSave().getLocalPlayer().money;
         GuiBuilder.TextData textDataMoney = new GuiBuilder.TextData(text2);
         textDataMoney.id = "MoneyLabel";
         textDataMoney.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
@@ -548,7 +548,7 @@ public class InGameScene extends Scene {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
             ImGui.begin(Resources.getLocalizedText("inventory"), showInventory);
-            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n"));
+            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getLocalPlayer().money + "\n\n"));
             makeListOfPlayerItem();
             ImGui.end();
         }
@@ -557,7 +557,7 @@ public class InGameScene extends Scene {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
             ImGui.begin(Resources.getLocalizedText("market"), showMarket);
-            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n"));
+            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getLocalPlayer().money + "\n\n"));
             ImGuiBuyingItem();
             ImGui.end();
         }
@@ -566,7 +566,7 @@ public class InGameScene extends Scene {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
             ImGui.begin(Resources.getLocalizedText("caravans"), showCaravan);
-            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n"));
+            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getLocalPlayer().money + "\n\n"));
             ImGuiBuyingCaravan();
             ImGui.end();
         }
@@ -575,7 +575,7 @@ public class InGameScene extends Scene {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
             ImGui.begin(Resources.getLocalizedText("research"), showResearch);
-            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n"));
+            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getLocalPlayer().money + "\n\n"));
             ImGuiBuyingResearch();
             ImGui.end();
         }
@@ -584,14 +584,14 @@ public class InGameScene extends Scene {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
             ImGui.begin("Banque", showBank);
-            ImGui.text("Votre argent : " + Farmland.get().getLoadedSave().getCurrentPlayer().money + "\n\n");
+            ImGui.text("Votre argent : " + Farmland.get().getLoadedSave().getLocalPlayer().money + "\n\n");
             ImGuiBank();
             ImGui.end();
         }
     }
 
     private void ImGuiBank(){
-        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getLocalPlayer();
         int maxBorrow = Farmland.get().getLoadedSave().maxBorrow;
 
         if(ImGui.button("Emprunt")){
@@ -666,7 +666,7 @@ public class InGameScene extends Scene {
     }
 
     private void ImGuiBuyingResearch(){
-        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getLocalPlayer();
 
         ImGui.text("Recherches : \n\n");
         for (int i = 0; i < player.researchList.size(); i++){
@@ -689,10 +689,10 @@ public class InGameScene extends Scene {
             caravanMenu = true;
         }
 
-        Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getLoadedSave()).getCurrentPlayer().getAllItemOfSellInventory();
+        Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getLoadedSave()).getLocalPlayer().getAllItemOfSellInventory();
         Set<String> uniqueItems = playerInventory.keySet();
 
-        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getLocalPlayer();
         int playerMoney = player.money;
 
         if (!caravanMenu) {
@@ -765,13 +765,13 @@ public class InGameScene extends Scene {
             sellMenu = true;
         }
 
-        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getLocalPlayer();
         int playerMoney = player.money;
 
         if(sellMenu){
             ImGui.text(Resources.getLocalizedText("sellItem"));
 
-            Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getLoadedSave()).getCurrentPlayer().getAllItemOfSellInventory();
+            Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getLoadedSave()).getLocalPlayer().getAllItemOfSellInventory();
             Set<String> uniqueItems = playerInventory.keySet();
             List<Item> toDelete = new ArrayList<>();
 
@@ -805,7 +805,7 @@ public class InGameScene extends Scene {
 
             for(Item item : Farmland.get().getResourceDatabase().values()){
                 if(ImGui.button(buyNickNameItem(item)) && playerMoney>=item.buyingValue){
-                    Farmland.get().getLoadedSave().getCurrentPlayer().buyItem(item, 1);
+                    Farmland.get().getLoadedSave().getLocalPlayer().buyItem(item, 1);
                     updateLeaderboard();
                 }
                 ImGui.sameLine();
@@ -840,7 +840,7 @@ public class InGameScene extends Scene {
             updateMoneyItemLabel();
         }
 
-        Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getLoadedSave()).getCurrentPlayer().getAllItemOfBoughtInventory();
+        Map<String, Item> playerInventory = Objects.requireNonNull(Farmland.get().getLoadedSave()).getLocalPlayer().getAllItemOfBoughtInventory();
         Set<String> uniqueItems = playerInventory.keySet();
 
         if (uniqueItems.isEmpty()) {
@@ -959,7 +959,7 @@ public class InGameScene extends Scene {
     }
 
     public void checkPlayerFrame(){
-        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getLocalPlayer();
         int fLevel = 0;
         int eLevel = 0;
         for (int i = 0; i < player.researchList.size(); i++){
@@ -1135,7 +1135,7 @@ public class InGameScene extends Scene {
             if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null && Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().containsKey(selectedId)) {
                 text += Resources.getLocalizedText("selected", Farmland.get().getItem(selectedId).name, Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity);
             }
-            String text2 = "    " + Farmland.get().getLoadedSave().getCurrentPlayer().money;
+            String text2 = "    " + Farmland.get().getLoadedSave().getLocalPlayer().money;
             getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);
             getEntityByName("MoneyLabel").getComponent(TextComponent.class).setText(text2);
             moneyUpdate();
@@ -1143,7 +1143,7 @@ public class InGameScene extends Scene {
     }
 
     public void moneyUpdate(){
-        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
+        Player player = Farmland.get().getLoadedSave().getLocalPlayer();
         int playerMoney = player.money;
         if (playerMoney >= 750){
             getEntityByName("MoneyImage").getComponent(SpriteComponent.class).setSprite(new Sprite(Resources.loadTexture("ui/coin4.png")));
