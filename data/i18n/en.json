@@ -64,6 +64,7 @@
         "money": "Money: {}",
         "turnInfo": "Turn {} of {}",
         "timeRemaining": "Remaining time: {}",
+	"timePassed": "time : {}",
         "leaderboard": "Leaderboard:",
         "yourMoney": "Your money: {}",
         "emptyInventory": "Your inventory is empty!",

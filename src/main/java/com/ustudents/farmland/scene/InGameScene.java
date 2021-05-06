@@ -272,11 +272,11 @@ public class InGameScene extends Scene {
 
         Texture leaderBoardTexture = Resources.loadTexture("ui/leaderboard.png");
         GuiBuilder.ImageData imageDataLB = new GuiBuilder.ImageData(leaderBoardTexture);
-        imageDataLB.id = "BTImage";
+        imageDataLB.id = "LBImage";
         imageDataLB.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
         imageDataLB.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
         imageDataLB.scale = new Vector2f(2f, 2f);
-        imageDataLB.position = new Vector2f(-200, -5);
+        imageDataLB.position = new Vector2f(-20, -8);
         imageDataLB.zIndex = 2;
         guiBuilder.addImage(imageDataLB);
 
@@ -374,7 +374,7 @@ public class InGameScene extends Scene {
 
         guiBuilder.endWindow();
 
-        GuiBuilder.TextData textDataTime = new GuiBuilder.TextData("Temps : " + DateUtil.secondsToText(Farmland.get().getLoadedSave().timePassed));
+        GuiBuilder.TextData textDataTime = new GuiBuilder.TextData(Resources.getLocalizedText("timePassed",DateUtil.secondsToText(Farmland.get().getLoadedSave().timePassed)));
         textDataTime.id = "timePassedLabel";
         textDataTime.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
         textDataTime.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
@@ -427,7 +427,7 @@ public class InGameScene extends Scene {
         textData3.id = "LeaderBoardLabel";
         textData3.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
         textData3.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
-        textData3.position = new Vector2f(-20, 10);
+        textData3.position = new Vector2f(-80, 10);
         textData3.color = Color.BLACK;
         guiBuilder.addText(textData3);
 
@@ -1148,6 +1148,7 @@ public class InGameScene extends Scene {
 
     public void updateTimer() {
         getEntityByName("timeRemainingLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("timeRemaining", DateUtil.secondsToText(Save.timePerTurn - Farmland.get().getLoadedSave().turnTimePassed)));
+        getEntityByName("timePassedLabel").getComponent(TextComponent.class).setText(Resources.getLocalizedText("timePassed",DateUtil.secondsToText(++Farmland.get().getLoadedSave().timePassed)));
     }
 
     @Override
