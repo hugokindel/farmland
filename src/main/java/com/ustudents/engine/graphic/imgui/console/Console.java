@@ -112,7 +112,6 @@ public class Console {
 
             if (ImGui.inputText("", userText, ImGuiInputTextFlags.EnterReturnsTrue)) {
                 if (!userText.get().isEmpty()) {
-                    Out.printlnToFile("$> " + userText.get());
                     println("$> " + userText.get());
                     tryExecuteCommand(userText.get());
                     userText.set("");
@@ -161,6 +160,7 @@ public class Console {
             Out.println(data.getText());
         } else {
             inputs.add(data);
+            Out.printlnToFile(data);
         }
     }
 
@@ -168,7 +168,9 @@ public class Console {
         if (Game.get().getNetMode() == NetMode.DedicatedServer) {
             Out.println(text);
         } else {
-            inputs.add(new ConsolePrintData(text));
+            ConsolePrintData data = new ConsolePrintData(text);
+            inputs.add(data);
+            Out.printlnToFile(data.getText());
         }
     }
 
@@ -176,7 +178,9 @@ public class Console {
         if (Game.get().getNetMode() == NetMode.DedicatedServer) {
             Out.printlnInfo(text);
         } else {
-            inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Info));
+            ConsolePrintData data = new ConsolePrintData(text, ConsolePrintData.Type.Info);
+            inputs.add(data);
+            Out.printlnToFile(data.getText());
         }
     }
 
@@ -184,7 +188,9 @@ public class Console {
         if (Game.get().getNetMode() == NetMode.DedicatedServer) {
             Out.printlnWarning(text);
         } else {
-            inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Warning));
+            ConsolePrintData data = new ConsolePrintData(text, ConsolePrintData.Type.Warning);
+            inputs.add(data);
+            Out.printlnToFile(data.getText());
         }
     }
 
@@ -192,7 +198,9 @@ public class Console {
         if (Game.get().getNetMode() == NetMode.DedicatedServer) {
             Out.printlnError(text);
         } else {
-            inputs.add(new ConsolePrintData(text, ConsolePrintData.Type.Error));
+            ConsolePrintData data = new ConsolePrintData(text, ConsolePrintData.Type.Error);
+            inputs.add(data);
+            Out.printlnToFile(data.getText());
         }
     }
 
