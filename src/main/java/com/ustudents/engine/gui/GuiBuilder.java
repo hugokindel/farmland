@@ -340,7 +340,9 @@ public class GuiBuilder {
                 TextData textData = TextData.copy(copy.contentData);
                 textData.text = copy.content.getComponent(TextComponent.class).text;
                 copy.contentData = textData;
-                windowEntity.getComponent(NineSlicedSpriteComponent.class).setSize(copy.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale));
+                if (windowEntity.getComponentSafe(NineSlicedSpriteComponent.class) != null) {
+                    windowEntity.getComponentSafe(NineSlicedSpriteComponent.class).setSize(copy.content.getComponent(TextComponent.class).getSize().div(transformComponent.scale));
+                }
                 windowPosition(copy.content, copy.data, transformComponent);
             }
         });
