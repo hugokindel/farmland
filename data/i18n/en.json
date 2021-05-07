@@ -153,6 +153,10 @@
         "consoleInfo": "Info:",
         "consoleClose": "Close",
         "consoleServer": "Server",
-        "consoleMean": "Did you mean `{}` ?"
+        "consoleMean": "Did you mean `{}` ?",
+        "display": "Display: {}",
+        "fullscreen": "Fullscreen",
+        "borderless": "Borderless",
+        "windowed": "Windowed"
     }
 }

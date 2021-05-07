@@ -1,12 +1,19 @@
 package com.ustudents.engine.core.window;
 
 import com.ustudents.engine.Game;
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
 import com.ustudents.engine.core.window.glfw.GLFWWindow;
 import org.joml.Vector2i;
 
 public class Window {
+    public enum Type {
+        Windowed,
+        Fullscreen,
+        Borderless
+    }
+
     EmptyWindow windowManager;
 
     public void initialize(String name, Vector2i size, boolean vsync) {
@@ -118,11 +125,20 @@ public class Window {
         return windowManager.scrollMoved;
     }
 
+    public void switchType(Window.Type type) {
+        windowManager.switchType(type);
+    }
+
     public static Window get() {
         return Game.get().getWindow();
     }
 
     public EmptyWindow getWindow() {
         return windowManager;
+    }
+
+    public void chooseNextType() {
+        int nextType = Resources.getConfig().windowType.ordinal() == 2 ? 0 : Resources.getConfig().windowType.ordinal() + 1;
+        switchType(Type.values()[nextType]);
     }
 }

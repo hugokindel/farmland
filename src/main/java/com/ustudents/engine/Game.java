@@ -27,15 +27,14 @@ import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.window.Window;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL33;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.ustudents.engine.graphic.imgui.console.Console.getListOfCommands;
-import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.*;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
@@ -406,7 +405,7 @@ public abstract class Game extends Runnable {
         String commandName = getClass().getAnnotation(Command.class).name();
         window.initialize(
                 commandName.substring(0, 1).toUpperCase() + commandName.substring(1),
-                Resources.getConfig().windowSize,
+                Resources.getConfig().windowedSize,
                 vsync
         );
 
@@ -446,6 +445,8 @@ public abstract class Game extends Runnable {
         }
 
         window.show(true);
+
+        window.switchType(Resources.getConfig().windowType);
 
         if (isDebugging()) {
             Out.printlnDebug("Initialized.");

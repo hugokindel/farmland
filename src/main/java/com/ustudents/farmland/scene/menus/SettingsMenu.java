@@ -4,6 +4,7 @@ import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.audio.SoundManager;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.ecs.component.audio.SoundComponent;
 import com.ustudents.engine.ecs.Entity;
 import com.ustudents.farmland.Farmland;
@@ -12,8 +13,8 @@ public class SettingsMenu extends MenuScene {
     @Override
     public void initialize() {
         SoundManager currentSoundManager = Farmland.get().getSoundManager();
-        String[] buttonNames = new String[3];
-        String[] buttonIds = new String[3];
+        String[] buttonNames = new String[4];
+        String[] buttonIds = new String[4];
 
         if(currentSoundManager.getNoSound()){
             buttonNames[0] = Resources.getLocalizedText("activateSound");
@@ -26,8 +27,11 @@ public class SettingsMenu extends MenuScene {
         buttonNames[1] = Resources.getLocalizedText("changeLanguage", Resources.getLocalizedText("language"));
         buttonIds[1] = "changeLanguage";
 
-        buttonNames[2] = Resources.getLocalizedText("commands");
-        buttonIds[2] = "commands";
+        buttonNames[2] = Resources.getLocalizedText("display", Resources.getLocalizedText(Window.Type.values()[Resources.getConfig().windowType.ordinal()].name().toLowerCase()));
+        buttonIds[2] = "windowType";
+
+        buttonNames[3] = Resources.getLocalizedText("commands");
+        buttonIds[3] = "commands";
 
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
@@ -49,6 +53,10 @@ public class SettingsMenu extends MenuScene {
                         break;
                     case "changeLanguage":
                         Resources.chooseNextLanguage();
+                        changeScene(new SettingsMenu(), false);
+                        break;
+                    case "windowType":
+                        Window.get().chooseNextType();
                         changeScene(new SettingsMenu(), false);
                         break;
                     case "commands":
