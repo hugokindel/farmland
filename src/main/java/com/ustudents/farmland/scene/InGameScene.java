@@ -30,6 +30,7 @@ import com.ustudents.farmland.component.TurnTimerComponent;
 import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
+import com.ustudents.farmland.core.player.Bot;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.core.system.Caravan;
@@ -799,8 +800,7 @@ public class InGameScene extends Scene {
         }else{
             ImGui.text(Resources.getLocalizedText("products"));
 
-            //for(Item item : Farmland.get().getResourceDatabase().values()){.
-            for(Item item : Farmland.get().getResourceDatabase().values()){
+            for(Item item : Farmland.get().getLoadedSave().getResourceDatabase().values()){
                 if(ImGui.button(buyNickNameItem(item)) && playerMoney>=item.buyingValue){
                     Farmland.get().getLoadedSave().getLocalPlayer().buyItem(item, 1);
                     updateLeaderboard();
@@ -907,7 +907,6 @@ public class InGameScene extends Scene {
         }
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
-            //if (!currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
             if (Farmland.get().getLoadedSave() != null && !currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
                 getEntityByName("gameplayButtons").setEnabled(false);
                 if (showMarket.get()) {

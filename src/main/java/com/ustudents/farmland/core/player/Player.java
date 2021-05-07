@@ -367,7 +367,6 @@ public class Player {
             for (int i = 0; i < quantity; i++) {
                 addToInventory(item, "Buy");
 
-                //Farmland.get().getLoadedSave().buyItemDatabasePerTurn.get(Farmland.get().getLoadedSave().turn).add(item);
                 Farmland.get().getLoadedSave().fillTurnItemDataBase(item, true);
             }
 

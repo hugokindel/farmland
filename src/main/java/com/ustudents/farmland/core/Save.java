@@ -146,8 +146,6 @@ public class Save {
         buyTurnItemDataBase = new ArrayList<>();
         sellItemDatabasePerTurn = new ArrayList<>();
         sellTurnItemDataBase = new ArrayList<>();
-        //buyItemDatabasePerTurn.add(new ArrayList<>(buyTurnItemDataBase));
-        //sellItemDatabasePerTurn.add(new ArrayList<>(sellTurnItemDataBase));
 
         this.cells = new ArrayList<>();
 
