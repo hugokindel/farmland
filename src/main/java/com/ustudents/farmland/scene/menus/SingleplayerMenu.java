@@ -11,7 +11,7 @@ public class SingleplayerMenu extends MenuScene {
         String[] buttonIds;
         EventListener[] eventListeners;
 
-        if (Farmland.get().getSaves().size() > 0) {
+        if (Farmland.get().getSaves().size() > 0 && (Farmland.get().getSaves().size() > 2 || Farmland.get().getSaves().values().stream().noneMatch(e -> e.path.startsWith("save-server")))) {
             buttonNames = new String[] {
                     Resources.getLocalizedText("newGame"),
                     Resources.getLocalizedText("loadGame"),

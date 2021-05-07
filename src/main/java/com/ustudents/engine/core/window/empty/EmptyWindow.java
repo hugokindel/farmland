@@ -1,6 +1,7 @@
 package com.ustudents.engine.core.window.empty;
 
 import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.window.events.*;
 import org.joml.Vector2i;
 
@@ -94,5 +95,9 @@ public class EmptyWindow {
 
     public int getTexture() {
         return -1;
+    }
+
+    public void switchType(Window.Type type) {
+
     }
 }

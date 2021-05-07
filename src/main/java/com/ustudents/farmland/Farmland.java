@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 /** The main class of the project. */
 @SuppressWarnings({"unchecked", "unused"})
-@Command(name = "farmland", version = "0.0.1", description = "A management game about farming.")
+@Command(name = "farmland", version = "1.0.0", description = "A management game about farming.")
 public class Farmland extends Game {
     public Map<String, Item> itemDatabase = new HashMap<>();
 

@@ -3,6 +3,7 @@ package com.ustudents.engine.core.window.glfw;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.core.window.empty.EmptyWindow;
 import com.ustudents.engine.core.window.events.*;
@@ -25,6 +26,7 @@ import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
@@ -38,6 +40,8 @@ public class GLFWWindow extends EmptyWindow {
 
     private Vector2i size;
 
+    private Window.Type type;
+
     private long windowHandle;
 
     private String glslVersion;
@@ -48,6 +52,7 @@ public class GLFWWindow extends EmptyWindow {
     public void initialize(String name, Vector2i size, boolean vsync) {
         this.name = name;
         this.size = size;
+        this.type = Window.Type.Windowed;
         this.glslVersion = "";
 
         glfwSetErrorCallback(new GLFWErrorCallback() {
@@ -254,8 +259,15 @@ public class GLFWWindow extends EmptyWindow {
     }
 
     private void resize(Vector2i size) {
-        this.size = size;
-        Game.get().forceResizeBeforeNextFrame();
+        if (size.x > 0 && size.y > 0) {
+            this.size = size;
+
+            if (type == Window.Type.Windowed) {
+                Resources.getConfig().windowedSize = size;
+            }
+
+            Game.get().forceResizeBeforeNextFrame();
+        }
     }
 
     private void setupCallbacks() {
@@ -377,5 +389,33 @@ public class GLFWWindow extends EmptyWindow {
         }
 
         return renderTarget.getTextureHandle();
+    }
+
+    @Override
+    public void switchType(Window.Type type) {
+        if (this.type != type) {
+            Resources.getConfig().windowType = type;
+            this.type = type;
+
+            GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            assert vidMode != null;
+
+            if (type == Window.Type.Fullscreen) {
+                glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, vidMode.width(),
+                        vidMode.height(), 0);
+            } else if (type == Window.Type.Borderless) {
+                glfwSetWindowAttrib(windowHandle, GLFW_DECORATED, GLFW_FALSE);
+                glfwSetWindowMonitor(windowHandle, NULL, 0, 0, vidMode.width(), vidMode.height(),
+                        0);
+            } else {
+                glfwSetWindowSize(windowHandle, Resources.getConfig().windowedSize.x, Resources.getConfig().windowedSize.y);
+                glfwSetWindowPos(windowHandle, vidMode.width() / 2 - Resources.getConfig().windowedSize.x / 2,
+                        vidMode.height() / 2 - Resources.getConfig().windowedSize.y / 2);
+                glfwSetWindowAttrib(windowHandle, GLFW_DECORATED, GLFW_TRUE);
+                glfwSetWindowSize(windowHandle, Resources.getConfig().windowedSize.x, Resources.getConfig().windowedSize.y);
+                glfwSetWindowPos(windowHandle, vidMode.width() / 2 - Resources.getConfig().windowedSize.x / 2,
+                        vidMode.height() / 2 - Resources.getConfig().windowedSize.y / 2);
+            }
+        }
     }
 }
