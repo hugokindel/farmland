@@ -451,8 +451,10 @@ public class InGameScene extends Scene {
         rectangleData.zIndex = 10;
         guiBuilder.addRectangle(rectangleData);
         Window.get().getSizeChanged().add((dataType, data) -> {
-            if (getEntityByName("pauseBackgroundRectangle").getComponentSafe(RectangleComponent.class) != null) {
-                getEntityByName("pauseBackgroundRectangle").getComponentSafe(RectangleComponent.class).setSize(new Vector2f(Game.get().getWindow().getSize()));
+            if (hasEntityWithName("pauseBackgroundRectangle")) {
+                if (getEntityByName("pauseBackgroundRectangle").getComponentSafe(RectangleComponent.class) != null) {
+                    getEntityByName("pauseBackgroundRectangle").getComponentSafe(RectangleComponent.class).setSize(new Vector2f(Game.get().getWindow().getSize()));
+                }
             }
         });
 
