@@ -170,7 +170,7 @@ Semaine de partiel (peu de travail effectué), amélioration du gameplay.
 
 - Ajout d'un système d'emprunt (LE CORRE Léo) **[FAIT]**
 
-- Optimisation du code du gamplay (JAUROYON Maxime) **[FAIT]**
+- Optimisation du code du gameplay (JAUROYON Maxime) **[FAIT]**
 
 ### Semaine 11-12-13 (jusqu'au 9 mai)
 
