@@ -1,6 +1,6 @@
 # Feuille de route de Farmland
 
-En l'état, les dates indiqués font office de deadline (à une semaine près maximum).
+En l'état, les dates indiqués font office de deadline (à une semaine près maximum) sauf pour les dernières semaines où les commits étaient concentrés sur le rendu final.
 
 ### Semaine 1 (jusqu'au 12 février)
 
@@ -156,7 +156,7 @@ Semaine de partiel (peu de travail effectué), amélioration du gameplay.
 
 ### Semaine 9 (jusqu'au 9 avril)
 
-- Ajout d'un système de rechercher, de caravane (JAUROYON Maxime) **[FAIT]**
+- Ajout d'un système de recherche, de caravane (JAUROYON Maxime) **[FAIT]**
 
 - Création d'un avatar personnalisable (JAUROYON Maxime) **[FAIT]**
 
@@ -166,8 +166,24 @@ Semaine de partiel (peu de travail effectué), amélioration du gameplay.
 
 ### Semaine 10 (jusqu'au 16 avril)
 
-- Choix de la langue utilisée (PAULAS VICTOR Francis)
+- Choix de la langue utilisée (PAULAS VICTOR Francis) **[FAIT]**
 
-- Ajout d'un système d'emprunt (LE CORRE Léo)
+- Ajout d'un système d'emprunt (LE CORRE Léo) **[FAIT]**
 
-- Optimisation du code du gamplay (JAUROYON Maxime)
+- Optimisation du code du gamplay (JAUROYON Maxime) **[FAIT]**
+
+### Semaine 11-12-13 (jusqu'au 9 mai)
+
+- Ajout de la difficulté des bots (JAUROYON Maxime) **[FAIT]**
+
+- Amélioration du système de langue (PAULAS VICTOR Francis) **[FAIT]**
+
+- Création d'un système de commande (LE CORRE Léo et Hugo Kindel) **[FAIT]**
+
+- Ajout de la console pour communiquer (chat) et pour l'exécution des commandes (LE CORRE Léo et Hugo Kindel) **[FAIT]**
+
+- Optimisation du code, correction de bug et optimisation du projet (KINDEL Hugo, JAUROYON Maxime, PAULAS VICTOR Francis et LE CORRE Léo) **[FAIT]**
+
+### Semaine 14 (jusqu'au 16 mai)
+
+- Optimisation du code, correction de bug et optimisation du projet (KINDEL Hugo, JAUROYON Maxime, PAULAS VICTOR Francis et LE CORRE Léo) **[FAIT]**
