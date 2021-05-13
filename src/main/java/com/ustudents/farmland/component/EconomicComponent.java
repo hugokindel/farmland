@@ -101,15 +101,6 @@ public class EconomicComponent {
  * To change the value of some items.
  */
     public void changeValueOfRessource(){
-        /*OLD: List<Item> itemsTurn = Farmland.get().getLoadedSave().itemsTurn;
-        Set<Item> setItemTurn = new HashSet<>(itemsTurn);
-        for(Item item:setItemTurn){
-            if (item != null) {
-                int lastItemSell = countItemPerList(item,lastItemTurn);
-                int turnItemSell = countItemPerList(item,itemsTurn);
-                int res = knowTheDifferenceBetweenTurn(turnItemSell,lastItemSell);
-                if(item.value + res >= item.initValue) item.value += res;
-            }*/
         for(Item item : Farmland.get().getLoadedSave().getResourceDatabase().values()){
             item.buyingValue += buyItem(item);
             item.sellingValue += sellItem(item);

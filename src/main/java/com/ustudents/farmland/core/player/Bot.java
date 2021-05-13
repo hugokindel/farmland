@@ -1,5 +1,6 @@
 package com.ustudents.farmland.core.player;
 
+import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.item.Animal;
@@ -93,9 +94,6 @@ public class Bot {
                     sellInventory();
                     break;
             }
-
-            maintenanceCost();
-
         }
     }
 
@@ -140,21 +138,6 @@ public class Bot {
             }
         }
         return c;
-    }
-
-    public static void maintenanceCost(){
-        Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
-
-        for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
-            for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
-                Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
-
-                if (cell.isOwned() && cell.ownerId.equals(player.getId())){
-                    player.setMoney(player.money - 1);
-                }
-            }
-        }
-
     }
 
     public static void buyLand(SeedRandom random) {

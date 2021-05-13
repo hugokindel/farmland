@@ -324,8 +324,10 @@ public class SettingsKeybindMenu extends MenuScene{
     private String displayGoodKeyBind(int key){
         if(key >= 290 && key <= 302){
             return "F" + ((key%10) + 1);
-        }else if(key >= 32 && key < 96 || key >= 320 && key <= 329) {
+        }else if(key > 32 && key < 96 || key >= 320 && key <= 329) {
             return GLFW.glfwGetKeyName(key, GLFW.glfwGetKeyScancode(key));
+        }else if(key == 32){
+            return Resources.getLocalizedText("Space");
         }else if(key == 341 || key == 345) {
             if(key == 341)
                 return Resources.getLocalizedText("LCtrl");
