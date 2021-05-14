@@ -1,5 +1,8 @@
 package com.ustudents.engine.input.empty;
 
+import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.core.window.events.KeyStateChangedEvent;
+import com.ustudents.engine.core.window.events.MouseButtonStateChangedEvent;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -65,6 +68,26 @@ public class EmptyInput {
     }
 
     public void resetKeyAndButton() {
+
+    }
+
+    public void stopInputHandling() {
+
+    }
+
+    public void addKeyStateChangedListener(EventListener<KeyStateChangedEvent> listener, String name) {
+
+    }
+
+    public void addMouseButtonStateChangedListener(EventListener<MouseButtonStateChangedEvent> listener, String name) {
+
+    }
+
+    public void removeKeyStateChangedListener(String name) {
+
+    }
+
+    public void removeMouseButtonStateChangedListener(String name) {
 
     }
 }

@@ -1,15 +1,14 @@
 package com.ustudents.engine.input.glfw;
 
+import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.core.window.events.CursorMovedEvent;
 import com.ustudents.engine.core.window.events.KeyStateChangedEvent;
 import com.ustudents.engine.core.window.events.MouseButtonStateChangedEvent;
 import com.ustudents.engine.core.window.events.ScrollMovedEvent;
 import com.ustudents.engine.input.empty.EmptyInput;
-import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
-import com.ustudents.farmland.Farmland;
-import com.ustudents.farmland.scene.menus.SettingsKeybindMenu;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
@@ -18,13 +17,10 @@ import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
 public class GLFWInput extends EmptyInput {
-    private int[] keyStates;
 
     private int[] keyPressedStates;
 
     private boolean[] keys;
-
-    private int[] mouseStates;
 
     private int[] mousePressedStates;
 
@@ -36,17 +32,23 @@ public class GLFWInput extends EmptyInput {
 
     private Vector2f scroll;
 
+    private boolean stopInputHandling;
+
+    private EventDispatcher<KeyStateChangedEvent> keyStateChanged;
+
+    private EventDispatcher<MouseButtonStateChangedEvent> mouseButtonStateChanged;
+
     @Override
     public void initialize() {
-        keyStates = new int[GLFW.GLFW_KEY_LAST];
         keyPressedStates = new int[GLFW.GLFW_KEY_LAST];
         keys = new boolean[GLFW.GLFW_KEY_LAST];
-        mouseStates = new int[GLFW.GLFW_MOUSE_BUTTON_LAST];
         mousePressedStates = new int[GLFW.GLFW_MOUSE_BUTTON_LAST];
         mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST];
         mousePos = new Vector2f();
         mousePosInWorld = new Vector2f();
         scroll = new Vector2f();
+        keyStateChanged = new EventDispatcher<>();
+        mouseButtonStateChanged = new EventDispatcher<>();
 
         setupCallbacks();
         resetKeyAndButton();
@@ -143,23 +145,17 @@ public class GLFWInput extends EmptyInput {
     private void setupCallbacks() {
         Window.get().getKeyStateChanged().add((dataType, data) -> {
             KeyStateChangedEvent eventData = (KeyStateChangedEvent) data;
+
             if (eventData.key != -1) {
-                Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
-                if((currentScene instanceof SettingsKeybindMenu && ((SettingsKeybindMenu)currentScene).searchAction() != null &&
-                        ((SettingsKeybindMenu)currentScene).avoidKey(eventData.key))) {
-                    currentScene.changeScene(new SettingsKeybindMenu(2), false);
-                }else if(currentScene instanceof SettingsKeybindMenu &&
-                        ((SettingsKeybindMenu)currentScene).bindNotAlreadyDefine(eventData.key, true)) {
-                    ((SettingsKeybindMenu) currentScene).selectNewBind(true, eventData.key);
-                    currentScene.changeScene(new SettingsKeybindMenu(), false);
-                }else if((currentScene instanceof SettingsKeybindMenu && ((SettingsKeybindMenu)currentScene).searchAction() != null &&
-                        !((SettingsKeybindMenu)currentScene).bindNotAlreadyDefine(eventData.key, true))){
-                    currentScene.changeScene(new SettingsKeybindMenu(1), false/*(((CommandsMenu) currentScene).searchAction())*/);
-                }else{
-                    keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
-                    keyStates[eventData.key] = eventData.action;
-                    keyPressedStates[eventData.key] = eventData.action;
+                keyStateChanged.dispatch(eventData);
+
+                if (stopInputHandling) {
+                    stopInputHandling = false;
+                    return;
                 }
+
+                keys[eventData.key] = (eventData.action != GLFW.GLFW_RELEASE);
+                keyPressedStates[eventData.key] = eventData.action;
             }
         });
 
@@ -173,15 +169,16 @@ public class GLFWInput extends EmptyInput {
 
         Window.get().getMouseButtonStateChanged().add((dataType, data) -> {
             MouseButtonStateChangedEvent eventData = (MouseButtonStateChangedEvent) data;
-            Scene currentScene = Farmland.get().getSceneManager().getCurrentScene();
-            if(currentScene instanceof SettingsKeybindMenu &&
-                    ((SettingsKeybindMenu)currentScene).bindNotAlreadyDefine(eventData.button, false)){
-                ((SettingsKeybindMenu)currentScene).selectNewBind(false, eventData.button);
-            }else{
-                mouseButtons[eventData.button] = (eventData.action != GLFW.GLFW_RELEASE);
-                mouseStates[eventData.button] = eventData.action;
-                mousePressedStates[eventData.button] = eventData.action;
+
+            mouseButtonStateChanged.dispatch(eventData);
+
+            if (stopInputHandling) {
+                stopInputHandling = false;
+                return;
             }
+
+            mouseButtons[eventData.button] = (eventData.action != GLFW.GLFW_RELEASE);
+            mousePressedStates[eventData.button] = eventData.action;
         });
 
         Window.get().getScrollMoved().add((dataType, data) -> {
@@ -193,9 +190,32 @@ public class GLFWInput extends EmptyInput {
     @Override
     public void resetKeyAndButton() {
         Arrays.fill(keys, false);
-        Arrays.fill(keyStates, -1);
-        Arrays.fill(mouseStates, -1);
         Arrays.fill(keyPressedStates, -1);
         Arrays.fill(mousePressedStates, -1);
+    }
+
+    @Override
+    public void stopInputHandling() {
+        stopInputHandling = true;
+    }
+
+    @Override
+    public void addKeyStateChangedListener(EventListener<KeyStateChangedEvent> listener, String name) {
+        keyStateChanged.add(listener);
+    }
+
+    @Override
+    public void addMouseButtonStateChangedListener(EventListener<MouseButtonStateChangedEvent> listener, String name) {
+        mouseButtonStateChanged.add(listener);
+    }
+
+    @Override
+    public void removeKeyStateChangedListener(String name) {
+        keyStateChanged.remove(name);
+    }
+
+    @Override
+    public void removeMouseButtonStateChangedListener(String name) {
+        mouseButtonStateChanged.remove(name);
     }
 }

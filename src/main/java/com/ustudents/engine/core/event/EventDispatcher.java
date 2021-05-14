@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Safer rmove
 public class EventDispatcher<T extends Event> {
     List<EventListener<T>> listeners;
     Map<String, EventListener<T>> listenersPerName;

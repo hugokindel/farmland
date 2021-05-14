@@ -2,6 +2,9 @@ package com.ustudents.engine.input;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.core.window.events.KeyStateChangedEvent;
+import com.ustudents.engine.core.window.events.MouseButtonStateChangedEvent;
 import com.ustudents.engine.input.empty.EmptyInput;
 import com.ustudents.engine.input.glfw.GLFWInput;
 import org.joml.Vector2f;
@@ -98,5 +101,25 @@ public class Input {
 
     public static void resetKeyAndButton() {
         inputManager.resetKeyAndButton();
+    }
+
+    public static void stopInputHandling() {
+        inputManager.stopInputHandling();
+    }
+
+    public static void addKeyStateChangedListener(EventListener<KeyStateChangedEvent> listener, String name) {
+        inputManager.addKeyStateChangedListener(listener, name);
+    }
+
+    public static void addMouseButtonStateChangedListener(EventListener<MouseButtonStateChangedEvent> listener, String name) {
+        inputManager.addMouseButtonStateChangedListener(listener, name);
+    }
+
+    public static void removeKeyStateChangedListener(String name) {
+        inputManager.removeKeyStateChangedListener(name);
+    }
+
+    public static void removeMouseButtonStateChangedListener(String name) {
+        inputManager.removeMouseButtonStateChangedListener(name);
     }
 }

@@ -3,11 +3,14 @@ package com.ustudents.farmland.scene.menus;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
+import com.ustudents.engine.core.window.events.KeyStateChangedEvent;
+import com.ustudents.engine.core.window.events.MouseButtonStateChangedEvent;
 import com.ustudents.engine.graphic.Anchor;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Origin;
 import com.ustudents.engine.gui.GuiBuilder;
 import com.ustudents.engine.input.Action;
+import com.ustudents.engine.input.Input;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import org.joml.Vector2f;
@@ -29,11 +32,31 @@ public class SettingsKeybindMenu extends MenuScene{
 
     @Override
     public void initialize() {
+        Input.addKeyStateChangedListener((dataType, data) -> {
+            if (searchAction() != null && avoidKey(data.key)) {
+                changeScene(new SettingsKeybindMenu(2), false);
+                Input.stopInputHandling();
+            } else if (bindNotAlreadyDefine(data.key, true)) {
+                selectNewBind(true, data.key);
+                changeScene(new SettingsKeybindMenu(), false);
+                Input.stopInputHandling();
+            } else if (searchAction() != null && !bindNotAlreadyDefine(data.key, true)) {
+                changeScene(new SettingsKeybindMenu(1), false);
+                Input.stopInputHandling();
+            }
+        }, "keybindKeyChecker");
+
+        Input.addMouseButtonStateChangedListener((dataType, data) -> {
+            if (bindNotAlreadyDefine(data.button, false)) {
+                selectNewBind(false, data.button);
+                Input.stopInputHandling();
+            }
+        }, "keybindMouseChecker");
+
         String[] buttonNames = new String[0];
         String[] buttonIds = new String[0];
         EventListener[] eventListeners = new EventListener[buttonNames.length];
         GuiBuilder guiBuilder = new GuiBuilder();
-
 
         initializeTitle(guiBuilder);
         showTextAndButton(guiBuilder, "goUp");
@@ -88,8 +111,12 @@ public class SettingsKeybindMenu extends MenuScene{
         OtherOptions.position = new Vector2f(-150, 115);
         OtherOptions.color = Color.BLACK;
         guiBuilder.addText(OtherOptions);
+    }
 
-
+    @Override
+    public void destroy() {
+        Input.removeKeyStateChangedListener("keybindKeyChecker");
+        Input.removeMouseButtonStateChangedListener("keybindMouseChecker");
     }
 
     private void showTextAndButton(GuiBuilder guiBuilder, String action){
