@@ -37,6 +37,7 @@ public class EventDispatcher<T extends Event> {
     }
 
     public void add(EventListener<T> listener, String name) {
+        remove(name);
         listeners.add(listener);
         listenersPerName.put(name, listener);
     }
@@ -46,8 +47,10 @@ public class EventDispatcher<T extends Event> {
     }
 
     public void remove(String name) {
-        listeners.remove(listenersPerName.get(name));
-        listenersPerName.remove(name);
+        if (listenersPerName.containsKey(name)) {
+            listeners.remove(listenersPerName.get(name));
+            listenersPerName.remove(name);
+        }
     }
 
     public void clear() {
