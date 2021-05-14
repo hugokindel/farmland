@@ -1,8 +1,25 @@
+<p align="center">
+  <img width="500px" src="https://uni-farmland.s3.eu-west-3.amazonaws.com/farmland.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+</p>
+
 # Farmland
 
 Farmaland is a management game where you need to take care of your farm while being careful about the economy to stay in business while your competitors will try to put you out of business!
 
-![Farmland logo](https://hk-backup.s3.eu-west-3.amazonaws.com/images/farmland-hr.png)
+## Screenshots
+
+
+<div align="center" style="display: flex; justify-content:space-around;">
+  <div class="" style="max-width: 33%; max-height: 23%;">
+    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot1.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+  </div>
+  <div class="" style="max-width: 33%; max-height: 33%;">
+    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot2.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+  </div>
+  <div class="" style="max-width: 33%; max-height: 33%;">
+    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot3.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+  </div>
+</div>
 
 ## Features
 
