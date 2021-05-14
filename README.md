@@ -1,6 +1,6 @@
-<p align="center">
+<div align="center">
   <img width="500px" src="https://uni-farmland.s3.eu-west-3.amazonaws.com/farmland.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
-</p>
+</div>
 
 # Farmland
 
@@ -9,16 +9,10 @@ Farmaland is a management game where you need to take care of your farm while be
 ## Screenshots
 
 
-<div align="center" style="display: flex; justify-content:space-around; align-items: flex-start;">
-  <div class="" style="max-width: 33%; max-height: 33%;">
-    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot1.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
-  </div>
-  <div class="" style="max-width: 33%; max-height: 33%;">
-    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot2.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
-  </div>
-  <div class="" style="max-width: 33%; max-height: 33%;">
-    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot3.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
-  </div>
+<div align="center">
+    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot1.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot2.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot3.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
 </div>
 
 ## Features
