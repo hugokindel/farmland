@@ -7,6 +7,7 @@ import com.ustudents.engine.core.cli.option.annotation.Command;
 import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.Resources;
+import com.ustudents.engine.graphic.Viewport;
 import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.core.window.WindowSystemType;
 import com.ustudents.engine.core.window.glfw.GLFWWindow;
@@ -27,8 +28,6 @@ import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.window.Window;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.GL33;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -37,59 +36,49 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import static org.lwjgl.glfw.GLFW.*;
 
 /** The main class of the project. */
+@SuppressWarnings("unused")
 public abstract class Game extends Runnable {
-    /** Option to enable debugging output. */
     @Option(names = "--debug", description = "Enable debug output.")
     protected boolean isDebugging = false;
 
-    /** Option to force V-Sync at launch. */
     @Option(names = "--vsync", description = "Forces vertical synchronization.")
     protected boolean vsync = false;
 
-    /** Option to disable ANSI codes. */
     @Option(names = "--no-ansi", description = "Disable ANSI code (useful for Windows compatibility).")
     protected boolean noAnsiCodes = false;
 
-    /** Option to disable ImGui. */
     @Option(names = "--no-imgui", description = "Disable ImGui (interface system used during developement).")
     protected boolean noImGui = false;
 
-    /** Option to force to disable any custom cursors. */
     @Option(names = "--no-custom-cursor", description = "Disable any custom cursor.")
     protected boolean forceNoCustomCursor = false;
 
-    /** Option to force to disable any custom window icons. */
     @Option(names = "--no-custom-icon", description = "Disable any custom window icon.")
     protected boolean forceNoCustomIcon = false;
 
-    /** Option to force to disable any custom cursors. */
     @Option(names = "--no-sound", description = "Disable the sound system (for debugging purposes only).")
     protected boolean forceNoSound = false;
 
-    /** Option to force to disable any custom cursors. */
     @Option(names = "--no-input", description = "Disable the input system (for debugging purposes only).")
     protected boolean forceNoInput = false;
 
-    /** Option to force to disable any custom cursors. */
     @Option(names = "--no-render", description = "Disable the render system (for debugging purposes only).")
     protected boolean forceNoRender = false;
 
     // TODO: Add a listen server mode
-    /** Option to force to disable any custom cursors. */
     //@Option(names = "--listen", description = "Launches in listen server mode.")
     protected boolean listenServerEnabled = false;
 
-    /** Option to force to disable any custom cursors. */
     @Option(names = "--server", description = "Launches in dedicated server mode.")
     protected boolean dedicatedServerEnabled = false;
 
-    /** The window. */
+    /** The window manager. */
     protected final Window window = new Window();
 
-    /** The scene manager (handling every scene). */
+    /** The scene manager. */
     protected final SceneManager sceneManager = new SceneManager();
 
-    /** The sound manager (handle every sound sources). */
+    /** The sound manage. */
     private final SoundManager soundManager = new SoundManager();
 
     /** The ImGui manager (handle most debugging tools). */
@@ -634,7 +623,7 @@ public abstract class Game extends Runnable {
     private void resizeViewportAndCameras() {
         Vector2i size = window.getSize();
 
-        GL33.glViewport(0, 0, size.x, size.y);
+        Viewport.resize(size);
 
         if (getSceneManager() != null && getSceneManager().getCurrentScene() != null) {
             Scene scene = getSceneManager().getCurrentScene();
