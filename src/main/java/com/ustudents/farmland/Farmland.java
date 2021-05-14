@@ -63,7 +63,7 @@ public class Farmland extends Game {
 
     public AtomicBoolean clientAllPlayersPresents = new AtomicBoolean(false);
 
-    public AtomicBoolean clientGameStarted = new AtomicBoolean(false);
+    public AtomicBoolean serverGameStarted = new AtomicBoolean(false);
 
     public String clientServerIp;
 

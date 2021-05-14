@@ -7,6 +7,7 @@ import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
+import com.ustudents.engine.graphic.imgui.console.ConsoleCommands;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;
@@ -30,7 +31,6 @@ import com.ustudents.farmland.component.TurnTimerComponent;
 import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
-import com.ustudents.farmland.core.player.Bot;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.core.system.Caravan;
@@ -84,12 +84,14 @@ public class InGameScene extends Scene {
 
     @Override
     public void initialize() {
+        ConsoleCommands.show = true;
+
         if (Farmland.get().getNetMode() == NetMode.Standalone) {
             Farmland.get().clientPlayerId.set(0);
         }
 
         if (Farmland.get().getNetMode() == NetMode.DedicatedServer) {
-            Farmland.get().clientGameStarted.set(true);
+            Farmland.get().serverGameStarted.set(true);
         }
 
         Farmland.get().getLoadedSave().localPlayerId = Farmland.get().clientPlayerId.get();
@@ -1215,5 +1217,10 @@ public class InGameScene extends Scene {
         updateLeaderboard();
         updateTimer();
         updatePlayerFrame();
+    }
+
+    @Override
+    public void destroy() {
+        ConsoleCommands.show = false;
     }
 }

@@ -16,6 +16,8 @@ import com.ustudents.engine.graphic.Spritebatch;
 import com.ustudents.engine.graphic.Texture;
 import com.ustudents.engine.graphic.debug.DebugTools;
 import com.ustudents.engine.graphic.imgui.ImGuiManager;
+import com.ustudents.engine.graphic.imgui.console.ConsoleCommand;
+import com.ustudents.engine.graphic.imgui.console.ConsoleCommands;
 import com.ustudents.engine.graphic.imgui.tools.ImGuiTools;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.InputSystemType;

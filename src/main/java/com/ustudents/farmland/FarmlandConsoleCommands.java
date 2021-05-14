@@ -29,7 +29,7 @@ public class FarmlandConsoleCommands extends ConsoleCommands {
         return noSaveLoaded;
     }
 
-    @ConsoleCommand(description = "Adds a specific amount of money", authority = {NetMode.Standalone})
+    @ConsoleCommand(description = "Adds a specific amount of money", argsDescription = "x", authority = {NetMode.Standalone})
     public void addMoney(Integer quantity) {
         if (checkForSave()) {
             return;
@@ -71,7 +71,7 @@ public class FarmlandConsoleCommands extends ConsoleCommands {
         }
     }
 
-    @ConsoleCommand(description = "Say something", argsDescription = {"...text"})
+    @ConsoleCommand(description = "Say something", argsDescription = {"text..."})
     public void say(Object... text) {
         if (checkForSave()) {
             return;
