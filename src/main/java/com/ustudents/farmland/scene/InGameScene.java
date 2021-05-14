@@ -66,6 +66,16 @@ public class InGameScene extends Scene {
 
     public ImBoolean showBank;
 
+    public boolean shouldShowBackInventory = false;
+
+    public boolean shouldShowBackMarket = false;
+
+    public boolean shouldShowBackCaravan = false;
+
+    public boolean shouldShowBackResearch = false;
+
+    public boolean shouldShowBackBank = false;
+
     public ImInt selectBorrow;
 
     public EconomicComponent economicComponent;
@@ -915,40 +925,10 @@ public class InGameScene extends Scene {
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
             if (Farmland.get().getLoadedSave() != null && !currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
                 getEntityByName("gameplayButtons").setEnabled(false);
-                if (showMarket.get()) {
-                    shouldShowBackMarket = true;
-                }
-                if (showInventory.get()) {
-                    shouldShowBackInventory = true;
-                }
-                if (showCaravan.get()) {
-                    shouldShowBackCaravan = true;
-                }
-                if (showResearch.get()) {
-                    shouldShowBackResearch = true;
-                }
-                showInventory.set(false);
-                showMarket.set(false);
-                showCaravan.set(false);
-                showResearch.set(false);
+                checkIfWeShouldHideUi();
             } else {
                 getEntityByName("gameplayButtons").setEnabled(true);
-                if (shouldShowBackInventory) {
-                    showInventory.set(true);
-                    shouldShowBackInventory = false;
-                }
-                if (shouldShowBackMarket) {
-                    showMarket.set(true);
-                    shouldShowBackMarket = false;
-                }
-                if (shouldShowBackCaravan) {
-                    showCaravan.set(true);
-                    shouldShowBackCaravan = false;
-                }
-                if (shouldShowBackResearch) {
-                    showResearch.set(true);
-                    shouldShowBackResearch = false;
-                }
+                checkIfWeShouldShowBackUi();
             }
         }
     }
@@ -1064,16 +1044,6 @@ public class InGameScene extends Scene {
         }
         return false;
     }
-
-    public boolean shouldShowBackInventory = false;
-
-    public boolean shouldShowBackMarket = false;
-
-    public boolean shouldShowBackCaravan = false;
-
-    public boolean shouldShowBackResearch = false;
-
-    public boolean shouldShowBackBank = false;
 
     public List<Player> leaderBoardMaker(List<Player> list){
         Player[] tmp = new Player[list.size()];
@@ -1203,9 +1173,23 @@ public class InGameScene extends Scene {
     }
 
     public void setPause(boolean inPause) {
+        if (Farmland.get().getLoadedSave() == null) {
+            return;
+        }
+
         this.inPause = inPause;
         pauseChanged.dispatch(new PauseChanged(inPause));
         ButtonComponent.disableInput = inPause;
+
+        if (inPause) {
+            if (Game.get().getNetMode() != NetMode.DedicatedServer) {
+                checkIfWeShouldHideUi();
+            }
+        } else if (Farmland.get().getLoadedSave().getLocalPlayer().getId().equals(Farmland.get().getLoadedSave().getCurrentPlayer().getId())) {
+            if (Game.get().getNetMode() != NetMode.DedicatedServer) {
+                checkIfWeShouldShowBackUi();
+            }
+        }
     }
 
     public boolean getPause() {
@@ -1217,6 +1201,52 @@ public class InGameScene extends Scene {
         updateLeaderboard();
         updateTimer();
         updatePlayerFrame();
+    }
+
+    public void checkIfWeShouldHideUi() {
+        if (showMarket.get()) {
+            shouldShowBackMarket = true;
+        }
+        if (showInventory.get()) {
+            shouldShowBackInventory = true;
+        }
+        if (showCaravan.get()) {
+            shouldShowBackCaravan = true;
+        }
+        if (showResearch.get()) {
+            shouldShowBackResearch = true;
+        }
+        if (showBank.get()) {
+            shouldShowBackBank = true;
+        }
+        showInventory.set(false);
+        showMarket.set(false);
+        showCaravan.set(false);
+        showResearch.set(false);
+        showBank.set(false);
+    }
+
+    public void checkIfWeShouldShowBackUi() {
+        if (shouldShowBackInventory) {
+            showInventory.set(true);
+            shouldShowBackInventory = false;
+        }
+        if (shouldShowBackMarket) {
+            showMarket.set(true);
+            shouldShowBackMarket = false;
+        }
+        if (shouldShowBackCaravan) {
+            showCaravan.set(true);
+            shouldShowBackCaravan = false;
+        }
+        if (shouldShowBackResearch) {
+            showResearch.set(true);
+            shouldShowBackResearch = false;
+        }
+        if (shouldShowBackBank) {
+            showBank.set(true);
+            shouldShowBackBank = false;
+        }
     }
 
     @Override
