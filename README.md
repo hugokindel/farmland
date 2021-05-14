@@ -4,10 +4,9 @@
 
 # Farmland
 
-Farmaland is a management game where you need to take care of your farm while being careful about the economy to stay in business while your competitors will try to put you out of business!
+Farmland is a management game where you need to take care of your farm while being careful about the economy to stay in business while your competitors will try to get on top of you!
 
 ## Screenshots
-
 
 <div align="center">
     <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot1.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
@@ -17,17 +16,19 @@ Farmaland is a management game where you need to take care of your farm while be
 
 ## Features
 
-TODO
+- A homemade game engine.
+- A turn by turn based management gameplay.
+- A singleplayer and multiplayer experience.
+- Useful debugging tools and console system.
+- An easy to extend codebase (add an item, add a language, etc.).
 
-## Architecture
-
-TODO
+To see more details about the features included and the project architecture, please take a look [here](FEATURES.md).
 
 ## How to use
 
 ### From sources
 
-First of all, you need to clone the repository by using `git clone git@gaufre.informatique.univ-paris-diderot.fr:hugokindel/farmland.git` or `git clone https://gaufre.informatique.univ-paris-diderot.fr/hugokindel/farmland.git`
+First, you need to clone the repository by using `git clone git@gaufre.informatique.univ-paris-diderot.fr:hugokindel/farmland.git` or `git clone https://gaufre.informatique.univ-paris-diderot.fr/hugokindel/farmland.git`
 
 #### Compile with an IDE (if it supports Gradle):
 
@@ -42,7 +43,15 @@ First of all, you need to clone the repository by using `git clone git@gaufre.in
 
 ### From a binary distribution
 
-If you got a binary release (containing all the libs, assets and the bin directory), you can directly use `./cli` (on UNIX systems) or `./cli.bat` (on Windows).
+If you got a binary release (containing all the libs, assets and the bin directory), you can directly use `./farmland` (on UNIX systems) or `./farmland.bat` (on Windows).
+
+## Try the project
+
+Instructions to try every interesting features included within this project can be found [here](INSTRUCTIONS.md).
+
+## Roadmap
+
+The roadmap can be read [here](ROADMAP.md).
 
 ## Third party libraries
 
@@ -51,11 +60,11 @@ If you got a binary release (containing all the libs, assets and the bin directo
 - [GLFW](https://www.lwjgl.org/)  
   Handles the window and the input.
 - [OpenGL](https://www.opengl.org/)  
-  Creates the rendering context and a way to communicate with the GPU.
+  Creates the rendering context, and a way to communicate with the GPU.
 - [OpenAL](https://www.openal.org/)  
   Handles the audio system.
 - [ImGui](https://github.com/ocornut/imgui) (with [imgui-java](https://github.com/SpaiR/imgui-java) as a binding)  
-  Permits to rapidly develop GUI to use within development for tools.
+  Permits to rapidly develop usable GUI in a game.
 
 ## Contributors
 
