@@ -29,6 +29,15 @@ public class FarmlandConsoleCommands extends ConsoleCommands {
         return noSaveLoaded;
     }
 
+    @ConsoleCommand(description = "Adds a specific amount of money", authority = {NetMode.Standalone})
+    public void addMoney(Integer quantity) {
+        if (checkForSave()) {
+            return;
+        }
+
+        Farmland.get().getLoadedSave().getLocalPlayer().addMoney(quantity);
+    }
+
     @ConsoleCommand(description = "Forcefully win the current game", authority = {NetMode.Standalone})
     public void win() {
         if (checkForSave()) {

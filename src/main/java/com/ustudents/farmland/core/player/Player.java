@@ -259,6 +259,10 @@ public class Player {
         }
     }
 
+    public void addMoney(int money) {
+        setMoney(this.money + money);
+    }
+
     public void setMoney(Integer money) {
         this.money = money;
         moneyChanged.dispatch();

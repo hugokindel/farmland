@@ -868,6 +868,10 @@ public class InGameScene extends Scene {
     }
 
     public void onTurnEnded() {
+        if (Farmland.get().getLoadedSave() == null) {
+            return;
+        }
+
         Player currentPlayer = Farmland.get().getLoadedSave().getCurrentPlayer();
 
         if(currentPlayer.remainingDebt > 0) {

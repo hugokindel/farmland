@@ -26,6 +26,8 @@ import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.engine.core.Timer;
 import com.ustudents.engine.core.window.Window;
+import imgui.ImGui;
+import imgui.flag.ImGuiMouseCursor;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -534,8 +536,12 @@ public abstract class Game extends Runnable {
             resizeViewportAndCameras();
         }
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+        if (!noImGui) {
             imGuiManager.startFrame();
+
+            if (!(imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+                ImGui.setMouseCursor(ImGuiMouseCursor.None);
+            }
         }
 
         sceneManager.render();
@@ -561,7 +567,7 @@ public abstract class Game extends Runnable {
             }
         }
 
-        if (!noImGui && (imGuiToolsEnabled || SceneManager.getScene() == null || SceneManager.getScene().isForceImGuiEnabled() || Console.visible())) {
+        if (!noImGui) {
             imGuiManager.endFrame();
         }
 

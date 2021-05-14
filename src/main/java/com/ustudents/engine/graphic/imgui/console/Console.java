@@ -271,7 +271,17 @@ public class Console {
                                 if (c.method.isVarArgs()) {
                                     c.method.invoke(get().consoleCommands, new Object[] { args.toArray() });
                                 } else {
-                                    c.method.invoke(get().consoleCommands, args.toArray());
+                                    List<Object> realList = new ArrayList<>();
+
+                                    for (int i = 0; i < args.size(); i++) {
+                                        if (c.method.getParameters()[i].getType() == Integer.class) {
+                                            realList.add(Integer.parseInt(args.get(i)));
+                                        } else {
+                                            realList.add(args.get(i));
+                                        }
+                                    }
+
+                                    c.method.invoke(get().consoleCommands, realList.toArray());
                                 }
                             }
                         } else {
