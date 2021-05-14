@@ -11,7 +11,6 @@ import com.ustudents.engine.core.window.events.ScrollMovedEvent;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;
-import com.ustudents.farmland.scene.InGameScene;
 import org.joml.*;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -24,6 +23,16 @@ public class Camera {
 
         public PositionChanged(Vector2f position) {
             this.position = position;
+        }
+    }
+
+    public static class MousePositionChanged extends Event {
+        public Vector2f oldMousePosition;
+        public Vector2f newMousePosition;
+
+        public MousePositionChanged(Vector2f oldMousePosition, Vector2f newMousePosition) {
+            this.oldMousePosition = oldMousePosition;
+            this.newMousePosition = newMousePosition;
         }
     }
 
@@ -60,6 +69,8 @@ public class Camera {
     private Vector4f viewFrustum;
 
     public EventDispatcher moved = new EventDispatcher(PositionChanged.class);
+
+    public EventDispatcher mouseMoved = new EventDispatcher(MousePositionChanged.class);
 
     public Camera(float extents, float minZoom, float maxZoom, Type type) {
         viewMatrix = new Matrix3x2f();
@@ -182,13 +193,7 @@ public class Camera {
     }
 
     public void moveToMousePosition(Vector2f newMousePosition) {
-        // TODO: Move to Farmland
-        if (Game.get().getSceneManager().getCurrentScene() instanceof InGameScene) {
-            if (!((InGameScene)Game.get().getSceneManager().getCurrentScene()).inPause && (Input.isKeyDown(Key.LeftAlt) || Input.isKeyDown(Key.RightAlt)) && Input.isMouseDown(MouseButton.Left)) {
-                moveTo(newMousePosition, mousePosition, 1);
-            }
-        }
-
+        mouseMoved.dispatch(new MousePositionChanged(newMousePosition, mousePosition));
         mousePosition = newMousePosition;
     }
 
@@ -208,7 +213,7 @@ public class Camera {
         moveTo(new Vector2f(position.x, position.y + newPos), position, 0);
     }
 
-    private void moveTo(Vector2f newPosition, Vector2f oldPosition, int type) {
+    public void moveTo(Vector2f newPosition, Vector2f oldPosition, int type) {
         if (type == 0) {
             if ((hasMaximalX && position.x > maximalX  && position.x > newPosition.x) ||
                     (hasMaximalY && position.y > maximalY && position.y < newPosition.y) ||

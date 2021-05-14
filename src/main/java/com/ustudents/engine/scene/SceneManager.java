@@ -111,6 +111,14 @@ public class SceneManager {
     /** Called at the beginning of the frame (to check if we need to do a scene transition). */
     public void startFrame() {
         if (transitioningScene) {
+            if (currentSceneIndex > 0) {
+                if (scenes.get(currentSceneIndex).getSpritebatch() != null) {
+                    scenes.get(currentSceneIndex).getSpritebatch().destroy();
+                }
+
+                scenes.get(currentSceneIndex).destroy();
+            }
+
             currentSceneIndex = scenes.size() - 1;
 
             if (currentSceneIndex > 0) {
@@ -118,11 +126,6 @@ public class SceneManager {
                     lastScenesType.add(scenes.get(currentSceneIndex - 1).getClass());
                 }
 
-                if (scenes.get(currentSceneIndex - 1).getSpritebatch() != null) {
-                    scenes.get(currentSceneIndex - 1).getSpritebatch().destroy();
-                }
-
-                scenes.get(currentSceneIndex - 1).destroy();
                 registry.clearRegistry();
                 registry.addAllKeptEntitiesToSystemCheck();
 

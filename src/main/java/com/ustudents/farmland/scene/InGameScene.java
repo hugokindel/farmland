@@ -5,6 +5,7 @@ import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
+import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.graphic.imgui.console.ConsoleCommands;
@@ -95,36 +96,13 @@ public class InGameScene extends Scene {
     @Override
     public void initialize() {
         ConsoleCommands.show = true;
-
-        if (Farmland.get().getNetMode() == NetMode.Standalone) {
-            Farmland.get().clientPlayerId.set(0);
-        }
-
-        if (Farmland.get().getNetMode() == NetMode.DedicatedServer) {
-            Farmland.get().serverGameStarted.set(true);
-        }
-
-        Farmland.get().getLoadedSave().localPlayerId = Farmland.get().clientPlayerId.get();
-
         forceImGui = true;
-
-        showInventory = new ImBoolean(false);
-        showMarket = new ImBoolean(false);
-        showCaravan = new ImBoolean(false);
-        showResearch = new ImBoolean(false);
-        showBank = new ImBoolean(false);
-        selectBorrow = new ImInt(Farmland.get().getLoadedSave().maxBorrow/10);
 
         initializeEntities();
         initializeGui();
         initializeGameplay();
-        economicComponent = new EconomicComponent();
         updatePlayerFrame();
         moneyUpdate();
-
-        if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
-            getEntityByName("gameplayButtons").setEnabled(false);
-        }
     }
 
     public void initializeEntities() {
@@ -150,11 +128,16 @@ public class InGameScene extends Scene {
 
         Entity player = createEntityWithName("player");
         player.addComponent(new PlayerMovementComponent(500.0f));
-
-        economicComponent = new EconomicComponent();
     }
 
     public void initializeGui() {
+        showInventory = new ImBoolean(false);
+        showMarket = new ImBoolean(false);
+        showCaravan = new ImBoolean(false);
+        showResearch = new ImBoolean(false);
+        showBank = new ImBoolean(false);
+        selectBorrow = new ImInt(Farmland.get().getLoadedSave().maxBorrow/10);
+
         GuiBuilder guiBuilder = new GuiBuilder();
 
         getEntityByName("canvas").createChildWithName("gameplayButtons");
@@ -483,6 +466,10 @@ public class InGameScene extends Scene {
                 getEntityByName("pauseBackgroundRectangle").setEnabled(false);
             }
         });
+
+        if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
+            getEntityByName("gameplayButtons").setEnabled(false);
+        }
     }
 
     public void initializeAvatar(GuiBuilder guiBuilder) {
@@ -549,8 +536,33 @@ public class InGameScene extends Scene {
     }
 
     public void initializeGameplay() {
+        if (Farmland.get().getNetMode() == NetMode.Standalone) {
+            Farmland.get().clientPlayerId.set(0);
+        }
+
+        if (Farmland.get().getNetMode() == NetMode.DedicatedServer) {
+            Farmland.get().serverGameStarted.set(true);
+        }
+
+        Farmland.get().getLoadedSave().localPlayerId = Farmland.get().clientPlayerId.get();
         Farmland.get().getLoadedSave().turnEnded.add((dataType, data) -> onTurnEnded());
         getEntityByName("grid").getComponent(TurnTimerComponent.class).secondElapsed.add(((dataType, data) -> updateTimer()));
+        getSceneManager().getCurrentScene().getWorldCamera().mouseMoved.add(new EventListener() {
+            @Override
+            public void onReceived(Class dataType, Event data) {
+                if (!inPause && (Input.isKeyDown(Key.LeftAlt) || Input.isKeyDown(Key.RightAlt)) && Input.isMouseDown(MouseButton.Left)) {
+                    Camera.MousePositionChanged realData = (Camera.MousePositionChanged) data;
+                    getSceneManager().getCurrentScene().getWorldCamera().moveTo(realData.oldMousePosition, realData.newMousePosition, 1);
+                }
+            }
+        }, "gameplayCameraMoved");
+        economicComponent = new EconomicComponent();
+    }
+
+    @Override
+    public void destroy() {
+        ConsoleCommands.show = false;
+        getSceneManager().getCurrentScene().getWorldCamera().mouseMoved.remove("gameplayCameraMoved");
     }
 
     @Override
@@ -1247,10 +1259,5 @@ public class InGameScene extends Scene {
             showBank.set(true);
             shouldShowBackBank = false;
         }
-    }
-
-    @Override
-    public void destroy() {
-        ConsoleCommands.show = false;
     }
 }
