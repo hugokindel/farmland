@@ -43,7 +43,7 @@ public abstract class Game extends Runnable {
     protected boolean isDebugging = false;
 
     /** Option to force V-Sync at launch. */
-    @Option(names = "--vsync", description = "Enable vertical synchronisation by default.")
+    @Option(names = "--vsync", description = "Forces vertical synchronization.")
     protected boolean vsync = false;
 
     /** Option to disable ANSI codes. */
