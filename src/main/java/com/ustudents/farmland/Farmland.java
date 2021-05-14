@@ -4,6 +4,7 @@ import com.ustudents.engine.Game;
 import com.ustudents.engine.GameConfig;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Command;
+import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.core.event.EventDispatcher;
@@ -46,6 +47,9 @@ public class Farmland extends Game {
     public EventDispatcher loadedSaveChanged = new EventDispatcher();
 
     public FarmlandConfig config;
+
+    @Option(names = "--no-save", description = "Disable saving (useful for debugging).")
+    protected boolean noSave = false;
 
     // SERVER SPECIFIC
     public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
@@ -139,8 +143,10 @@ public class Farmland extends Game {
     }
 
     public void writeAllSaves() {
-        for (Save save : saves.values()) {
-            Json.serialize(Resources.getSavesDirectoryName() + "/" + save.path, save);
+        if (!noSave) {
+            for (Save save : saves.values()) {
+                Json.serialize(Resources.getSavesDirectoryName() + "/" + save.path, save);
+            }
         }
     }
 
