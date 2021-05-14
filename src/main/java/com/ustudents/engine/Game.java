@@ -38,21 +38,21 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /** The main class of the project. */
 public abstract class Game extends Runnable {
-    /** Option to disable ANSI codes. */
-    @Option(names = "--no-ansi", description = "Disable ANSI code usage (useful for Windows compatibility).")
-    protected boolean noAnsiCodes = false;
-
     /** Option to enable debugging output. */
     @Option(names = "--debug", description = "Enable debug output.")
     protected boolean isDebugging = false;
 
-    /** Option to disable ImGui. */
-    @Option(names = "--no-imgui", description = "Disable ImGui completely (debug graphical interface).")
-    protected boolean noImGui = false;
-
     /** Option to force V-Sync at launch. */
-    @Option(names = "--vsync", description = "Enable vertical synchronisation.")
+    @Option(names = "--vsync", description = "Enable vertical synchronisation by default.")
     protected boolean vsync = false;
+
+    /** Option to disable ANSI codes. */
+    @Option(names = "--no-ansi", description = "Disable ANSI code usage (useful for Windows compatibility).")
+    protected boolean noAnsiCodes = false;
+
+    /** Option to disable ImGui. */
+    @Option(names = "--no-imgui", description = "Disable ImGui completely (interface system used during developement).")
+    protected boolean noImGui = false;
 
     /** Option to force to disable any custom cursors. */
     @Option(names = "--no-custom-cursor", description = "Force to use the default operating system cursor.")
@@ -74,12 +74,13 @@ public abstract class Game extends Runnable {
     @Option(names = "--no-render", description = "Force to disable any renders.")
     protected boolean forceNoRender = false;
 
+    // TODO: Add a listen server mode
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--listen", description = "Launches this instance in listen server mode.")
+    //@Option(names = "--listen", description = "Launches in listen server mode.")
     protected boolean listenServerEnabled = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--server", description = "Launches this instance in dedicated server mode.")
+    @Option(names = "--server", description = "Launches in dedicated server mode.")
     protected boolean dedicatedServerEnabled = false;
 
     /** The window. */

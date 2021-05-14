@@ -48,7 +48,7 @@ public class Farmland extends Game {
 
     public FarmlandConfig config;
 
-    @Option(names = "--no-save", description = "Disable saving (useful for debugging).")
+    @Option(names = "--no-save", description = "Disable saving system (can still load but will never save).")
     protected boolean noSave = false;
 
     // SERVER SPECIFIC
