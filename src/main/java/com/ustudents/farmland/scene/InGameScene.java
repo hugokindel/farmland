@@ -720,7 +720,7 @@ public class InGameScene extends Scene {
 
                         int researchBonus = (playerInventory.get(item) instanceof Crop)? fEffect : eEffect;
 
-                        int sellValueOfCaravan = (int) (((playerInventory.get(item).sellingValue + researchBonus) * 1.25) * currentQuantity / 2);
+                        int sellValueOfCaravan = (int) (((Farmland.get().getLoadedSave().getResourceDatabase().get(item).sellingValue + researchBonus) * 1.5) * currentQuantity / 2);
                         int travelTime = 4;
                         int travelPrice = 10;
                         if (ImGui.button(Resources.getLocalizedText("sended") + playerInventory.get(item).name + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
@@ -1115,8 +1115,8 @@ public class InGameScene extends Scene {
                     toDelete.add(player.caravans.get(i));
                 }
 
-                player.caravans.removeAll(toDelete);
             }
+            player.caravans.removeAll(toDelete);
         }
     }
 
