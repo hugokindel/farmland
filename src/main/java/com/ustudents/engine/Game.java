@@ -47,7 +47,7 @@ public abstract class Game extends Runnable {
     protected boolean vsync = false;
 
     /** Option to disable ANSI codes. */
-    @Option(names = "--no-ansi", description = "Disable ANSI code usage (useful for Windows compatibility).")
+    @Option(names = "--no-ansi", description = "Disable ANSI code (useful for Windows compatibility).")
     protected boolean noAnsiCodes = false;
 
     /** Option to disable ImGui. */
@@ -55,23 +55,23 @@ public abstract class Game extends Runnable {
     protected boolean noImGui = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--no-custom-cursor", description = "Force to use the default operating system cursor.")
+    @Option(names = "--no-custom-cursor", description = "Disable any custom cursor.")
     protected boolean forceNoCustomCursor = false;
 
     /** Option to force to disable any custom window icons. */
-    @Option(names = "--no-custom-icon", description = "Force to use the default operating system window icon.")
+    @Option(names = "--no-custom-icon", description = "Disable any custom window icon.")
     protected boolean forceNoCustomIcon = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--no-sound", description = "Force to disable any sounds.")
+    @Option(names = "--no-sound", description = "Disable the sound system (should not be used by the user).")
     protected boolean forceNoSound = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--no-input", description = "Force to disable any inputs.")
+    @Option(names = "--no-input", description = "Disable the input system (should not be used by the user).")
     protected boolean forceNoInput = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--no-render", description = "Force to disable any renders.")
+    @Option(names = "--no-render", description = "Disable the render system (should not be used by the user).")
     protected boolean forceNoRender = false;
 
     // TODO: Add a listen server mode
