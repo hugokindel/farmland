@@ -51,7 +51,7 @@ public abstract class Game extends Runnable {
     protected boolean noAnsiCodes = false;
 
     /** Option to disable ImGui. */
-    @Option(names = "--no-imgui", description = "Disable ImGui completely (interface system used during developement).")
+    @Option(names = "--no-imgui", description = "Disable ImGui (interface system used during developement).")
     protected boolean noImGui = false;
 
     /** Option to force to disable any custom cursors. */
@@ -63,15 +63,15 @@ public abstract class Game extends Runnable {
     protected boolean forceNoCustomIcon = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--no-sound", description = "Disable the sound system (should not be used by the user).")
+    @Option(names = "--no-sound", description = "Disable the sound system (for debugging purposes only).")
     protected boolean forceNoSound = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--no-input", description = "Disable the input system (should not be used by the user).")
+    @Option(names = "--no-input", description = "Disable the input system (for debugging purposes only).")
     protected boolean forceNoInput = false;
 
     /** Option to force to disable any custom cursors. */
-    @Option(names = "--no-render", description = "Disable the render system (should not be used by the user).")
+    @Option(names = "--no-render", description = "Disable the render system (for debugging purposes only).")
     protected boolean forceNoRender = false;
 
     // TODO: Add a listen server mode

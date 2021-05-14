@@ -149,7 +149,7 @@ public abstract class Runnable {
      * @param <T> The type of the child's class.
      */
     private <T extends Runnable> void displayHelp(Class<T> classWithArgs, ArrayList<Field> fields) {
-        Out.println("usage: java -jar " + classWithArgs.getAnnotation(Command.class).name() + ".jar [options...]");
+        Out.println("usage: ./" + classWithArgs.getAnnotation(Command.class).name() + " [options...]");
 
         Out.println();
 
