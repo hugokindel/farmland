@@ -9,8 +9,8 @@ Farmaland is a management game where you need to take care of your farm while be
 ## Screenshots
 
 
-<div align="center" style="display: flex; justify-content:space-around;">
-  <div class="" style="max-width: 33%; max-height: 23%;">
+<div align="center" style="display: flex; justify-content:space-around; align-items: flex-start;">
+  <div class="" style="max-width: 33%; max-height: 33%;">
     <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot1.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
   </div>
   <div class="" style="max-width: 33%; max-height: 33%;">
