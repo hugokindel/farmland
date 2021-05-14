@@ -17,7 +17,7 @@ Farmland is a management game where you need to take care of your farm while bei
 ## Features
 
 - A homemade game engine.
-- A turn by turn based management gameplay.
+- A turn by turn based farm management gameplay.
 - A singleplayer and multiplayer experience.
 - Useful debugging tools and console system.
 - An easy to extend codebase (add an item, add a language, etc.).
