@@ -118,8 +118,13 @@ public class NewGameMenu extends MenuScene {
             }
             if (playerName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("playerName"));
-            } else if (playerName.get().length() > 16) {
-                errors.add(Resources.getLocalizedText("playerNameTooLong"));
+            } else {
+                if (playerName.get().length() > 16) {
+                    errors.add(Resources.getLocalizedText("playerNameTooLong"));
+                }
+                if (playerName.get().contains("\"")) {
+                    errors.add(Resources.getLocalizedText("playerIllegalChar"));
+                }
             }
             if (villageName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("villageName"));

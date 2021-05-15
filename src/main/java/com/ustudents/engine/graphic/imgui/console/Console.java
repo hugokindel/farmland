@@ -328,7 +328,7 @@ public class Console {
             if (e.getMessage().toLowerCase().contains("wrong number of arguments")) {
                 printlnError(Resources.getLocalizedText("consoleWrongNumArg"));
             } else {
-                e.printStackTrace();
+                printlnError(Resources.getLocalizedText("consoleError"));
             }
         }
     }
