@@ -38,6 +38,47 @@
 
 - amélioration des recherches : améliore la recherche qui benefie au premier item des terrains du bot
 
+
+### Caravanes
+
+#### Description
+
+- Le systeme des caravanes consiste en :
+    - envoyer la moitié de ses ressources en caravanes afin de gagner plus d'argent qu'au marché local
+         - calcul des gains des caravanes : ( ( Prix du Marché locale + Avantage des Recherches ) x 1,5 ) x Quantité envoyé
+    - payer 10 pieces pour le cout de la caravane
+    - attendre 4 tours avant de récuperer les gains
+        
+#### Implémentation
+
+- Chaque joueur contient une liste de leurs caravanes qui s'actualise a chaque tour complet 
+    - une caravanes contient les gains, le nombre tours effectues, le nombre de tours avant d'arriver, le produit transporter
+
+### Recherches
+
+#### Description
+
+- Le systeme de recherches consiste en :
+    - une augmentation des gains obtenu via les caravanes 
+    - un niveau refletant l'augmentation 
+    - un prix pour augmenter de niveaux
+
+#### Implémentation
+
+- Chaque joueur contient une liste de leurs recherches initialiser a 2 recherches (Eleveur et Fermier) qu'ils peuvent ameliorer :
+     - les recherches sont initialisé au niveau 1 avec un prix de 10 pieces pour l'amelioration et une augmentation de 0 piece
+     - lorsque l'on augmente une recherche elle gagne 1 niveau, le prix pour la prochaine amelioration augmente de 10 pieces et l'augmentation qu'elle apporte aux caravanes augmente de 1 piece
+
+
+### Banque
+
+#### Description
+
+#### Implémentation
+
+
 ### Bonus 
 
 - Le cadre du joueur evolue avec l'avancé des recherches par palier (palier 0 : niveau 1 / palier 1 : niveau 3 / palier 2 : niveau 5)
+- Le podium affiche les joueurs dans la partie dans l'ordre de leur argent (le classement est realise par un tri par insertion)
+- Il y a un compteur de temps restant pour le tour (1 minute et 30 secondes) et aussi un temps total pour la durée de la partie
