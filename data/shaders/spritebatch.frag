@@ -7,7 +7,7 @@ out vec4 color;
 
 uniform sampler2D textureSampler;
 uniform float alpha;
-uniform int type;
+uniform int type; // Texture or font.
 
 void main(void)
 {
@@ -17,6 +17,7 @@ void main(void)
 	if (type == 0) {
 		color = tint * textureColor;
 	} else {
+		// For fonts, every colors is passed on the red bits.
 		color = tint * textureColor.rrrr;
 	}
 }

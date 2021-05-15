@@ -26,6 +26,11 @@ public class Player {
         Bot
     }
 
+    public enum InventoryType {
+        WaitingToBePlanted,
+        WaitingToBeSold
+    }
+
     public static final Color DEFAULT_BANNER_COLOR = new Color(1f, 0f, 0f, 1f);
 
     @JsonSerializable
@@ -102,10 +107,10 @@ public class Player {
         this.soldAnimals = new ArrayList<>();
     }
 
-    public void addToInventory(Item item, String name) {
-        if(name.equals("Buy")){
+    public void addToInventory(Item item, InventoryType type) {
+        if (type == InventoryType.WaitingToBePlanted) {
             boolean contains = false;
-            List<? extends Item> items = getGoodList(item, true);
+            List<? extends Item> items = getGoodList(item, InventoryType.WaitingToBePlanted);
             assert items != null;
             for(Item i: items){
                 if(item.id.equals(i.id)){
@@ -126,9 +131,9 @@ public class Player {
                     boughtAnimals.add(clone);
                 }
             }
-        }else{
+        } else {
             boolean contains = false;
-            List<? extends Item> items = getGoodList(item, false);
+            List<? extends Item> items = getGoodList(item, InventoryType.WaitingToBeSold);
             assert items != null;
             for(Item i: items){
                 if(item.id.equals(i.id)){
@@ -152,11 +157,11 @@ public class Player {
         }
     }
 
-    private List<? extends Item> getGoodList(Item item, boolean bought){
+    private List<? extends Item> getGoodList(Item item, InventoryType type){
         if(item instanceof Crop){
-            return (bought)? boughtCrops: soldCrops;
+            return (type == InventoryType.WaitingToBePlanted) ? boughtCrops : soldCrops;
         }else if(item instanceof Animal){
-            return (bought)? boughtAnimals: soldAnimals;
+            return (type == InventoryType.WaitingToBePlanted) ? boughtAnimals : soldAnimals;
         }
         return null;
     }
@@ -189,8 +194,8 @@ public class Player {
         soldAnimals.clear();
     }
 
-    public void deleteFromSoldInventory(Item item, boolean isAnimal){
-        if (isAnimal){
+    public void deleteFromSoldInventory(Item item) {
+        if (item instanceof Animal){
             Animal todelete = null;
             for(Item i: soldAnimals){
                 if(item.id.equals(i.id)){
@@ -219,8 +224,8 @@ public class Player {
         }
     }
 
-    public boolean deleteFromInventory(Item item, String name) {
-            List<? extends Item> items = getGoodList(item, (name.contains("Buy")));
+    public boolean deleteFromInventory(Item item, InventoryType type) {
+            List<? extends Item> items = getGoodList(item, type);
             Item todelete = null;
             assert items != null;
             for(Item i: items){
@@ -238,9 +243,9 @@ public class Player {
         return false;
     }
 
-    public boolean deleteFromInventory(List<Item> list, String name){
+    public boolean deleteFromInventory(List<Item> list, InventoryType type){
         for(Item item: list){
-            if(!deleteFromInventory(item, name)){
+            if(!deleteFromInventory(item, type)){
                 return false;
             }
         }
@@ -373,7 +378,7 @@ public class Player {
             setMoney(money - (item.buyingValue * quantity));
 
             for (int i = 0; i < quantity; i++) {
-                addToInventory(item, "Buy");
+                addToInventory(item, InventoryType.WaitingToBePlanted);
 
                 Farmland.get().getLoadedSave().fillTurnItemDataBase(item, true);
             }
@@ -394,7 +399,7 @@ public class Player {
 
             Item item = Item.clone(getAllItemOfSellInventory().get(itemId));
             Farmland.get().getLoadedSave().fillTurnItemDataBase(item, false);
-            deleteFromInventory(getAllItemOfSellInventory().get(itemId), "Sell");
+            deleteFromInventory(getAllItemOfSellInventory().get(itemId), InventoryType.WaitingToBeSold);
 
             Farmland.get().serverBroadcastSave();
         } else {
@@ -423,7 +428,7 @@ public class Player {
 
             Farmland.get().getLoadedSave().getCell(position).setItem(selectedItemClone);
 
-            Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(selectedItem, "Buy");
+            Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(selectedItem, InventoryType.WaitingToBePlanted);
 
             if (getItemFromInventory(selectedItem.id) == null) {
                 Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
@@ -498,7 +503,7 @@ public class Player {
             caravans.add(new Caravan(sellValue, travelTime, itemId));
 
             for (int i = 0; i < itemQuantity / 2; i++) {
-                deleteFromInventory(getAllItemOfSellInventory().get(itemId), "Caravan");
+                deleteFromInventory(getAllItemOfSellInventory().get(itemId), InventoryType.WaitingToBeSold);
             }
 
             Farmland.get().serverBroadcastSave();

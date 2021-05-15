@@ -822,7 +822,7 @@ public class InGameScene extends Scene {
                 ImGui.text(Resources.getLocalizedText("resellPrice", Farmland.get().getLoadedSave().getResourceDatabase().get(item).sellingValue));
             }
 
-            player.deleteFromInventory(toDelete, "Sell");
+            player.deleteFromInventory(toDelete, Player.InventoryType.WaitingToBeSold);
 
         }else{
             ImGui.text(Resources.getLocalizedText("products"));
@@ -924,7 +924,7 @@ public class InGameScene extends Scene {
 
                         if (cell.item.shouldBeDestroyed()) {
                             Player player = Farmland.get().getLoadedSave().players.get(cell.ownerId);
-                            player.addToInventory(cell.item, "Sell");
+                            player.addToInventory(cell.item, Player.InventoryType.WaitingToBeSold);
                             cell.item = null;
                         }
                     }
@@ -1054,7 +1054,7 @@ public class InGameScene extends Scene {
             }
         }
 
-        if (Farmland.get().getNetMode() == NetMode.Standalone) {
+        if (Farmland.get().getNetMode() == NetMode.Standalone && Farmland.get().getLoadedSave().players.size() > 1) {
             int count = 0;
 
             for (Player player : Farmland.get().getLoadedSave().players) {

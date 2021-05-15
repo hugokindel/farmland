@@ -1,7 +1,8 @@
 #version 330 core
 
-// x,y = position in world coordinates
-// z,w = UV
+// Values in position:
+// x,y = position in world coordinates.
+// z,w = UV.
 layout (location = 0) in vec4 position;
 layout (location = 1) in vec4 _colorTint;
 

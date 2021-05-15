@@ -264,7 +264,7 @@ public class Bot {
                 itemCopy.quantity = itemQuantity/2;
                 boolean isAnimal = item instanceof Animal;
                 for (int i = 0; i < itemQuantity / 2; i++) {
-                    player.deleteFromSoldInventory(item, isAnimal);
+                    player.deleteFromSoldInventory(item);
                 }
                 itemQuantity /= 2;
             }
