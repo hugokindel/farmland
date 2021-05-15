@@ -94,8 +94,8 @@ public class Player {
         this.remainingDebt = 0;
         this.caravans = new ArrayList<>();
         this.researches = new ArrayList<>();
-        this.researches.add(new Research("Fermier"));
-        this.researches.add(new Research("Eleveur"));
+        this.researches.add(new Research(Research.Type.Farmer));
+        this.researches.add(new Research(Research.Type.Breeder));
         this.boughtCrops = new ArrayList<>();
         this.boughtAnimals = new ArrayList<>();
         this.soldCrops = new ArrayList<>();
@@ -344,9 +344,9 @@ public class Player {
         this.selectedItemId = selectedItemId;
     }
 
-    public Research findResearch(String name) {
+    public Research findResearch(Research.Type type) {
         for (Research research : researches) {
-            if (research.name.equals(name)) {
+            if (research.type == type) {
                 return research;
             }
         }
@@ -469,17 +469,20 @@ public class Player {
         }
     }
 
-    public void upgradeResearch(String name) {
+    public void upgradeResearch(Research.Type type) {
         if (Game.get().hasAuthority()) {
-            Out.println("Upgrade: " + name);
-            Research research = findResearch(name);
+            if (Game.isDebugging()) {
+                Out.println("Upgrade: " + name);
+            }
+
+            Research research = findResearch(type);
 
             money -= research.getPrice();
             research.levelUp(10, 1);
 
             Farmland.get().serverBroadcastSave();
         } else {
-            Game.get().getClient().send(new UpgradeResearch(name));
+            Game.get().getClient().send(new UpgradeResearch(type));
         }
     }
 

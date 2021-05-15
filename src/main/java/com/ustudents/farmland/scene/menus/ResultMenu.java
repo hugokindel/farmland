@@ -30,6 +30,7 @@ public class ResultMenu extends MenuScene {
 
         GuiBuilder guiBuilder = new GuiBuilder();
 
+        // TODO: Translate images
         String resultPath = (isWin)?"ui/victory.png":"ui/defeat.png";
         Texture resultTexture = Resources.loadTexture(resultPath);
         GuiBuilder.ImageData imageData = new GuiBuilder.ImageData(resultTexture);

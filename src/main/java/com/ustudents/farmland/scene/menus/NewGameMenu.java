@@ -89,6 +89,7 @@ public class NewGameMenu extends MenuScene {
         ImGui.inputInt(Resources.getLocalizedText("ngMaxLoan"), maxBorrow,100);
         ImGui.inputInt(Resources.getLocalizedText("ngLoanPer"), percentDebt,10);
 
+        // TODO: REMOVE ?
         if (maxBorrow.get() < 100 || maxBorrow.get()%100 != 0 || maxBorrow.get()%10 != 0)
             maxBorrow.set(100);
 

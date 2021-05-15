@@ -3,6 +3,7 @@ package com.ustudents.farmland.core;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.print.Out;
+import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.core.json.annotation.JsonSerializableConstructor;
@@ -29,7 +30,6 @@ import java.nio.file.Files;
 import java.util.*;
 
 @JsonSerializable
-@SuppressWarnings("unchecked")
 public class Save {
     public static final int timePerTurn = 90;
 
@@ -100,9 +100,9 @@ public class Save {
 
     public String path;
 
-    public EventDispatcher turnEnded = new EventDispatcher();
+    public EventDispatcher<Event> turnEnded = new EventDispatcher<>();
 
-    public EventDispatcher itemUsed = new EventDispatcher();
+    public EventDispatcher<Event> itemUsed = new EventDispatcher<>();
 
     public SeedRandom random;
 
@@ -115,6 +115,7 @@ public class Save {
         if (this.seed == null) {
             this.seed = System.currentTimeMillis();
         }
+
         SeedRandom random = new SeedRandom(this.seed);
 
         this.deadPlayers = new LinkedList<>();
@@ -359,18 +360,6 @@ public class Save {
         return getCurrentPlayer().getId().equals(getLocalPlayer().getId());
     }
 
-    public List<Color> getUsedColors() {
-        List<Color> colors = new ArrayList<>();
-
-        for (Player player : players) {
-            if (!colors.contains(player.bannerColor)) {
-                colors.add(player.bannerColor);
-            }
-        }
-
-        return colors;
-    }
-
     public List<Vector2i> getUsedLocations() {
         List<Vector2i> locations = new ArrayList<>();
 
@@ -424,7 +413,8 @@ public class Save {
 
     public void fillTurnItemDataBase(Item item, boolean buyInventory){
         assert(item != null);
-        if(buyInventory){
+
+        if (buyInventory) {
             boolean contains = false;
             for(Item i: buyTurnItemDataBase){
                 if(item.id.equals(i.id)){

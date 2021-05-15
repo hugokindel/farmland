@@ -45,6 +45,7 @@ import imgui.type.ImInt;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
+import java.sql.Ref;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -609,8 +610,8 @@ public class InGameScene extends Scene {
         if (showBank.get()) {
             ImGuiUtils.setNextWindowWithSizeCentered(500, 300, ImGuiCond.Appearing);
 
-            ImGui.begin("Banque", showBank);
-            ImGui.text("Votre argent : " + Farmland.get().getLoadedSave().getLocalPlayer().money + "\n\n");
+            ImGui.begin(Resources.getLocalizedText("bank"), showBank);
+            ImGui.text(Resources.getLocalizedText("yourMoney", Farmland.get().getLoadedSave().getLocalPlayer().money));
             ImGuiBank();
             ImGui.end();
         }
@@ -620,12 +621,12 @@ public class InGameScene extends Scene {
         Player player = Farmland.get().getLoadedSave().getLocalPlayer();
         int maxBorrow = Farmland.get().getLoadedSave().maxBorrow;
 
-        if(ImGui.button("Emprunt")){
+        if(ImGui.button(Resources.getLocalizedText("loan"))){
             selectBorrow.set(maxBorrow/10);
             refundMenu = false;
         }
         ImGui.sameLine();
-        if(ImGui.button("Remboursement")){
+        if(ImGui.button(Resources.getLocalizedText("refund"))){
             selectBorrow.set(1);
             refundMenu = true;
         }
@@ -633,56 +634,56 @@ public class InGameScene extends Scene {
         if(!refundMenu){
             if(player.remainingDebt == 0){
                 player.loan = 0;
-                ImGui.text("\n\n" + "Maximum d'emprunt : " + player.remainingDebt + "/" + maxBorrow +"\n\n");
-                ImGui.inputInt("Somme à emprunter", selectBorrow,maxBorrow/10);
-                ImGui.text("Valeur d'emprunt sélectionné: " + selectBorrow.get() + "\n\n\n\n");
+                ImGui.text(Resources.getLocalizedText("loanMaximum", player.remainingDebt, maxBorrow));
+                ImGui.inputInt(Resources.getLocalizedText("loanAmount"), selectBorrow,maxBorrow/10);
+                ImGui.text(Resources.getLocalizedText("loanSelected", selectBorrow.get()));
                 if(!(selectBorrow.get() >= 5 && selectBorrow.get() <= maxBorrow)) {
                     if (selectBorrow.get() < 5)
                         selectBorrow.set(maxBorrow/10);
                     else if (selectBorrow.get() > player.remainingDebt)
                         selectBorrow.set(maxBorrow);
                 }else{
-                    if(ImGui.button("Confirmer")){
+                    if(ImGui.button(Resources.getLocalizedText("confirm"))){
                         player.takeLoan(selectBorrow.get());
                         updateMoneyItemLabel();
                         updateLeaderboard();
                         selectBorrow.set(maxBorrow/10);
                     }
                     ImGui.sameLine();
-                    if(ImGui.button("Annuler")){
+                    if(ImGui.button(Resources.getLocalizedText("cancel"))){
                         selectBorrow.set(maxBorrow/10);
                     }
                 }
             }else{
-                ImGui.text("\n\n" + "Somme à payer : " + player.remainingDebt + " pièces d'or \n\n");
-                ImGui.text("\n\n" + "Vous devez rembourser votre emprunt !" + "\n\n");
+                ImGui.text(Resources.getLocalizedText("loanToPay", player.remainingDebt));
+                ImGui.text(Resources.getLocalizedText("loanNeedRefund"));
             }
 
         }else{
             if(player.remainingDebt > 0) {
-                ImGui.text("\n\n" + "Votre dette : " + player.remainingDebt + " pièces d'or \n\n");
-                ImGui.inputInt("Somme à emprunter", selectBorrow,maxBorrow/10);
-                ImGui.text("Valeur de remboursement sélectionné: " + selectBorrow.get() + "\n\n\n\n");
+                ImGui.text(Resources.getLocalizedText("debtYours", player.remainingDebt));
+                ImGui.inputInt(Resources.getLocalizedText("debtAmount"), selectBorrow,maxBorrow/10);
+                ImGui.text(Resources.getLocalizedText("debtSelected", selectBorrow.get()));
                 if(!(selectBorrow.get() >= 1 && selectBorrow.get() <= player.remainingDebt)) {
                     if (selectBorrow.get() < 0)
                         selectBorrow.set(1);
                     else if (selectBorrow.get() > player.remainingDebt)
                         selectBorrow.set(player.remainingDebt);
                 }else{
-                    if(ImGui.button("Confirmer")){
+                    if(ImGui.button(Resources.getLocalizedText("confirm"))){
                         player.payLoan(selectBorrow.get());
                         updateMoneyItemLabel();
                         updateLeaderboard();
                         selectBorrow.set(1);
                     }
                     ImGui.sameLine();
-                    if(ImGui.button("Annuler")){
+                    if(ImGui.button(Resources.getLocalizedText("cancel"))){
                         selectBorrow.set(1);
                     }
                 }
             }else{
                 player.loan = 0;
-                ImGui.text("\n\n" + "Vous n'avez pas de dette à rembourser" + "\n\n");
+                ImGui.text(Resources.getLocalizedText("debtNothing"));
             }
         }
     }
@@ -690,19 +691,22 @@ public class InGameScene extends Scene {
     private void ImGuiBuyingResearch(){
         Player player = Farmland.get().getLoadedSave().getLocalPlayer();
 
-        ImGui.text("Recherches : \n\n");
+        ImGui.text(Resources.getLocalizedText("researches"));
         for (int i = 0; i < player.researches.size(); i++){
             Research research = player.researches.get(i);
-            if (ImGui.button("Améliorer " + research.getName() + "[" + research.getPrice() + "]") && player.money > research.getPrice()){
-                Out.println("Upgrade: " + research.getName());
-                player.upgradeResearch(research.getName());
+            if (ImGui.button(Resources.getLocalizedText("researchUpgrade", research.getLocalizedName(), research.getPrice()))  && player.money > research.getPrice()) {
+                if (Game.isDebugging()) {
+                    Out.println("Upgrade: " + research.getType().name());
+                }
+
+                player.upgradeResearch(research.getType());
 
                 updateMoneyItemLabel();
                 updateLeaderboard();
                 updatePlayerFrame();
             }
             ImGui.sameLine();
-            ImGui.text( research.getName() + " niveau : " + research.getLevel() + " bonus de revente : " + research.getEffect());
+            ImGui.text(Resources.getLocalizedText("researchInfo", research.getLocalizedName(), research.getLevel(), research.getEffect()));
         }
     }
 
@@ -734,9 +738,9 @@ public class InGameScene extends Scene {
                         int eEffect = 0;
                         for (int i = 0; i < player.researches.size(); i++){
                             Research re = player.researches.get(i);
-                            if (re.getName().equals("Fermier")){
+                            if (re.getType() == Research.Type.Farmer){
                                 fEffect = re.getEffect();
-                            } else if (re.getName().equals("Eleveur")){
+                            } else if (re.getType() == Research.Type.Breeder){
                                 eEffect = re.getEffect();
                             }
                         }
@@ -949,9 +953,9 @@ public class InGameScene extends Scene {
         int eLevel = 0;
         for (int i = 0; i < player.researches.size(); i++){
             Research re = player.researches.get(i);
-            if (re.getName().equals("Fermier")){
+            if (re.getType() == Research.Type.Farmer){
                 fLevel = re.getLevel();
-            } else if (re.getName().equals("Eleveur")){
+            } else if (re.getType() == Research.Type.Breeder){
                 eLevel = re.getLevel();
             }
         }

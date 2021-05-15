@@ -8,7 +8,6 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.network.general.GameInformationsRequest;
 import com.ustudents.farmland.network.general.GameInformationsResponse;
 
-@SuppressWarnings("unchecked")
 public class ServersListMenu extends MenuScene {
     @Override
     public void initialize() {

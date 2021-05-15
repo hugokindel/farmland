@@ -1,6 +1,5 @@
 package com.ustudents.farmland.core.player;
 
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.utility.SeedRandom;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.item.Animal;
@@ -26,7 +25,6 @@ public class Bot {
 
     public static void playTurn() {
         Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
-        // TODO: seed
 
         if (!Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
 
@@ -106,11 +104,11 @@ public class Bot {
                 if(cells.get(i).hasItem()){
                     for (int y = 0; y < player.researches.size(); y++){
                         Research re = player.researches.get(y);
-                        if (re.getName().equals("Eleveur") && cells.get(i).item instanceof Animal){
+                        if (re.type == Research.Type.Breeder && cells.get(i).item instanceof Animal){
                             player.money -= re.getPrice();
                             re.levelUp(10,1);
                             break;
-                        } else if (re.getName().equals("Fermier") && cells.get(i).item instanceof Crop){
+                        } else if (re.getType() == Research.Type.Farmer && cells.get(i).item instanceof Crop){
                             player.money -= re.getPrice();
                             re.levelUp(10,1);
                             break;
@@ -214,13 +212,15 @@ public class Bot {
 
     public static void botTakesOutALoan(){
         Player player = Farmland.get().getLoadedSave().getCurrentPlayer();
-
         Random rand = new Random();
         int maxBorrow = Farmland.get().getLoadedSave().maxBorrow;
-        int randValue = rand.nextInt(maxBorrow - maxBorrow/10);
+        if (Farmland.get().getLoadedSave().difficulty == Difficulty.Impossible) {
+            maxBorrow += 300;
+        }
+        int randValue = rand.nextInt(maxBorrow - maxBorrow / 10);
         player.money += randValue;
-        player.loan = randValue + (int)(randValue*0.03f);
-        player.remainingDebt += randValue + (int)(randValue*0.03f);
+        player.loan = randValue + (int)(randValue * 0.03f);
+        player.remainingDebt += randValue + (int)(randValue * 0.03f);
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateMoneyItemLabel();
         ((InGameScene)Farmland.get().getSceneManager().getCurrentScene()).updateLeaderboard();
     }
@@ -247,9 +247,9 @@ public class Bot {
                 int eEffect = 0;
                 for (int i = 0; i < player.researches.size(); i++) {
                     Research re = player.researches.get(i);
-                    if (re.getName().equals("Fermier")) {
+                    if (re.getType() == Research.Type.Farmer) {
                         fEffect = re.getEffect();
-                    } else if (re.getName().equals("Eleveur")) {
+                    } else if (re.getType() == Research.Type.Breeder) {
                         eEffect = re.getEffect();
                     }
                 }

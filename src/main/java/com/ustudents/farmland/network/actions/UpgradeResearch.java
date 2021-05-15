@@ -3,17 +3,18 @@ package com.ustudents.farmland.network.actions;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
+import com.ustudents.farmland.core.system.Research;
 
 @JsonSerializable
 public class UpgradeResearch extends Message {
     @JsonSerializable
-    String researchName;
+    Research.Type researchName;
 
     public UpgradeResearch() {
 
     }
 
-    public UpgradeResearch(String researchName) {
+    public UpgradeResearch(Research.Type researchName) {
         this.researchName = researchName;
     }
 

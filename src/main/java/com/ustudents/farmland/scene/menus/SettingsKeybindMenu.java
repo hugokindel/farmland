@@ -351,19 +351,19 @@ public class SettingsKeybindMenu extends MenuScene{
         }else if(key > 32 && key < 96 || key >= 320 && key <= 329) {
             return GLFW.glfwGetKeyName(key, GLFW.glfwGetKeyScancode(key));
         }else if(key == 32){
-            return Resources.getLocalizedText("Space");
+            return Resources.getLocalizedText("space");
         }else if(key == 341 || key == 345) {
             if(key == 341)
-                return Resources.getLocalizedText("LCtrl");
+                return Resources.getLocalizedText("lCtrl");
             else
-                return Resources.getLocalizedText("RCtrl");
+                return Resources.getLocalizedText("rCtrl");
         }else if(key == 342 || key == 346) {
             if (key == 342)
-                return Resources.getLocalizedText("LAlt");
+                return Resources.getLocalizedText("lAlt");
             else
-                return Resources.getLocalizedText("RAlt");
+                return Resources.getLocalizedText("rAlt");
         }else if(key == 96){
-            return Resources.getLocalizedText("GraveAccent");
+            return Resources.getLocalizedText("graveAccent");
         }else{
             return "[...]";
         }
@@ -371,11 +371,11 @@ public class SettingsKeybindMenu extends MenuScene{
 
     private String displayGoodMouseButtonBind(int mouseButton){
         if(mouseButton == 0)
-            return Resources.getLocalizedText("LMB");
+            return Resources.getLocalizedText("lmb");
         else if (mouseButton == 1)
-            return Resources.getLocalizedText("RMB");
+            return Resources.getLocalizedText("rmb");
         else if (mouseButton > 1 && mouseButton <= 7)
-            return Resources.getLocalizedText("Button") + (mouseButton + 1);
+            return Resources.getLocalizedText("button") + (mouseButton + 1);
         else
             return "[...]";
     }

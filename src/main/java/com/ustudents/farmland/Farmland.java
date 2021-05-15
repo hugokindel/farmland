@@ -260,7 +260,7 @@ public class Farmland extends Game {
         if (new File(Resources.getDataDirectory() + "/server.json").exists()) {
             serverConfig = Json.deserialize(Resources.getDataDirectory() + "/server.json", FarmlandServerConfig.class);
         } else {
-            serverConfig = new FarmlandServerConfig("Mon serveur", 1);
+            serverConfig = new FarmlandServerConfig();
         }
     }
 

@@ -13,9 +13,9 @@ public class DeleteGameMenu extends MenuScene{
     @Override
     public void initialize() {
         int i = 0;
-        String[] buttonNames = new String[Farmland.get().getSaves().size()+1];
-        String[] buttonIds = new String[buttonNames.length+1];
-        EventListener[] eventListeners = new EventListener[buttonNames.length+1];
+        String[] buttonNames = new String[Farmland.get().getSaves().size()];
+        String[] buttonIds = new String[buttonNames.length];
+        EventListener[] eventListeners = new EventListener[buttonNames.length];
 
         for (Save save : Farmland.get().getSaves().values()) {
             int j = i;
@@ -37,13 +37,7 @@ public class DeleteGameMenu extends MenuScene{
             i++;
         }
 
-        buttonNames[Farmland.get().getSaves().size()] = Resources.getLocalizedText("goBack");
-        buttonIds[Farmland.get().getSaves().size()] = "back";
-        eventListeners[buttonNames.length-1] = (dataType, data) -> {
-            changeScene(new SingleplayerMenu());
-        };
-
-        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, true);
 
         super.initialize();
     }

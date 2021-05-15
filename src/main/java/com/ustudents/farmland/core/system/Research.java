@@ -1,12 +1,18 @@
 package com.ustudents.farmland.core.system;
 
+import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
 
 @JsonSerializable
 public class Research {
+    public enum Type {
+        Undefined,
+        Farmer,
+        Breeder
+    }
 
     @JsonSerializable
-    public String name;
+    public Type type;
 
     @JsonSerializable
     public Integer level;
@@ -18,15 +24,15 @@ public class Research {
     public Integer effect;
 
     public Research(){
-        this("Sans nom");
+        this(Type.Undefined);
     }
 
-    public Research(String n){
-        this(n,1,10,0);
+    public Research(Type t){
+        this(t,1,10,0);
     }
 
-    public Research(String n, Integer l, Integer p, Integer e){
-        name = n;
+    public Research(Type t, Integer l, Integer p, Integer e){
+        type = t;
         level = l;
         price = p;
         effect = e;
@@ -38,8 +44,8 @@ public class Research {
         effect += e;
     }
 
-    public String getName(){
-        return name;
+    public Type getType(){
+        return type;
     }
 
     public Integer getPrice() {
@@ -52,5 +58,9 @@ public class Research {
 
     public Integer getEffect() {
         return effect;
+    }
+
+    public String getLocalizedName() {
+        return Resources.getLocalizedText(type.name().toLowerCase());
     }
 }

@@ -15,16 +15,14 @@ public class SingleplayerMenu extends MenuScene {
             buttonNames = new String[] {
                     Resources.getLocalizedText("newGame"),
                     Resources.getLocalizedText("loadGame"),
-                    Resources.getLocalizedText("removeGame"),
-                    Resources.getLocalizedText("goBack")
+                    Resources.getLocalizedText("removeGame")
             };
-            buttonIds = new String[] {"newButton", "loadButton", "deleteButton","goBack"};
+            buttonIds = new String[] {"newButton", "loadButton", "deleteButton"};
         } else {
             buttonNames = new String[] {
-                    Resources.getLocalizedText("newGame"),
-                    Resources.getLocalizedText("goBack")
+                    Resources.getLocalizedText("newGame")
             };
-            buttonIds = new String[] {"newButton", "goBack"};
+            buttonIds = new String[] {"newButton"};
         }
 
         eventListeners = new EventListener[buttonNames.length];
@@ -42,14 +40,11 @@ public class SingleplayerMenu extends MenuScene {
                     case "deleteButton":
                         changeScene(new DeleteGameMenu());
                         break;
-                    case "goBack":
-                        changeScene(new MainMenu());
-                        break;
                 }
             };
         }
 
-        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, false);
+        initializeMenu(buttonNames, buttonIds, eventListeners, true, false, false, true);
 
         super.initialize();
     }
