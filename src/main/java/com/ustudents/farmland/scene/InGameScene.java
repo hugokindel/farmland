@@ -388,11 +388,7 @@ public class InGameScene extends Scene {
         textData.color = Color.BLACK;
         guiBuilder.addText(textData);
 
-        String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
         String text = "";
-        if (selectedId != null) {
-            text += Resources.getLocalizedText("\n\nselect") + Farmland.get().getItem(selectedId).name + " (x" + Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity + ")";
-        }
         GuiBuilder.TextData textData2 = new GuiBuilder.TextData(text);
         textData2.id = "selectedLabel";
         textData2.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
@@ -471,6 +467,8 @@ public class InGameScene extends Scene {
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
             getEntityByName("gameplayButtons").setEnabled(false);
         }
+
+        updateMoneyItemLabel();
     }
 
     public void initializeAvatar(GuiBuilder guiBuilder) {
@@ -748,19 +746,19 @@ public class InGameScene extends Scene {
                         int sellValueOfCaravan = (int) (((Farmland.get().getLoadedSave().getResourceDatabase().get(item).sellingValue + researchBonus) * 1.5) * currentQuantity / 2);
                         int travelTime = 4;
                         int travelPrice = 10;
-                        if (ImGui.button(Resources.getLocalizedText("sended") + playerInventory.get(item).name + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
+                        if (ImGui.button(Resources.getLocalizedText("sended") + playerInventory.get(item).getLocalizedName() + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
                             player.sendCaravan(travelPrice, travelTime, sellValueOfCaravan, item);
                         }
                         ImGui.sameLine();
                         if (playerInventory.get(item) == null) {
                             ImGui.text(Resources.getLocalizedText("noMoreCaravans"));
                         } else {
-                            ImGui.text(playerInventory.get(item).name + " x" + currentQuantity / 2);
+                            ImGui.text(playerInventory.get(item).getLocalizedName() + " (x" + currentQuantity / 2 + ")");
                         }
                         ImGui.sameLine();
                         ImGui.text(Resources.getLocalizedText("sellingPrice") + sellValueOfCaravan + Resources.getLocalizedText("estimatedTime") + travelTime);
                     } else {
-                        ImGui.text(Resources.getLocalizedText("lackOf") + playerInventory.get(item).name + Resources.getLocalizedText("sent"));
+                        ImGui.text(Resources.getLocalizedText("lackOf") + playerInventory.get(item).getLocalizedName() + Resources.getLocalizedText("sent"));
                     }
                 }
             }
@@ -825,8 +823,8 @@ public class InGameScene extends Scene {
         }else{
             ImGui.text(Resources.getLocalizedText("products"));
 
-            for(Item item : Farmland.get().getLoadedSave().getResourceDatabase().values()){
-                if(ImGui.button(buyNickNameItem(item)) && playerMoney>=item.buyingValue){
+            for(Item item : Farmland.get().getLoadedSave().getResourceDatabase().values()) {
+                if (ImGui.button(buyNickNameItem(item)) && playerMoney>=item.buyingValue) {
                     Farmland.get().getLoadedSave().getLocalPlayer().buyItem(item, 1);
                     updateLeaderboard();
                 }
@@ -834,25 +832,24 @@ public class InGameScene extends Scene {
                 ImGui.text(Resources.getLocalizedText("sellPrice", item.buyingValue));
             }
         }
-
     }
 
-    private String buyNickNameItem(Item item){
-        if(item instanceof Crop){
-            if(item.name.charAt(0) == 'A' || item.name.charAt(0) == 'E' ||
-                    item.name.charAt(0) == 'I' || item.name.charAt(0) == 'O' || item.name.charAt(0) == 'Y')
-                return "Graine d'" + item.name.toLowerCase();
-            return "Graine de " + item.name.toLowerCase();
-        }else if(item instanceof Animal){
-            return "Bébé " + item.name.toLowerCase();
+    private String buyNickNameItem(Item item) {
+        if (item instanceof Crop) {
+            return ((Crop)item).getLocalizedSeedName();
+        } else if (item instanceof Animal) {
+            return ((Animal)item).getLocalizedBabyName();
         }
-        return item.name;
+
+        return item.getLocalizedName();
     }
 
     private String sellnickNameItem(Item item){
-        if(item instanceof Animal)
-            return "Viande de " + item.name.toLowerCase();
-        return item.name;
+        if (item instanceof Animal) {
+            return Resources.getLocalizedText("meatOf", item.getLocalizedName().toLowerCase());
+        } else {
+            return item.getLocalizedName();
+        }
     }
 
     private void makeListOfPlayerItem(){
@@ -1114,7 +1111,15 @@ public class InGameScene extends Scene {
             String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
             String text = "";
             if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null && Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().containsKey(selectedId)) {
-                text += Resources.getLocalizedText("selected", Farmland.get().getItem(selectedId).name, Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity);
+                String itemName = Farmland.get().getItem(selectedId).getLocalizedName();
+
+                if (Farmland.get().getItem(selectedId) instanceof Crop) {
+                    itemName = ((Crop)Farmland.get().getItem(selectedId)).getLocalizedSeedName();
+                } else if (Farmland.get().getItem(selectedId) instanceof Animal) {
+                    itemName = ((Animal)Farmland.get().getItem(selectedId)).getLocalizedBabyName();
+                }
+
+                text += Resources.getLocalizedText("selected", itemName, Farmland.get().getLoadedSave().getLocalPlayer().getAllItemOfBoughtInventory().get(selectedId).quantity);
             }
             String text2 = "    " + Farmland.get().getLoadedSave().getLocalPlayer().money;
             getEntityByName("selectedLabel").getComponent(TextComponent.class).setText(text);

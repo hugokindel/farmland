@@ -1,6 +1,5 @@
 [
 	{
-		"name": "Tomate",
 		"id": "tomato",
 		"buyingValue" : 10,
 		"sellingValue" : 10,
@@ -14,10 +13,10 @@
 			"tomato5",
 			"tomato6"
 		],
-		"initValue": 10
+		"initValue": 10,
+		"nameId": "tomato"
 	},
 	{
-		"name": "Fraise",
 		"id": "strawberry",
 		"buyingValue" : 10,
 		"sellingValue" : 10,
@@ -31,10 +30,10 @@
 			"strawberry5",
 			"strawberry6"
 		],
-		"initValue": 10
+		"initValue": 10,
+		"nameId": "strawberry"
 	},
 	{
-		"name": "Mais",
 		"id": "corn",
 		"buyingValue" : 10,
 		"sellingValue" : 10,
@@ -48,10 +47,10 @@
 			"corn5",
 			"corn6"
 		],
-		"initValue": 10
+		"initValue": 10,
+		"nameId": "corn"
 	},
 	{
-		"name": "Raisins",
 		"id": "grapes",
 		"buyingValue" : 10,
 		"sellingValue" : 10,
@@ -65,10 +64,10 @@
 			"grapes5",
 			"grapes6"
 		],
-		"initValue": 10
+		"initValue": 10,
+		"nameId": "grapes"
 	},
 	{
-		"name": "Orange",
 		"id": "orange",
 		"buyingValue" : 10,
 		"sellingValue" : 10,
@@ -82,10 +81,10 @@
 			"orange5",
 			"orange6"
 		],
-		"initValue": 10
+		"initValue": 10,
+		"nameId": "orange"
 	},
 	{
-		"name": "Ananas",
 		"id": "pineapple",
 		"buyingValue" : 10,
 		"sellingValue" : 10,
@@ -99,10 +98,10 @@
 			"pineapple5",
 			"pineapple6"
 		],
-		"initValue": 10
+		"initValue": 10,
+		"nameId": "pineapple"
 	},
 	{
-		"name": "Radis",
 		"id": "shuttle",
 		"buyingValue" : 10,
 		"sellingValue" : 10,
@@ -116,10 +115,10 @@
 			"shuttle5",
 			"shuttle6"
 		],
-		"initValue": 10
+		"initValue": 10,
+		"nameId": "shuttle"
 	},
 	{
-		"name": "Pasteque",
 		"id": "watermelon",
 		"buyingValue" : 10,
 		"sellingValue" : 10,
@@ -133,6 +132,7 @@
 			"watermelon5",
 			"watermelon6"
 		],
-		"initValue": 10
+		"initValue": 10,
+		"nameId": "watermelon"
 	}
 ]

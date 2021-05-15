@@ -16,9 +16,6 @@ public class Item {
     public String id;
 
     @JsonSerializable
-    public String name;
-
-    @JsonSerializable
     public Integer initValue;
 
     @JsonSerializable
@@ -33,6 +30,9 @@ public class Item {
     @JsonSerializable(necessary = false)
     public Integer quantity;
 
+    @JsonSerializable(necessary = false)
+    public String nameId = null;
+
     public Spritesheet spritesheet;
 
     public Item() {
@@ -46,12 +46,12 @@ public class Item {
 
     public void takeValuesFrom(Item from) {
         this.id = from.id;
-        this.name = from.name;
         this.initValue = from.initValue;
         this.buyingValue = from.buyingValue;
         this.sellingValue = from.sellingValue;
         this.texture = from.texture;
         this.quantity = from.quantity;
+        this.nameId = from.nameId;
         this.spritesheet = from.spritesheet;
     }
 
@@ -77,5 +77,13 @@ public class Item {
 
     public boolean shouldBeDestroyed() {
         return false;
+    }
+
+    public String getLocalizedName() {
+        if (nameId == null || nameId.isEmpty()) {
+            return id;
+        }
+
+        return Resources.getLocalizedText(nameId);
     }
 }

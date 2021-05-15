@@ -1,82 +1,87 @@
 [
   {
-    "name": "Poulet",
     "id": "chicken",
-    "buyingValue" : 500,
-    "sellingValue" : 500,
+    "buyingValue": 500,
+    "sellingValue": 500,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "chicken.json",
-    "sprites" :[
+    "sprites": [
       "chicken1",
       "chicken2",
       "chicken3",
       "chicken4",
       "chicken1"
     ],
-    "initValue": 50
+    "initValue": 50,
+    "nameId": "chicken",
+    "babyId": "canary"
   },
   {
-    "name": "Vache",
     "id": "cow",
-    "buyingValue" : 50,
-    "sellingValue" : 50,
+    "buyingValue": 50,
+    "sellingValue": 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "cow.json",
-    "sprites" :[
+    "sprites": [
       "cow1",
       "cow2",
       "cow3",
       "cow4",
       "cow1"
     ],
-    "initValue": 50
+    "initValue": 50,
+    "nameId": "cow",
+    "babyId": "calf"
   },
   {
-    "name": "Chevre",
     "id": "goat",
-    "buyingValue" : 50,
-    "sellingValue" : 50,
+    "buyingValue": 50,
+    "sellingValue": 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "goat.json",
-    "sprites" :[
+    "sprites": [
       "goat1",
       "goat2",
       "goat3",
       "goat4",
       "goat1"
     ],
-    "initValue": 50
+    "initValue": 50,
+    "nameId": "goat",
+    "babyId": "kidGoat"
   },
   {
-    "name": "Cochon",
     "id": "pig",
-    "buyingValue" : 50,
-    "sellingValue" : 50,
+    "buyingValue": 50,
+    "sellingValue": 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "pig.json",
-    "sprites" :[
+    "sprites": [
       "pig1",
       "pig2",
       "pig3",
       "pig4",
       "pig1"
     ],
-    "initValue": 50
+    "initValue": 50,
+    "nameId": "pig",
+    "babyId": "piglet"
   },
   {
-    "name": "Mouton",
     "id": "sheep",
-    "buyingValue" : 50,
-    "sellingValue" : 50,
+    "buyingValue": 50,
+    "sellingValue": 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "sheep.json",
-    "sprites" :[
+    "sprites": [
       "sheep1",
       "sheep2",
       "sheep3",
       "sheep4",
       "sheep1"
     ],
-    "initValue": 50
+    "initValue": 50,
+    "nameId": "sheep",
+    "babyId": "lamb"
   }
 ]

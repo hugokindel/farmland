@@ -33,7 +33,7 @@ public class BuyItemMessage extends Message {
         Item item = getItem();
 
         if (Game.isDebugging()) {
-            Out.printlnDebug("Client " + Farmland.get().getPlayerId(getSenderId()) + ", bought " + item.name + " (x1)");
+            Out.printlnDebug("Client " + Farmland.get().getPlayerId(getSenderId()) + ", bought " + item.nameId + " (x1)");
         }
 
         Farmland.get().getLoadedSave().getCurrentPlayer().buyItem(item, 1);

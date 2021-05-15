@@ -50,4 +50,20 @@ public class Crop extends Item {
     public boolean shouldBeDestroyed() {
         return currentTurn > numberOfTurnsToGrow;
     }
+
+    public String getLocalizedSeedName() {
+        String itemName = getLocalizedName();
+
+        if (Resources.getConfig().language.equals("fr")) {
+            char start = itemName.charAt(0);
+
+            if (start == 'A' || start == 'E' || start == 'I' || start == 'O' || start == 'Y') {
+                return Resources.getLocalizedText("seedOf", Resources.getLocalizedText("of2").toLowerCase(), "", itemName.toLowerCase());
+            } else {
+                return Resources.getLocalizedText("seedOf", Resources.getLocalizedText("of1").toLowerCase(), " ", itemName.toLowerCase());
+            }
+        } else {
+            return Resources.getLocalizedText("seedOf", Resources.getLocalizedText("of1").toLowerCase(), " ", itemName.toLowerCase());
+        }
+    }
 }

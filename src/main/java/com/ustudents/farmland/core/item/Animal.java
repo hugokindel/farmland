@@ -16,6 +16,9 @@ public class Animal extends Item {
     @JsonSerializable(necessary = false)
     public Integer currentTurn = 1;
 
+    @JsonSerializable(necessary = false)
+    public String babyId;
+
     @JsonSerializableConstructor
     @Override
     public void deserialize(Map<String, Object> json) {
@@ -32,6 +35,7 @@ public class Animal extends Item {
         Animal result = new Animal();
         result.takeValuesFrom(animal);
         result.numberOfTurnsToReachMaturity = animal.numberOfTurnsToReachMaturity;
+        result.babyId = animal.babyId;
         return result;
     }
 
@@ -50,4 +54,11 @@ public class Animal extends Item {
         return currentTurn > numberOfTurnsToReachMaturity;
     }
 
+    public String getLocalizedBabyName() {
+        if (babyId == null || babyId.isEmpty()) {
+            return id;
+        }
+
+        return Resources.getLocalizedText(babyId);
+    }
 }

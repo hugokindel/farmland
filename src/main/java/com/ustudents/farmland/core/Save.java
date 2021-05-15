@@ -135,9 +135,9 @@ public class Save {
         animalItem = new ArrayList<>();
         for(Item item: Farmland.get().getItemDatabase().values()){
             if(item instanceof Crop){
-                cropItem.add((Crop) Crop.clone(item));
+                cropItem.add(Crop.clone((Crop)item));
             }else if(item instanceof Animal){
-                animalItem.add((Animal) Animal.clone(item));
+                animalItem.add(Animal.clone((Animal)item));
             }
 
         }

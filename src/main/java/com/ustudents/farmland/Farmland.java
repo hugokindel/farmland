@@ -446,7 +446,7 @@ public class Farmland extends Game {
         Resources.loadSpritesheet("crops/tomato.json");
         Resources.loadSpritesheet("crops/watermelon.json");
 
-        Resources.loadSpritesheet("decoration/cities.json");
+        Resources.loadSpritesheet("decoration/city.json");
         Resources.loadSpritesheet("decoration/mountain.json");
 
         Resources.loadSpritesheet("property/crops.json");

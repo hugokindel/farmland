@@ -1,7 +1,7 @@
 {
-  "path": "decoration/cities.png",
+  "path": "decoration/city.png",
   "sprites": {
-    "cities1": {
+    "city1": {
       "x": 0,
       "y": 0,
       "z": 28,
