@@ -143,13 +143,36 @@ public class InGameScene extends Scene {
 
         getEntityByName("canvas").createChildWithName("gameplayButtons");
 
+        Texture bankTexture = Resources.loadTexture("ui/bank.png");
+        GuiBuilder.ImageData imageDataBank= new GuiBuilder.ImageData(bankTexture);
+        imageDataBank.id = "bankButtonImage";
+        imageDataBank.parentId = "gameplayButtons";
+        imageDataBank.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        imageDataBank.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+
+        if (Resources.getConfig().language.equals("fr")) {
+            imageDataBank.position = new Vector2f(-800, -110);
+        } else {
+            imageDataBank.position = new Vector2f(-790, -110);
+        }
+
+        imageDataBank.scale = new Vector2f(3f, 3f);
+        imageDataBank.zIndex = 2;
+        guiBuilder.addImage(imageDataBank);
+
         Texture researchTexture = Resources.loadTexture("ui/research.png");
         GuiBuilder.ImageData imageDataResearch= new GuiBuilder.ImageData(researchTexture);
         imageDataResearch.id = "researchButtonImage";
         imageDataResearch.parentId = "gameplayButtons";
         imageDataResearch.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataResearch.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        imageDataResearch.position = new Vector2f(-642, -110);
+
+        if (Resources.getConfig().language.equals("fr")) {
+            imageDataResearch.position = new Vector2f(-642, -110);
+        } else {
+            imageDataResearch.position = new Vector2f(-613, -110);
+        }
+
         imageDataResearch.scale = new Vector2f(3f, 3f);
         imageDataResearch.zIndex = 2;
         guiBuilder.addImage(imageDataResearch);
@@ -160,21 +183,16 @@ public class InGameScene extends Scene {
         imageDataCaravan.parentId = "gameplayButtons";
         imageDataCaravan.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataCaravan.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        imageDataCaravan.position = new Vector2f(-465, -110);
+
+        if (Resources.getConfig().language.equals("fr")) {
+            imageDataCaravan.position = new Vector2f(-465, -110);
+        } else {
+            imageDataCaravan.position = new Vector2f(-435, -110);
+        }
+
         imageDataCaravan.scale = new Vector2f(3f, 3f);
         imageDataCaravan.zIndex = 2;
         guiBuilder.addImage(imageDataCaravan);
-
-        Texture inventoryTexture = Resources.loadTexture("ui/inventory.png");
-        GuiBuilder.ImageData imageDataInventory= new GuiBuilder.ImageData(inventoryTexture);
-        imageDataInventory.id = "inventoryButtonImage";
-        imageDataInventory.parentId = "gameplayButtons";
-        imageDataInventory.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
-        imageDataInventory.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        imageDataInventory.position = new Vector2f(-145, -110);
-        imageDataInventory.scale = new Vector2f(3f, 3f);
-        imageDataInventory.zIndex = 2;
-        guiBuilder.addImage(imageDataInventory);
 
 
         Texture marketTexture = Resources.loadTexture("ui/market.png");
@@ -183,10 +201,33 @@ public class InGameScene extends Scene {
         imageDataMarket.parentId = "gameplayButtons";
         imageDataMarket.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataMarket.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        imageDataMarket.position = new Vector2f(-320, -112);
+
+        if (Resources.getConfig().language.equals("fr")) {
+            imageDataMarket.position = new Vector2f(-320, -112);
+        } else {
+            imageDataMarket.position = new Vector2f(-290, -112);
+        }
+
         imageDataMarket.scale = new Vector2f(3f, 3f);
         imageDataMarket.zIndex = 2;
         guiBuilder.addImage(imageDataMarket);
+
+        Texture inventoryTexture = Resources.loadTexture("ui/inventory.png");
+        GuiBuilder.ImageData imageDataInventory= new GuiBuilder.ImageData(inventoryTexture);
+        imageDataInventory.id = "inventoryButtonImage";
+        imageDataInventory.parentId = "gameplayButtons";
+        imageDataInventory.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
+        imageDataInventory.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
+
+        if (Resources.getConfig().language.equals("fr")) {
+            imageDataInventory.position = new Vector2f(-145, -113);
+        } else {
+            imageDataInventory.position = new Vector2f(-105, -113);
+        }
+
+        imageDataInventory.scale = new Vector2f(3f, 3f);
+        imageDataInventory.zIndex = 2;
+        guiBuilder.addImage(imageDataInventory);
 
         Texture turnEndTexture = Resources.loadTexture("ui/time.png");
         GuiBuilder.ImageData imageDataTurnEnd= new GuiBuilder.ImageData(turnEndTexture);
@@ -194,21 +235,16 @@ public class InGameScene extends Scene {
         imageDataTurnEnd.parentId = "gameplayButtons";
         imageDataTurnEnd.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         imageDataTurnEnd.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        imageDataTurnEnd.position = new Vector2f(40, -114);
+
+        if (Resources.getConfig().language.equals("fr")) {
+            imageDataTurnEnd.position = new Vector2f(40, -114);
+        } else {
+            imageDataTurnEnd.position = new Vector2f(70, -114);
+        }
+
         imageDataTurnEnd.scale = new Vector2f(3f, 3f);
         imageDataTurnEnd.zIndex = 2;
         guiBuilder.addImage(imageDataTurnEnd);
-
-        Texture bankTexture = Resources.loadTexture("ui/bank.png");
-        GuiBuilder.ImageData imageDataBank= new GuiBuilder.ImageData(bankTexture);
-        imageDataBank.id = "bankButtonImage";
-        imageDataBank.parentId = "gameplayButtons";
-        imageDataBank.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
-        imageDataBank.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        imageDataBank.position = new Vector2f(-800, -110);
-        imageDataBank.scale = new Vector2f(3f, 3f);
-        imageDataBank.zIndex = 2;
-        guiBuilder.addImage(imageDataBank);
 
         Texture frameTexture = Resources.loadTexture("ui/frame.png");
         GuiBuilder.ImageData imageDataFrame = new GuiBuilder.ImageData(frameTexture);
@@ -286,6 +322,7 @@ public class InGameScene extends Scene {
         buttonData.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
         buttonData.position = new Vector2f(-10, -10);
+
         guiBuilder.addButton(buttonData);
 
         GuiBuilder.ButtonData buttonData1 = new GuiBuilder.ButtonData(Resources.getLocalizedText("inventory"), (dataType, data) -> {
@@ -295,7 +332,11 @@ public class InGameScene extends Scene {
         buttonData1.parentId = "gameplayButtons";
         buttonData1.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData1.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        buttonData1.position = new Vector2f(-220, -10);
+        if (Resources.getConfig().language.equals("fr")) {
+            buttonData1.position = new Vector2f(-220, -10);
+        } else {
+            buttonData1.position = new Vector2f(-185, -10);
+        }
         guiBuilder.addButton(buttonData1);
 
         GuiBuilder.ButtonData buttonData3 = new GuiBuilder.ButtonData(Resources.getLocalizedText("market"), (dataType, data) -> {
@@ -305,7 +346,11 @@ public class InGameScene extends Scene {
         buttonData3.parentId = "gameplayButtons";
         buttonData3.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonData3.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        buttonData3.position = new Vector2f(-400, -8);
+        if (Resources.getConfig().language.equals("fr")) {
+            buttonData3.position = new Vector2f(-400, -8);
+        } else {
+            buttonData3.position = new Vector2f(-370, -10);
+        }
         guiBuilder.addButton(buttonData3);
 
         GuiBuilder.ButtonData buttonDataC = new GuiBuilder.ButtonData(Resources.getLocalizedText("caravans"), (dataType, data) -> {
@@ -315,7 +360,11 @@ public class InGameScene extends Scene {
         buttonDataC.parentId = "gameplayButtons";
         buttonDataC.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonDataC.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        buttonDataC.position = new Vector2f(-535, -10);
+        if (Resources.getConfig().language.equals("fr")) {
+            buttonDataC.position = new Vector2f(-535, -10);
+        } else {
+            buttonDataC.position = new Vector2f(-515, -10);
+        }
         guiBuilder.addButton(buttonDataC);
 
         GuiBuilder.ButtonData buttonDataR = new GuiBuilder.ButtonData(Resources.getLocalizedText("research"), (dataType, data) -> {
@@ -325,7 +374,11 @@ public class InGameScene extends Scene {
         buttonDataR.parentId = "gameplayButtons";
         buttonDataR.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonDataR.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        buttonDataR.position = new Vector2f(-715, -10);
+        if (Resources.getConfig().language.equals("fr")) {
+            buttonDataR.position = new Vector2f(-715, -10);
+        } else {
+            buttonDataR.position = new Vector2f(-695, -10);
+        }
         guiBuilder.addButton(buttonDataR);
 
         GuiBuilder.ButtonData buttonDataB = new GuiBuilder.ButtonData("Banque", (dataType, data) -> {
@@ -335,7 +388,11 @@ public class InGameScene extends Scene {
         buttonDataB.parentId = "gameplayButtons";
         buttonDataB.origin = new Origin(Origin.Vertical.Bottom, Origin.Horizontal.Right);
         buttonDataB.anchor = new Anchor(Anchor.Vertical.Bottom, Anchor.Horizontal.Right);
-        buttonDataB.position = new Vector2f(-880, -10);
+        if (Resources.getConfig().language.equals("fr")) {
+            buttonDataB.position = new Vector2f(-880, -10);
+        } else {
+            buttonDataB.position = new Vector2f(-865, -10);
+        }
         guiBuilder.addButton(buttonDataB);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData(Resources.getLocalizedText("mainMenu"), (dataType, data) -> {
