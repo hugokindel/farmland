@@ -14,6 +14,9 @@ public class FarmlandServerConfig {
     @JsonSerializable(necessary = false)
     public String name = Resources.getLocalizedText("defaultServerName");
 
+    @JsonSerializable(necessary = false)
+    public Integer port = 8533;
+
     // TODO: Put at 2
     @JsonSerializable(necessary = false)
     public Integer capacity = 1;
@@ -41,9 +44,6 @@ public class FarmlandServerConfig {
 
     @JsonSerializable(necessary = false)
     public List<String> admin = new ArrayList<>();
-
-    @JsonSerializable(necessary = false)
-    public String port = "8533";
 
     public FarmlandServerConfig() {
 

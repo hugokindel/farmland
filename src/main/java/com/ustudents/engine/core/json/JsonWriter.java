@@ -66,6 +66,17 @@ public class JsonWriter {
         }
     }
 
+    public static void writeToFile(String filepath, Map<String, Object> map, String message) {
+        try {
+            JsonWriter writer = new JsonWriter(filepath);
+            writer.writeMessage(message);
+            writer.writeMap(map);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Writes a list to file in NJSon format.
      *
@@ -129,6 +140,10 @@ public class JsonWriter {
         }
 
         return null;
+    }
+
+    private void writeMessage(String message) {
+        write(message, false);
     }
 
     /**

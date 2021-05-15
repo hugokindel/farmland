@@ -9,6 +9,8 @@ import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.player.Avatar;
 import com.ustudents.farmland.core.player.Player;
 import com.ustudents.farmland.network.general.PlayerCreateMessage;
+import com.ustudents.farmland.network.general.PlayerExistsResponse;
+import com.ustudents.farmland.network.general.PlayerWithNameExistsRequest;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
 import imgui.type.ImString;
@@ -105,9 +107,13 @@ public class ServerNewPlayerMenu extends MenuScene {
                     buttons.contrast(10);
                 }
 
-                Farmland.get().getClient().send(new PlayerCreateMessage(playerId, playerName.get(), villageName.get(), new Color(bannerColor), braces, shirt, hat, buttons));
-                Farmland.get().clientPlayerId.set(playerId);
-                changeScene(new ServerWaitingPlayersMenu());
+                if (Farmland.get().getClient().request(new PlayerWithNameExistsRequest(playerName.get()), PlayerExistsResponse.class).exists()) {
+                    errors.add(Resources.getLocalizedText("playerExists"));
+                } else {
+                    Farmland.get().getClient().send(new PlayerCreateMessage(playerId, playerName.get(), villageName.get(), new Color(bannerColor), braces, shirt, hat, buttons));
+                    Farmland.get().clientPlayerId.set(playerId);
+                    changeScene(new ServerWaitingPlayersMenu());
+                }
             }
         }
 

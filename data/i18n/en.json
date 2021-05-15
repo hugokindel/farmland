@@ -149,6 +149,7 @@
         "saveAlreadyUsed": "A save with this name already exists!",
         "playerNameTooLong": "Your player name is too long (16 <=)!",
         "playerIllegalChar": "Your player name cannot contains the following characters: \"",
+        "playerExists": "A player with this name already exists!",
         "villageNameTooLong": "Your village name is too long (16 <=)!",
         "chicken": "Chicken",
         "canary": "Canary",

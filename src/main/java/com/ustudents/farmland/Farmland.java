@@ -96,8 +96,12 @@ public class Farmland extends Game {
     }
 
     @Override
-    public void onServerStarted() {
+    public void beforeServerStarts() {
         readServerConfig();
+    }
+
+    @Override
+    public void onServerStarted() {
         server.getClientDisconnectedDispatcher().add((dataType, data) -> {
             if (serverPlayerIdPerClientId.containsKey(data.clientId)) {
                 getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Bot;
@@ -265,7 +269,11 @@ public class Farmland extends Game {
     }
 
     private void writeServerConfig() {
-        Json.serialize(Resources.getDataDirectory() + "/server.json", serverConfig);
+        Json.serialize(Resources.getDataDirectory() + "/server.json", serverConfig,
+                "// Some settings will only happen when you remove the save file because they\n" +
+                        "// need to happen before the save file is created. Such as `capacity`,\n" +
+                        "// `numberOfBots`, `maximumLoanValue`, `debtRate` and `difficulty`. If you do\n" +
+                        "// not respect this directive, unexpected behavior might happen during gameplay.\n\n");
     }
 
     private void loadItems() {

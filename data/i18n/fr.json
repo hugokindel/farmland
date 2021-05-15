@@ -149,6 +149,7 @@
         "saveAlreadyUsed": "Une sauvegarde avec ce nom existe déjà !",
         "playerNameTooLong": "Le nom de votre joueur est trop long (16 <=) !",
         "playerIllegalChar": "Le nom de votre joueur ne peux pas contenir le caractère suivant : \"",
+        "playerExists": "Un joueur avec ce nom existe déjà !",
         "villageNameTooLong": "Le nom de votre village est trop long (16 <=) !",
         "chicken": "Poulet",
         "canary": "Poussin",

@@ -8,6 +8,7 @@ import com.ustudents.engine.network.messages.BroadcastMessage;
 import com.ustudents.engine.network.messages.DisconnectMessage;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.engine.utility.Pair;
+import com.ustudents.farmland.Farmland;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -47,7 +48,7 @@ public class Server extends Controller {
     @Override
     public boolean start() {
         try {
-            socket = new ServerSocket(DEFAULT_PORT);
+            socket = new ServerSocket(Farmland.get().serverConfig.port);
         } catch (Exception e) {
             e.printStackTrace();
 

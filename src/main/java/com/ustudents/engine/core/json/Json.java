@@ -31,6 +31,14 @@ public class Json {
         }
     }
 
+    public static <T> void serialize(String filePath, T object, String message) {
+        try {
+            JsonWriter.writeToFile(filePath, serialize(object), message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Serialize a Json map from an object.
      *
