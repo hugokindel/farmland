@@ -460,7 +460,6 @@ public class Farmland extends Game {
         Resources.loadSpritesheet("ui/button_down.json");
         Resources.loadSpritesheet("ui/button_focused.json");
         Resources.loadTexture("ui/cursor.png");
-        Resources.loadTexture("ui/defeat.png");
         Resources.loadTexture("ui/farmer.png");
         Resources.loadTexture("ui/farmer2.png");
         Resources.loadTexture("ui/farmer2breeder.png");
@@ -474,8 +473,11 @@ public class Farmland extends Game {
         Resources.loadSpritesheet("ui/map_cell_cursor.json");
         Resources.loadSpritesheet("ui/map_territory_indicator_white.json");
         Resources.loadTexture("ui/player.png");
-        Resources.loadTexture("ui/victory.png");
         Resources.loadSpritesheet("ui/window_default.json");
+        Resources.loadTexture("ui/en/defeat.png");
+        Resources.loadTexture("ui/en/victory.png");
+        Resources.loadTexture("ui/fr/defeat.png");
+        Resources.loadTexture("ui/fr/victory.png");
     }
 
     private void loadShaders() {

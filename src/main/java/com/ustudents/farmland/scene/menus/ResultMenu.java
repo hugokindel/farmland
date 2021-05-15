@@ -17,6 +17,7 @@ public class ResultMenu extends MenuScene {
     public Player currentPlayer;
     public Save currentSave;
     public boolean isWin;
+    public boolean comeFromServer;
 
     @Override
     public void initialize() {
@@ -30,8 +31,16 @@ public class ResultMenu extends MenuScene {
 
         GuiBuilder guiBuilder = new GuiBuilder();
 
-        // TODO: Translate images
-        String resultPath = (isWin)?"ui/victory.png":"ui/defeat.png";
+        String pathStart = "ui/";
+
+        if (Resources.getConfig().language.equals("fr")) {
+            pathStart += "fr/";
+        } else {
+            pathStart += "en/";
+        }
+
+        String resultPath = pathStart + ((isWin) ? "victory.png" : "defeat.png");
+
         Texture resultTexture = Resources.loadTexture(resultPath);
         GuiBuilder.ImageData imageData = new GuiBuilder.ImageData(resultTexture);
         imageData.id = "resultImage";
@@ -41,7 +50,7 @@ public class ResultMenu extends MenuScene {
         imageData.position.y = 7;
         guiBuilder.addImage(imageData);
 
-        if (Game.get().isConnectedToServer()) {
+        if (Game.get().isConnectedToServer() || comeFromServer) {
             buttonNames = new String[]{};
             buttonIds = new String[]{};
         } else {
