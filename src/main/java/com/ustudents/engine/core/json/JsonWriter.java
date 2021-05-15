@@ -154,7 +154,11 @@ public class JsonWriter {
     private void writeMap(Map<String, Object> map) {
         parentIsArray = false;
 
-        write("{" + (newLine ? "\n" : ""), false);
+        if (map.isEmpty()) {
+            write("{", false);
+        } else {
+            write("{" + (newLine ? "\n" : ""), false);
+        }
 
         String oldPrefix = prefix;
         prefix += "" + (tab ? "\t" : "");
@@ -174,7 +178,11 @@ public class JsonWriter {
 
         prefix = oldPrefix;
 
-        write("}");
+        if (map.isEmpty()) {
+            write("}", false);
+        } else {
+            write("}");
+        }
     }
 
     /**
@@ -203,7 +211,11 @@ public class JsonWriter {
                 write("[", false);
             }
         } else {
-            write("[" + (newLine ? "\n" : ""), false);
+            if (array.isEmpty()) {
+                write("[", false);
+            } else {
+                write("[" + (newLine ? "\n" : ""), false);
+            }
         }
 
         if (!array.isEmpty() && array.get(0) instanceof List) {
@@ -249,6 +261,8 @@ public class JsonWriter {
         } else if (beforeParentIsArray && !array.isEmpty() && array.get(0).getClass().isAnnotationPresent(JsonSerializable.class)) {
             write((newLine ? "\n" : ""), false);
             write("]");
+        } else if (!beforeParentIsArray && array.isEmpty()) {
+            write("]", false);
         } else {
             write("]", !beforeParentIsArray);
         }

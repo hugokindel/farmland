@@ -74,7 +74,11 @@ public class Farmland extends Game {
         changeIcon("ui/farmland_logo.png");
         changeCursor("ui/cursor.png");
         Console.create(new FarmlandConsoleCommands());
-        configMessage = "// THIS FILE SHOULD NOT BE MANUALLY EDITED!\n\n";
+        configMessage =
+                        "// THIS FILE SHOULD NOT BE MANUALLY EDITED!\n" +
+                        "//\n" +
+                        "// If you need to reset the settings, ensure the game is shutdown and\n" +
+                        "// delete this file, a new one will be generated next time you start the game.\n\n";
 
         loadConfig();
         loadTextures();
