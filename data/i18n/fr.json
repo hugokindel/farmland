@@ -125,6 +125,7 @@
         "of1": "De",
         "of2": "D'",
 		"selected": "\n\nSélectionné : {} (x{})",
+		"reset": "Réinitialiser",
 		"resetMapping": "Réinitialiser les touches",
 		"you": "Vous",
 		"console": "Console",

@@ -7,14 +7,26 @@ import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.ecs.component.audio.SoundComponent;
 import com.ustudents.engine.ecs.Entity;
+import com.ustudents.engine.graphic.Origin;
 import com.ustudents.farmland.Farmland;
 
 public class SettingsMenu extends MenuScene {
     @Override
     public void initialize() {
+        hasButtonNearBack = true;
+
+        goBackButtonOrigin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
+        goBackButtonSpacing.x = -10;
+        buttonNearBackOrigin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
+        buttonNearBackSpacing.x = 10;
+
+        if (Resources.getConfig().language.equals("fr")) {
+            buttonNearBackSpacing.y = -2;
+        }
+
         SoundManager currentSoundManager = Farmland.get().getSoundManager();
-        String[] buttonNames = new String[4];
-        String[] buttonIds = new String[4];
+        String[] buttonNames = new String[5];
+        String[] buttonIds = new String[5];
 
         if(currentSoundManager.getNoSound()){
             buttonNames[0] = Resources.getLocalizedText("activateSound");
@@ -32,6 +44,9 @@ public class SettingsMenu extends MenuScene {
 
         buttonNames[3] = Resources.getLocalizedText("commands");
         buttonIds[3] = "commands";
+
+        buttonNames[4] = Resources.getLocalizedText("reset");
+        buttonIds[4] = "reset";
 
         EventListener[] eventListeners = new EventListener[buttonNames.length];
 
@@ -61,6 +76,10 @@ public class SettingsMenu extends MenuScene {
                         break;
                     case "commands":
                         changeScene(new SettingsKeybindMenu());
+                        break;
+                    case "reset":
+                        Farmland.get().resetConfig();
+                        changeScene(new SettingsMenu(), false);
                         break;
                 }
             };

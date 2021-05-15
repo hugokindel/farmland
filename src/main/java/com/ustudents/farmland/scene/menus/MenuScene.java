@@ -25,6 +25,13 @@ public abstract class MenuScene extends Scene {
     boolean canGoToMainMenu;
     boolean canQuit;
     boolean canGoBack;
+    protected Vector2i goBackButtonSpacing = new Vector2i(0, 0);
+    protected Anchor goBackButtonAnchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+    protected Origin goBackButtonOrigin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+    protected boolean hasButtonNearBack = false;
+    protected Vector2i buttonNearBackSpacing = new Vector2i(0, 0);
+    protected Anchor buttonNearBackAnchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+    protected Origin buttonNearBackOrigin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
 
     public MenuScene() {
         this.buttonNames = new String[0];
@@ -94,18 +101,29 @@ public abstract class MenuScene extends Scene {
             guiBuilder.addImage(imageData);
         }*/
 
-
         int i;
         for (i = 0; i < buttonNames.length; i++) {
             GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(buttonNames[i], eventListeners[i]);
-            buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
-            buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
-            buttonData.position = new Vector2f(0, 250 + i * 75);
+
+            if (hasButtonNearBack && i == buttonNames.length - 1) {
+                buttonData.position = new Vector2f(buttonNearBackSpacing.x, 250 + i * 75 + buttonNearBackSpacing.y);
+                buttonData.origin = buttonNearBackOrigin;
+                buttonData.anchor = buttonNearBackAnchor;
+            } else {
+                buttonData.position = new Vector2f(0, 250 + i * 75);
+                buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
+                buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
+            }
+
             buttonData.id = buttonIds[i];
             guiBuilder.addButton(buttonData);
         }
 
         if (canGoBack) {
+            if (hasButtonNearBack) {
+                i--;
+            }
+
             try {
                 GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData(Resources.getLocalizedText("return"), (dataType, data) -> {
                     try {
@@ -114,9 +132,9 @@ public abstract class MenuScene extends Scene {
                         e.printStackTrace();
                     }
                 });
-                buttonData.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
-                buttonData.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
-                buttonData.position = new Vector2f(0, 250 + i * 75);
+                buttonData.origin = goBackButtonOrigin;
+                buttonData.anchor = goBackButtonAnchor;
+                buttonData.position = new Vector2f(goBackButtonSpacing.x, 250 + i * 75 + goBackButtonSpacing.y);
                 buttonData.id = "backButton";
                 guiBuilder.addButton(buttonData);
                 i++;

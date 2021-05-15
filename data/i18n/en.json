@@ -125,6 +125,7 @@
         "of1": "Of",
         "of2": "Of",
         "selected": "\n\nSelected: {} (x{})",
+        "reset": "Reset",
         "resetMapping": "Reset mapping",
         "you": "You",
         "console": "Console",

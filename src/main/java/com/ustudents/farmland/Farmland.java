@@ -553,4 +553,13 @@ public class Farmland extends Game {
 
         return false;
     }
+
+    public void resetConfig() {
+        Resources.resetConfig();
+        config = new FarmlandConfig();
+        if(Resources.getConfig().commands.isEmpty()){
+            initializeCommands(Resources.getConfig());
+        }
+        reloadCustomizableCommands();
+    }
 }

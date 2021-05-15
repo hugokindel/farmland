@@ -420,4 +420,8 @@ public class Resources {
             }
         }
     }
+
+    public static void resetConfig() {
+        config = new GameConfig();
+    }
 }
