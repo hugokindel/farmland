@@ -260,10 +260,36 @@ public class Console {
             String[] split = commandName.split(" ");
             String command = split[0];
             List<String> args = new ArrayList<>(Arrays.asList(split).subList(1, split.length));
+            List<String> argsCopy = new ArrayList<>(args);
 
-            if (listOfCommands.stream().anyMatch(c -> c.name.equals(command))) {
+            boolean inString = false;
+            int stringPos = -1;
+            int numSupp = 0;
+
+            for (int i = 0; i < argsCopy.size(); i++) {
+                String arg = argsCopy.get(i);
+
+                if (inString) {
+                    args.set(stringPos, args.get(stringPos) + " " + arg);
+
+                    if (arg.endsWith("\"")) {
+                        args.set(stringPos, args.get(stringPos).substring(0, args.get(stringPos).length() - 1));
+                        inString = false;
+                        stringPos = -1;
+                    }
+
+                    args.remove(i - numSupp);
+                    numSupp += 1;
+                } else if (arg.startsWith("\"")) {
+                    inString = true;
+                    stringPos = i;
+                    args.set(stringPos, arg.substring(1));
+                }
+            }
+
+            if (listOfCommands.stream().anyMatch(c -> c.name.equals(command) && (c.method.getParameters().length == args.size() || c.method.isVarArgs()))) {
                 for (ConsoleCommandData c : listOfCommands) {
-                    if (c.name.equals(command)) {
+                    if (c.name.equals(command) && (c.method.getParameters().length == args.size() || c.method.isVarArgs())) {
                         if (Arrays.stream(c.authority).anyMatch(e -> e == Game.get().getNetMode())) {
                             if (args.isEmpty()) {
                                 c.method.invoke(get().consoleCommands);

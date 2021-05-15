@@ -354,6 +354,10 @@ public class Player {
         return null;
     }
 
+    public boolean isDead() {
+        return Farmland.get().getLoadedSave().deadPlayers.contains(getId());
+    }
+
     public void selectItem(String itemId) {
         if (Game.get().hasAuthority()) {
             setSelectedItemId(itemId);

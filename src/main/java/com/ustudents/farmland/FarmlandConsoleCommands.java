@@ -3,11 +3,13 @@ package com.ustudents.farmland;
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.cli.option.annotation.Option;
+import com.ustudents.engine.core.cli.print.In;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.imgui.console.Console;
 import com.ustudents.engine.graphic.imgui.console.ConsoleCommand;
 import com.ustudents.engine.graphic.imgui.console.ConsoleCommands;
 import com.ustudents.engine.network.NetMode;
+import com.ustudents.engine.scene.Scene;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.network.general.PauseMessage;
 import com.ustudents.farmland.network.general.ReceiveChatMessage;
@@ -29,7 +31,17 @@ public class FarmlandConsoleCommands extends ConsoleCommands {
         return noSaveLoaded;
     }
 
-    @ConsoleCommand(description = "Adds a specific amount of money", argsDescription = "x", authority = {NetMode.Standalone})
+    public static boolean checkForPlayerName(String playerName) {
+        boolean notFound = Farmland.get().getLoadedSave().getPlayerByName(playerName) == null;
+
+        if (notFound) {
+            Console.printlnWarning("You need to specify an existing player!");
+        }
+
+        return notFound;
+    }
+
+    @ConsoleCommand(description = "Adds a specific amount of money", argsDescription = "quantity", authority = {NetMode.Standalone})
     public void addMoney(Integer quantity) {
         if (checkForSave()) {
             return;
@@ -38,21 +50,68 @@ public class FarmlandConsoleCommands extends ConsoleCommands {
         Farmland.get().getLoadedSave().getLocalPlayer().addMoney(quantity);
     }
 
-    @ConsoleCommand(description = "Forcefully win the current game", authority = {NetMode.Standalone})
+    @ConsoleCommand(description = "Forcefully win the game", authority = {NetMode.Standalone})
     public void win() {
         if (checkForSave()) {
             return;
         }
 
         ResultMenu resultMenu = new ResultMenu();
-        resultMenu.currentPlayer = Farmland.get().getLoadedSave().getLocalPlayer();
         resultMenu.currentSave = Farmland.get().getLoadedSave();
         resultMenu.isWin = true;
         Farmland.get().unloadSave();
         SceneManager.get().changeScene(resultMenu);
     }
 
-    @ConsoleCommand(description = "Pause the game", authority = {NetMode.Standalone, NetMode.ListenServer, NetMode.DedicatedServer})
+    @ConsoleCommand(description = "Forcefully make the wanted player win the game", argsDescription = "playerName", authority = {NetMode.Standalone})
+    public void win(String playerName) {
+        if (checkForSave()) {
+            return;
+        }
+
+        if (checkForPlayerName(playerName)) {
+            return;
+        }
+
+        ResultMenu resultMenu = new ResultMenu();
+        resultMenu.currentSave = Farmland.get().getLoadedSave();
+        resultMenu.isWin = Farmland.get().getLoadedSave().getLocalPlayer() == Farmland.get().getLoadedSave().getPlayerByName(playerName);
+        Farmland.get().unloadSave();
+        SceneManager.get().changeScene(resultMenu);
+    }
+
+    @ConsoleCommand(description = "Forcefully loose the game", authority = {NetMode.Standalone})
+    public void defeat() {
+        if (checkForSave()) {
+            return;
+        }
+
+        ResultMenu resultMenu = new ResultMenu();
+        resultMenu.currentSave = Farmland.get().getLoadedSave();
+        resultMenu.isWin = false;
+        Farmland.get().unloadSave();
+        SceneManager.get().changeScene(resultMenu);
+    }
+
+    @ConsoleCommand(description = "Forcefully make the wanted player loose the game", argsDescription = "playerName", authority = {NetMode.Standalone})
+    public void defeat(String playerName) {
+        if (checkForSave()) {
+            return;
+        }
+
+        if (checkForPlayerName(playerName)) {
+            return;
+        }
+
+        if (Farmland.get().getLoadedSave().getLocalPlayer() == Farmland.get().getLoadedSave().getPlayerByName(playerName)) {
+            defeat();
+        } else {
+            Farmland.get().getLoadedSave().deadPlayers.add(Farmland.get().getLoadedSave().getPlayerByName(playerName).getId());
+            ((InGameScene) SceneManager.get().getCurrentScene()).updateUi();
+        }
+    }
+
+    @ConsoleCommand(description = "Pause/unpause the game", authority = {NetMode.Standalone, NetMode.ListenServer, NetMode.DedicatedServer})
     public void pause() {
         if (checkForSave()) {
             return;

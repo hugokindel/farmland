@@ -1001,7 +1001,6 @@ public class InGameScene extends Scene {
             }
 
             ResultMenu resultMenu = new ResultMenu();
-            resultMenu.currentPlayer = human;
             resultMenu.currentSave = Farmland.get().getLoadedSave();
             if (human != null) {
                 resultMenu.isWin = human.money >= 1000;
@@ -1022,7 +1021,6 @@ public class InGameScene extends Scene {
 
                     if (player.money >= 1000) {
                         ResultMenu resultMenu = new ResultMenu();
-                        resultMenu.currentPlayer = currentPlayer;
                         resultMenu.currentSave = Farmland.get().getLoadedSave();
                         resultMenu.isWin = false;
                         Farmland.get().unloadSave();
@@ -1048,7 +1046,6 @@ public class InGameScene extends Scene {
 
             if (numberOfBots == 0 && Farmland.get().getLoadedSave().startWithBots) {
                 ResultMenu resultMenu = new ResultMenu();
-                resultMenu.currentPlayer = currentPlayer;
                 resultMenu.currentSave = Farmland.get().getLoadedSave();
                 resultMenu.isWin = true;
                 Farmland.get().unloadSave();
@@ -1056,6 +1053,26 @@ public class InGameScene extends Scene {
                 return true;
             }
         }
+
+        if (Farmland.get().getNetMode() == NetMode.Standalone) {
+            int count = 0;
+
+            for (Player player : Farmland.get().getLoadedSave().players) {
+                if (player.isDead()) {
+                    count++;
+                }
+            }
+
+            if (count == Farmland.get().getLoadedSave().players.size() - 1 && !Farmland.get().getLoadedSave().getLocalPlayer().isDead()) {
+                ResultMenu resultMenu = new ResultMenu();
+                resultMenu.currentSave = Farmland.get().getLoadedSave();
+                resultMenu.isWin = true;
+                Farmland.get().unloadSave();
+                changeScene(resultMenu);
+                return true;
+            }
+        }
+
         return false;
     }
 

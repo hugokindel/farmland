@@ -210,7 +210,6 @@ public class Save {
     @JsonSerializableConstructor
     public void deserialize() {
         random = new SeedRandom(this.seed);
-        deadPlayers = new ArrayList<>();
     }
 
     public void addPlayer(String name, String villageName, Color bannerColor, Color bracesColor, Color shirtColor, Color hatColor, Color buttonColor, Player.Type type) {
@@ -474,5 +473,15 @@ public class Save {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Player getPlayerByName(String name) {
+        for (Player player : players) {
+            if (player.name.equals(name)) {
+                return player;
+            }
+        }
+
+        return null;
     }
 }

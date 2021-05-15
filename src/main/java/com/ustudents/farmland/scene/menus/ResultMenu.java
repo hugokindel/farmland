@@ -14,7 +14,6 @@ import com.ustudents.farmland.scene.InGameScene;
 import org.joml.Vector2f;
 
 public class ResultMenu extends MenuScene {
-    public Player currentPlayer;
     public Save currentSave;
     public boolean isWin;
     public boolean comeFromServer;

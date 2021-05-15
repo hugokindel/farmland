@@ -54,7 +54,7 @@ public class Texture {
     }
 
     public Texture(ByteBuffer data, int width, int height, int numberOfComponents) {
-        this.path = "from memory (bytebuffer)";
+        this.path = "from memory (byte buffer)";
 
         if (Game.get().canRender()) {
             loadTexture(data, width, height, numberOfComponents);
