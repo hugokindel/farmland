@@ -19,6 +19,19 @@
 
 #### Implémentation
 
+### Inventaire
+
+#### Description
+
+#### Implémentation
+
+
+### Marché
+
+#### Description
+
+#### Implémentation
+
 
 
 ### Système de robot (intelligence artificielle)
