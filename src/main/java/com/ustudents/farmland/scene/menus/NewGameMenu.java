@@ -113,13 +113,15 @@ public class NewGameMenu extends MenuScene {
 
             if (saveName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("saveName"));
+            } else if (saveName.get().length() > 16) {
+                errors.add(Resources.getLocalizedText("saveTooLong"));
             } else if (Farmland.get().hasSaveWithName(saveName.get())) {
                 errors.add(Resources.getLocalizedText("saveAlreadyUsed"));
             }
             if (playerName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("playerName"));
             } else {
-                if (playerName.get().length() > 16) {
+                if (playerName.get().length() > 10) {
                     errors.add(Resources.getLocalizedText("playerNameTooLong"));
                 }
                 if (playerName.get().contains("\"")) {
@@ -128,7 +130,7 @@ public class NewGameMenu extends MenuScene {
             }
             if (villageName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("villageName"));
-            } else if (villageName.get().length() > 16) {
+            } else if (villageName.get().length() > 10) {
                 errors.add(Resources.getLocalizedText("villageNameTooLong"));
             }
             if (size[0] < 16 || size[1] < 16 || size[0] > 64 || size[1] > 64) {

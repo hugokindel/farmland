@@ -80,12 +80,12 @@ public class ServerNewPlayerMenu extends MenuScene {
 
             if (playerName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("playerName"));
-            } else if (playerName.get().length() > 16) {
+            } else if (playerName.get().length() > 10) {
                 errors.add(Resources.getLocalizedText("playerNameTooLong"));
             }
             if (villageName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("villageName"));
-            } else if (villageName.get().length() > 16) {
+            } else if (villageName.get().length() > 10) {
                 errors.add(Resources.getLocalizedText("villageNameTooLong"));
             }
 
