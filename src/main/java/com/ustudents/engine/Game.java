@@ -121,6 +121,8 @@ public abstract class Game extends Runnable {
     /** Should we authorize ImGui docking. */
     protected boolean enableDocking;
 
+    protected String configMessage = "";
+
     /** The game instance. */
     private static Game game;
 
@@ -625,7 +627,7 @@ public abstract class Game extends Runnable {
 
         window.destroy();
 
-        Resources.saveAndUnload();
+        Resources.saveAndUnload(configMessage);
 
         if (isDebugging()) {
             Out.printlnDebug("Destroyed.");

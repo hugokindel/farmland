@@ -74,6 +74,7 @@ public class Farmland extends Game {
         changeIcon("ui/farmland_logo.png");
         changeCursor("ui/cursor.png");
         Console.create(new FarmlandConsoleCommands());
+        configMessage = "// THIS FILE SHOULD NOT BE MANUALLY EDITED!\n\n";
 
         loadConfig();
         loadTextures();
@@ -270,10 +271,17 @@ public class Farmland extends Game {
 
     private void writeServerConfig() {
         Json.serialize(Resources.getDataDirectory() + "/server.json", serverConfig,
-                "// Some settings will only happen when you remove the save file because they\n" +
+                        "// This file contains the server configuration, feel free to edit what you need.\n" +
+                        "//\n" +
+                        "// Some settings will only happen when you remove the save file because they\n" +
                         "// need to happen before the save file is created. Such as `capacity`,\n" +
                         "// `numberOfBots`, `maximumLoanValue`, `debtRate` and `difficulty`. If you do\n" +
-                        "// not respect this directive, unexpected behavior might happen during gameplay.\n\n");
+                        "// not respect this directive, unexpected behavior might happen during gameplay.\n" +
+                        "//\n" +
+                        "// To reset the settings, ensure the server is shutdown and delete this file,\n" +
+                        "// a new config file will be generated next time you launch the server.\n" +
+                        "//\n" +
+                        "// Have fun!\n\n");
     }
 
     private void loadItems() {

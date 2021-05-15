@@ -120,7 +120,7 @@ public class Resources {
     }
 
     /** Saves everything. */
-    public static void saveAndUnload() {
+    public static void saveAndUnload(String message) {
         for (Map.Entry<String, Shader> shaderSet : shaders.entrySet()) {
             unloadShader(shaderSet.getKey(), false);
         }
@@ -149,7 +149,7 @@ public class Resources {
 
         spritesheets.clear();
 
-        saveConfig();
+        saveConfig(message);
     }
 
     /** Loads the settings into memory. */
@@ -170,10 +170,10 @@ public class Resources {
     }
 
     /** Saves the settings on the hard drive. */
-    private static void saveConfig() {
+    private static void saveConfig(String message) {
         try {
             if (config != null) {
-                Json.serialize(getDataDirectory() + "/" + settingsFilename, config);
+                Json.serialize(getDataDirectory() + "/" + settingsFilename, config, message);
             }
         } catch (Exception e) {
             e.printStackTrace();
