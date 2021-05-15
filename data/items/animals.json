@@ -1,8 +1,8 @@
 [
   {
     "id": "chicken",
-    "buyingValue": 500,
-    "sellingValue": 500,
+    "buyingValue": 50,
+    "sellingValue": 50,
     "numberOfTurnsToReachMaturity": 5,
     "texture": "chicken.json",
     "sprites": [
