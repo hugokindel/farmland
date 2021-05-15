@@ -279,11 +279,23 @@ public class Farmland extends Game {
                         "//\n" +
                         "// Some settings will only happen when you remove the save file because they\n" +
                         "// need to happen before the save file is created. Such as `capacity`,\n" +
-                        "// `numberOfBots`, `maximumLoanValue`, `debtRate` and `difficulty`. If you do\n" +
-                        "// not respect this directive, unexpected behavior might happen during gameplay.\n" +
+                        "// `numberOfBots`, `maximumLoanValue`, `debtRate` and `difficulty`, `mapSize`\n" +
+                        "// and `seed`. If you do not respect this directive, unexpected behavior\n" +
+                        "// might happen during gameplay.\n" +
                         "//\n" +
                         "// To reset the settings, ensure the server is shutdown and delete this file,\n" +
                         "// a new config file will be generated next time you launch the server.\n" +
+                        "//\n" +
+                        "// The following recommandations should be followed for the server to work:\n" +
+                        "// - `name` should be a string with a size within the range 1 to 16.\n" +
+                        "// - `port` should be an integer within the range 1 to 65536.\n" +
+                        "// - `capacity` should be an integer within the range 1 to 4.\n" +
+                        "// - `mapSize` should be a vector of two integers within th range 8 to 64.\n" +
+                        "// - `seed` should be a positive long value.\n" +
+                        "// - `numberOfBots` should be an integer within the range 1 to 4.\n" +
+                        "// - `maximumLoanValue` should be an integer greater than 0.\n" +
+                        "// - `debtRate` should be an integer within the range 1 to 100.\n" +
+                        "// - `difficulty` should be either `Easy`, `Normal`, `Hard` or `Impossible`.\n" +
                         "//\n" +
                         "// Have fun!\n\n");
     }
@@ -510,8 +522,8 @@ public class Farmland extends Game {
 
     private void loadOrCreateServerSave() {
         if (!saves.containsKey("save-server.json")) {
-            Save save = new Save(serverConfig.name, new Vector2i(16, 16),
-                    System.currentTimeMillis(), serverConfig.numberOfBots, serverConfig.maximumLoanValue,
+            Save save = new Save(serverConfig.name, serverConfig.mapSize,
+                    serverConfig.seed, serverConfig.numberOfBots, serverConfig.maximumLoanValue,
                     serverConfig.debtRate, serverConfig.difficulty);
             save.path = "save-server.json";
             save.capacity = serverConfig.capacity;

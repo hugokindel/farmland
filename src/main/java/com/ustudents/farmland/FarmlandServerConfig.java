@@ -5,6 +5,7 @@ import com.ustudents.engine.core.json.annotation.JsonSerializable;
 import com.ustudents.engine.network.Server;
 import com.ustudents.farmland.core.player.Bot;
 import com.ustudents.farmland.core.system.Research;
+import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,12 @@ public class FarmlandServerConfig {
     // TODO: Put at 2
     @JsonSerializable(necessary = false)
     public Integer capacity = 1;
+
+    @JsonSerializable(necessary = false)
+    public Vector2i mapSize = new Vector2i(16, 16);
+
+    @JsonSerializable(necessary = false)
+    public Long seed = System.currentTimeMillis();
 
     @JsonSerializable(necessary = false)
     public Integer numberOfBots = 0;
