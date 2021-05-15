@@ -70,7 +70,7 @@ public class NewGameMenu extends MenuScene {
 
     @Override
     public void renderImGui() {
-        ImGuiUtils.setNextWindowWithSizeCentered(850, 400, ImGuiCond.Appearing);
+        ImGuiUtils.setNextWindowWithSizeCentered(850, 500, ImGuiCond.Appearing);
         ImGui.begin(Resources.getLocalizedText(Resources.getLocalizedText("newGame")));
 
         ImGui.text(Resources.getLocalizedText("newGameDescription"));
@@ -112,18 +112,24 @@ public class NewGameMenu extends MenuScene {
 
             if (saveName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("saveName"));
+            } else if (Farmland.get().hasSaveWithName(saveName.get())) {
+                errors.add(Resources.getLocalizedText("saveAlreadyUsed"));
             }
             if (playerName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("playerName"));
+            } else if (playerName.get().length() > 16) {
+                errors.add(Resources.getLocalizedText("playerNameTooLong"));
             }
             if (villageName.isEmpty()) {
                 errors.add(Resources.getLocalizedText("villageName"));
+            } else if (villageName.get().length() > 16) {
+                errors.add(Resources.getLocalizedText("villageNameTooLong"));
             }
-            if (size[0] < 16 || size[1] < 16) {
+            if (size[0] < 16 || size[1] < 16 || size[0] > 64 || size[1] > 64) {
                 errors.add(Resources.getLocalizedText("correctSize"));
             }
             if (seed.get() <= 0) {
-                errors.add(Resources.getLocalizedText("correctSeed)"));
+                errors.add(Resources.getLocalizedText("correctSeed"));
             }
 
             if (errors.isEmpty()) {
@@ -150,7 +156,7 @@ public class NewGameMenu extends MenuScene {
 
                 Farmland.get().getSaves().put(save.name, save);
                 Farmland.get().loadSave(save.name);
-                Farmland.get().writeAllSaves();
+                Farmland.get().writeLoadedSave();
 
                 SceneManager.get().popTypeOfLastScene();
 

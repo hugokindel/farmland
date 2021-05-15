@@ -94,7 +94,7 @@
 		"saveName": "Veuillez entre un nom de partie !",
 		"playerName": "Veuillez entrer un nom de joueur !",
 		"villageName": "Veuillez entrer un nom de village !",
-		"correctSize": "Veuillez entrer une taille de carte valide (>= 16) !",
+		"correctSize": "Veuillez entrer une taille de carte valide (>= 16 et 64 <=) !",
 		"correctSeed": "Veuillez entrer une graine valide (> 0) !",
 		"correctInfo": "Veuillez entrer une adresse et un port!",
 		"correctFormat": "Veuillez entrer un format valide!",
@@ -158,6 +158,9 @@
         "display": "Affichage : {}",
         "fullscreen": "Pleine écran",
         "borderless": "Fenêtré sans bordure",
-        "windowed": "Fenêtré"
+        "windowed": "Fenêtré",
+        "saveAlreadyUsed": "Une sauvegarde avec ce nom existe déjà !",
+        "playerNameTooLong": "Le nom de votre joueur est trop long (16 <=) !",
+        "villageNameTooLong": "Le nom de votre village est trop long (16 <=) !"
 	}
 }

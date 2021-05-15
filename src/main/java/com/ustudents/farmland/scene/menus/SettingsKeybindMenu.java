@@ -1,10 +1,7 @@
 package com.ustudents.farmland.scene.menus;
 
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.EventListener;
-import com.ustudents.engine.core.window.events.KeyStateChangedEvent;
-import com.ustudents.engine.core.window.events.MouseButtonStateChangedEvent;
 import com.ustudents.engine.graphic.Anchor;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.Origin;

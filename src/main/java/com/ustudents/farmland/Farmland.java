@@ -91,7 +91,7 @@ public class Farmland extends Game {
 
     @Override
     protected void destroy() {
-        writeAllSaves();
+        writeLoadedSave();
         saveConfig();
     }
 
@@ -139,6 +139,12 @@ public class Farmland extends Game {
                     Out.printlnError("Cannot load savegame: " + path);
                 }
             }
+        }
+    }
+
+    public void writeLoadedSave() {
+        if (loadedSaveId != null) {
+            Json.serialize(Resources.getSavesDirectoryName() + "/" + getLoadedSave().path, getLoadedSave());
         }
     }
 
@@ -197,6 +203,18 @@ public class Farmland extends Game {
             loadedSaveId = null;
             loadedSaveChanged.dispatch();
         }
+    }
+
+    public boolean hasSaveWithName(String name) {
+        for (Map.Entry<String, Save> saveEntry : saves.entrySet()) {
+            Save save = saveEntry.getValue();
+
+            if (save.name.equals(name)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public Map<String, Item> getItemDatabase() {
@@ -281,6 +299,7 @@ public class Farmland extends Game {
     public void initializeCommands(GameConfig config){
         Map<String, Action> actions = config.commands;
         Action action;
+
         if(!actions.containsKey("goUp")){
             action = new Action();
             Mapping KeyW = new Mapping("keyboard");
@@ -291,6 +310,7 @@ public class Farmland extends Game {
             action.addMapping(KeyUp);
             config.commands.put("goUp", action);
         }
+
         if(!actions.containsKey("goDown")){
             action = new Action();
             Mapping KeyS = new Mapping("keyboard");
@@ -301,6 +321,7 @@ public class Farmland extends Game {
             action.addMapping(KeyDown);
             config.commands.put("goDown", action);
         }
+
         if(!actions.containsKey("goLeft")){
             action = new Action();
             Mapping KeyA = new Mapping("keyboard");
@@ -311,6 +332,7 @@ public class Farmland extends Game {
             action.addMapping(KeyLeft);
             config.commands.put("goLeft", action);
         }
+
         if(!actions.containsKey("goRight")){
             action = new Action();
             Mapping KeyD = new Mapping("keyboard");
@@ -321,6 +343,7 @@ public class Farmland extends Game {
             action.addMapping(KeyRight);
             config.commands.put("goRight", action);
         }
+
         if(!actions.containsKey("showTerritory")) {
             action = new Action();
             Mapping KeyCtrlG = new Mapping("keyboard");
@@ -331,6 +354,7 @@ public class Farmland extends Game {
             action.addMapping(KeyCtrlD);
             config.commands.put("showTerritory", action);
         }
+
         if(!actions.containsKey("putItem")) {
             action = new Action();
             Mapping leftMouseButton = new Mapping("mouse");
@@ -338,6 +362,7 @@ public class Farmland extends Game {
             action.addMapping(leftMouseButton);
             config.commands.put("putItem", action);
         }
+
         if(!actions.containsKey("getItem")) {
             action = new Action();
             Mapping RightMouseButton = new Mapping("mouse");
@@ -352,6 +377,7 @@ public class Farmland extends Game {
             action.addMapping(debug);
             config.commands.put("showDebug", action);
         }
+
         if(!actions.containsKey("showPerfomance")) {
             action = new Action();
             Mapping showPerfomance = new Mapping("keyboard");
@@ -359,6 +385,7 @@ public class Farmland extends Game {
             action.addMapping(showPerfomance);
             config.commands.put("showPerfomance", action);
         }
+
         if(!actions.containsKey("showConsole")) {
             action = new Action();
             Mapping showConsole = new Mapping("keyboard");

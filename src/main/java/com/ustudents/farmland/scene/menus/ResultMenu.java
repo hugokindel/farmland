@@ -59,7 +59,7 @@ public class ResultMenu extends MenuScene {
                 if ("replay".equals(buttonIds[j])) {
                     Farmland.get().loadedSaveId = currentSave.name;
                     Farmland.get().replaceLoadedSave(new Save(currentSave));
-                    Farmland.get().writeAllSaves();
+                    Farmland.get().writeLoadedSave();
 
                     changeScene(new InGameScene());
                 }

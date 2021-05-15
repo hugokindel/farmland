@@ -94,7 +94,7 @@
         "saveName": "Please enter a name for your game!",
         "playerName": "Please enter a player name!",
         "villageName": "Please enter a village name!",
-        "correctSize": "Please enter a valid card size (>= 16)!",
+        "correctSize": "Please enter a valid card size (>= 16 and 64 <=)!",
         "correctSeed": "Please enter a valid seed (> 0)!",
         "correctInfo": "Please enter an address and a port!",
         "correctFormat": "Please enter a valid format!",
@@ -158,6 +158,9 @@
         "display": "Display: {}",
         "fullscreen": "Fullscreen",
         "borderless": "Borderless",
-        "windowed": "Windowed"
+        "windowed": "Windowed",
+        "saveAlreadyUsed": "A save with this name already exists!",
+        "playerNameTooLong": "You player name is too long (16 <=)!",
+        "villageNameTooLong": "You village name is too long (16 <=)!"
     }
 }

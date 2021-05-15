@@ -338,6 +338,7 @@ public class InGameScene extends Scene {
         guiBuilder.addButton(buttonDataB);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData(Resources.getLocalizedText("mainMenu"), (dataType, data) -> {
+            Farmland.get().writeLoadedSave();
             Farmland.get().unloadSave();
             if (getGame().isConnectedToServer()) {
                 getGame().disconnectFromServer();
