@@ -975,9 +975,9 @@ public class InGameScene extends Scene {
                     }
 
                     if (cell.hasItem()) {
-                        cell.item.endTurn();
-
-                        if (cell.item.shouldBeDestroyed()) {
+                        if (!cell.item.shouldBeDestroyed()) {
+                           cell.item.endTurn();
+                        } else if (Farmland.get().fastHarvest || cell.isOwnedByBot()) {
                             Player player = Farmland.get().getLoadedSave().players.get(cell.ownerId);
                             player.addToInventory(cell.item, Player.InventoryType.WaitingToBeSold);
                             cell.item = null;
@@ -1253,7 +1253,7 @@ public class InGameScene extends Scene {
             }
         }
 
-        if (Input.isMouseRelease(MouseButton.Right)) {
+        if (Input.isMouseRelease(MouseButton.Middle)) {
             if (Farmland.get().getLoadedSave().getLocalPlayer().getId().equals(Farmland.get().getLoadedSave().getCurrentPlayer().getId())) {
                 if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
                     lastSelectedItemId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;

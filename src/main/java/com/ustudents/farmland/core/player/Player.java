@@ -474,6 +474,18 @@ public class Player {
         }
     }
 
+    public void harvestSelectedItem(Vector2i position) {
+        if (Game.get().hasAuthority()) {
+            Cell cell = Farmland.get().getLoadedSave().getCell(position);
+            addToInventory(cell.item, Player.InventoryType.WaitingToBeSold);
+            cell.item = null;
+
+            Farmland.get().serverBroadcastSave();
+        } else {
+            Game.get().getClient().send(new HarvestItemMessage(position));
+        }
+    }
+
     public void takeLoan(int amount) {
         if (Game.get().hasAuthority()) {
             money += amount;

@@ -112,7 +112,6 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     public void update(float dt) {
         selectionCursor.update(dt);
 
-        //showTypeOfTerritory = Input.isKeyDown(Key.LeftControl) || Input.isKeyDown(Key.RightControl);
         showTypeOfTerritory = Input.isActionSuccessful("showTerritory");
 
         if (currentSelectedCell.x == -1 || !Input.isMouseInWorldViewRect(
@@ -140,6 +139,15 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
                 Farmland.get().getLoadedSave().currentPlayerId.equals(Farmland.get().getLoadedSave().localPlayerId)
                 && Farmland.get().getLoadedSave().getLocalPlayer().money >= 25) {
             Farmland.get().getLoadedSave().getLocalPlayer().buyCell(currentSelectedCell);
+        }
+
+        if (selectionDrawingEnabled() && currentSelectedCell.x != -1 &&
+                !Input.isKeyDown(Key.LeftAlt) && !Input.isKeyDown(Key.RightAlt) &&
+                Input.isMousePressed(MouseButton.Right) &&
+                Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId()) &&
+                cellIsOwnedByLocalPlayer(currentSelectedCell.x, currentSelectedCell.y) && getCell(currentSelectedCell).isOwnedByCurrentPlayer() &&
+                getCell(currentSelectedCell).hasItem() && getCell(currentSelectedCell).item.shouldBeDestroyed()) {
+            Farmland.get().getLoadedSave().getLocalPlayer().harvestSelectedItem(currentSelectedCell);
         }
     }
 

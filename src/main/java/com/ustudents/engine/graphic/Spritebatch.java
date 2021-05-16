@@ -604,7 +604,6 @@ public class Spritebatch {
     }
 
     public void drawNineSlicedSprite(NineSlicedSpriteData spriteRenderer) {
-        // TODO: Add rotation support (not useful for now).
         Vector2f realPosition = new Vector2f(
                 spriteRenderer.position.x - spriteRenderer.scale.x * spriteRenderer.origin.x,
                 spriteRenderer.position.y - spriteRenderer.scale.y * spriteRenderer.origin.y);
@@ -862,7 +861,6 @@ public class Spritebatch {
     }
 
     public void drawText(TextData textRenderer) {
-        // TODO: Add rotation support (not useful for now).
         Font realFont;
 
         if (textRenderer.scale.x == textRenderer.scale.y) {
@@ -890,7 +888,6 @@ public class Spritebatch {
                 realFont.getTextHeight(textRenderer.text)
         );
 
-        // TODO: Remove '- 1f' ?
         Vector2f realPosition = new Vector2f(debugPosition.x, debugPosition.y + realFont.getAscentHeight() - realFont.getDescentHeight() - 1f);
 
         int lineNumber = 0;

@@ -48,7 +48,7 @@ public class Crop extends Item {
 
     @Override
     public boolean shouldBeDestroyed() {
-        return currentTurn > numberOfTurnsToGrow;
+        return currentTurn >= numberOfTurnsToGrow;
     }
 
     public String getLocalizedSeedName() {

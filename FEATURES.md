@@ -803,7 +803,7 @@ Alt et BSG | Déplacer la caméra à l'aide de la souris
 Ctrl | Afficher les territoires
 Ctrl et BSG | Acheter le terrain à la position de la souris (si terrain proche du terrain possédé et que Alt n'est pas aussi pressé)
 BSG | Poser un objet (si un objet est sélectionné et que Alt n'est pas aussi pressé)
-BSD | Activer/désactiver la sélection d'objet
+BSM | Activer/désactiver la sélection d'objet
 Z | Déplacer la caméra vers l'avant
 S | Déplacer la caméra vers l'arrière
 Q | Déplacer la caméra vers la gauche

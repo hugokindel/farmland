@@ -51,7 +51,7 @@ public class Animal extends Item {
 
     @Override
     public boolean shouldBeDestroyed() {
-        return currentTurn > numberOfTurnsToReachMaturity;
+        return currentTurn >= numberOfTurnsToReachMaturity;
     }
 
     public String getLocalizedBabyName() {
