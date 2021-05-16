@@ -22,6 +22,7 @@ de cette boucle (lorsqu'il est temps de quitter le jeu), il va se détruire.
 
 Elle peut-être visualier comme ceci:
 
+[comment]: <> (C'est un graphique utilisant la lib mermaid, fonctionne uniquement sur gitlab)
 ```mermaid
 graph TD;
   Initialization-->GameLoop;
@@ -335,6 +336,19 @@ Exemple de fichier de langue en pseudo-JSON:
         "quit": "Quitter",
         "version": "Version: {}"
     }
+}
+```
+
+### Utilisation
+
+Il est relativement simple à utiliser, le jeu possède une langue par défaut que l'on peux changer à tout moment
+pour autant qu'il y a de fichier de langues de trouvé.
+
+Récupérer un texte est suffisamment simple:
+```java
+public void exemple() {
+    System.out.println(Resources.getLocalizedText("language")); // Récupère le texte d'ID `language`
+    System.out.println(Resources.getLocalizedText("version", "1.0.0")); // Récupère le texte d'ID `version` avec 1 paramètre.
 }
 ```
 
