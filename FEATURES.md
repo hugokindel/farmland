@@ -798,15 +798,22 @@ Combinaison | Description
 F1 | Afficher le gestionnaire de jeu
 F2 | Afficher le visualiseur de donnée
 ² | Afficher la console
-Alt + BSG | Se déplacer à l'aide de la souris
+Alt + BSG | Déplacer la caméra à l'aide de la souris
 Ctrl | Afficher les territoires
 Ctrl + BSG | Acheter le terrain à la position de la souris (si terrain proche du terrain possédé et que Alt n'est pas aussi pressé)
 BSG | Poser un objet (si un objet est sélectionné et que Alt n'est pas aussi pressé)
 BSD | Activer/désactiver la sélection d'objet
+Z | Déplacer la caméra vers l'avant
+S | Déplacer la caméra vers l'arrière
+Q | Déplacer la caméra vers la gauche
+D | Déplacer la caméra vers la droite
+Scroll+ | Zoomer la caméra
+Scroll- | Dézoomer la caméra
 
 #### Informations sur les touches
 
 - BSG correspond à bouton souris gauche
+- BSM correspond à bouton souris milieu
 - BSD correspond à bouton souris droit
 - AltG correspond à Alt gauche.
 - AltD correspond à Alt droit.

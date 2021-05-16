@@ -141,4 +141,8 @@ public class Window {
         int nextType = Resources.getConfig().windowType.ordinal() == 2 ? 0 : Resources.getConfig().windowType.ordinal() + 1;
         switchType(Type.values()[nextType]);
     }
+
+    public void chooseDefaultType() {
+        switchType(Type.values()[0]);
+    }
 }

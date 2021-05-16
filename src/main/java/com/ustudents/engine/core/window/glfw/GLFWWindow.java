@@ -393,6 +393,8 @@ public class GLFWWindow extends EmptyWindow {
 
     @Override
     public void switchType(Window.Type type) {
+        Window.Type oldType = this.type;
+
         if (this.type != type) {
             Resources.getConfig().windowType = type;
             this.type = type;
@@ -405,9 +407,12 @@ public class GLFWWindow extends EmptyWindow {
                         vidMode.height(), 0);
             } else if (type == Window.Type.Borderless) {
                 glfwSetWindowAttrib(windowHandle, GLFW_DECORATED, GLFW_FALSE);
-                glfwSetWindowMonitor(windowHandle, NULL, 0, 0, vidMode.width(), vidMode.height(),
-                        0);
+                glfwSetWindowMonitor(windowHandle, NULL, 0, 0, vidMode.width(), vidMode.height(), 0);
             } else {
+                if (oldType == Window.Type.Fullscreen) {
+                    glfwSetWindowMonitor(windowHandle, NULL, 0, 0, Resources.getConfig().windowedSize.x, Resources.getConfig().windowedSize.y, 0);
+                }
+
                 glfwSetWindowSize(windowHandle, Resources.getConfig().windowedSize.x, Resources.getConfig().windowedSize.y);
                 glfwSetWindowPos(windowHandle, vidMode.width() / 2 - Resources.getConfig().windowedSize.x / 2,
                         vidMode.height() / 2 - Resources.getConfig().windowedSize.y / 2);
@@ -415,6 +420,12 @@ public class GLFWWindow extends EmptyWindow {
                 glfwSetWindowSize(windowHandle, Resources.getConfig().windowedSize.x, Resources.getConfig().windowedSize.y);
                 glfwSetWindowPos(windowHandle, vidMode.width() / 2 - Resources.getConfig().windowedSize.x / 2,
                         vidMode.height() / 2 - Resources.getConfig().windowedSize.y / 2);
+            }
+
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

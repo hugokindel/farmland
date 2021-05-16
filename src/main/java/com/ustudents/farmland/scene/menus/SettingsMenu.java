@@ -28,7 +28,7 @@ public class SettingsMenu extends MenuScene {
         String[] buttonNames = new String[5];
         String[] buttonIds = new String[5];
 
-        if(currentSoundManager.getNoSound()){
+        if(getEntityByName("backgroundMusic").getComponent(SoundComponent.class).source.isPaused() || getEntityByName("backgroundMusic").getComponent(SoundComponent.class).source.isStopped()){
             buttonNames[0] = Resources.getLocalizedText("activateSound");
             buttonIds[0] = "activateSound";
         }else{
@@ -54,33 +54,40 @@ public class SettingsMenu extends MenuScene {
             int j = i;
             eventListeners[i] = (dataType, data) -> {
                 switch (buttonIds[j]) {
-                    case "activateSound":
-                        initializeMusic();
-                        Sound musicSound = Resources.loadSound("music/main_menu_background.ogg");
-                        Entity music = createEntityWithName("backgroundMusic");
-                        music.keepOnLoad(true);
-                        new SoundComponent(musicSound, true, true).play();
+                    case "activateSound": {
+                        getEntityByName("backgroundMusic").getComponent(SoundComponent.class).play();
                         changeScene(new SettingsMenu(), false);
                         break;
-                    case "deactivateSound":
-                        currentSoundManager.stopAll();
+                    }
+                    case "deactivateSound": {
+                        getEntityByName("backgroundMusic").getComponent(SoundComponent.class).pause();
                         changeScene(new SettingsMenu(), false);
                         break;
-                    case "changeLanguage":
+                    }
+                    case "changeLanguage": {
                         Resources.chooseNextLanguage();
                         changeScene(new SettingsMenu(), false);
                         break;
-                    case "windowType":
+                    }
+                    case "windowType": {
                         Window.get().chooseNextType();
                         changeScene(new SettingsMenu(), false);
                         break;
-                    case "commands":
+                    }
+                    case "commands": {
                         changeScene(new SettingsKeybindMenu());
                         break;
-                    case "reset":
+                    }
+                    case "reset": {
                         Farmland.get().resetConfig();
+                        if (getEntityByName("backgroundMusic").getComponent(SoundComponent.class).source.isPaused() || getEntityByName("backgroundMusic").getComponent(SoundComponent.class).source.isStopped()) {
+                            getEntityByName("backgroundMusic").getComponent(SoundComponent.class).play();
+                        }
+                        Resources.chooseDefaultLanguage();
+                        Window.get().chooseDefaultType();
                         changeScene(new SettingsMenu(), false);
                         break;
+                    }
                 }
             };
         }

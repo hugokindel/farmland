@@ -421,6 +421,10 @@ public class Resources {
         }
     }
 
+    public static void chooseDefaultLanguage() {
+        config.language = languagesList.get(1);
+    }
+
     public static void resetConfig() {
         config = new GameConfig();
     }

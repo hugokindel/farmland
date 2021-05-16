@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="500px" src="https://uni-farmland.s3.eu-west-3.amazonaws.com/farmland.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+  <img width="500px" src="images/farmland.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
 </div>
 
 # Farmland
@@ -9,9 +9,9 @@ Farmland is a management game where you need to take care of your farm while bei
 ## Screenshots
 
 <div align="center">
-    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot1.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
-    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot2.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
-    <img src="https://uni-farmland.s3.eu-west-3.amazonaws.com/screenshot3.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+    <img src="images/screenshot1.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+    <img src="images/screenshot2.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+    <img src="images/screenshot3.png" height="180px" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
 </div>
 
 ## Features

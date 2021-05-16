@@ -1,5 +1,8 @@
 # Instructions de test des fonctionnalités principales
 
+La majeure partie du projet devrait être relativement intuitive à utiliser, mais voici l'aide pour certaines
+fonctionnalités primordiale du projet.
+
 ## I) Compiler et lancer le jeu
 
 Les instructions pour compiler et lancer le jeu sont présente dans le [README](README.md).
@@ -8,8 +11,10 @@ Les instructions pour compiler et lancer le jeu sont présente dans le [README](
 
 ### 1) Création d'une partie
 
-![Farmland-NewGame-Menu](images/Farmland-NewGame.png)
-    
+<div align="center">
+  <img src="images/instructions1.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+</div>
+
 Lorsque vous arrivez pour la première fois dans le mode solo, vous devez obligatoirement créer une partie à l'aide du
 menu que vous pouvez voir ci-dessus, afin de finir la création de la partie vous devrez fournir au moins le nom de la
 partie, votre pseudo ainsi que le nom du village. Les autres champs vous permettront de modifier les informations en
@@ -20,46 +25,28 @@ question pour personnaliser votre expérience.
 
 Une fois que la partie est créé et que vous êtes dans celle-ci, vous aurez de multiples options à votre disposition pour
 remporter la partie :
-    
-   - Le marché qui permet d'acheter vos items ainsi que de les revendre, 
-      celui-ci respecte les lois suivantes :
-        * Achat d'item :
-            * Baisse de prix sur les items non achetés au bout de 2 tours.
-            * Augmentation des prix sur les items achetés à la fin du tour.
 
-        * Vente d'item :
-            * Augmentation des prix sur les items non vendus au bout de 2 tours.
-            * Baisse des prix sur les items vendus à la fin du tour.
-   
-   - L'inventaire qui permet de stocker les items que l'on a achetés 
-      dans le marché, dans celui-ci vous pourrez sélectionner les items 
-      pour les poser sur terrain.
+- Utiliser le marché pour acheter ou vendres vos objets.
+- Accéder à votre inventaire pour voir les objets que vous avez achetés et les sélectionner pour pouvoir les poser.
+- Envoyer des caravanes pour revendre des objets avec une meilleure rentabilité que le marché (mais un temps d'attente
+  sera imposé).
+- Améliorer vos recherches pour obtenir de meilleures rentabilitées.
+- Aller à la banque pour emprunter le l'argent pour ne pas vous ruiner ou rembourser une partie de votre précédent prêt.
+- Finissez le tour actuel.
+- Retourner au menu principal quand vous le souhaitez (vous pourrez rejoindre votre partie plus tard, elle sera
+  automatiquement sauvegardée).
 
-   - La caravane qui est utilisée pour augmenter la valeur des ressources 
-     que l'on envoie et que l'on récupère quelque tour plus tard.
+Pour prendre en main toutes ces options nous vous conseillons de faire votre première partie en solo et sans robot
+puis une fois que vous avez compris comment toutes ces actions fonctionnaient, vous pourrez essayer de jouer en solo
+avec des robots pour essayer de gagner.
 
-   - La recherche pour augmenter le rendement des animaux et des graines.
+Une dernière chose, Lorsque vous gagnerez ou perdrez-vous serez sur le menu des résultats, il y a deux boutons :
 
-   - L'emprunt qui est utile pour acheter plus de terrain et de ressource.
+   -    « Rejouer » qui permet de recréer une partie avec les options que vous avez choisies dans la précédente partie
+        et la même graîne (les terrains seront aux même emplacements).
+   -    « Menu Principal » qui vous permet de retourner au menu principal.
 
-   - Le bouton pour finir le tour.
-
-   - Le bouton de retour sur le menu principal.
-
-   Pour prendre en main toutes ces options nous vous conseillons 
-   de faire votre première partie en «solo» (sans bot) puis une fois 
-   que vous avez compris comment toutes ces actions fonctionnaient, 
-   vous pourrez essayer de jouer en solo avec les bots pour essayer de gagner.
-   Une dernière chose, Lorsque vous gagnerez ou perdrez vous serez 
-   sur le menu des résultats, il y a deux boutons :
-
-   -    «Rejouer» qui permet de recréer une partie avec les 
-        options que vous avez choisi dans la précédente partie.
-   -    «Menu Principal» dont vous pouvez lire la description 
-        dans la section «1.4) Supprimer une partie :».
-
-
-**3) Charger une partie :**
+### 2) Supprimer la partie
    
    Lorsque vous voulez faire une pause et que vous quittez votre partie 
    pour revenir plus tard, lorsque vous reviendrez votre sauvegarde 
