@@ -4,9 +4,9 @@ Cette partie se concentre sur le moteur, qui est relativement important pour com
 en lui-même, bien que cette partie ne soit pas "demandée" par le projet en elle-même, le projet ne pourrait pas
 fonctionner sans.
 
-Tous les systèmes proposé dans cette partie ne sont pas spécifiquement développé pour farmland et ne dépende en aucun
-cas du code de farmland. Ce qui signifie qu'il serait très simple de réutiliser ce code pour développer un autre jeu
-vidéo. Voir même modifier un peu le système de compilation pour le faire compiler dans son propre projet pour simplifier
+Tous les systèmes proposé dans cette partie ne sont pas spécifiquement développé pour Farmland et ne dépende en aucun
+cas du code de Farmland. Ce qui signifie qu'il serait très simple de réutiliser ce code pour développer un autre jeu
+vidéo. Voire modifier un peu le système de compilation pour le faire compiler dans son propre projet pour simplifier
 cette usage.
 
 ## Le cœur
@@ -17,10 +17,10 @@ Comme la grande majorité des moteurs de jeu graphique en 2 ou 3 dimensions, le 
 battre le moteur est la boucle de jeu (les autres systèmes pourrait être les organes vitaux pour simplifier), comme
 le nom l'indique, cette partie correspond à du code qui est effectué en boucle tant que le jeu est en cours d'exécution.  
 Cette boucle effectue 3 parties : *Input*, *Update*, *Render*.
-- *Input*: Récupère toutes les informations en rapport avec les "entrées" (touche appuyé, clique effectué, fenêtre
+- *Input* : Récupère toutes les informations en rapport avec les "entrées" (touche appuyé, clique effectué, fenêtre
   bougé, etc.).
-- *Update*: Modifie l'état actuel du jeu (déplace un objet, effectue une action de gameplay, etc.).
-- *Render*: Affiche l'état actuel du jeu à l'écran.
+- *Update* : Modifie l'état actuel du jeu (déplace un objet, effectue une action de gameplay, etc.).
+- *Render* : Affiche l'état actuel du jeu à l'écran.
 
 Bien sûr, il est important de noter qu'avant l'exécution de cette boucle, le jeu va d'aborder s'initialiser. Et à la fin
 de cette boucle (lorsqu'il est temps de quitter le jeu), il va se détruire.
@@ -57,7 +57,7 @@ notre propre système et donc notre propre "langage" qui nous permet une flexibi
 grandement inspiré du JSON, d'où le nom, mais réalisé pour une meilleure interopérabilité avec le langage Java (support
 des enum, des types primitif du langage, etc.).
 
-Voici un exemple de pseudo-JSON:
+Voici un exemple de pseudo-JSON :
 ```json
 // This file contains the server configuration, feel free to edit what you need.
 
@@ -97,7 +97,7 @@ Voici un exemple de code permettant de créer une option :
 public boolean fastBot = false;
 ```
 
-La liste des paramètres de démarrage de **farmland** est la suivante :
+La liste des paramètres de démarrage de **Farmland** est la suivante :
 
 Paramètre | Description
 --- | ---
@@ -187,9 +187,9 @@ plutôt pour son côté hiérarchique.
 
 Un système peux être appelé aux moments *Update* et *Render*, ce qui lui permet d'intéragir avec le jeu.
 Les entités ne peuvent pas intéragir avec *Update* et *Render*, mais les composants eux, le peuvent pour certains
-(les composants en question doivent étendre des type spécifique).
+(les composants en question doivent étendre des types spécifique).
 
-Les entités peuvent posséder un nom, des tags (exemple: "ennemis" pour définir que c'est un ennemi), un parent,
+Les entités peuvent posséder un nom, des tags (exemple : "ennemis" pour définir que c'est un ennemi), un parent,
 des enfants, être désactivé, avoir autant de composants que possible (mais elle ne peux pas avoir deux fois un
 composant du même type, cela voudrait dire avoir deux fois les même type de donnée).
 
@@ -197,8 +197,8 @@ composant du même type, cela voudrait dire avoir deux fois les même type de do
 
 Chaque scène possède un registre d'entité-composant-système. Donc une liste propre d'entité, de composants et de système.
 
-Mais il est possible de demander à conserver une entité donné ou un système donné lors du changement de scène.
-Utile pour conserver les choses voulus (exemple: une musique de fond entre toute les scènes de menu).
+Mais il est possible de demander à conserver une entité donnée ou un système donné lors du changement de scène.
+Utile pour conserver les choses voulus (exemple : une musique de fond entre toutes les scènes de menu).
 
 ## Le système audio
 
@@ -251,9 +251,9 @@ Finalement, au dessus de tout ça (plus haut niveau), il existe des **composants
 et qui définissent par exemple une image, un sprite (partie d'une image), une forme, un bouton, un sprite animé, etc.
 
 La pièce qui s'occupe du rendu est en réalité deux *systèmes* (de l'ECS) qui sont appelés au moment *Render* de
-chaque itération de la boucle de jeu:
-- WorldRenderSystem: s'occupe d'afficher le monde (caméra et spritebatch du monde).
-- UiRenderSystem: s'occupe d'afficher l'UI (caméra et spritebatch d'UI).
+chaque itération de la boucle de jeu :
+- *WorldRenderSystem* : s'occupe d'afficher le monde (caméra et spritebatch du monde).
+- *UiRenderSystem* : s'occupe d'afficher l'UI (caméra et spritebatch d'UI).
 
 Le curseur lui est affiché en tout dernier et ne dépend pas de *système* étant donné que c'est un élément unique, pas
 besoin de créer un système juste pour lui. Le jeu s'occupera de le rendre à la fin du *Render*.
@@ -414,7 +414,7 @@ déplacer comme voulu lors du changement de taille de la fenêtre automatiquemen
 Il est assez redondant de créer soit-même les éléments d'interface car ils nécessitent beaucoup de code identique et
 de créer une entité par élément composé souvent de plusieurs *composants*.
 
-Pour régler ce soucis, nous avons créer le `GuiBuilder` qui s'occupe au début d'une scène de créer les éléments voulus
+Pour régler ce soucis, nous avons créé le `GuiBuilder` qui s'occupe au début d'une scène de créer les éléments voulus
 avec moins de code.
 
 Exemple d'utilisation du `GuiBuilder`:
@@ -438,31 +438,31 @@ public void exemple() {
 
 Le système réseau repose sur l'idée de contrôleur, le serveur en est un et chaque client en est un aussi.  
 Le contrôleur est un élément capable d'envoyer des messages réseau à l'aide du protocole TCP (nous avons choisi de ne
-pas inclure la version UDP pour des questions de temps et de stabilité), il peux aussi en recevoir et par conséquent
-il peux aussi envoyé des requêtes (envoyer un message, attendre la réponse).
+pas inclure la version UDP pour des questions de temps et de stabilité), il peut aussi en recevoir et par conséquent
+il peut aussi envoyé des requêtes (envoyer un message, attendre la réponse).
 
-Un contrôleur dispose de deux threads:
-- Le thread de lecture des messages: lis les messages en attente de lecture.
-- Le thread d'envoi des messages: envoi les messages en attente d'envoi.
+Un contrôleur dispose de deux threads :
+- Le thread de lecture des messages : lis les messages en attente de lecture.
+- Le thread d'envoi des messages : envoi les messages en attente d'envoi.
 
 ### Fonctionnement du serveur
 
 La spécifité du serveur en tant que contrôleur est tout d'abord son type de `Socket` étant donné que c'est un `Socket`
-spécifique au serveur, il peux être créé sur un port donné. Il possède aussi la spécificité de pouvoir diffuser
+spécifique au serveur, il peut être créé sur un port donné. Il possède aussi la spécificité de pouvoir diffuser
 des messages à l'ensemble de ses utilisateur.
 
 Un client qui lui envoi un message n'est pas son utilisateur pour autant, nous définissons l'utilisateur comme un client
-qui aura demandé une connexion au serveur (un type de message qu'il peux envoyer), une fois connecté, le client
-pourras demander des messages plus intéressant (l'état du jeu, etc.), s'il ne se connecte pas il ne peux envoyer que
-des messages simple (est-ce que le serveur est en vie; demande de connexion; informations sur le serveur).
+qui aura demandé une connexion au serveur (un type de message qu'il peut envoyer), une fois connecté, le client
+pourras demander des messages plus intéressant (l'état du jeu, etc.), s'il ne se connecte pas il ne peut envoyer que
+des messages simple (est-ce que le serveur est en vie ; demande de connexion ; informations sur le serveur).
 
-Le serveur dispose d'autres thread en plus de ceux du contrôleur:
-- Thread d'interception client: attends de recevoir un message d'un client inconnue pour l'intercepter (récupérer ses
+Le serveur dispose d'autres thread en plus de ceux du contrôleur :
+- Thread d'interception client : attends de recevoir un message d'un client inconnu pour l'intercepter (récupérer ses
   informations pour être capable de lui envoyer un message).
-- Thread de réception des message par client: réceptionne les messages envoyé par un client spécifique et le transmet
+- Thread de réception des messages par client : réceptionne les messages envoyé par un client spécifique et le transmet
   pour ensuite être lu par le thread de lecture des messages.  
-  Chaque client connecté va créé un thread de ce type.
-- Thread de la console: permet d'écrire des commandes dans le terminal pour intéragir avec le serveur.
+  Chaque client connecté va créer un thread de ce type.
+- Thread de la console : permet d'écrire des commandes dans le terminal pour intéragir avec le serveur.
 
 ### Fonctionnement du client
 
@@ -472,16 +472,16 @@ le client sera détruit pour en recréer un nouveau.
 
 Il peux effetuer toutes les actions d'un contrôleur (envoyer un message, en recevoir, effectuer des requêtes).
 
-Le client dispose du thread suivant en plus de ceux du contrôleur:
-- Thread d'interception serveur: attends de recevoir un message du serveur et le transmet pour ensuite être lu par le
+Le client dispose du thread suivant en plus de ceux du contrôleur :
+- Thread d'interception serveur : attends de recevoir un message du serveur et le transmet pour ensuite être lu par le
   thread de lecture des messages.
 
 ### Format d'un message
 
-Les messages sont envoyé sous forme de pseudo-JSON minimifié. Ce sont donc des objets Java sérialiser puis désérialiser.
+Les messages sont envoyés sous forme de pseudo-JSON minimifié. Ce sont donc des objets Java sérialiser puis désérialiser.
 Ils dépendent tous du type `Message` qui définit un message.
 
-Exemple d'un message simple:
+Exemple d'un message simple :
 ```json
 {"_type":"com.ustudents.farmland.network.general.GameInformationsRequest"}
 ```
@@ -489,7 +489,7 @@ Ceci est un message qui envoi une requête d'informations sur la partie en cours
 `GameInformationsRequest` étend donc `Message` et l'attribut *_type* est l'unique attribut de `Message` qui permet
 de transmettre le type de Message, pour savoir le désérialiser. Ici le message ne possède aucun autre attribut.
 
-Une réponse possible pourrait être:
+Une réponse possible pourrait être :
 ```json
 {"name":"My Server","capacity":1,"connectedPlayerIds":[0],"_type":"com.ustudents.farmland.network.general.GameInformationsResponse"}
 ```
@@ -503,15 +503,23 @@ Lors du développement en UDP, nous devions par exemple découper nous même les
 directement la complexité du système, nous devions aussi nous assurer nous même de l'envoi de certains paquets sous
 faute de devoir les renvoyé.
 
+### L'état du jeu
+
+Si le jeu est lancé en mode serveur, le système audio, de rendu et d'entrée seront désactivé.
+
+Tout le code du jeu (les scènes, etc.) seront joué de la même manière qu'en client, mais pour que le jeu puisse
+s'adapter aux différents mode (solo, client ou serveur), il existe une énumération qui permet de vérifier cela et qui
+est dans la classe `Game`, il suffit d'appeler la fonction `Game.get().getNetMode()`.
+
 ## Code utilitaire
 
 Le moteur dispose aussi de code utilitaire pour différents domaines, avec par exemple les éléments ci-contre (mais ne
-se limitant pas à ceux-ci):
-- Mathématique: Création d'une liste de points d'un cercle avec une précision et un rayon donné.
-- Réflexion: Méthode d'aide à l'introspéction de type Java.
-- Génération de nombre: Un générateur de nombre aléatoire supportant les graînes (basé sur celui de Java mais en plus
+se limitant pas à ceux-ci) :
+- Mathématique : Création d'une liste de points d'un cercle avec une précision et un rayon donné.
+- Réflexion : Méthode d'aide à l'introspéction de type Java.
+- Génération de nombre : Un générateur de nombre aléatoire supportant les graînes (basé sur celui de Java mais en plus
   dogmatique).
-- Chaîne de caractères: Divers algorithmes utilisés pour lire/écrire des chaînes de caractères contenant des caractères
+- Chaîne de caractères : Divers algorithmes utilisés pour lire/écrire des chaînes de caractères contenant des caractères
   d'échappement.
 - ...
 
@@ -547,134 +555,189 @@ intéragir avec le jeu. Le moteur possède ses propres commandes, mais le jeu pe
 
 Ce menu se lance par défaut avec ².
 
-# FARMLAND
+# Farmland
 
-## Gameplay
+## Informations générales
 
-### Actions du Joueur
+Le jeu est jouable de plusieurs manière:
+- En solo avec ou sans robots.
+- En multijoueur avec ou sans robots et avec ou sans autres joueurs.
 
-- Durant le tour du joueur, celui-ci le choix entre plusieurs actions :
-    - finir le tour : met fin au tour actuel
-    - menu principal : retour au menu principal et sauvegarde de la partie
-    - inventaire : stocke les graines et animaux
-    - marché : pour acheter des graines/animaux ou vendre les ressources qui ont poussées/atteint leur maturité
-    - caravanes : envoie des caravanes (limité a la moitié des ressources possédée) ou vérifie l'avancé des caravanes
-      envoyées
-    - recherches : pour améliorer la recherche "d'éleveur" (pour les animaux) ou de "fermier" (pour les plantes) 
-      afin d'augmenter les gains des caravanes
-    - banque : pour prendre un prêt (limité a 1 prêt à la fois) ou pour rembourser une partie manuellement 
-      (remboursement d'une partie systématiquement a chaque fin de tour ou par la vente d'item)
+## Les scènes du jeu
 
-### Inventaire
+### Les menus
 
-- L'inventaire permet : 
-    - d'afficher les items qui ont été achetés et leur quantité
-    - de sélectionner un item pour le poser sur le terrain
-    - désélectionner un item.
+Le jeu est composé d'un certains nombres de scène de menu, qui étendent toutes de `MenuScene` pour simplifier le code.
+La scène de démarrage du jeu est `MainMenu`.
 
+### La scène de jeu
 
-### Marché
+La scène principale est `InGameScene`, elle contient tout le code de gameplay lié au jeu.
+Lorsque le joueur crée/rejoint une parti en solo, cette scène deviendra la scène active.
+Lorsque le nombre de joueurs connecté au serveur est complet, cette scène deviendra la scène active.
 
-- Le marché est une structure permettant d'acheter ou de revendre des items, celui-ci est soumis aux lois de l'offre 
+Hiérarchie simplifiée des scènes :
+
+- Scène de jeu
+- Menu principal
+  - Menu solo
+    - Nouvelle partie
+    - Chargement d'une partie
+    - Supprimer partie
+  - Multijoueur
+    - Rejoindre un serveur
+      - Rechercher un serveur
+  - Paramètres
+    - Changer les commandes
+  - Crédits
+
+## Le gameplay
+
+### Les règles du jeu
+
+- Règle générale :
+  - Un joueur gagne s'il dépasse 1 000 pièces d'or et ne possède aucune dette.
+  - Un joueur perd s'il n'a plus du tout d'argent à la fin d'un tour.
+  
+- Règle spécifique aux parties en multijoueurs et/ou avec des robots.
+  - Un joueur peux aussi gagner si c'est le seul survivant.
+
+### Personnalisation de partie
+
+Chaque partie possède les caractéristiques unique suivante :
+- Un nom de sauvegarde.
+- Une taille de carte (longueur et largeur).
+- Une graîne (pour reproduire les positions de village généré).
+- Un nombre de robots.
+- La difficulté des robots.
+- La somme maximale à emprunter.
+- Le taux de remboursement de l'emprunt.
+
+### Personnalisation du joueur
+
+Chaque joueur possède les caractéristiques unique suivante :
+- Un nom de joueur.
+- Un nom de village.
+- Une couleur de bannière (définira la couleur de son terrain).
+- Un avatar coloré.
+  - Couleur du pantalon à bretelle.
+  - Couleur des boutons de bretelle.
+  - Couleur de la chemise.
+  - Couleur du chapeau.
+
+### Système de tour par tour
+
+Durant le tour du joueur, celui-ci le choix entre plusieurs actions :
+- Voir/acheter du terrain.
+- Retourner au menu principal.
+- Finir le tour actuel.
+- Accéder à son inventaire.
+- Accéder au marché de vente.
+- Accéder à la carte des caravanes.
+- Accéder au laboratoire de recherche.
+- Accéder à la banque.
+
+Un tour dure 1 minute 30.  
+Les récoltes/animaux grandissent à la fin d'un tour complet.
+
+### L'inventaire
+
+L'inventaire permet :
+- D'afficher les objets qui ont été achetés ainsi que leur quantité.
+- De sélectionner un objet pour pouvoir le poser sur le terrain ou de déselectionner l'objet actuellement sélectionné.
+
+Chaque joueur possède son propre inventaire.
+
+### Le marché de vente
+
+Le marché est une structure permettant d'acheter ou de revendre des items, celui-ci est soumis aux lois de l'offre
 et de la demande qui change constamment, notamment :
-  * l'achat d'item a pour conséquence :
-      * Baisse de prix sur les items non achetés au bout de 2 tours.
-      * Augmentation des prix sur les items achetés à la fin du tour.
-    
-  * la vente d'item a pour conséquence :
-      * Augmentation des prix sur les items non vendus au bout de 2 tours.
-      * Baisse des prix sur les items vendus à la fin du tour.
+- L'achat a pour conséquence :
+  - La baisse du prix des objets non acheté depuis plus de 2 tours.
+  - L'augmentation du prix des objets achetés au dernier tour.
+- La vente a pour conséquence :
+  - L'augmentation du prix des objets non vendus depuis plus de 2 tours.
+  - La baisse du prix des objets vendus au dernier tour.
 
-### Système de robot (intelligence artificielle)
+Les prix du marché de vente sont communs entre tous les joueurs (ils influent donc les uns sur les autres).
 
-- Les robots peuvent faire les mêmes actions que les joueurs c'est-à-dire : 
-    - acheter un terrain, acheter des items, vendre son inventaire, envoyer des caravanes, améliorer les recherches et
-      prendre des prêts
-- leurs actions pendant les tours dépendent de leurs difficultés :
-    - facile : achète 1 terrain ou 1 item (de manière aléatoire) puis vend son inventaire
-    - normal : achète 1 terrain ou autant d'items different que de terrains vide (s'il y en existe) puis vend son inventaire
-    - difficile : achète 1 terrain ou améliore les recherches (de manière aléatoire) ou autant d'items identiques que 
-      de terrains vide (s'il y en existe) puis envoie des caravanes (s'il peut) puis vend son inventaire
-    - impossible : exactement les mêmes actions que la difficulté "difficile" mais à chaque tour s'il n'a pas de prêt 
-      alors il y a 1 chance sur 2 qu'il en prenne 1
+### La carte des caravanes
 
+Une caravane est un conteneur, pour un objet précis, avec une quantité supérieure à 2. L'envoi de caravane permet au
+joueur d'obtenir une meilleure rentabilitée que la revente au marché de vente, mais un temps d'attente sera nécessaire
+pour le transport de la caravane et la réception des gains de la vente n'est donc pas immédiat.
 
-### Caravanes
+La formule du calcul des gains est la suivante: `((Prix du marché + Avantage du niveau de recherches) x 1,5) x Quantité envoyée`
 
-- Le système des caravanes consiste à :
-    - envoyer la moitié de ses ressources via des caravanes afin de gagner plus d'argent qu'au marché local
-         - calcul des gains des caravanes : ( ( Prix du Marché locale + Avantage des Recherches ) x 1,5 ) x Quantité envoyée
-    - payer 10 pièces pour le coût d'envoie de la caravane
-    - attendre 4 tours avant de récupérer les gains
+La carte des caravanes permet :
+- D'envoyer des caravanes avec le fonctionnement suivant :  
+  - Payer le coût initiale de 10 pièces d'or pour envoyer une caravane
+  - Attendre l'arrivée de la caravane (4 tours) pour obtenir son gain.
+- Visualiser l'état actuel de ses caravanes.
+  
+Chaque joueur possède sa propre liste de caravanes.
 
-- Pour utiliser ce système, chaque joueur contient une liste des caravanes qu'ils ont envoyées qui s'actualise 
-  à chaque tour complet, ces caravanes contiennent :  
-    - des gains, 
-    - le nombre de tours effectués 
-    - le nombre de tours avant d'arriver
-    - le produit transporté
+### Le laboratoire de recherche
 
-### Recherches
+Un système de recherche composé de deux recherches (fermier et éleveur) est disponible, il permet de payer un certains
+nombre de pièces d'or afin d'améliorer ses compétences pour obtenir une meilleure rentabilitée soit pour la vente de
+récoltes (fermier) soit pour la vente de viande (éleveur). Chacune des recherches possède un niveau spécifique, plus
+votre niveau est élevé, plus la rentabilité sera élevée. Bien sûr, le prix de chaque niveau augmente aussi.
 
-- Le système de recherche consiste en :
-    - une augmentation des gains obtenu via les caravanes 
-    - un niveau reflétant l'augmentation de la recherche via l'ajout d'élément sur l'image de votre fermier
-    - un prix pour augmenter de niveaux
+Chaque joueur possède ses propres niveaux de recherche.
 
-- Pour utiliser le système de caravanes, chaque joueur contient une liste de recherche possible qui par défaut est
-  initialisée à 2 recherches(éleveur et fermier) qu'ils peuvent améliorer :
-     - les recherches sont initialisées au niveau 1 avec un prix de 10 pieces pour l'amélioration au niveau 2 et
-       l'augmentation qu'elle apporte aux caravanes est de 0 pièce pour le niveau 1
-     - lorsque l'on augmente une recherche elle gagne 1 niveau, le prix pour la prochaine amelioration augmente de 10 pieces 
-       et l'augmentation qu'elle apporte aux caravanes augmente de 1 piece
+Il existe certains paliers permettant au joueur de visualiser son niveau sur son avatar :
+- Palier 0 -> Niveau 1
+- Palier 1 -> Niveau 3
+- Palier 2 -> Niveau 5
 
+### La banque
 
-### Banque
+La banque permet :
+- D'effectuer un prêt de manière à obtenir plus d'argent, qui sera obligatoire à rembourser pour gagner ou demander
+  un autre prêt.
+- De rembourser son prêt actuel, en donnant une somme précise.
 
-- La banque est une entité liée au marché, celle-ci permet :
-  - de faire des emprunts en fonction de la somme maximale établie dans les paramètres de la partie
-  - de rembourser une somme empruntée manuellement ainsi qu'automatiquement lors de la fin du tour 
-    ou via la revente d'item
+Chaque joueur possède ses propres dettes.  
+Si le joueur possède une dette impayée, une partie de celle-ci sera payé automatiquement à taux fixe à la fin du tour.
 
+### Les robots (intelligence artificielle)
 
-### Bonus 
+Les robots peuvent effectuer les actions suivantes lors de leur tour :
+- Acheter du terrain
+- Acheter des objets
+- Vendre des objets
+- Envoyer des caravanes
+- Améliorer ses recherches
+- Prendre un prêt
 
-- Le cadre du joueur évolue avec l'avancé des recherches par palier (palier 0 : niveau 1 / palier 1 : niveau 3 / palier 2 : niveau 5)
-- Le podium affiche les joueurs dans la partie dans l'ordre de leur argent (le classement est realise par un tri par insertion)
-- Il y a un compteur de temps restant pour le tour (1 minute et 30 secondes) et aussi un temps total pour la durée de la partie
+Il existe différent niveaux de difficulté qui change les actions qu'il est capable de réaliser et lui donne des
+avantages sur le joueur.
 
--------------------------
+Difficulté | Description
+--- | ---
+Facile | Achète un terrain ou un objet (de manière aléatoire) puis vend ce qu'il possède
+Normal | Achète un terrain ou autant d'objets different qu'il possède de terrains vide puis vend ce qu'il possède
+Difficle | achète un terrain ou autant d'objets identiques qu'il possède de terrains vide ou améliore ses recherches puis envoie des caravanes (s'il le peut) puis vend ce qu'il possède.
+Impossible | Identique à **Difficile** mais à chaque tour s'il n'a pas de prêt alors il y a une chance sur deux qu'il en prenne un.
 
-LISTE TODO TEMP (vérifier que )
+Le tour d'un robot dur 2 secondes par défaut.
 
-FARMLAND:
-- SCENES:
-  - Menus (menu principal, crédits, ...)
-  - Scène de jeu
-- GAMEPLAY:
-  - Possibilité de jouer en solo
-  - Possibilité de jouer en multijoueur
-  - Robots avec difficultés (facile, normal, difficile, impossible)
-  - Personnaliser l'expérience (taille de carte, difficulté)
-  - Personnaliser son personnage (nom, village, avatar, bannière)
-  - Acheter du terrain
-  - Poser/vendre des animaux/récoltes.
-  - Caravanes
-  - Recherches
-  - Prêt/remboursement
-  - Podium
-  - Possibilité de gagner/perdre
-  - OPTIONS:
-  - Désactiver le son.
-  - Redimensionner la fenêtre.
-  - Changer le mode de rendu (fenêtré, fenêtré pleine écran, pleine écran).
-  - Changer les touches de chaque action.
-  - Changer la langue (anglais, français)
+### L'affichage tête haute (HUD)
 
+Lors d'une partie, un HUD est présent pour afficher les informations suivantes :
+- Votre avatar
+- Les informations actuelles du tour (nombre de tours, nom du joueur qui joue).
+- Un indicateur du temps restant à ce tour.
+- Un indicateur du temps passé sur la partie entière.
+- Un podium des joueurs.
+- Le bouton du menu principal.
+- Les boutons d'accès aux différents menus.
 
-CE QU'ON AURAIT AIMER RAJOUTER:
-- Tutoriel
-- Troupeau
-- Sabotage
-- Pari
+# Ce qu'on aurait aimé rajouter
+
+- Un système de tutoriel
+- Un système de troupeau
+- Un système de sabotage
+- Un système de pari
 - Un interface graphique plus stylisé
