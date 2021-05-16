@@ -25,7 +25,7 @@ Cette boucle effectue 3 parties : *Input*, *Update*, *Render*.
 Bien sûr, il est important de noter qu'avant l'exécution de cette boucle, le jeu va d'abord s'initialiser. Et à la fin
 de cette boucle (lorsqu'il est temps de quitter le jeu), il va se détruire.
 
-Elle peut être visualisée comme ceci :
+Elle peut être visualisée comme ceci :  
 PS: Ceci est un graph visible sur gitlab uniquement.
 [comment]: <> (C'est un graphique utilisant la lib mermaid, fonctionne uniquement sur gitlab)
 ```mermaid
