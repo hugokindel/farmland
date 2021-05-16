@@ -8,7 +8,7 @@ import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.core.event.EventListener;
 import com.ustudents.engine.core.window.Window;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
-import com.ustudents.engine.graphic.imgui.console.ConsoleCommands;
+import com.ustudents.engine.tools.console.ConsoleCommands;
 import com.ustudents.engine.input.Input;
 import com.ustudents.engine.input.Key;
 import com.ustudents.engine.input.MouseButton;

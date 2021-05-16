@@ -1,9 +1,8 @@
 package com.ustudents.farmland.network.general;
 
-import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
 import com.ustudents.engine.core.json.annotation.JsonSerializable;
-import com.ustudents.engine.graphic.imgui.console.Console;
+import com.ustudents.engine.tools.console.Console;
 import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 

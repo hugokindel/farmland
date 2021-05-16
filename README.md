@@ -24,6 +24,55 @@ Farmland is a management game where you need to take care of your farm while bei
 
 To see more details about the features included and the project architecture, please take a look [here](FEATURES.md).
 
+## Architecture
+
+Tree of the most important files and folder in the project's repository hierarchy:
+
+```
+/
+├─┬─src/: Source code.
+│ ├─┬─main/java/com/ustudents/: Main source code package.
+│ │ ├─┬─engine/: The engine source code
+│ │ │ └─┬─audio/: The audio system code.
+│ │ │   ├─core/: The core system code (resources, etc.).
+│ │ │   ├─ecs/: The entity-component-system code.
+│ │ │   ├─graphic/: The graphics system code.
+│ │ │   ├─gui/: The GUI related code (GuiBuilder).
+│ │ │   ├─i18n/: The language system code.
+│ │ │   ├─input/: The input and input actions code.
+│ │ │   ├─network/: The network system code.
+│ │ │   ├─scene/: The scene code and scene manager.
+│ │ │   ├─utility/: Some utility code.
+│ │ │   ├─Game.java: Main engine class.
+│ │ │   └─GameConfig.java: Configuration class.
+│ │ └─┬─farmland/: The game source code
+│ │   └─┬─component/: Evey game related ECS components.
+│ │     ├─core/: Core game structures.
+│ │     ├─network/: Every game related network messages.
+│ │     ├─scene/: Every game scenes.
+│ │     ├─Farmland.java: The main game class.
+│ │     ├─Main.java: The class containing the main method.
+│ │     └─*.java: Other source files.
+│ └─test/: Tests source code.
+├─┬─data/: Main data folder.
+│ ├─fonts/: Fonts folder.
+│ ├─i18n/: Localizations folder (english, french).
+│ ├─items/: Resources databases.
+│ ├─logs/: Generated log files.
+│ ├─saves/: Generated save files.
+│ ├─shaders/: Render system shaders code.
+│ ├─sounds/: Sound and music files.
+│ ├─textures/: Texture, sprite/sprite animation definition files.
+│ ├─server.json: Generated server config file.
+│ └─settings.json: Generated game config file.
+├─FEATURES.md: A complete features list with explanations.
+├─INSTRUCTIONS.md: Instructions to test the most important project's features.
+├─README.md: This file.
+├─ROADMAP.md: Roadmap of who did what and when.
+└─*.*: Other files.
+
+```
+
 ## How to use
 
 ### From sources

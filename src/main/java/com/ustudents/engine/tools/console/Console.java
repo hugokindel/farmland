@@ -1,8 +1,7 @@
-package com.ustudents.engine.graphic.imgui.console;
+package com.ustudents.engine.tools.console;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
-import com.ustudents.engine.core.cli.option.annotation.Option;
 import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.graphic.Color;
 import com.ustudents.engine.graphic.imgui.ImGuiUtils;
@@ -12,12 +11,10 @@ import imgui.flag.*;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import static com.ustudents.engine.core.cli.option.Runnable.calculateLevenshteinDistance;
 

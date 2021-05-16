@@ -1,4 +1,4 @@
-package com.ustudents.engine.graphic.debug;
+package com.ustudents.engine.tools;
 
 import com.ustudents.engine.Game;
 import com.ustudents.engine.core.Resources;
