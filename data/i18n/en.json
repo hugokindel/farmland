@@ -152,6 +152,7 @@
         "playerNameTooLong": "Your player name is too long (10 <=)!",
         "playerIllegalChar": "Your player name cannot contains the following characters: \"",
         "playerExists": "A player with this name already exists!",
+        "playerExists2": "The player {} already exists!",
         "villageNameTooLong": "Your village name is too long (10 <=)!",
         "chicken": "Chicken",
         "canary": "Canary",
