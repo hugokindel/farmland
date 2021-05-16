@@ -10,6 +10,8 @@ import com.ustudents.engine.network.messages.Message;
 import com.ustudents.engine.utility.Pair;
 import com.ustudents.farmland.Farmland;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -222,13 +224,13 @@ public class Server extends Controller {
     protected static class CliInteractionRunnable implements Runnable {
         @Override
         public void run() {
-            Scanner scanner = new Scanner(System.in);
+            //Scanner scanner = new Scanner(System.in);
 
             Out.println("The server launched at your IP address with port " + Game.get().getServer().socket.getLocalPort());
             Out.println("To stop the server, enter `quit`.");
             Out.println("To see more informations, enter `help`.");
 
-            while (!Game.get().shouldQuit()) {
+            /*while (!Game.get().shouldQuit()) {
                 if (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
                     Game.get().serverCommands.add(line);
@@ -237,9 +239,37 @@ public class Server extends Controller {
                         break;
                     }
                 }
-            }
+            }*/
 
-            scanner.close();
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String input;
+
+            try {
+                do {
+                    while (!br.ready() && !Game.get().shouldQuit()) {
+                        Thread.sleep(10);
+                    }
+
+                    if (Game.get().shouldQuit()) {
+                        break;
+                    }
+
+                    input = br.readLine();
+
+                    if (!input.equals("")) {
+                        Game.get().serverCommands.add(input);
+
+                        if (input.equals("quit")) {
+                            break;
+                        }
+                    }
+                } while (true);
+
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //scanner.close();
         }
     }
 }

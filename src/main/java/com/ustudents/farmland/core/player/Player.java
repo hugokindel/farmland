@@ -107,6 +107,36 @@ public class Player {
         this.soldAnimals = new ArrayList<>();
     }
 
+    public boolean hasLost() {
+        return money <= 0;
+    }
+
+    public boolean hasWon() {
+        return money >= 1000 && remainingDebt <= 0 && !isDead();
+    }
+
+    public boolean isHuman() {
+        return type == Type.Human;
+    }
+
+    public boolean isBot() {
+        return type == Type.Bot;
+    }
+
+    public boolean isOnlySurvivor() {
+        for(Player player : Farmland.get().getLoadedSave().players) {
+            if (!player.getId().equals(getId()) && !player.isDead()) {
+                return false;
+            }
+        }
+
+        return !isDead();
+    }
+
+    public boolean isAloneInGame() {
+        return Farmland.get().getLoadedSave().players.size() == 1;
+    }
+
     public void addToInventory(Item item, InventoryType type) {
         if (type == InventoryType.WaitingToBePlanted) {
             boolean contains = false;

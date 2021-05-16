@@ -5,6 +5,7 @@ import com.ustudents.engine.core.cli.print.Out;
 import com.ustudents.engine.core.event.Event;
 import com.ustudents.engine.core.event.EventDispatcher;
 import com.ustudents.engine.ecs.component.core.BehaviourComponent;
+import com.ustudents.engine.network.NetMode;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.player.Bot;
 import com.ustudents.farmland.core.player.Player;
@@ -58,14 +59,23 @@ public class TurnTimerComponent extends BehaviourComponent {
         timePassed += dt;
 
         if (Game.get().hasAuthority()) {
-            if (Farmland.get().getLoadedSave() != null && Farmland.get().getLoadedSave().getCurrentPlayer().type == Player.Type.Bot) {
-                if (Farmland.get().getLoadedSave().getCurrentPlayer().isDead()) {
+            if (Farmland.get().getLoadedSave() != null) {
+                if (Farmland.get().getNetMode() == NetMode.DedicatedServer && Farmland.get().getLoadedSave().isCurrentPlayerDead()) {
                     Farmland.get().getLoadedSave().endTurn();
-                } else if (skipturn >= 1f  && !skipmadepart1) {
-                    Bot.playTurn();
-                    skipmadepart1 = true;
-                } else if (skipturn >= 2f && skipmadepart1) {
-                    Farmland.get().getLoadedSave().endTurn();
+                } else if (Farmland.get().getLoadedSave().getCurrentPlayer().type == Player.Type.Bot) {
+                    if (Farmland.get().getLoadedSave().getCurrentPlayer().isDead()) {
+                        Farmland.get().getLoadedSave().endTurn();
+                    } else if (!Farmland.get().fastBot) {
+                        if (skipturn >= 1f  && !skipmadepart1) {
+                            Bot.playTurn();
+                            skipmadepart1 = true;
+                        } else if (skipturn >= 2f && skipmadepart1) {
+                            Farmland.get().getLoadedSave().endTurn();
+                        }
+                    } else {
+                        Bot.playTurn();
+                        Farmland.get().getLoadedSave().endTurn();
+                    }
                 }
             }
         }

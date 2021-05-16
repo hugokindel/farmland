@@ -51,6 +51,9 @@ public class Farmland extends Game {
     @Option(names = "--no-save", description = "Disable saving system (can still load but will never save).")
     protected boolean noSave = false;
 
+    @Option(names = "--fast-bot", description = "Makes bot turns instantaneous.")
+    public boolean fastBot = false;
+
     // SERVER SPECIFIC
     public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
 
@@ -109,12 +112,15 @@ public class Farmland extends Game {
     public void onServerStarted() {
         server.getClientDisconnectedDispatcher().add((dataType, data) -> {
             if (serverPlayerIdPerClientId.containsKey(data.clientId)) {
-                getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Bot;
-                getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
-                serverPlayerIdPerClientId.remove(data.clientId);
-                server.broadcast(new LoadSaveResponse(getLoadedSave()));
-                if (Game.get().getSceneManager().getCurrentScene() instanceof InGameScene && serverPlayerIdPerClientId.isEmpty()) {
-                    ((InGameScene)Game.get().getSceneManager().getCurrentScene()).setPause(true);
+                if (getLoadedSave() != null && serverPlayerIdPerClientId.containsKey(data.clientId) &&
+                        !getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).isDead()) {
+                    getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).type = Player.Type.Bot;
+                    getLoadedSave().players.get(serverPlayerIdPerClientId.get(data.clientId)).name += " (Robot)";
+                    serverPlayerIdPerClientId.remove(data.clientId);
+                    server.broadcast(new LoadSaveResponse(getLoadedSave()));
+                    if (Game.get().getSceneManager().getCurrentScene() instanceof InGameScene && serverPlayerIdPerClientId.isEmpty()) {
+                        ((InGameScene)Game.get().getSceneManager().getCurrentScene()).setPause(true);
+                    }
                 }
             }
         });
@@ -243,6 +249,16 @@ public class Farmland extends Game {
 
     public int getPlayerId(int clientId) {
         return serverPlayerIdPerClientId.get(clientId);
+    }
+
+    public int getClientId(int playerId) {
+        for (Map.Entry<Integer, Integer> entry : serverPlayerIdPerClientId.entrySet()) {
+            if (entry.getValue().equals(playerId)) {
+                return entry.getKey();
+            }
+        }
+
+        return -1;
     }
 
     public List<Integer> getListOfConnectedPlayers() {
@@ -561,5 +577,28 @@ public class Farmland extends Game {
             initializeCommands(Resources.getConfig());
         }
         reloadCustomizableCommands();
+    }
+
+    public void serverGameEnded() {
+        try {
+            Thread.sleep(100);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        while (getServer().hasMessagesToSend()) {
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Out.println("The game is over, restart the server to create a new game.");
+
+        getLoadedSave().removeFile();
+        unloadSave();
+        saves.clear();
+        quit();
     }
 }

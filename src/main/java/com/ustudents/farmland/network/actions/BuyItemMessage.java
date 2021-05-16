@@ -7,6 +7,7 @@ import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.item.Item;
 
+// PROCESSED ON SERVER
 @JsonSerializable
 public class BuyItemMessage extends Message {
     @JsonSerializable

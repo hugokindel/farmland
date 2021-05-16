@@ -33,6 +33,7 @@ import com.ustudents.farmland.core.Save;
 import com.ustudents.farmland.core.grid.Cell;
 import com.ustudents.farmland.core.item.*;
 import com.ustudents.farmland.core.player.Player;
+import com.ustudents.farmland.network.actions.EndGameMessage;
 import com.ustudents.farmland.network.general.LoadSaveResponse;
 import com.ustudents.farmland.core.system.Caravan;
 import com.ustudents.farmland.core.system.Research;
@@ -45,7 +46,6 @@ import imgui.type.ImInt;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.sql.Ref;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -102,7 +102,9 @@ public class InGameScene extends Scene {
         initializeEntities();
         initializeGui();
         initializeGameplay();
+
         updatePlayerFrame();
+        updateGameplayButtons();
         moneyUpdate();
     }
 
@@ -381,7 +383,7 @@ public class InGameScene extends Scene {
         }
         guiBuilder.addButton(buttonDataR);
 
-        GuiBuilder.ButtonData buttonDataB = new GuiBuilder.ButtonData("Banque", (dataType, data) -> {
+        GuiBuilder.ButtonData buttonDataB = new GuiBuilder.ButtonData(Resources.getLocalizedText("bank"), (dataType, data) -> {
             showBank.set(!showBank.get());
         });
         buttonDataB.id = "bankButton";
@@ -461,7 +463,7 @@ public class InGameScene extends Scene {
         textDataMoney.id = "MoneyLabel";
         textDataMoney.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         textDataMoney.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
-        textDataMoney.position = new Vector2f(190, 50);
+        textDataMoney.position = new Vector2f(200, 50);
         textDataMoney.color = Color.BLACK;
 
         guiBuilder.addText(textDataMoney);
@@ -521,10 +523,6 @@ public class InGameScene extends Scene {
                 getEntityByName("pauseBackgroundRectangle").setEnabled(false);
             }
         });
-
-        if (Farmland.get().getNetMode() != NetMode.DedicatedServer && !Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
-            getEntityByName("gameplayButtons").setEnabled(false);
-        }
 
         updateMoneyItemLabel();
     }
@@ -988,19 +986,17 @@ public class InGameScene extends Scene {
                 }
             }
 
-            if (!onCompletedTurnEnd()){
-                updateLeaderboard();
-            }
+            onCompletedTurnEnd();
+
+            updateLeaderboard();
         }
 
         if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
-            if (Farmland.get().getLoadedSave() != null && !currentPlayer.getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
-                getEntityByName("gameplayButtons").setEnabled(false);
-                checkIfWeShouldHideUi();
-            } else {
-                getEntityByName("gameplayButtons").setEnabled(true);
-                checkIfWeShouldShowBackUi();
+            if (Farmland.get().getLoadedSave() == null) {
+                return;
             }
+
+            updateGameplayButtons();
         }
     }
 
@@ -1041,96 +1037,92 @@ public class InGameScene extends Scene {
         }
     }
 
-    public boolean onCompletedTurnEnd(){
-        Player currentPlayer = Farmland.get().getLoadedSave().getCurrentPlayer();
+    public void updateGameplayButtons() {
+        if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
+            if (Farmland.get().getLoadedSave() != null &&
+                    !Farmland.get().getLoadedSave().getCurrentPlayer().getId().equals(Farmland.get().getLoadedSave().getLocalPlayer().getId())) {
+                getEntityByName("gameplayButtons").setEnabled(false);
+                checkIfWeShouldHideUi();
+            } else {
+                getEntityByName("gameplayButtons").setEnabled(true);
+                checkIfWeShouldShowBackUi();
+            }
+        }
+    }
 
+    public void transitionToResultScene(boolean hasWon) {
+        ResultMenu resultMenu = new ResultMenu();
+        resultMenu.currentSave = Farmland.get().getLoadedSave();
+        resultMenu.isWin = hasWon;
+        Farmland.get().unloadSave();
+        changeScene(resultMenu);
+    }
+
+    public void onCompletedTurnEnd() {
+        // Update the economy
         Farmland.get().getLoadedSave().fillBuyItemDataBasePerTurn();
         economicComponent.changeValueOfRessource();
         Farmland.get().getLoadedSave().clearTurnItemDatabase();
 
-        if (Farmland.get().getLoadedSave().PlayerMeetCondition()) {
+        // Check for any bot that have lost
+        for (Player player : Farmland.get().getLoadedSave().players) {
+            if (player.isBot() && player.hasLost() && !player.isDead()) {
+                Farmland.get().getLoadedSave().kill(player);
+            }
+        }
 
-            Player human = null;
-            for (Player player : Farmland.get().getLoadedSave().players) {
-                if (player.type == Player.Type.Human) {
-                    human = player;
+        // Check for any human that have lost
+        for (Player player : Farmland.get().getLoadedSave().players) {
+            if (player.isHuman() && player.hasLost() && !player.isDead()) {
+                Farmland.get().getLoadedSave().kill(player);
+
+                if (Game.get().getNetMode() == NetMode.Standalone) {
+                    transitionToResultScene(false);
+
+                    return;
+                } else if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+                    Game.get().getServer().send(Farmland.get().getClientId(player.getId()), new EndGameMessage(false));
                 }
             }
+        }
 
-            ResultMenu resultMenu = new ResultMenu();
-            resultMenu.currentSave = Farmland.get().getLoadedSave();
-            if (human != null) {
-                resultMenu.isWin = human.money >= 1000;
+        // Check for any bot that have won
+        for (Player player : Farmland.get().getLoadedSave().players) {
+            if (player.isBot() && player.hasWon()) {
+                if (Game.get().getNetMode() == NetMode.Standalone) {
+                    transitionToResultScene(false);
+                } else if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+                    Game.get().getServer().broadcast(new EndGameMessage(false));
+                    Farmland.get().serverGameEnded();
+                }
+
+                return;
             }
-            Farmland.get().unloadSave();
-            changeScene(resultMenu);
-            return true;
+        }
 
-        } else if (Farmland.get().getLoadedSave().BotMeetCondition()) {
-
-            int numberOfBots = 0;
-
-            for (int i = 0; i < Farmland.get().getLoadedSave().players.size(); i++) {
-                Player player = Farmland.get().getLoadedSave().players.get(i);
-
-                if (player.type == Player.Type.Bot && !Farmland.get().getLoadedSave().deadPlayers.contains(player.getId())) {
-                    numberOfBots += 1;
-
-                    if (player.money >= 1000) {
-                        ResultMenu resultMenu = new ResultMenu();
-                        resultMenu.currentSave = Farmland.get().getLoadedSave();
-                        resultMenu.isWin = false;
-                        Farmland.get().unloadSave();
-                        changeScene(resultMenu);
-                        return true;
-                    } else if (player.money <= 0) {
-                        numberOfBots -= 1;
-                        for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
-                            for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
-                                Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
-
-                                if (cell.isOwned() && cell.ownerId.equals(player.getId())) {
-                                    cell.setItem(null);
-                                    cell.setOwned(false, -1);
-                                }
-                            }
+        // Check for any human that have won
+        for (Player player : Farmland.get().getLoadedSave().players) {
+            if (player.isHuman() && (player.hasWon() || (!player.isAloneInGame() && player.isOnlySurvivor()))) {
+                if (Game.get().getNetMode() == NetMode.Standalone) {
+                    transitionToResultScene(true);
+                } else if (Game.get().getNetMode() == NetMode.DedicatedServer) {
+                    for (Player player2 : Farmland.get().getLoadedSave().players) {
+                        if (player2.isHuman()) {
+                            Game.get().getServer().send(Farmland.get().getClientId(player2.getId()),
+                                    new EndGameMessage(player == player2));
                         }
-
-                        Farmland.get().getLoadedSave().deadPlayers.add(player.getId());
                     }
+                    Farmland.get().serverGameEnded();
                 }
-            }
 
-            if (numberOfBots == 0 && Farmland.get().getLoadedSave().startWithBots) {
-                ResultMenu resultMenu = new ResultMenu();
-                resultMenu.currentSave = Farmland.get().getLoadedSave();
-                resultMenu.isWin = true;
-                Farmland.get().unloadSave();
-                changeScene(resultMenu);
-                return true;
+                return;
             }
         }
 
-        if (Farmland.get().getNetMode() == NetMode.Standalone && Farmland.get().getLoadedSave().players.size() > 1) {
-            int count = 0;
-
-            for (Player player : Farmland.get().getLoadedSave().players) {
-                if (player.isDead()) {
-                    count++;
-                }
-            }
-
-            if (count == Farmland.get().getLoadedSave().players.size() - 1 && !Farmland.get().getLoadedSave().getLocalPlayer().isDead()) {
-                ResultMenu resultMenu = new ResultMenu();
-                resultMenu.currentSave = Farmland.get().getLoadedSave();
-                resultMenu.isWin = true;
-                Farmland.get().unloadSave();
-                changeScene(resultMenu);
-                return true;
-            }
+        // Check if all players are dead on the dedicated server (to stop the game).
+        if (Farmland.get().getLoadedSave().areAllPlayersDead() && Game.get().getNetMode() == NetMode.DedicatedServer) {
+            Farmland.get().serverGameEnded();
         }
-
-        return false;
     }
 
     public List<Player> leaderBoardMaker(List<Player> list){
@@ -1155,6 +1147,10 @@ public class InGameScene extends Scene {
     }
 
     public void updateLeaderboard(){
+        if (Farmland.get().getLoadedSave() == null) {
+            return;
+        }
+
         List<Player> leaderBoardList = leaderBoardMaker(Farmland.get().getLoadedSave().players);
         StringBuilder leaderBoard = new StringBuilder(Resources.getLocalizedText("leaderboard"));
         for (Player player : leaderBoardList) {
@@ -1185,6 +1181,10 @@ public class InGameScene extends Scene {
     }
 
     public void updateMoneyItemLabel() {
+        if (Farmland.get().getLoadedSave() == null) {
+            return;
+        }
+
         if (Game.get().getNetMode() == NetMode.Client || Game.get().getNetMode() == NetMode.Standalone) {
             String selectedId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
             String text = "";
@@ -1233,12 +1233,16 @@ public class InGameScene extends Scene {
             if (serverSave != null) {
                 Save currentSave = Farmland.get().getLoadedSave();
 
-                serverSave.turnEnded = currentSave.turnEnded;
+                if (currentSave != null) {
+                    serverSave.turnEnded = currentSave.turnEnded;
+                }
 
                 Farmland.get().saves.put(Farmland.get().loadedSaveId, serverSave);
 
-                if (!serverSave.currentPlayerId.equals(currentSave.currentPlayerId) || !serverSave.turn.equals(currentSave.turn)) {
-                    Farmland.get().getLoadedSave().turnEnded.dispatch();
+                if (currentSave != null) {
+                    if (!serverSave.currentPlayerId.equals(currentSave.currentPlayerId) || !serverSave.turn.equals(currentSave.turn)) {
+                        Farmland.get().getLoadedSave().turnEnded.dispatch();
+                    }
                 }
 
 

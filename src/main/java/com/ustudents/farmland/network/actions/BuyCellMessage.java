@@ -7,6 +7,7 @@ import com.ustudents.engine.network.messages.Message;
 import com.ustudents.farmland.Farmland;
 import org.joml.Vector2i;
 
+// PROCESSED ON SERVER
 @JsonSerializable
 public class BuyCellMessage extends Message {
     @JsonSerializable

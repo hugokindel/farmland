@@ -2,6 +2,8 @@ package com.ustudents.engine.graphic.imgui.console;
 
 import com.ustudents.engine.Game;
 
+import java.util.Arrays;
+
 public abstract class ConsoleCommands {
     public static boolean show = false;
 
@@ -9,17 +11,19 @@ public abstract class ConsoleCommands {
     public void help() {
         for (ConsoleCommandData commandData : Console.getListOfCommands()) {
             if (commandData.name.equals("help") || commandData.name.equals("quit") || commandData.name.equals("clear") || show) {
-                StringBuilder args = new StringBuilder();
+                if (Arrays.stream(commandData.authority).anyMatch(a -> a == Game.get().getNetMode())) {
+                    StringBuilder args = new StringBuilder();
 
-                for (String arg : commandData.argDesc) {
-                    args.append(arg).append(" ");
+                    for (String arg : commandData.argDesc) {
+                        args.append(arg).append(" ");
+                    }
+
+                    if (args.length() > 0) {
+                        args.deleteCharAt(args.length() - 1);
+                    }
+
+                    Console.println(commandData.name + (args.length() > 0 ? " " + args.toString() : "") + ": " + commandData.description);
                 }
-
-                if (args.length() > 0) {
-                    args.deleteCharAt(args.length() - 1);
-                }
-
-                Console.println(commandData.name + (args.length() > 0 ? " " + args.toString() : "") + ": " + commandData.description);
             }
         }
     }

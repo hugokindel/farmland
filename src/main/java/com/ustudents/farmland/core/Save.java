@@ -276,6 +276,10 @@ public class Save {
         }
     }
 
+    public boolean isCurrentPlayerDead() {
+        return deadPlayers.contains(currentPlayerId);
+    }
+
     public Player getCurrentPlayer() {
         return players.get(currentPlayerId);
     }
@@ -329,14 +333,125 @@ public class Save {
         }
     }
 
-    public boolean PlayerMeetCondition() {
+    public boolean hasBots() {
+        return getNumberOfBots() > 0;
+    }
+
+    public boolean hasMultipleHumans() {
+        return  getNumberOfHumans() > 1;
+    }
+
+    public boolean hasAnyoneWon() {
         for(Player player : players) {
-            if(player.type == Player.Type.Human) {
-                return player.money <= 0 || (player.money >= 1000 && player.remainingDebt <= 0);
+            if (!Farmland.get().getLoadedSave().deadPlayers.contains(player.getId()) &&
+                    player.money >= 1000 && player.remainingDebt <= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasAnyHumanWon() {
+        if (hasBots() && areAllBotsDead() && (getNumberOfHumans() == 1 || getNumberOfDeadHumans() == getNumberOfHumans() - 1)) {
+            return true;
+        }
+
+        for(Player player : players) {
+            if (player.type == Player.Type.Human && player.money >= 1000 && player.remainingDebt <= 0 && !player.isDead()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasAnyHumanLost() {
+        for(Player player : players) {
+            if (player.type == Player.Type.Human && player.money <= 0 && !player.isDead()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasAnyBotWon() {
+        for(Player player : players) {
+            if (player.type == Player.Type.Bot && player.money >= 1000 && player.remainingDebt <= 0 && !player.isDead()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasAnyBotLoose() {
+        for(Player player : players) {
+            if (player.type == Player.Type.Bot && player.money <= 0 && !player.isDead()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int getNumberOfDeadHumans() {
+        int count = 0;
+
+        for(Player player : players) {
+            if (player.type == Player.Type.Human && player.isHuman()) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public boolean areAllBotsDead() {
+        for(Player player : players) {
+            if (player.type == Player.Type.Bot && !player.isDead()) {
+                return false;
             }
         }
 
         return true;
+    }
+
+    public boolean areAllPlayersDead() {
+        for(Player player : players) {
+            if (player.type == Player.Type.Human && !player.isDead()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public int getNumberOfHumans() {
+        int count = 0;
+
+        for(Player player : players) {
+            if (player.type == Player.Type.Human) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public void kill(Player player) {
+        for (int x = 0; x < Farmland.get().getLoadedSave().cells.size(); x++) {
+            for (int y = 0; y < Farmland.get().getLoadedSave().cells.get(x).size(); y++) {
+                Cell cell = Farmland.get().getLoadedSave().cells.get(x).get(y);
+
+                if (cell.isOwnedBy(player)) {
+                    cell.reset();
+                }
+            }
+        }
+
+        Farmland.get().getLoadedSave().deadPlayers.add(player.getId());
     }
 
     public boolean BotMeetCondition() {

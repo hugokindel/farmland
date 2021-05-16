@@ -94,6 +94,10 @@ public abstract class Controller {
         return messagesToHandleOnMainThread;
     }
 
+    public boolean hasMessagesToSend() {
+        return !messagesToSend.isEmpty();
+    }
+
     protected abstract Connection findConnectionToSendMessage(Message message);
 
     protected void handleMessageIfNecessary(Message message) {
@@ -132,7 +136,11 @@ public abstract class Controller {
 
     protected Message readMessage(String data) {
         Map<String, Object> json = JsonReader.readMap(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
-        Out.println("read: " + data);
+
+        //if (Game.isDebugging()) {
+            Out.println("read: " + data);
+        //}
+
         assert json != null;
 
         try {
@@ -246,7 +254,11 @@ public abstract class Controller {
             if (connection != null) {
                 message.setType(message.getClass().getName());
                 String minifiedMessage = JsonWriter.writeToString(Json.serialize(message), false, false, false);
-                Out.println("sent: " + minifiedMessage);
+
+                //if (Game.isDebugging()) {
+                    Out.println("sent: " + minifiedMessage);
+                //}
+
                 connection.writer.println(Objects.requireNonNull(minifiedMessage));
 
                 if (Game.isDebugging()) {

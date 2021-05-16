@@ -94,4 +94,13 @@ public class Cell {
     public boolean hasItem() {
         return item != null;
     }
+
+    public boolean isOwnedBy(Player player) {
+        return Farmland.get().getLoadedSave() != null && isOwned() && player.getId().equals(ownerId);
+    }
+
+    public void reset() {
+        setItem(null);
+        setOwned(false, -1);
+    }
 }
