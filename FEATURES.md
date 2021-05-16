@@ -228,7 +228,7 @@ L'affichage du jeu possède 3 **caméras** superposées (et par conséquent on p
 - La caméra de l'interface graphique, qui permet d'intéragir en coordonnée d'écran.
 - La caméra du curseur personnalisé, qui est aussi en coordonnée d'écran mais est affiché au-dessus de tout.
 
-Finalement, au dessus de tout ça (plus haut niveau), il existe des **composants** qui peuvent être donné à des entités
+Finalement, au-dessus de tout ça (plus haut niveau), il existe des **composants** qui peuvent être donné à des entités
 et qui définissent par exemple une image, un sprite (partie d'une image), une forme, un bouton, un sprite animé, etc.
 
 La pièce qui s'occupe du rendu est en réalité deux *systèmes* (de l'ECS) qui sont appelés au moment *Render* de
@@ -375,18 +375,18 @@ public void exemple() {
 
 ### Les différents éléments disponible
 
-Ce système est encore suffisamment rudimentaire, la majorité des interfaces graphiques complexe étant affiché à l'aide
-de la librairie ImGui qui permet de prototyper rapidement des interfaces complet sans avoir un système complexe de notre
-côté.
+Ce système est encore suffisamment rudimentaire, la majorité des interfaces graphiques complexes étant affiché à l'aide
+de la librairie ImGui, celle-ci permet de prototyper rapidement des interfaces complète sans avoir un système complexe
+de notre côté.
 
-Notre système dispose de 3 éléments (correspondant à des *composants*):
+Notre système dispose de 3 éléments (correspondant à des *composants*) :
 
 - Un texte (utilisant une police d'écriture)
 - Un bouton (le texte du bouton peut-être modifié à tout moment).
-- Une fenêtre (une sorte de fond utilisé pour certains texte, comme sur l'indicateur de tour en partie, ou le menu de
+- Une fenêtre (une sorte de fond utilisé pour certains textes, comme sur l'indicateur de tour en partie, ou le menu de
   crédit).
 
-Ces 3 éléments dispose d'un certains nombre de paramètres, qui permet de les positionner automatiquement ou de les
+Ces 3 éléments dispose d'un certains nombres de paramètres, qui permettent de les positionner automatiquement ou de les
 déplacer comme voulu lors du changement de taille de la fenêtre automatiquement (les paramètres utilisés sont des
 `anchor` et `origin`).
 
@@ -395,7 +395,7 @@ déplacer comme voulu lors du changement de taille de la fenêtre automatiquemen
 Il est assez redondant de créer soit-même les éléments d'interface car ils nécessitent beaucoup de code identique et
 de créer une entité par élément composé souvent de plusieurs *composants*.
 
-Pour régler ce soucis, nous avons créé le `GuiBuilder` qui s'occupe au début d'une scène de créer les éléments voulus
+Pour régler ces soucis, nous avons créé le `GuiBuilder` qui s'occupe au début d'une scène de créer les éléments voulus
 avec moins de code.
 
 Exemple d'utilisation du `GuiBuilder`:
@@ -451,7 +451,7 @@ Le client lui possède donc un `Socket` de type client, il va donc s'attacher à
 peux envoyer des messages à une adresse donné et un port donné. Lors de l'envoi à une adresse ou un port différent,
 le client sera détruit pour en recréer un nouveau.
 
-Il peux effetuer toutes les actions d'un contrôleur (envoyer un message, en recevoir, effectuer des requêtes).
+Il peut effectuer toutes les actions d'un contrôleur (envoyer un message, en recevoir, effectuer des requêtes).
 
 Le client dispose du thread suivant en plus de ceux du contrôleur :
 - Thread d'interception serveur : attends de recevoir un message du serveur et le transmet pour ensuite être lu par le
@@ -459,7 +459,7 @@ Le client dispose du thread suivant en plus de ceux du contrôleur :
 
 ### Format d'un message
 
-Les messages sont envoyés sous forme de pseudo-JSON minimifié. Ce sont donc des objets Java sérialiser puis désérialiser.
+Les messages sont envoyés sous forme de pseudo-JSON minifié. Ce sont donc des objets Java sérialisé puis désérialisé.
 Ils dépendent tous du type `Message` qui définit un message.
 
 Exemple d'un message simple :
@@ -479,8 +479,8 @@ Qui est un message de type `GameInformationsResponse` et qui possède les attrib
 
 Si un message dépasse la taille maximale d'un paquet autorisé par les `Socket`,
 
-À l'aide tu protocole TCP tout le reste est relativement automatique.  
-Lors du développement en UDP, nous devions par exemple découper nous même les message trop gros, ce qui augmentais
+À l'aide du protocole TCP tout le reste est relativement automatique.  
+Lors du développement en UDP, nous devions par exemple découper nous même les messages trop gros, ce qui augmentait
 directement la complexité du système, nous devions aussi nous assurer nous même de l'envoi de certains paquets sous
 faute de devoir les renvoyé.
 
@@ -489,7 +489,7 @@ faute de devoir les renvoyé.
 Si le jeu est lancé en mode serveur, le système audio, de rendu et d'entrée seront désactivé.
 
 Tout le code du jeu (les scènes, etc.) seront joué de la même manière qu'en client, mais pour que le jeu puisse
-s'adapter aux différents mode (solo, client ou serveur), il existe une énumération qui permet de vérifier cela et qui
+s'adapter aux différents modes (solo, client ou serveur), il existe une énumération qui permet de vérifier cela et qui
 est dans la classe `Game`, il suffit d'appeler la fonction `Game.get().getNetMode()`.
 
 ## Code utilitaire
@@ -497,8 +497,8 @@ est dans la classe `Game`, il suffit d'appeler la fonction `Game.get().getNetMod
 Le moteur dispose aussi de code utilitaire pour différents domaines, avec par exemple les éléments ci-contre (mais ne
 se limitant pas à ceux-ci) :
 - Mathématique : Création d'une liste de points d'un cercle avec une précision et un rayon donné.
-- Réflexion : Méthode d'aide à l'introspéction de type Java.
-- Génération de nombre : Un générateur de nombre aléatoire supportant les graînes (basé sur celui de Java mais en plus
+- Réflexion : Méthode d'aide à l'introspection de type Java.
+- Génération de nombre : Un générateur de nombre aléatoire supportant les graines (basé sur celui de Java mais en plus
   dogmatique).
 - Chaîne de caractères : Divers algorithmes utilisés pour lire/écrire des chaînes de caractères contenant des caractères
   d'échappement.
@@ -506,14 +506,14 @@ se limitant pas à ceux-ci) :
 
 ## Outils de développement
 
-Le moteur dispose de quelques outils utile au développement/débogage du jeu.  
+Le moteur dispose de quelques outils utiles au développement/débogage du jeu.  
 Ils peuvent aussi permettre à des utilisateurs plus avancés d'intéragir plus aisément avec certaines parties du jeu.
 
 ### Le gestionnaire de jeu
 
 Le premier outil de développement présent en jeu est le gestionnaire de jeu, il permet entre autre de voir la liste
 des entités présente dans la scène sous forme d'arbre (la hiérarchie parent-enfant dont la scène est la racine), la
-liste des composants et leurs attributs (s'il sont visibles).
+liste des composants et leurs attributs (s'ils sont visibles).
 
 Il permet ensuite d'avoir accès a un panel de paramètre permettant de modifier la synchronisation verticale (et dans
 l'idée encore d'autre paramètres).
@@ -542,7 +542,7 @@ Ce menu se lance par défaut avec ².
 
 ## Informations générales
 
-Le jeu est jouable de plusieurs manière:
+Le jeu est jouable de plusieurs manières :
 - En solo avec ou sans robots.
 - En multijoueur avec ou sans robots et avec ou sans autres joueurs.
 
@@ -602,7 +602,7 @@ Chaque partie possède les caractéristiques unique suivante :
 
 ### Personnalisation du joueur
 
-Chaque joueur possède les caractéristiques unique suivante :
+Chaque joueur possède les caractéristiques uniques suivantes :
 - Un nom de joueur.
 - Un nom de village.
 - Une couleur de bannière (définira la couleur de son terrain).
@@ -631,7 +631,7 @@ Les récoltes/animaux grandissent à la fin d'un tour complet.
 
 L'inventaire permet :
 - D'afficher les objets qui ont été achetés ainsi que leur quantité.
-- De sélectionner un objet pour pouvoir le poser sur le terrain ou de déselectionner l'objet actuellement sélectionné.
+- De sélectionner un objet pour pouvoir le poser sur le terrain ou de désélectionner l'objet actuellement sélectionné.
 
 Chaque joueur possède son propre inventaire.
 
@@ -651,10 +651,10 @@ Les prix du marché de vente sont communs entre tous les joueurs (ils influent d
 ### La carte des caravanes
 
 Une caravane est un conteneur, pour un objet précis, avec une quantité supérieure à 2. L'envoi de caravane permet au
-joueur d'obtenir une meilleure rentabilitée que la revente au marché de vente, mais un temps d'attente sera nécessaire
+joueur d'obtenir une meilleure rentabilité que la revente au marché de vente, mais un temps d'attente sera nécessaire
 pour le transport de la caravane et la réception des gains de la vente n'est donc pas immédiat.
 
-La formule du calcul des gains est la suivante: `((Prix du marché + Avantage du niveau de recherches) x 1,5) x Quantité envoyée`
+La formule du calcul des gains est la suivante : `((Prix du marché + Avantage du niveau de recherches) x 1,5) x Quantité envoyée`
 
 La carte des caravanes permet :
 - D'envoyer des caravanes avec le fonctionnement suivant :  
@@ -667,7 +667,7 @@ Chaque joueur possède sa propre liste de caravanes.
 ### Le laboratoire de recherche
 
 Un système de recherche composé de deux recherches (fermier et éleveur) est disponible, il permet de payer un certains
-nombre de pièces d'or afin d'améliorer ses compétences pour obtenir une meilleure rentabilitée soit pour la vente de
+nombres de pièces d'or afin d'améliorer ses compétences pour obtenir une meilleure rentabilité soit pour la vente de
 récoltes (fermier) soit pour la vente de viande (éleveur). Chacune des recherches possède un niveau spécifique, plus
 votre niveau est élevé, plus la rentabilité sera élevée. Bien sûr, le prix de chaque niveau augmente aussi.
 
@@ -701,14 +701,14 @@ Les robots peuvent effectuer les actions suivantes lors de leur tour :
 - Améliorer ses recherches
 - Prendre un prêt
 
-Il existe différent niveaux de difficulté qui change les actions qu'il est capable de réaliser et lui donne des
+Il existe différents niveaux de difficulté qui change les actions qu'il est capable de réaliser et lui donne des
 avantages sur le joueur.
 
 Difficulté | Description
 --- | ---
 Facile | Achète un terrain ou un objet (de manière aléatoire) puis vend ce qu'il possède
 Normal | Achète un terrain ou autant d'objets different qu'il possède de terrains vide puis vend ce qu'il possède
-Difficle | achète un terrain ou autant d'objets identiques qu'il possède de terrains vide ou améliore ses recherches puis envoie des caravanes (s'il le peut) puis vend ce qu'il possède.
+Difficile | achète un terrain ou autant d'objets identiques qu'il possède de terrains vide ou améliore ses recherches puis envoie des caravanes (s'il le peut) puis vend ce qu'il possède.
 Impossible | Identique à **Difficile** mais à chaque tour s'il n'a pas de prêt alors il y a une chance sur deux qu'il en prenne un.
 
 Le tour d'un robot dure 2 secondes par défaut.
@@ -777,7 +777,7 @@ La liste des commandes de la console est la suivante :
 
 Commande | Paramètres | Description
 --- | --- | ---
-help | | Affiche la liste des commadnes
+help | | Affiche la liste des commandes
 quit | | Quitte le jeu
 clear | | Vide la console
 say | text ... | Dit les mots données
