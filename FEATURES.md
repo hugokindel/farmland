@@ -707,7 +707,7 @@ Normal | Achète un terrain ou autant d'objets different qu'il possède de terra
 Difficle | achète un terrain ou autant d'objets identiques qu'il possède de terrains vide ou améliore ses recherches puis envoie des caravanes (s'il le peut) puis vend ce qu'il possède.
 Impossible | Identique à **Difficile** mais à chaque tour s'il n'a pas de prêt alors il y a une chance sur deux qu'il en prenne un.
 
-Le tour d'un robot dur 2 secondes par défaut.
+Le tour d'un robot dure 2 secondes par défaut.
 
 ### L'affichage tête haute (HUD)
 
