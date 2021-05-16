@@ -80,7 +80,7 @@ Gradle, les paramètres de jeu et les sauvegardes risquerait de ne pas être sau
 Une fois le jeu quitté correctement, un fichier `data/settings.json` devrait avoir été créé contenant vos paramètres,
 vous n'êtes pas censé l'éditer manuellement, mais vous pouvez tout de même jeter un coup d'oeil.
 
-## Mode multijoueur
+## III) Mode multijoueur
 
 ### 1) Lancer le serveur
 
@@ -111,7 +111,7 @@ Une fois le serveur quitté correctement, un fichier `data/server.json` devrait 
 du serveur. Vous pouvez l'éditer pour changer les paramètres de jeu multijouer. Il devrait d'ailleurs contenir un
 commentaire utile pour comprendre les différents paramètres.
 
-## III) Complémentaire
+## IV) Complémentaire
 
 ### 1) Utilisation de la console
 
