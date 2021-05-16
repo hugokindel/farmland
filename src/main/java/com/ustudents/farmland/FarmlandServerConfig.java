@@ -20,7 +20,7 @@ public class FarmlandServerConfig {
 
     // TODO: Put at 2
     @JsonSerializable(necessary = false)
-    public Integer capacity = 1;
+    public Integer capacity = 2;
 
     @JsonSerializable(necessary = false)
     public Vector2i mapSize = new Vector2i(16, 16);

@@ -41,75 +41,60 @@ puis une fois que vous avez compris comment toutes ces actions fonctionnaient, v
 avec des robots pour essayer de gagner.
 
 Une dernière chose, Lorsque vous gagnerez ou perdrez-vous serez sur le menu des résultats, il y a deux boutons :
-
-   -    « Rejouer » qui permet de recréer une partie avec les options que vous avez choisies dans la précédente partie
+- « Rejouer » qui permet de recréer une partie avec les options que vous avez choisies dans la précédente partie
         et la même graîne (les terrains seront aux même emplacements).
-   -    « Menu Principal » qui vous permet de retourner au menu principal.
+- « Menu Principal » qui vous permet de retourner au menu principal.
 
-### 2) Supprimer la partie
-   
-   Lorsque vous voulez faire une pause et que vous quittez votre partie 
-   pour revenir plus tard, lorsque vous reviendrez votre sauvegarde 
-   vous ramènera au tour où vous avez quitté le jeu que ce soit votre tour 
-   ou celui d'un autre joueur. Vous retrouverez tous vos items 
-   et améliorations choisies, ainsi que vos dettes 
-   et les prix du marché avant que vous quittiez la partie.
-   
+<div align="center">
+  <img src="images/instructions2.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+</div>
 
-**4) Supprimer une partie :**
+### 2) Charger la partie
    
-   Le menu de suppression d'une partie est semblable au menu pour charger 
-   les parties, à la différence que ça supprime la sauvegarde 
+Lorsque vous voulez faire une pause et que vous quittez votre partie pour revenir plus tard, lorsque vous reviendrez
+votre sauvegarde vous ramènera au tour où vous avez quitté le jeu que ce soit votre tour ou celui d'un autre joueur.
+Vous retrouverez votre sauvegarde au moment exact ou vous l'avez laissé.
+
+### 3) Supprimer une sauvegarde
+   
+Le menu de suppression d'une partie est semblable au menu pour charger les parties, à la différence que ça supprime la sauvegarde 
    quand vous cliquez dessus. Un autre moyen de supprimer 
    une partie existante est dans le menu «défaite» ou «victoire» 
    où vous devrez choisir de revenir au «menu principal» 
    pour supprimer votre partie.
 
-                 
-                 
-              
-![Farmland-Result-Menu](images/Farmland-Result.png)
 
-   
+
 ## Mode multijoueur
 
-**1) Créer et rejoindre une partie :**
+### 1) Lancer le serveur
 
-   La création d’une partie dans le mode multijoueur est différent du mode solo,
-   notamment vous devrez compiler et exécuter le programme sur deux terminaux 
-   différents, le premier terminal servira au bon fonctionnement du serveur 
-   dont vous verrez toutes les informations dans celui-ci, pour lancer 
-   le serveur vous ferez la commande : “./gradlew run --args="--server" ”. 
-   Le second servira pour jouer normalement, que vous lancerez 
-   avec la commande : “./gradlew run”.
-   Une fois que votre serveur et jeu sont lancés vous devrez 
-   vous rendre dans le menu “Multijoueur->Rejoindre un serveur” puis choisir
-   le bouton “mon serveur [0/2]” par défaut le serveur a déjà
-   une configuration de partie, pour changer cela il faut couper 
-   l'exécution de votre console en utilisant la commande “quit” dans 
-   votre terminal où qui gère le server et quitter le jeu 
-   sur votre terminal principal pour ainsi vous rendre dans le fichier 
-   de configuration qui se nomme “server.json” dans le répertoire “data”.
-   Une fois que vous avez modifié la configuration du serveur, 
-   vous pouvez relancer de la même manière que précédemment 
-   vos deux terminaux puis de nouveau vous rendre sur votre serveur 
-   puis choisir un joueur et entrer les infos de celui-ci 
-   et vous pourrez commencer à jouer.
+La création d’une partie dans le mode multijoueur est différent du mode solo, vous devez d'abord lancer le jeu en mode
+serveur dédié, pour cela, il suffit de le lancer avec la commande `--server`, si vous ne savez pas comment ajouter
+un paramètre à gradle pour démarrer, voici la commande à utiliser :
 
-**2) Spécificité d'une partie en multijoueur :**
+```
+./gradlew run --args="--server"
+```
 
-   En ce qui concerne la partie, il est plus intéressant de tester 
-   le serveur lorsque le nombre de joueur autorisé et d’au moins 
-   deux car vous pourrez tester à l’aide d’un troisième terminal
-   le multijoueur, celui-ci fera office de joueur deux.
-   Nous vous conseillons de faire les meme test qu’en “solo” 
-   et vous pouvez essayer de déconnecter un de vos compte de la partie 
-   et passez un tour vous pourrez voir qu’un bot prendra votre place 
-   le temps que vous reveniez.
+Le serveur devrait alors se lancer en attendant les joueurs.
 
-![Farmland-Console](images/Farmland-ServerConfig-File.PNG)
+La capacité par défaut en nombre de joueurs du serveur est de 2, vous devez donc lancer 2 autres instances du jeu
+normalement et aller dans le menu « Multijoueur » puis « Rejoindre un serveur » et votre serveur devrait s'afficher.
+Vous devriez pouvoir le rejoindre, choisissez un joueur différent dans chacune des deux instances. Une fois les joueurs
+créés, la partie devrait se lancer.
 
-**3) Utilisation de la console :**
+Vous devriez ensuite pouvoir jouer tout comme en solo.
+
+### 2) Fermer le serveur
+
+Pour fermer le serveur correctement
+
+### 2) Éditer la configuration serveur
+
+## III) Complémentaire
+
+### 1) Utilisation de la console
 
    Enfin une nouveauté pour le multijoueur, la console qui permet 
    de faire ces actions :
