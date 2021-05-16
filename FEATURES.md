@@ -789,6 +789,32 @@ kill | name | Fait perdre le joueur donné
 setMoney | quantity | Redéfinie votre argent à la somme donnée
 setMoney | name quantity | Redéfinie l'argent du joueur voulu à la somme donnée
 
+### Relatifs aux touches du jeu
+
+La liste des touches par défaut est la suivante :
+
+Combinaison | Description
+--- | ---
+F1 | Afficher le gestionnaire de jeu
+F2 | Afficher le visualiseur de donnée
+² | Afficher la console
+Alt + BSG | Se déplacer à l'aide de la souris
+Ctrl | Afficher les territoires
+Ctrl + BSG | Acheter le terrain à la position de la souris (si terrain proche du terrain possédé et que Alt n'est pas aussi pressé)
+BSG | Poser un objet (si un objet est sélectionné et que Alt n'est pas aussi pressé)
+BSD | Activer/désactiver la sélection d'objet
+
+#### Informations sur les touches
+
+- BSG correspond à bouton souris gauche
+- BSD correspond à bouton souris droit
+- AltG correspond à Alt gauche.
+- AltD correspond à Alt droit.
+- CtrlG correspond à Ctrl gauche.
+- CtrlD correspond à Ctrl droit.
+- Alt correspond à AltG ou AltD.
+- Ctrl correspond à CtrlG ou CtrlD.
+
 # Ce qu'on aurait aimé rajouter
 
 - Un système de tutoriel.

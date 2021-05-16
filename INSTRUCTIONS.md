@@ -1,30 +1,25 @@
-# Mode d'emploi du projet
+# Instructions de test des fonctionnalités principales
 
+## I) Compiler et lancer le jeu
 
-## Mode Solo
+Les instructions pour compiler et lancer le jeu sont présente dans le [README](README.md).
 
-**1) Création d'une partie :**
+## II) Mode solo
 
-  ![Farmland-NewGame-Menu](images/Farmland-NewGame.png)
+### 1) Création d'une partie
+
+![Farmland-NewGame-Menu](images/Farmland-NewGame.png)
     
-  Lorsque vous arrivez pour la première fois dans le mode solo,
-  vous devez obligatoirement créer une partie à l'aide du menu
-  que vous pouvez voir ci-dessus, afin de finir la création
-  de la partie vous devrez fournir au moins le nom de la partie,
-  votre pseudo ainsi que le nom du village.
-  Les autres champs vous permettront :
+Lorsque vous arrivez pour la première fois dans le mode solo, vous devez obligatoirement créer une partie à l'aide du
+menu que vous pouvez voir ci-dessus, afin de finir la création de la partie vous devrez fournir au moins le nom de la
+partie, votre pseudo ainsi que le nom du village. Les autres champs vous permettront de modifier les informations en
+question pour personnaliser votre expérience.
 
-  * Personnaliser l'apparence de votre avatar.
-  * Définir les propriétés de la map.
-  * Ajouter des bots avec une difficulté spécifique.
-  * Définir les sommes et les taux de remboursement sur les emprunts.
-    
 
-**2) Jouer une partie :**
-   
-   Une fois que la partie est crée et que vous êtes dans celle-ci,
-   vous aurez sept options à votre dispositions 
-   pour remporter la partie :
+### 2) Jouer la partie
+
+Une fois que la partie est créé et que vous êtes dans celle-ci, vous aurez de multiples options à votre disposition pour
+remporter la partie :
     
    - Le marché qui permet d'acheter vos items ainsi que de les revendre, 
       celui-ci respecte les lois suivantes :
