@@ -30,8 +30,8 @@ remporter la partie :
 
 - Utiliser le marché pour acheter ou vendres vos objets.
 - Accéder à votre inventaire pour voir les objets que vous avez achetés et les sélectionner pour pouvoir les poser.
-- Une fois qu'une de vos récolte vous semblera suffisamment grande, il vous suffira d'effectuer un clique droit dessus
-  pour la récolter, vous pourrez ensuite la vendre dans le marché ou à l'aide des caravanes.
+- Une fois qu'une de vos récoltes vous semblera mûre, vous n'aurez qu'à effectuer un clique droit dessus
+  pour la récupérer, vous pourrez ensuite la vendre dans le marché ou à l'aide des caravanes.
 - Envoyer des caravanes pour revendre des objets avec une meilleure rentabilité que le marché (mais un temps d'attente
   sera imposé).
 - Améliorer vos recherches pour obtenir de meilleures rentabilités.
