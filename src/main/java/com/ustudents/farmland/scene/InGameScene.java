@@ -1255,10 +1255,10 @@ public class InGameScene extends Scene {
 
         if (Input.isMouseRelease(MouseButton.Right)) {
             if (Farmland.get().getLoadedSave().getLocalPlayer().getId().equals(Farmland.get().getLoadedSave().getCurrentPlayer().getId())) {
-                if (lastSelectedItemId == null) {
+                if (Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId != null) {
                     lastSelectedItemId = Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId;
                     Farmland.get().getLoadedSave().getLocalPlayer().selectItem(null);
-                } else {
+                } else if (lastSelectedItemId != null) {
                     Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
                     Farmland.get().getLoadedSave().getLocalPlayer().selectItem(lastSelectedItemId);
                 }

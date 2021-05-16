@@ -395,7 +395,9 @@ public class Player {
 
     public void selectItem(String itemId) {
         if (Game.get().hasAuthority()) {
-            setSelectedItemId(itemId);
+            if (itemId == null || (getItemFromInventory(itemId) != null && getItemFromInventory(itemId).quantity > 0)) {
+                setSelectedItemId(itemId);
+            }
 
             Farmland.get().serverBroadcastSave();
         } else {
