@@ -51,6 +51,9 @@ public class Farmland extends Game {
     @Option(names = "--fast-bot", description = "Makes bot turns instantaneous.")
     public boolean fastBot = false;
 
+    @Option(names = "--fast-harvest", description = "Makes animals/crops harvest instantaneous.")
+    public boolean fastHarvest = false;
+
     // SERVER SPECIFIC
     public Map<Integer, Integer> serverPlayerIdPerClientId = new ConcurrentHashMap<>();
 
@@ -415,6 +418,7 @@ public class Farmland extends Game {
             action.addMapping(RightMouseButton);
             config.commands.put("getItem", action);
         }
+
         if(!actions.containsKey("showDebug")) {
             action = new Action();
             Mapping debug = new Mapping("keyboard");

@@ -741,7 +741,8 @@ Il est possible réinitialiser les paramètres.
 - Touches diverses.
 
 Il est important de noter que les touches relatives à la souris ne devrait pas être modifié, et que les touches de la
-souris ne peuvent pas être utilisé lors d'un changement de touche actuellement.
+souris ne peuvent pas être utilisé lors d'un changement de touche actuellement. Pour le détail, certaines des actions
+non modifiables en l'état sont "Pause" et "Zoom".
 
 ## Autres fonctionnalités notable
 
@@ -798,9 +799,9 @@ Combinaison | Description
 F1 | Afficher le gestionnaire de jeu
 F2 | Afficher le visualiseur de donnée
 ² | Afficher la console
-Alt + BSG | Déplacer la caméra à l'aide de la souris
+Alt et BSG | Déplacer la caméra à l'aide de la souris
 Ctrl | Afficher les territoires
-Ctrl + BSG | Acheter le terrain à la position de la souris (si terrain proche du terrain possédé et que Alt n'est pas aussi pressé)
+Ctrl et BSG | Acheter le terrain à la position de la souris (si terrain proche du terrain possédé et que Alt n'est pas aussi pressé)
 BSG | Poser un objet (si un objet est sélectionné et que Alt n'est pas aussi pressé)
 BSD | Activer/désactiver la sélection d'objet
 Z | Déplacer la caméra vers l'avant
@@ -809,6 +810,7 @@ Q | Déplacer la caméra vers la gauche
 D | Déplacer la caméra vers la droite
 Scroll+ | Zoomer la caméra
 Scroll- | Dézoomer la caméra
+P ou Echap | Mettre en pause (durant une partie en solo)
 
 #### Informations sur les touches
 
