@@ -480,6 +480,6 @@ public class SettingsKeybindMenu extends MenuScene{
     }
 
     public boolean avoidKey(int key){
-        return displayGoodKeyBind(key).equals("[...]");
+        return displayGoodKeyBind(key).equals("[...]") || key == 342 || key == 346;
     }
 }
