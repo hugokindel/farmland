@@ -40,17 +40,17 @@ public class FarmlandServerConfig {
     @JsonSerializable(necessary = false)
     public Bot.Difficulty difficulty = Bot.Difficulty.Normal;
 
-    @JsonSerializable(necessary = false)
-    public String password = "";
+    //@JsonSerializable(necessary = false)
+    //public String password = "";
 
-    @JsonSerializable(necessary = false)
-    public List<String> whitelist = new ArrayList<>();
+    //@JsonSerializable(necessary = false)
+    //public List<String> whitelist = new ArrayList<>();
 
-    @JsonSerializable(necessary = false)
-    public List<String> blacklist = new ArrayList<>();
+    //@JsonSerializable(necessary = false)
+    //public List<String> blacklist = new ArrayList<>();
 
-    @JsonSerializable(necessary = false)
-    public List<String> admin = new ArrayList<>();
+    //@JsonSerializable(necessary = false)
+    //public List<String> admin = new ArrayList<>();
 
     public FarmlandServerConfig() {
 

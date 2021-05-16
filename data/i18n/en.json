@@ -192,6 +192,7 @@
         "debtAmount": "Value of debt to pay",
         "debtSelected": "Selected value of debt to pay {} \n\n\n\n",
         "debtNothing": "\n\n You have no debt to pay. \n\n",
-        "defaultServerName": "My Server"
+        "defaultServerName": "My Server",
+        "serverFull": "This server is already full!"
     }
 }

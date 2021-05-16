@@ -8,6 +8,8 @@ import com.ustudents.engine.graphic.imgui.ImGuiUtils;
 import com.ustudents.engine.scene.SceneManager;
 import com.ustudents.farmland.Farmland;
 import com.ustudents.farmland.core.Save;
+import com.ustudents.farmland.network.general.GameInformationsRequest;
+import com.ustudents.farmland.network.general.GameInformationsResponse;
 import com.ustudents.farmland.scene.InGameScene;
 import imgui.ImGui;
 import imgui.flag.ImGuiCond;
@@ -84,9 +86,17 @@ public class ServerCustomMenu extends MenuScene {
                 boolean serverExists = Farmland.get().getClient().isAlive();
 
                 if (serverExists) {
-                    SceneManager.get().popTypeOfLastScene();
+                    GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
 
-                    changeScene(new ServerWaitingRoomMenu(), false);
+                    if (informations.getNumberOfConnectedPlayers() < informations.getCapacity()) {
+                        SceneManager.get().popTypeOfLastScene();
+
+                        changeScene(new ServerWaitingRoomMenu(), false);
+                    } else {
+                        Farmland.get().clientServerIp = null;
+                        Farmland.get().clientServerPort = 0;
+                        errors.add(Resources.getLocalizedText("serverFull"));
+                    }
                 } else {
                     Farmland.get().clientServerIp = null;
                     Farmland.get().clientServerPort = 0;

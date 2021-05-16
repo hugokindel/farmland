@@ -27,8 +27,14 @@ public class ServersListMenu extends MenuScene {
 
         if (localServerExists) {
             GameInformationsResponse informations = Farmland.get().getClient().request(new GameInformationsRequest(), GameInformationsResponse.class);
-            buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", Resources.getLocalizedText("researchServer"), Resources.getLocalizedText("reloadServer")};
-            buttonIds = new String[] {"localButton", "addressButton", "reloadButton"};
+
+            if (informations.getNumberOfConnectedPlayers() < informations.getCapacity()) {
+                buttonNames = new String[] {informations.getName() + " (" + informations.getNumberOfConnectedPlayers() + "/" + informations.getCapacity() + ")", Resources.getLocalizedText("researchServer"), Resources.getLocalizedText("reloadServer")};
+                buttonIds = new String[] {"localButton", "addressButton", "reloadButton"};
+            } else {
+                buttonNames = new String[] {Resources.getLocalizedText("researchServer"), Resources.getLocalizedText("reloadServer")};
+                buttonIds = new String[] {"addressButton", "reloadButton"};
+            }
         } else {
             buttonNames = new String[] {Resources.getLocalizedText("researchServer"), Resources.getLocalizedText("reloadServer")};
             buttonIds = new String[] {"addressButton", "reloadButton"};

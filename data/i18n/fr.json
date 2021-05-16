@@ -192,7 +192,7 @@
         "debtAmount": "Somme à rembourser",
         "debtSelected": "Valeur de remboursement sélectionné {} \n\n\n\n",
         "debtNothing": "\n\n Vous n'avez pas de dette à rembourser. \n\n",
-        "defaultServerName": "Mon serveur"
-
+        "defaultServerName": "Mon serveur",
+        "serverFull": "Ce serveur est déjà rempli !"
 	}
 }
