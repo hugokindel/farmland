@@ -208,7 +208,8 @@ et zoomer/dézoomer. Une fois cela défini, on utilise ce que l'on appelle un **
 l'écran différent type d'objets primitifs comme des textures ou des formes (cercle, point, rectangle, ligne).
 Cela pourrait correspondre au second niveau de complexité du système de rendu.
 
-L'affichage du jeu possède 3 caméras (et par conséquent on peux simplifier en disant qu'il y a aussi 3 spritebatch):
+L'affichage du jeu possède 3 **caméras** superposées (et par conséquent on peux simplifier en disant qu'il y a aussi 3
+**spritebatch**):
 - La caméra du monde, qui correspond à la position du joueur et qui permet d'intéragir en coordonnée de monde
   (différent des coordonnées d'écran, un pixel n'a pas la même valeur qu'une unité du monde).
 - La caméra de l'interface graphique, qui permet d'intéragir en coordonnée d'écran.
@@ -229,7 +230,8 @@ Le moteur permet d'afficher les éléments suivant:
 - Des textures
   - Une texture
   - Un sprite (une partie de texture)
-  - Un 9-slicing sprite (une texture découpé en 9 morceaux, pour être redimensionné, les fond de boutons en sont par exemple)
+  - Un 9-slicing sprite (une texture découpé en 9 morceaux, pour être redimensionné, les fond de boutons en sont par
+    exemple)
   - Un sprite animé (le curseur en jeu par exemple)
   
 - Du texte (depuis une police d'écriture)
@@ -237,10 +239,10 @@ Le moteur permet d'afficher les éléments suivant:
 Un grand nombre de paramètre peux être appliqué pour modifier le rendu de chacun de ses éléments (taille, rotation,
 couleur de teint, précédence d'affichage, etc.)
 
-Un exemple de pseudo-JSON qui démontre la définition de plusieurs sprite à partir d'une image ainsi que de ses animations:
+Un exemple de pseudo-JSON qui démontre la définition de plusieurs sprite à partir d'une image ainsi que de ses
+animations:
 
 <div align="center">
-  <br>
   <img width="216px" src="data/textures/ui/map_cell_cursor.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
 </div>
 
@@ -289,6 +291,53 @@ Un exemple de pseudo-JSON qui démontre la définition de plusieurs sprite à pa
 }
 ```
 
+## Le système d'entrée
+
+Ce système est codé sous forme de calque et peux donc être complètement désactivé (sans faire crasher le projet) à
+l'aide d'un calque d'implémentation "vide", tandit que le calque fonctionnel utilise l'API GLFW (inclus dans LWJGL).
+
+### Lecture des touches du clavier/de la souris
+
+En utilisant la partie *Input* de la boucle de jeu, ce système est capable à chaque itération de la boucle de récupérer
+les changement suivant:
+- Lorsqu'un bouton de clavier/de souris est pressé
+- Lorsqu'un bouton de clavier/de souris est relevé
+
+Cela nous permet de pouvoir vérifier 4 états, si un bouton est levé, s'il vient d'être appuyé, s'il est maintenu et
+finalement s'il vient d'être lâché te permet donc un nombre varier de vérifications.
+
+### Les actions et les mapping
+
+Nous définissons une action comme quelque chose qu'un joueur peux réaliser ("avancer" par exemple).
+Nous définissons un mapping comme une suite de conditions d'entrées à réaliser (appuyer sur E par exemple)
+
+Mais une action est aussi composé d'une liste de mapping, et pour qu'une action puisse se réaliser, il faut que l'un
+de ses mapping soit valide (que ses conditions soit vrai à une itération donné de la boucle de jeu).
+
+Ce système nous permet de définir des touches redéfinissable (rebindable).
+
+## Le système de langue
+
+### Fichiers de langue
+
+Le système de langue est basé sur la lecture des différentes langues présente dans le dossier `data/i18n` (i18n qui
+signifie internationalisation).
+
+Exemple de fichier de langue en pseudo-JSON:
+```json
+{
+    "content": {
+        "language": "Français",
+        "singleplayer": "Solo",
+        "multiplayer": "Multijoueur",
+        "settings": "Paramètres",
+        "credits": "Crédits",
+        "quit": "Quitter",
+        "version": "Version: {}"
+    }
+}
+```
+
 # FARMLAND
 
 ## Gameplay
@@ -302,9 +351,12 @@ Un exemple de pseudo-JSON qui démontre la définition de plusieurs sprite à pa
     - menu principal : retour au menu principal et sauvegarde la partie
     - inventaire : inventaire des graines et bébés animaux
     - marché : acheter des graines/bébés aniamux OU vendre les ressources qui ont pousser/atteint la maturité
-    - caravanes : envoie des caravanes (limité a la moitié des ressources possedé) OU verifier l'avancé des caravanes envoyés
-    - recherches : améliorer la recherche d'Eleveur (pour les animaux) ou de Fermier (pour les plantes) afin d'augmenter les gains des caravanes
-    - banque :  prendre un prêt (limité a 1 prêt a la fois) OU rembourser une partie manuellement (remboursement d'une partie systematiquement a chaque tour)
+    - caravanes : envoie des caravanes (limité a la moitié des ressources possedé) OU verifier l'avancé des caravanes
+      envoyés
+    - recherches : améliorer la recherche d'Eleveur (pour les animaux) ou de Fermier (pour les plantes) afin d'augmenter
+      les gains des caravanes
+    - banque :  prendre un prêt (limité a 1 prêt a la fois) OU rembourser une partie manuellement (remboursement d'une
+      partie systematiquement a chaque tour)
 
 #### Implémentation
 
