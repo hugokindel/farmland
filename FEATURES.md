@@ -769,7 +769,7 @@ Paramètre | Description
 
 ### Relatifs aux commandes de la console
 
-La liste des paramètres de la console est la suivante :
+La liste des commandes de la console est la suivante :
 
 Commande | Paramètres | Description
 --- | --- | ---
