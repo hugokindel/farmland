@@ -26,7 +26,7 @@ Bien sûr, il est important de noter qu'avant l'exécution de cette boucle, le j
 de cette boucle (lorsqu'il est temps de quitter le jeu), il va se détruire.
 
 Elle peut être visualisée comme ceci :  
-PS: Ceci est un graph visible sur gitlab uniquement.
+PS: Ceci est un graph visible sur gitlab uniquement.  
 [comment]: <> (C'est un graphique utilisant la lib mermaid, fonctionne uniquement sur gitlab)
 ```mermaid
 graph TD;
