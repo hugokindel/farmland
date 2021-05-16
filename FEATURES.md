@@ -614,7 +614,7 @@ Chaque joueur possède les caractéristiques uniques suivantes :
 
 ### Système de tour par tour
 
-Durant le tour du joueur, celui-ci le choix entre plusieurs actions :
+Durant le tour du joueur, celui-ci a le choix entre plusieurs actions :
 - Voir/acheter du terrain.
 - Retourner au menu principal.
 - Finir le tour actuel.
