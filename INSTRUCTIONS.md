@@ -8,7 +8,7 @@ vous conseillons de les observer en même temps que la lecture de ce guide en ca
 
 ## I) Compiler et lancer le jeu
 
-Les instructions pour compiler et lancer le jeu sont présente dans le [README](README.md).
+Les instructions pour compiler et lancer le jeu sont présentes dans le [README](README.md).
 
 ## II) Mode solo
 
@@ -25,15 +25,15 @@ question pour personnaliser votre expérience.
 
 ### 2) Jouer la partie
 
-Une fois que la partie est créé et que vous êtes dans celle-ci, vous aurez de multiples options à votre disposition pour
+Une fois que la partie est créée et que vous êtes dans celle-ci, vous aurez de multiples options à votre disposition pour
 remporter la partie :
 
-- Utiliser le marché pour acheter ou vendres vos objets.
-- Accéder à votre inventaire pour voir les objets que vous avez achetés et les sélectionner pour pouvoir les poser.
+- Utiliser le marché pour acheter ou vendre vos objets.
+- Accéder à votre inventaire pour voir les objets que vous avez acheté et les sélectionner pour pouvoir les poser.
 - Envoyer des caravanes pour revendre des objets avec une meilleure rentabilité que le marché (mais un temps d'attente
   sera imposé).
-- Améliorer vos recherches pour obtenir de meilleures rentabilitées.
-- Aller à la banque pour emprunter le l'argent pour ne pas vous ruiner ou rembourser une partie de votre précédent prêt.
+- Améliorer vos recherches pour obtenir de meilleures rentabilités.
+- Aller à la banque pour emprunter de l'argent pour ne pas vous ruiner ou rembourser une partie de votre précédent prêt.
 - Finissez le tour actuel.
 - Retourner au menu principal quand vous le souhaitez (vous pourrez rejoindre votre partie plus tard, elle sera
   automatiquement sauvegardée).
@@ -48,9 +48,9 @@ La liste des touches est noté dans la catégorie « Relatifs aux touches du jeu
   <img src="images/screenshot1.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
 </div>
 
-Une dernière chose, Lorsque vous gagnerez ou perdrez-vous serez sur le menu des résultats, il y a deux boutons :
+Une dernière chose, lorsque vous gagnerez ou perdrez, vous serez sur le menu des résultats, il y a deux boutons :
 - « Rejouer » qui permet de recréer une partie avec les options que vous avez choisies dans la précédente partie
-        et la même graîne (les terrains seront aux même emplacements).
+        et la même graîne (les terrains seront aux mêmes emplacements).
 - « Menu Principal » qui vous permet de retourner au menu principal.
 
 <div align="center">
@@ -61,19 +61,19 @@ Une dernière chose, Lorsque vous gagnerez ou perdrez-vous serez sur le menu des
    
 Lorsque vous voulez faire une pause et que vous quittez votre partie pour revenir plus tard, lorsque vous reviendrez
 votre sauvegarde vous ramènera au tour où vous avez quitté le jeu que ce soit votre tour ou celui d'un autre joueur.
-Vous retrouverez votre sauvegarde au moment exact ou vous l'avez laissé.
+Vous retrouverez votre sauvegarde au moment exact où vous l'avez laissé.
 
 ### 3) Supprimer une sauvegarde
    
-Le menu de suppression d'une partie est semblable au menu pour charger les parties, à la différence que ça supprime la
+Le menu de suppression d'une partie est semblable au menu pour charger les parties, à la différence que cela supprime la
 sauvegarde quand vous cliquez dessus. Il est intéressant de noter que les sauvegardes sont aussi automatiquement
-supprimé lorsqu'une partie est fini.
+supprimés, lorsqu'une partie est fini.
 
 ### 4) Quitter le jeu
 
 Pour quitter le jeu proprement, pensez bien à fermer la fenêtre de jeu à l'aide de la croix ou d'utiliser le bouton
 « Quitter » du jeu, si vous fermez le jeu automatiquement depuis votre IDE, votre débogueur ou en fermant la console
-Gradle, les paramètres de jeu et les sauvegardes risquerait de ne pas être sauvegarder.
+Gradle, les paramètres de jeu et les sauvegardes risqueraient de ne pas être sauvegardés.
 
 ### 5) Éditer les paramètres du jeu
 
@@ -94,8 +94,8 @@ un paramètre à gradle pour démarrer, voici la commande à utiliser :
 
 Le serveur devrait alors se lancer en attendant les joueurs.
 
-La capacité par défaut en nombre de joueurs du serveur est de 2, vous devez donc lancer 2 autres instances du jeu
-normalement et aller dans le menu « Multijoueur » puis « Rejoindre un serveur » et votre serveur devrait s'afficher.
+La capacité par défaut en nombre de joueurs du serveur est de 2, vous devez donc lancer 2 autres instances normales du jeu
+et aller dans le menu « Multijoueur » puis « Rejoindre un serveur » et votre serveur devrait s'afficher.
 Vous devriez pouvoir le rejoindre, choisissez un joueur différent dans chacune des deux instances. Une fois les joueurs
 créés, la partie devrait se lancer.
 
@@ -123,7 +123,7 @@ commandes comme `say bonjour` ou `setMoney "Robot 1" 1500`.
 </div>
 
 La liste des commandes disponibles est noté dans la catégorie « Relatifs aux commandes de la console » de [FEATURES](FEATURES.md).  
-Ou sinon, il vous suffit d'invoquer la commande `help` pour voir les commandes disponibles au moment ou vous utiliser la console.
+Ou sinon, il vous suffit d'invoquer la commande `help` pour voir les commandes disponibles au moment ou vous utilisez la console.
 
 ### 2) Utiliser des paramètres de démarrage
 
@@ -137,12 +137,12 @@ Le menu des paramètres accessible depuis le menu principal vous permet de modif
 permet d'activer/désactiver le son du jeu, ce que nous vous conseillons de faire, vous pouvez ensuite modifier le type
 de rendu de la fenêtre, ainsi que la langue du jeu.
 
-Un bouton commandes permet également d'aller modifier les touches du jeu., celui-ci permet de voir les touches que vous
+Un bouton **Commandes** permet également d'aller modifier les touches du jeu., celui-ci permet de voir les touches que vous
 utilisez actuellement, de changer certaines commandes, nous vous conseillons d'essayer de modifier les commandes avec
-les touches du clavier telle que « avancer ».
+les touches du clavier telle que la commande « avancer ».
 
-Mais faites attention certaines actions ne sont pas possible comme attribuer une touche du clavier pour les actions
-qui requiert un bouton de la souris et pareil inversement, vous ne pouvez pas choisir une touche qui est déjà attribuée
+Mais faites attention, certaines actions ne sont pas possible comme attribuer une touche du clavier pour les actions
+qui requiert un bouton de la souris et inversement, vous ne pouvez pas choisir non plus une touche qui est déjà attribuée
 et vous ne pourrez pas choisir n'importe quelle touche de votre clavier.
 
 Également, vous avez un bouton « Réinitialiser les touches » qui vous permet de revenir à la configuration initiale.
