@@ -28,15 +28,10 @@ question pour personnaliser votre expérience.
 Une fois que la partie est créée et que vous êtes dans celle-ci, vous aurez de multiples options à votre disposition pour
 remporter la partie :
 
-<<<<<<< HEAD
 - Utiliser le marché pour acheter ou vendres vos objets.
 - Accéder à votre inventaire pour voir les objets que vous avez achetés et les sélectionner pour pouvoir les poser.
 - Une fois qu'une de vos récolte vous semblera suffisamment grande, il vous suffira d'effectuer un clique droit dessus
   pour la récolter, vous pourrez ensuite la vendre dans le marché ou à l'aide des caravanes.
-=======
-- Utiliser le marché pour acheter ou vendre vos objets.
-- Accéder à votre inventaire pour voir les objets que vous avez acheté et les sélectionner pour pouvoir les poser.
->>>>>>> origin/master
 - Envoyer des caravanes pour revendre des objets avec une meilleure rentabilité que le marché (mais un temps d'attente
   sera imposé).
 - Améliorer vos recherches pour obtenir de meilleures rentabilités.
