@@ -822,6 +822,18 @@ Scroll- | Dézoomer la caméra
 - Alt correspond à AltG ou AltD.
 - Ctrl correspond à CtrlG ou CtrlD.
 
+#### La moddabilité du jeu
+
+Nous pouvons noter que le jeu est fait d'une manière qui le rend par nature relativement moddable. Bien sûr tout
+d'abord tous les fichiers de données sont accessible, mais surtout, tous les objets (animaux, ressources) sont défini
+dans les fichiers écrits en pseudo-JSON directement dans le dossier `data/items` et ils peuvent être modifié pour
+rajouter des animaux ou ressources différentes mais il faudra aussi ajouter les textures correspondantes dans
+`data/textures` et rajouter le support des langues dans `data/i18n`.
+
+Il est aussi relativement facile d'ajouter des langues, il suffit de créer un nouveau fichier dans `data/i18n` et de
+copier le contenu de `fr.json` ou `en.json` et le modifier pour la langue voulue. Le jeu devrait s'adapter automatiquement
+en permettant de sélectionner la nouvelle langue dans les paramètres.
+
 # Ce qu'on aurait aimé rajouter
 
 - Un système de tutoriel.

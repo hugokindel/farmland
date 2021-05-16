@@ -3,6 +3,9 @@
 La majeure partie du projet devrait être relativement intuitive à utiliser, mais voici l'aide pour certaines
 fonctionnalités primordiale du projet.
 
+Beaucoup d'informations utiles (liste des touches, etc.) sont contenues vers la fin de [FEATURES](FEATURES.md), nous
+vous conseillons de les observer en même temps que la lecture de ce guide en cas de soucis.
+
 ## I) Compiler et lancer le jeu
 
 Les instructions pour compiler et lancer le jeu sont présente dans le [README](README.md).
@@ -20,7 +23,6 @@ menu que vous pouvez voir ci-dessus, afin de finir la création de la partie vou
 partie, votre pseudo ainsi que le nom du village. Les autres champs vous permettront de modifier les informations en
 question pour personnaliser votre expérience.
 
-
 ### 2) Jouer la partie
 
 Une fois que la partie est créé et que vous êtes dans celle-ci, vous aurez de multiples options à votre disposition pour
@@ -35,10 +37,16 @@ remporter la partie :
 - Finissez le tour actuel.
 - Retourner au menu principal quand vous le souhaitez (vous pourrez rejoindre votre partie plus tard, elle sera
   automatiquement sauvegardée).
-
+  
 Pour prendre en main toutes ces options nous vous conseillons de faire votre première partie en solo et sans robot
 puis une fois que vous avez compris comment toutes ces actions fonctionnaient, vous pourrez essayer de jouer en solo
 avec des robots pour essayer de gagner.
+
+La liste des touches est noté dans la catégorie « Relatifs aux touches du jeu » de [FEATURES](FEATURES.md).
+
+<div align="center">
+  <img src="images/screenshot1.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+</div>
 
 Une dernière chose, Lorsque vous gagnerez ou perdrez-vous serez sur le menu des résultats, il y a deux boutons :
 - « Rejouer » qui permet de recréer une partie avec les options que vous avez choisies dans la précédente partie
@@ -57,13 +65,20 @@ Vous retrouverez votre sauvegarde au moment exact ou vous l'avez laissé.
 
 ### 3) Supprimer une sauvegarde
    
-Le menu de suppression d'une partie est semblable au menu pour charger les parties, à la différence que ça supprime la sauvegarde 
-   quand vous cliquez dessus. Un autre moyen de supprimer 
-   une partie existante est dans le menu «défaite» ou «victoire» 
-   où vous devrez choisir de revenir au «menu principal» 
-   pour supprimer votre partie.
+Le menu de suppression d'une partie est semblable au menu pour charger les parties, à la différence que ça supprime la
+sauvegarde quand vous cliquez dessus. Il est intéressant de noter que les sauvegardes sont aussi automatiquement
+supprimé lorsqu'une partie est fini.
 
+### 4) Quitter le jeu
 
+Pour quitter le jeu proprement, pensez bien à fermer la fenêtre de jeu à l'aide de la croix ou d'utiliser le bouton
+« Quitter » du jeu, si vous fermez le jeu automatiquement depuis votre IDE, votre débogueur ou en fermant la console
+Gradle, les paramètres de jeu et les sauvegardes risquerait de ne pas être sauvegarder.
+
+### 5) Éditer les paramètres du jeu
+
+Une fois le jeu quitté correctement, un fichier `data/settings.json` devrait avoir été créé contenant vos paramètres,
+vous n'êtes pas censé l'éditer manuellement, mais vous pouvez tout de même jeter un coup d'oeil.
 
 ## Mode multijoueur
 
@@ -88,95 +103,55 @@ Vous devriez ensuite pouvoir jouer tout comme en solo.
 
 ### 2) Fermer le serveur
 
-Pour fermer le serveur correctement
+Pour fermer le serveur correctement, veuillez écrire `quit` dans le terminal du serveur.
 
-### 2) Éditer la configuration serveur
+### 3) Éditer la configuration serveur
+
+Une fois le serveur quitté correctement, un fichier `data/server.json` devrait avoir été créé contenant la configuration
+du serveur. Vous pouvez l'éditer pour changer les paramètres de jeu multijouer. Il devrait d'ailleurs contenir un
+commentaire utile pour comprendre les différents paramètres.
 
 ## III) Complémentaire
 
 ### 1) Utilisation de la console
 
-   Enfin une nouveauté pour le multijoueur, la console qui permet 
-   de faire ces actions :
+À tout moment du jeu vous pouvez utiliser la console, qui s'ouvre par défaut avec ², elle vous permet de taper des
+commandes comme `say bonjour` ou `setMoney "Robot 1" 1500`.
 
-   *    win : Pour que le joueur qui l’exécute gagne la partie.
-   *    pause: Met le jeu en pause, équivalent à l’action de la touche “echap” lorsque le joueur à les droits 
-        de le faire.
-   *    say : Pour écrire un message avec le nom du joueur qui l’a écrit dans le chat.
-   *    clear : Pour nettoyer le chat.
-   *    help : Affiche les différentes commandes et leur description.
-   *    quit : Pour quitter la partie.
+<div align="center">
+  <img src="images/instructions3.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+</div>
 
+La liste des commandes disponibles est noté dans la catégorie « Relatifs aux commandes de la console » de [FEATURES](FEATURES.md).  
+Ou sinon, il vous suffit d'invoquer la commande `help` pour voir les commandes disponibles au moment ou vous utiliser la console.
 
+### 2) Modification des paramètres
 
+Le menu des paramètres accessible depuis le menu principal vous permet de modifier certains paramètres, le premier
+permet d'activer/désactiver le son du jeu, ce que nous vous conseillons de faire, vous pouvez ensuite modifier le type
+de rendu de la fenêtre, ainsi que la langue du jeu.
 
-![Farmland-Console](images/Farmland-Console.PNG)
+Un bouton commandes permet également d'aller modifier les touches du jeu., celui-ci permet de voir les touches que vous
+utilisez actuellement, de changer certaines commandes, nous vous conseillons d'essayer de modifier les commandes avec
+les touches du clavier telle que « avancer ».
 
+Mais faites attention certaines actions ne sont pas possible comme attribuer une touche du clavier pour les actions
+qui requiert un bouton de la souris et pareil inversement, vous ne pouvez pas choisir une touche qui est déjà attribuée
+et vous ne pourrez pas choisir n'importe quelle touche de votre clavier.
 
-## Paramètres
+Également, vous avez un bouton « Réinitialiser les touches » qui vous permet de revenir à la configuration initiale.
 
-**1) Manipulation du son :**
+<div align="center">
+  <img src="images/instructions4.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+</div>
 
-   La première option du menu «paramètre» permet de désactiver/activer le son,
-   les effets de ce bouton fonctionne sur tous les menus du jeu,
-   nous vous conseillons de le désactiver par défaut 
-   car celui-ci est assez fort, néanmoins si vous voulez le retrouver 
-   celui-ci est dans le dossier :
+### 3) Voir les crédits
 
-                 
-                     
-                  
-    ![Farmland-SoundPath](images/Farmland-MusicPath.png)
-
-**2) Changement de langue :**
-   
-   Le changement de langue est un paramètre intéressant, 
-   pour le moment, les seuls langages implémentés sont le français et l'anglais,
-   que vous pourrez retrouver dans les fichiers de traduction via ce chemin :
-
-                 
-                     
-                  
-    ![Farmland-SoundPath](images/Farmland-MusicPath.png)
-
-
-**3) Redimensionnement de la fenêtre :**
-   
-   Également nous avons inclus une fonctionnalité permettant de changer 
-   la taille de la fenêtre du jeu, pour cela vous avez trois modes possibles :
-   
-   *    Fenêtré (ou «Windowed» en anglais).
-   *    Pleine écran (ou «Fullscreen» en anglais).
-   *    Pleine écran sans bordure (ou «Borderless» en anglais).
-
-
-**4) Commandes :**
-   
-   Nous avons également ajouté un système de commandes, celui-ci permet de voir
-   les touches que vous utilisez actuellement, de changer certaines commandes,
-   nous vous conseillons d'essayer de modifier les commandes
-   avec les touches du clavier telle que «avancer» (ou «goUp» en anglais),
-   puis d'essayer de changer les boutons de la souris «poser un item»
-   (ou «putItem» en anglais). 
-   Mais faites attention certaines actions ne sont pas possible
-   comme attribuer une touche du clavier pour les actions qui requiert
-   un bouton de la souris et pareil inversement,
-   vous ne pouvez pas choisir une touche qui est déjà attribuée et
-   vous ne pourrez pas choisir n'importe quelle touche de votre clavier.
-   Également, vous avez un bouton «Réinitialiser les touches» 
-   (ou «reset mapping» en anglais) qui vous permet de revenir
-   à la configuration initiale (que vous pouvez voir ci-dessous).
-
-   ![Farmland-Commands-Menu](images/Farmland-Commands.png)
-
-## Crédit
-
-- Le menu crédit est le dernier menu, celui-ci permet de conclure notre projet qui était de créer un jeu de gestion de la manière la plus réaliste qu'il soit à notre niveau de connaissance actuel.
+Le menu crédit est le dernier menu, celui-ci permet de conclure notre projet qui était de créer un jeu de gestion de
+la manière la plus réaliste qu'il soit à notre niveau de connaissance actuel.
 
 Nous tenions à vous remercier de nous avoir donné ce projet, il nous a tous beaucoup appris.
 
-![Farmland-SoundPath](images/Farmland-Credit.png)
-
-
-
-   
+<div align="center">
+  <img src="images/instructions5.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
+</div>
