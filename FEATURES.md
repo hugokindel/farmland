@@ -379,9 +379,9 @@ public void exemple() {
 
 ### Marché
 
-- Le marché est une structure permettant d'acheter ou de revendre des items, celle-ci est soumise à la loi de l'offre 
+- Le marché est une structure permettant d'acheter ou de revendre des items, celui-ci est soumis aux lois de l'offre 
 et de la demande qui change constamment, notamment :
-  * l'achat d'item à pour conséquence :
+  * l'achat d'item a pour conséquence :
       * Baisse de prix sur les items non achetés au bout de 2 tours.
       * Augmentation des prix sur les items achetés à la fin du tour.
     
@@ -436,7 +436,7 @@ et de la demande qui change constamment, notamment :
 ### Banque
 
 - La banque est une entité liée au marché, celle-ci permet :
-  - de faire des emprunts en fonction de la somme maximale établie dans les paramètre de la partie
+  - de faire des emprunts en fonction de la somme maximale établie dans les paramètres de la partie
   - de rembourser une somme empruntée manuellement ainsi qu'automatiquement lors de la fin du tour 
     ou via la revente d'item
 
