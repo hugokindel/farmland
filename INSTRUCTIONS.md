@@ -28,8 +28,10 @@ question pour personnaliser votre expérience.
 Une fois que la partie est créée et que vous êtes dans celle-ci, vous aurez de multiples options à votre disposition pour
 remporter la partie :
 
-- Utiliser le marché pour acheter ou vendre vos objets.
-- Accéder à votre inventaire pour voir les objets que vous avez acheté et les sélectionner pour pouvoir les poser.
+- Utiliser le marché pour acheter ou vendres vos objets.
+- Accéder à votre inventaire pour voir les objets que vous avez achetés et les sélectionner pour pouvoir les poser.
+- Une fois qu'une de vos récoltes vous semblera mûre, vous n'aurez qu'à effectuer un clique droit dessus
+  pour la récupérer, vous pourrez ensuite la vendre dans le marché ou à l'aide des caravanes.
 - Envoyer des caravanes pour revendre des objets avec une meilleure rentabilité que le marché (mais un temps d'attente
   sera imposé).
 - Améliorer vos recherches pour obtenir de meilleures rentabilités.
@@ -137,13 +139,13 @@ Le menu des paramètres accessible depuis le menu principal vous permet de modif
 permet d'activer/désactiver le son du jeu, ce que nous vous conseillons de faire, vous pouvez ensuite modifier le type
 de rendu de la fenêtre, ainsi que la langue du jeu.
 
-Un bouton **Commandes** permet également d'aller modifier les touches du jeu., celui-ci permet de voir les touches que vous
-utilisez actuellement, de changer certaines commandes, nous vous conseillons d'essayer de modifier les commandes avec
+Un bouton **Commandes** permet également d'aller modifier les touches du jeu, celui-ci permet de voir les touches que vous
+utilisez actuellement et d'en modifier, nous vous conseillons d'essayer de modifier les commandes avec
 les touches du clavier telle que la commande « avancer ».
 
-Mais faites attention, certaines actions ne sont pas possible comme attribuer une touche du clavier pour les actions
-qui requiert un bouton de la souris et inversement, vous ne pouvez pas choisir non plus une touche qui est déjà attribuée
-et vous ne pourrez pas choisir n'importe quelle touche de votre clavier.
+Il est important de noter que la souris n'est pas attribuable en l'état, que les actions qui relatent de la souris ne
+sont pas modifiable, que certaines actions comme "pause" ne sont pas modifiable non plus et que des touches comme Alt
+ne sont pas assignable pour éviter des soucis remarqué de compatibilité.
 
 Également, vous avez un bouton « Réinitialiser les touches » qui vous permet de revenir à la configuration initiale.
 
