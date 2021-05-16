@@ -398,12 +398,12 @@ public class InGameScene extends Scene {
         guiBuilder.addButton(buttonDataB);
 
         GuiBuilder.ButtonData buttonData2 = new GuiBuilder.ButtonData(Resources.getLocalizedText("mainMenu"), (dataType, data) -> {
+            setPause(false);
             Farmland.get().writeLoadedSave();
             Farmland.get().unloadSave();
             if (getGame().isConnectedToServer()) {
                 getGame().disconnectFromServer();
             }
-            setPause(false);
             changeScene(new MainMenu());
         });
         buttonData2.id = "mainMenuButton";
