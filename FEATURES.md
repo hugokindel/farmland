@@ -4,12 +4,17 @@ Cette partie se concentre sur le moteur, qui est relativement important pour com
 en lui même, bien que cette partie ne soit pas "demandé" par le projet en elle-même, le projet ne pourrait pas
 fonctionner sans.
 
+Tous les systèmes proposé dans cette partie ne sont pas spécifiquement développé pour farmland et ne dépende en aucun
+cas du code de farmland. Ce qui signifie qu'il serait très simple de réutiliser ce code pour développer un autre jeu
+vidéo. Voir même modifier un peu le système de compilation pour le faire compiler dans son propre projet pour simplifier
+cette usage.
+
 ## Le cœur
 
 ### La boucle de jeu
 
-Comme l'extrêmement grande majorité des moteurs de jeu graphique en 2 ou 3 dimensions, le réel cœur qui fait
-battre le moteur est la boucle de jeu (les autres sytèmes pourrait être les organes vitaux pour simplifier), comme
+Comme la grande majorité des moteurs de jeu graphique en 2 ou 3 dimensions, le réel cœur qui fait
+battre le jeu est la boucle de jeu (les autres sytèmes pourrait être les organes vitaux pour simplifier), comme
 le nom l'indique, cette partie correspond à du code qui est effectué en boucle tant que le jeu est en cours d'exécution.  
 Cette boucle effectue 3 partie: *Input*, *Update*, *Render*.
 - *Input*: Récupère toutes les informations en rapport avec les "entrées" (touche appuyé, clique effectué, fenêtre
@@ -50,7 +55,7 @@ La sérialisation de Java est intéressante mais ne permet pas vraiment d'obteni
 éditable, on a donc préféré utilisé un format plus compréhensible, que nous appelons du "pseudo-JSON". Nous avons
 notre propre système et donc notre propre "langage" qui nous permet une flexibilité relativement intéressante, il est
 grandement inspiré du JSON, d'où le nom, mais réalisé pour une meilleur interopérabilité avec le langage Java (support
-des enum, des types primitif du langage, etc.).
+des enum, des types primitif du langage, des commentaires etc.).
 
 Voici un exemple de pseudo-JSON:
 ```json
@@ -75,6 +80,10 @@ Voici un exemple de pseudo-JSON:
 	"admin": []
 }
 ```
+
+Le JSON peux soit être écris de manière beautifié (c'est-à-dire lisible, comme dans l'exemple ci-contre), soit minimifié,
+c'est-à-dire sur une ligne uniquement sans espace ni fin de ligne (ce mode ne supporte donc pas les commentaires
+uniligne).
 
 ### Les paramètres de démarrage
 
@@ -151,7 +160,8 @@ utile pour retrouver une erreur qui s'est produite il y a quelques exécutions o
 ### Des paramètres de jeu configurables
 
 Les jeux étant souvent des applications configurable, notre moteur possède un système de paramètre pouvant être lu à
-l'exécution du jeu, modifié durant son exécution et sauvegardé à la fin (sous forme de pseudo-JSON).
+l'exécution du jeu, modifié durant son exécution et sauvegardé à la fin (sous forme de pseudo-JSON). Le moteur
+possède ses propres paramètres, mais le jeu peux aussi fournir les siens.
 
 ## Le système de scène
 
@@ -175,6 +185,21 @@ compréhensible. Ce paterne est privilégié en jeu vidéo car le *donne-orient�
 en Java à cause du *garbage collector* alors ce n'est pas la raison pour laquelle nous l'avons programmé mais vraiment
 plutôt pour son côté hiérarchique.
 
+Un système peux être appelé aux moments *Update* et *Render*, ce qui lui permet d'intéragir avec le jeu.
+Les entités ne peuvent pas intéragir avec *Update* et *Render*, mais les composants eux, le peuvent pour certains
+(les composants en question doivent étendre des type spécifique).
+
+Les entités peuvent posséder un nom, des tags (exemple: "ennemis" pour définir que c'est un ennemi), un parent,
+des enfants, être désactivé, avoir autant de composants que possible (mais elle ne peux pas avoir deux fois un
+composant du même type, cela voudrait dire avoir deux fois les même type de donnée).
+
+### Intéraction entre les deux
+
+Chaque scène possède un registre d'entité-composant-système. Donc une liste propre d'entité, de composants et de système.
+
+Mais il est possible de demander à conserver une entité donné ou un système donné lors du changement de scène.
+Utile pour conserver les choses voulus (exemple: une musique de fond entre toute les scènes de menu).
+
 ## Le système audio
 
 Ce système est codé sous forme de calque et peux donc être complètement désactivé (sans faire crasher le projet) à
@@ -183,12 +208,19 @@ l'aide d'un calque d'implémentation "vide", tandit que le calque fonctionnel ut
 ### La lecture de fichier audio
 
 À l'aide d'OpenAL, notre système audio est capable de lire des fichiers audio de plusieurs types, dont Ogg Vorbis (.ogg)
-ou Waveform (.wav). Nous pouvons donc lire des fichiers de son/musiques et les entendre en jeu.
+ou Waveform (.wav). Nous pouvons donc lire des fichiers de son/musiques et les entendre en jeu. Cela correspond vraiment
+au bas niveau de notre code.
+
+Ensuite, nous avons des classes, comme `Sound` qui permette d'intéragir avec un son chargé.
+
+Finalement, *des composants* sont disponible (bien plus haut niveau à utiliser) qui correspondent à des sons entre
+autre.
 
 ## Le système graphique
 
 Ce système est codé sous forme de calque et peux donc être complètement désactivé (sans faire crasher le projet) à
-l'aide d'un calque d'implémentation "vide", tandit que le calque fonctionnel utilise l'API OpenGL/GLFW (inclus dans LWJGL).
+l'aide d'un calque d'implémentation "vide", tandit que le calque fonctionnel utilise l'API OpenGL/GLFW (inclus dans
+LWJGL).
 
 ### Gestionnaire de fenêtre
 
@@ -218,6 +250,14 @@ L'affichage du jeu possède 3 **caméras** superposées (et par conséquent on p
 
 Finalement, au dessus de tout ça (plus haut niveau), il existe des **composants** qui peuvent être donné à des entités
 et qui définissent par exemple une image, un sprite (partie d'une image), une forme, un bouton, un sprite animé, etc.
+
+La pièce qui s'occupe du rendu est en réalité deux *systèmes* (de l'ECS) qui sont appelés au moment *Render* de
+chaque itération de la boucle de jeu:
+- WorldRenderSystem: s'occupe d'afficher le monde (caméra et spritebatch du monde).
+- UiRenderSystem: s'occupe d'afficher l'UI (caméra et spritebatch d'UI).
+
+Le curseur lui est affiché en tout dernier et ne dépend pas de *système* étant donné que c'est un élément unique, pas
+besoin de créer un système juste pour lui. Le jeu s'occupera de le rendre à la fin du *Render*.
 
 ### Les différents types d'élément affichable
 
@@ -351,6 +391,163 @@ public void exemple() {
     System.out.println(Resources.getLocalizedText("version", "1.0.0")); // Récupère le texte d'ID `version` avec 1 paramètre.
 }
 ```
+
+## Le système d'interface graphique
+
+### Les différents éléments disponible
+
+Ce système est encore suffisamment rudimentaire, la majorité des interfaces graphiques complexe étant affiché à l'aide
+de la librairie ImGui qui permet de prototyper rapidement des interfaces complet sans avoir un système complexe de notre
+côté.
+
+Notre système dispose de 3 éléments (correspondant à des *composants*):
+
+- Un texte (utilisant une police d'écriture)
+- Un bouton (le texte du bouton peut-être modifié à tout moment).
+- Une fenêtre (une sorte de fond utilisé pour certains texte, comme sur l'indicateur de tour en partie, ou le menu de
+  crédit).
+
+Ces 3 éléments dispose d'un certains nombre de paramètres, qui permet de les positionner automatiquement ou de les
+déplacer comme voulu lors du changement de taille de la fenêtre automatiquement (les paramètres utilisés sont des
+`anchor` et `origin`).
+
+### La création d'interface graphique
+
+Il est assez redondant de créer soit-même les éléments d'interface car ils nécessitent beaucoup de code identique et
+de créer une entité par élément composé souvent de plusieurs *composants*.
+
+Pour régler ce soucis, nous avons créer le `GuiBuilder` qui s'occupe au début d'une scène de créer les éléments voulus
+avec moins de code.
+
+Exemple d'utilisation du `GuiBuilder`:
+```java
+// Création d'un bouton
+public void exemple() {
+    GuiBuilder guiBuilder = new GuiBuilder();
+
+    GuiBuilder.ButtonData buttonData = new GuiBuilder.ButtonData("Cliquer ici", (dataType, data) -> {
+        System.out.println("Le bouton a été cliqué !");
+    });
+    buttonData.position = new Vector2f(0, 0);
+    
+    guiBuilder.addButton(buttonData);
+}
+```
+
+## Le système réseau
+
+### Les contrôleurs
+
+Le système réseau repose sur l'idée de contrôleur, le serveur en est un et chaque client en est un aussi.  
+Le contrôleur est un élément capable d'envoyer des messages réseau à l'aide du protocole TCP (nous avons choisi de ne
+pas inclure la version UDP pour des questions de temps et de stabilité), il peux aussi en recevoir et par conséquent
+il peux aussi envoyé des requêtes (envoyer un message, attendre la réponse).
+
+Un contrôleur dispose de deux threads:
+- Le thread de lecture des messages: lis les messages en attente de lecture.
+- Le thread d'envoi des messages: envoi les messages en attente d'envoi.
+
+### Fonctionnement du serveur
+
+La spécifité du serveur en tant que contrôleur est tout d'abord son type de `Socket` étant donné que c'est un `Socket`
+spécifique au serveur, il peux être créé sur un port donné. Il possède aussi la spécificité de pouvoir diffuser
+des messages à l'ensemble de ses utilisateur.
+
+Un client qui lui envoi un message n'est pas son utilisateur pour autant, nous définissons l'utilisateur comme un client
+qui aura demandé une connexion au serveur (un type de message qu'il peux envoyer), une fois connecté, le client
+pourras demander des messages plus intéressant (l'état du jeu, etc.), s'il ne se connecte pas il ne peux envoyer que
+des messages simple (est-ce que le serveur est en vie; demande de connexion; informations sur le serveur).
+
+Le serveur dispose d'autres thread en plus de ceux du contrôleur:
+- Thread d'interception client: attends de recevoir un message d'un client inconnue pour l'intercepter (récupérer ses
+  informations pour être capable de lui envoyer un message).
+- Thread de réception des message par client: réceptionne les messages envoyé par un client spécifique et le transmet 
+  pour ensuite être lu par le thread de lecture des messages.  
+  Chaque client connecté va créé un thread de ce type.
+- Thread de la console: permet d'écrire des commandes dans le terminal pour intéragir avec le serveur.
+
+### Fonctionnement du client
+
+Le client lui possède donc un `Socket` de type client, il va donc s'attacher à un port disponible sur le réseau et
+peux envoyer des messages à une adresse donné et un port donné. Lors de l'envoi à une adresse ou un port différent,
+le client sera détruit pour en recréer un nouveau.
+
+Il peux effetuer toutes les actions d'un contrôleur (envoyer un message, en recevoir, effectuer des requêtes).
+
+Le client dispose du thread suivant en plus de ceux du contrôleur:
+- Thread d'interception serveur: attends de recevoir un message du serveur et le transmet pour ensuite être lu par le
+  thread de lecture des messages.
+
+### Format d'un message
+
+Les messages sont envoyé sous forme de pseudo-JSON minimifié. Ce sont donc des objets Java sérialiser puis désérialiser.
+Ils dépendent tous du type `Message` qui définit un message.
+
+Exemple d'un message simple:
+```json
+{"_type":"com.ustudents.farmland.network.general.GameInformationsRequest"}
+```
+Ceci est un message qui envoi une requête d'informations sur la partie en cours au serveur. Le type
+`GameInformationsRequest` étend donc `Message` et l'attribut *_type* est l'unique attribut de `Message` qui permet
+de transmettre le type de Message, pour savoir le désérialiser. Ici le message ne possède aucun autre attribut.
+
+Une réponse possible pourrait être:
+```json
+{"name":"My Server","capacity":1,"connectedPlayerIds":[0],"_type":"com.ustudents.farmland.network.general.GameInformationsResponse"}
+```
+Qui est un message de type `GameInformationsResponse` et qui possède les attributs `name`, `capacity` et
+`connectedPlayerIds`.
+
+Si un message dépasse la taille maximale d'un paquet autorisé par les `Socket`, 
+
+À l'aide tu protocole TCP tout le reste est relativement automatique.  
+Lors du développement en UDP, nous devions par exemple découper nous même les message trop gros, ce qui augmentais
+directement la complexité du système, nous devions aussi nous assurer nous même de l'envoi de certains paquets sous
+faute de devoir les renvoyé.
+
+## Code utilitaire
+
+Le moteur dispose aussi de code utilitaire pour différents domaines, avec par exemple les éléments ci-contre (mais ne
+se limitant pas à ceux-ci):
+- Mathématique: Création d'une liste de points d'un cercle avec une précision et un rayon donné.
+- Réflexion: Méthode d'aide à l'introspéction de type Java.
+- Génération de nombre: Un générateur de nombre aléatoire supportant les graînes (basé sur celui de Java mais en plus
+  dogmatique).
+- Chaîne de caractères: Divers algorithmes utilisés pour lire/écrire des chaînes de caractères contenant des caractères
+  d'échappement.
+- ...  
+
+## Outils de développement
+
+Le moteur dispose de quelques outils utile au développement/débogage du jeu.  
+Ils peuvent aussi permettre à des utilisateurs plus avancés d'intéragir plus aisément avec certaines parties du jeu.
+
+### Le gestionnaire de jeu
+
+Le premier outil de développement présent en jeu est le gestionnaire de jeu, il permet entre autre de voir la liste
+des entités présente dans la scène sous forme d'arbre (la hiérarchie parent-enfant dont la scène est la racine), la
+liste des composants et leurs attributs (s'il sont visibles).
+
+Il permet ensuite d'avoir accès a un panel de paramètre permettant de modifier la synchronisation verticale (et dans
+l'idée encore d'autre paramètres).
+
+Finalement, il permet aussi d'accéder à un compteur de performance.
+
+Ce menu se lance par défaut avec F1.
+
+### Le visualiseur de donnée
+
+Le second disponible est le visualiseur de donnée, il permet uniquement de rendre visible certaines informations
+(la taille des textes, un compteur de performance, le centre de l'écran).
+
+Ce menu se lance par défaut avec F2.
+
+### La console
+
+L'un des plus intéressant est la console (ou REPL). Il permet de rentrer des commandes (avec ou sans argument) pour
+intéragir avec le jeu. Le moteur possède ses propres commandes, mais le jeu peux aussi fournir les siennes.
+
+Ce menu se lance par défaut avec ².
 
 # FARMLAND
 

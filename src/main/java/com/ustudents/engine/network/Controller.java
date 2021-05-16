@@ -137,9 +137,9 @@ public abstract class Controller {
     protected Message readMessage(String data) {
         Map<String, Object> json = JsonReader.readMap(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
 
-        //if (Game.isDebugging()) {
+        if (Game.isDebugging()) {
             Out.println("read: " + data);
-        //}
+        }
 
         assert json != null;
 
@@ -255,9 +255,9 @@ public abstract class Controller {
                 message.setType(message.getClass().getName());
                 String minifiedMessage = JsonWriter.writeToString(Json.serialize(message), false, false, false);
 
-                //if (Game.isDebugging()) {
+                if (Game.isDebugging()) {
                     Out.println("sent: " + minifiedMessage);
-                //}
+                }
 
                 connection.writer.println(Objects.requireNonNull(minifiedMessage));
 

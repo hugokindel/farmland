@@ -87,11 +87,11 @@ public class ImGuiTools {
                 ImGui.endMenu();
             }
 
-            if (ImGui.beginMenu("Help")) {
+            /*if (ImGui.beginMenu("Help")) {
                 ImGui.menuItem("Show ImGui demo", "", showDemoWindow);
 
                 ImGui.endMenu();
-            }
+            }*/
 
             ImGui.endMainMenuBar();
         }
