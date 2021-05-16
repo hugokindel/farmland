@@ -772,6 +772,7 @@ Paramètre | Description
 --no-render | Désactive le système de rendu (pour du débogage ou le serveur uniquement)
 --no-save | Désactive l'enregistrement des fichiers de sauvegarde
 --fast-bot | Rend le tour des robots immédiats
+--fast-harvest | Rend la récupération des récoltes immédiates
 --server | Lance le jeu en mode serveur dédié
 
 ### Relatifs aux commandes de la console
