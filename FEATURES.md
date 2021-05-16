@@ -623,6 +623,8 @@ Durant le tour du joueur, celui-ci a le choix entre plusieurs actions :
 - Accéder à la carte des caravanes.
 - Accéder au laboratoire de recherche.
 - Accéder à la banque.
+- Poser des ressources (en les sélectionnant dans son inventaire).
+- Récolter des ressources prêtes.
 
 Un tour dure 1 minute 30.  
 Les récoltes/animaux grandissent à la fin d'un tour complet.
@@ -740,9 +742,9 @@ Il est possible réinitialiser les paramètres.
 - Touches de gameplay.
 - Touches diverses.
 
-Il est important de noter que les touches relatives à la souris ne devrait pas être modifié, et que les touches de la
-souris ne peuvent pas être utilisé lors d'un changement de touche actuellement. Pour le détail, certaines des actions
-non modifiables en l'état sont "Pause" et "Zoom".
+Il est important de noter que les touches relatives à la souris ne peuvent pas être modifié. Ensuite, vous ne pouvez pas
+utiliser des touches de la souris comme touche pour une action. Finalement, toutes les actions du jeu ne sont pas
+modifiable (principalement l'action "pause" et les actions qui utilisent la touche Alt).
 
 ## Autres fonctionnalités notable
 
@@ -802,8 +804,9 @@ F2 | Afficher le visualiseur de donnée
 Alt et BSG | Déplacer la caméra à l'aide de la souris
 Ctrl | Afficher les territoires
 Ctrl et BSG | Acheter le terrain à la position de la souris (si terrain proche du terrain possédé et que Alt n'est pas aussi pressé)
-BSG | Poser un objet (si un objet est sélectionné et que Alt n'est pas aussi pressé)
-BSM | Activer/désactiver la sélection d'objet
+BSG | Poser un objet (si un objet est sélectionné et que Alt n'est pas pressé)
+BSM | Activer/désactiver la sélection d'objet (si un objet est prêt et que Alt n'est pas pressé)
+BSD | Récolter un objet
 Z | Déplacer la caméra vers l'avant
 S | Déplacer la caméra vers l'arrière
 Q | Déplacer la caméra vers la gauche

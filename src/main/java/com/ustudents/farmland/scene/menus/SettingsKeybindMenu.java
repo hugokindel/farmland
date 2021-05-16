@@ -61,8 +61,8 @@ public class SettingsKeybindMenu extends MenuScene{
         showTextAndButton(guiBuilder, "goLeft");
         showTextAndButton(guiBuilder, "goRight");
         showTextAndButton(guiBuilder, "showTerritory");
-        showTextAndButton(guiBuilder, "putItem");
-        showTextAndButton(guiBuilder, "getItem");
+        //showTextAndButton(guiBuilder, "putItem");
+        //showTextAndButton(guiBuilder, "getItem");
         showTextAndButton(guiBuilder, "showDebug");
         showTextAndButton(guiBuilder, "showPerfomance");
         showTextAndButton(guiBuilder, "showConsole");
@@ -77,7 +77,7 @@ public class SettingsKeybindMenu extends MenuScene{
     }
 
     private void initializeTitle(GuiBuilder guiBuilder){
-        GuiBuilder.TextData commandsTitle = new GuiBuilder.TextData("Commands : ");
+        GuiBuilder.TextData commandsTitle = new GuiBuilder.TextData(Resources.getLocalizedText("commands"));
         commandsTitle.id = "commandsTitle";
         commandsTitle.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
         commandsTitle.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
@@ -85,7 +85,7 @@ public class SettingsKeybindMenu extends MenuScene{
         commandsTitle.color = Color.BLACK;
         guiBuilder.addText(commandsTitle);
 
-        GuiBuilder.TextData moveOptions = new GuiBuilder.TextData("Déplacements : ");
+        GuiBuilder.TextData moveOptions = new GuiBuilder.TextData(Resources.getLocalizedText("movements"));
         moveOptions.id = "moveSection";
         moveOptions.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Left);
         moveOptions.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Left);
@@ -93,7 +93,7 @@ public class SettingsKeybindMenu extends MenuScene{
         moveOptions.color = Color.BLACK;
         guiBuilder.addText(moveOptions);
 
-        GuiBuilder.TextData gameplayOptions = new GuiBuilder.TextData("Gameplay : ");
+        GuiBuilder.TextData gameplayOptions = new GuiBuilder.TextData(Resources.getLocalizedText("gameplay"));
         gameplayOptions.id = "gameplayOptions";
         gameplayOptions.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Center);
         gameplayOptions.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Center);
@@ -101,7 +101,7 @@ public class SettingsKeybindMenu extends MenuScene{
         gameplayOptions.color = Color.BLACK;
         guiBuilder.addText(gameplayOptions);
 
-        GuiBuilder.TextData OtherOptions = new GuiBuilder.TextData("Divers : ");
+        GuiBuilder.TextData OtherOptions = new GuiBuilder.TextData(Resources.getLocalizedText("other2"));
         OtherOptions.id = "otherSection";
         OtherOptions.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
         OtherOptions.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
@@ -213,7 +213,7 @@ public class SettingsKeybindMenu extends MenuScene{
         }
 
         if(action.equals("showConsole")){
-            GuiBuilder.TextData showConsole = new GuiBuilder.TextData("Console : ");
+            GuiBuilder.TextData showConsole = new GuiBuilder.TextData(Resources.getLocalizedText("console2"));
             showConsole.id = action;
             showConsole.origin = new Origin(Origin.Vertical.Top, Origin.Horizontal.Right);
             showConsole.anchor = new Anchor(Anchor.Vertical.Top, Anchor.Horizontal.Right);
