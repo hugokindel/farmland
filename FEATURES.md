@@ -686,10 +686,13 @@ votre niveau est élevé, plus la rentabilité sera élevée. Bien sûr, le prix
 
 Chaque joueur possède ses propres niveaux de recherche.
 
-Il existe certains paliers permettant au joueur de visualiser son niveau sur son avatar :
-- Palier 0 -> Niveau 1
-- Palier 1 -> Niveau 3
-- Palier 2 -> Niveau 5
+Il existe certains paliers de décoration permettant au joueur de visualiser son niveau sur son avatar :
+
+Palier | Niveau de recherche
+--- | ---
+0 | 1
+1 | 3
+2 | 5
 
 ### La banque
 
