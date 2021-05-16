@@ -283,7 +283,15 @@ public class Console {
                 } else if (arg.startsWith("\"")) {
                     inString = true;
                     stringPos = i;
-                    args.set(stringPos, arg.substring(1));
+
+                    if (arg.endsWith("\"")) {
+                        args.set(stringPos, arg.substring(1, arg.length() - 1));
+
+                        inString = false;
+                        stringPos = -1;
+                    } else {
+                        args.set(stringPos, arg.substring(1));
+                    }
                 }
             }
 
