@@ -573,6 +573,10 @@ Hiérarchie simplifiée des scènes :
   - Paramètres
     - Changer les commandes
   - Crédits
+  
+Autres scènes :
+
+- Scène de victoire/défaute
 
 ## Le gameplay
 
