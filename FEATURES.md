@@ -97,25 +97,6 @@ Voici un exemple de code permettant de créer une option :
 public boolean fastBot = false;
 ```
 
-La liste des paramètres de démarrage de **Farmland** est la suivante :
-
-Paramètre | Description
---- | ---
--h, --help | Affiche la liste des paramètres
--v, --version | Affiche la version du jeu
---debug | Affiche des informations de débogage
---vsync | Force la synchronisation verticale
---no-ansi | Désactive les codes ANSI (utile pour la compatibilité Windows)
---no-imgui | Désactive les interfaces ImGui (interface de développement)
---no-custom-cursor | Désactive les curseurs personnalisés
---no-window-icon | Désactive les icônes de fenêtre personnalisés
---no-sound | Désactive le système audio (pour du débogage ou le serveur uniquement)
---no-input | Désactive le système d'entrée (pour du débogage ou le serveur uniquement)
---no-render | Désactive le système de rendu (pour du débogage ou le serveur uniquement)
---no-save | Désactive l'enregistrement des fichiers de sauvegarde
---fast-bot | Rend le tour des robots immédiats
---server | Lance le jeu en mode serveur dédié
-
 ### La gestion d'évènement
 
 Les évènements en programmations sont relativement important, pour éviter de répéter des vérifications d'informations
@@ -551,7 +532,9 @@ Ce menu se lance par défaut avec F2.
 ### La console
 
 L'un des plus intéressant est la console (ou REPL). Il permet de rentrer des commandes (avec ou sans argument) pour
-intéragir avec le jeu. Le moteur possède ses propres commandes, mais le jeu peux aussi fournir les siennes.
+intéragir avec le jeu. Le moteur possède ses propres commandes, mais le jeu peux aussi fournir les siennes. Chaque
+commande possède une valeur d'autorité, c'est-à-dire que'elle permet de savoir dans quel mode de jeu (exemple : client
+ou serveur) la commande sera utilisable. Toutes les commandes ne sont donc pas utilisable à chaque moment.
 
 Ce menu se lance par défaut avec ².
 
@@ -756,10 +739,58 @@ Il est possible réinitialiser les paramètres.
 Il est important de noter que les touches relatives à la souris ne devrait pas être modifié, et que les touches de la
 souris ne peuvent pas être utilisé lors d'un changement de touche actuellement.
 
+## Autres fonctionnalités notable
+
+### Relatif au multijoueur
+
+Si un serveur est en cours sur le réseau local, il sera automatiquement affiché dans la liste des serveurs en jeu.  
+Mais il est aussi possible d'indiquer une adresse IP et un port pour se connecter à un serveur distant.
+
+### Relatif aux paramètres de démarrage
+
+La liste des paramètres de démarrage est la suivante :
+
+Paramètre | Description
+--- | ---
+-h, --help | Affiche la liste des paramètres
+-v, --version | Affiche la version du jeu
+--debug | Affiche des informations de débogage
+--vsync | Force la synchronisation verticale
+--no-ansi | Désactive les codes ANSI (utile pour la compatibilité Windows)
+--no-imgui | Désactive les interfaces ImGui (interface de développement)
+--no-custom-cursor | Désactive les curseurs personnalisés
+--no-window-icon | Désactive les icônes de fenêtre personnalisés
+--no-sound | Désactive le système audio (pour du débogage ou le serveur uniquement)
+--no-input | Désactive le système d'entrée (pour du débogage ou le serveur uniquement)
+--no-render | Désactive le système de rendu (pour du débogage ou le serveur uniquement)
+--no-save | Désactive l'enregistrement des fichiers de sauvegarde
+--fast-bot | Rend le tour des robots immédiats
+--server | Lance le jeu en mode serveur dédié
+
+### Relatifs aux commandes de la console
+
+La liste des paramètres de la console est la suivante :
+
+Commande | Paramètres | Description
+--- | --- | ---
+help | | Affiche la liste des commadnes
+quit | | Quitte le jeu
+clear | | Vide la console
+say | text ... | Dit les mots données
+pause | | Met le jeu en pause
+win | | Gagne la partie
+win | name | Fait gagner le joueur au nom donné
+kill | | Perd la partie
+kill | name | Fait perdre le joueur donné
+setMoney | quantity | Redéfinie votre argent à la somme donnée
+setMoney | name quantity | Redéfinie l'argent du joueur voulu à la somme donnée
+
 # Ce qu'on aurait aimé rajouter
 
-- Un système de tutoriel
-- Un système de troupeau
-- Un système de sabotage
-- Un système de pari
-- Un interface graphique plus stylisé
+- Un système de tutoriel.
+- Un système de troupeau.
+- Un système de sabotage.
+- Un système de pari.
+- Un interface graphique plus stylisé.
+- Un système de whitelist/blacklist/administrateur et mot de passe pour le serveur.
+- ...
