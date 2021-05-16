@@ -187,3 +187,5 @@ Semaine de partiel (peu de travail effectué), amélioration du gameplay.
 ### Semaine 14 (jusqu'au 16 mai)
 
 - Optimisation du code, correction de bug et optimisation du projet (KINDEL Hugo, JAUROYON Maxime, PAULAS VICTOR Francis et LE CORRE Léo) **[FAIT]**
+
+- Ajout des fichiers de rendu (KINDEL Hugo, JAUROYON Maxime, PAULAS VICTOR Francis et LE CORRE Léo) **[FAIT]**
