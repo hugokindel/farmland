@@ -805,7 +805,7 @@ public class InGameScene extends Scene {
                         int sellValueOfCaravan = (int) (((Farmland.get().getLoadedSave().getResourceDatabase().get(item).sellingValue + researchBonus) * 1.5) * currentQuantity / 2);
                         int travelTime = 4;
                         int travelPrice = 10;
-                        if (ImGui.button(Resources.getLocalizedText("sended") + playerInventory.get(item).getLocalizedName() + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
+                        if (ImGui.button(Resources.getLocalizedText("sended") + playerInventory.get(item).getLocalizedName().toLowerCase() + " [" + travelPrice + "]") && playerInventory.get(item) != null) {
                             player.sendCaravan(travelPrice, travelTime, sellValueOfCaravan, item);
                         }
                         ImGui.sameLine();
@@ -817,7 +817,7 @@ public class InGameScene extends Scene {
                         ImGui.sameLine();
                         ImGui.text(Resources.getLocalizedText("sellingPrice") + sellValueOfCaravan + Resources.getLocalizedText("estimatedTime") + travelTime);
                     } else {
-                        ImGui.text(Resources.getLocalizedText("lackOf") + playerInventory.get(item).getLocalizedName() + Resources.getLocalizedText("sent"));
+                        ImGui.text(Resources.getLocalizedText("lackOf") + playerInventory.get(item).getLocalizedName().toLowerCase() + Resources.getLocalizedText("sent"));
                     }
                 }
             }
