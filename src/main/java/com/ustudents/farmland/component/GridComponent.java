@@ -78,14 +78,14 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
         Camera camera = getScene().getWorldCamera();
         camera.setMinimalX(transformComponent.position.x + gridBackgroundSideSize.x);
-        camera.setMaximalX(transformComponent.position.x + gridBackgroundSideSize.x + gridSize.x * cellSize.x);
+        camera.setMaximalX(transformComponent.position.x + gridBackgroundSideSize.x + getGridSize().x * cellSize.x);
         camera.setMinimalY(transformComponent.position.x + gridBackgroundSideSize.y);
-        camera.setMaximalY(transformComponent.position.y + gridBackgroundSideSize.y + gridSize.x * cellSize.y);
+        camera.setMaximalY(transformComponent.position.y + gridBackgroundSideSize.y + getGridSize().x * cellSize.y);
 
         if (Farmland.get().getLoadedSave() == null) {
             camera.centerOnPosition(new Vector2f(
-                    transformComponent.position.x + gridBackgroundSideSize.x + (gridSize.x * cellSize.x) / 2.0f,
-                    transformComponent.position.y + gridBackgroundSideSize.y + (gridSize.y * cellSize.y) / 2.0f));
+                    transformComponent.position.x + gridBackgroundSideSize.x + (getGridSize().x * cellSize.x) / 2.0f,
+                    transformComponent.position.y + gridBackgroundSideSize.y + (getGridSize().y * cellSize.y) / 2.0f));
         } else {
             if (Farmland.get().getNetMode() != NetMode.DedicatedServer) {
                 if (Farmland.get().getLoadedSave().getLocalPlayer().position != null) {
@@ -144,8 +144,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     }
 
     public void updateCurrentSelectedCell() {
-        for (int x = 0; x < gridSize.x; x++) {
-            for (int y = 0; y < gridSize.y; y++) {
+        for (int x = 0; x < getGridSize().x; x++) {
+            for (int y = 0; y < getGridSize().y; y++) {
                 Cell cell = getCell(x, y);
 
                 if (Input.isMouseInWorldViewRect(cell.viewRectangle)) {
@@ -193,16 +193,16 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
     }
 
     public boolean cellIsClosedToOwnedCell(int x, int y) {
-        return (x < gridSize.x - 1 && getCell(x + 1, y).isOwned()) ||
+        return (x < getGridSize().x - 1 && getCell(x + 1, y).isOwned()) ||
                 (x > 0 && getCell(x - 1, y).isOwned()) ||
-                (y < gridSize.y - 1 && getCell(x, y + 1).isOwned()) ||
+                (y < getGridSize().y - 1 && getCell(x, y + 1).isOwned()) ||
                 (y > 0 && getCell(x, y - 1).isOwned());
     }
 
     public boolean cellIsClosedToOwnedCellByLocalPlayer(int x, int y) {
-        return (x < gridSize.x - 1 && getCell(x + 1, y).isOwnedByLocalPlayer()) ||
+        return (x < getGridSize().x - 1 && getCell(x + 1, y).isOwnedByLocalPlayer()) ||
                 (x > 0 && getCell(x - 1, y).isOwnedByLocalPlayer()) ||
-                (y < gridSize.y - 1 && getCell(x, y + 1).isOwnedByLocalPlayer()) ||
+                (y < getGridSize().y - 1 && getCell(x, y + 1).isOwnedByLocalPlayer()) ||
                 (y > 0 && getCell(x, y - 1).isOwnedByLocalPlayer());
     }
 
@@ -211,7 +211,7 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         Spritebatch.NineSlicedSpriteData spriteData = new Spritebatch.NineSlicedSpriteData(
                 gridBackground,
                 new Vector2f(transformComponent.position.x, transformComponent.position.y),
-                new Vector2f(gridSize.x * cellSize.x, gridSize.y * cellSize.y));
+                new Vector2f(getGridSize().x * cellSize.x, getGridSize().y * cellSize.y));
         spriteData.zIndex = rendererComponent.zIndex;
 
         spritebatch.drawNineSlicedSprite(spriteData);
@@ -219,8 +219,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderCells(Spritebatch spritebatch, RendererComponent rendererComponent,
                              TransformComponent transformComponent) {
-        for (int x = 0; x < gridSize.x; x++) {
-            for (int y = 0; y < gridSize.y; y++) {
+        for (int x = 0; x < getGridSize().x; x++) {
+            for (int y = 0; y < getGridSize().y; y++) {
                 Spritebatch.SpriteData spriteData = new Spritebatch.SpriteData(
                         getCell(x, y).sprite,
                         new Vector2f(
@@ -235,8 +235,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderItems(Spritebatch spritebatch, RendererComponent rendererComponent,
                              TransformComponent transformComponent) {
-        for (int x = 0; x < gridSize.x; x++) {
-            for (int y = 0; y < gridSize.y; y++) {
+        for (int x = 0; x < getGridSize().x; x++) {
+            for (int y = 0; y < getGridSize().y; y++) {
                 Cell cell = getCell(x, y);
 
                 if (cell.hasItem()) {
@@ -293,8 +293,8 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
 
     private void renderTerritory(Spritebatch spritebatch, RendererComponent rendererComponent,
                                  TransformComponent transformComponent) {
-        for (int x = 0; x < gridSize.x; x++) {
-            for (int y = 0; y < gridSize.y; y++) {
+        for (int x = 0; x < getGridSize().x; x++) {
+            for (int y = 0; y < getGridSize().y; y++) {
                 if (cellIsOwned(x, y)) {
                     renderTerritoryCell("owned", x, y, spritebatch, rendererComponent, transformComponent, getCell(x, y).ownerId);
                 } else if (cellIsClosedToOwnedCellByLocalPlayer(x, y)) {
@@ -327,6 +327,13 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
         return cells == null ? Farmland.get().getLoadedSave().getCell(position) : cells.get(position.x).get(position.y);
     }
 
+    public Vector2i getGridSize() {
+        return cells == null ? new Vector2i(
+                Farmland.get().getLoadedSave().cells.size(),
+                Farmland.get().getLoadedSave().cells.isEmpty()
+                        ? 0 : Farmland.get().getLoadedSave().cells.get(0).size()) : gridSize;
+    }
+
     private void recalculateCells() {
         SeedRandom random = new SeedRandom();
         TransformComponent transformComponent = getEntity().getComponentSafe(TransformComponent.class);
@@ -335,10 +342,10 @@ public class GridComponent extends BehaviourComponent implements RenderableCompo
             if (Farmland.get().getNetMode() == NetMode.DedicatedServer || Farmland.get().getLoadedSave() == null) {
                 cells = new ArrayList<>();
 
-                for (int x = 0; x < gridSize.x; x++) {
+                for (int x = 0; x < getGridSize().x; x++) {
                     this.cells.add(new ArrayList<>());
 
-                    for (int y = 0; y < gridSize.y; y++) {
+                    for (int y = 0; y < getGridSize().y; y++) {
                         Vector2f spriteRegion = new Vector2f(
                                 cellSize.x * random.generateInRange(1, 120 / cellSize.x),
                                 cellSize.y * random.generateInRange(1, 120 / cellSize.y));

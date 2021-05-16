@@ -155,7 +155,7 @@ public class InGameScene extends Scene {
         if (Resources.getConfig().language.equals("fr")) {
             imageDataBank.position = new Vector2f(-800, -110);
         } else {
-            imageDataBank.position = new Vector2f(-790, -110);
+            imageDataBank.position = new Vector2f(-775, -110);
         }
 
         imageDataBank.scale = new Vector2f(3f, 3f);
