@@ -686,7 +686,7 @@ votre niveau est élevé, plus la rentabilité sera élevée. Bien sûr, le prix
 
 Chaque joueur possède ses propres niveaux de recherche.
 
-Il existe certains paliers de décoration permettant au joueur de visualiser son niveau sur son avatar :
+Il existe plusieurs paliers de décoration permettant au joueur de visualiser son niveau sur son avatar :
 
 Palier | Niveau de recherche
 --- | ---
@@ -736,6 +736,25 @@ Lors d'une partie, un HUD est présent pour afficher les informations suivantes 
 - Un podium des joueurs.
 - Le bouton du menu principal.
 - Les boutons d'accès aux différents menus.
+
+## Les paramètres modifiable
+
+Il est possible réinitialiser les paramètres.
+
+### Général
+
+- Activer/désactiver le son.
+- Changer la langue.
+- Changer le type d'affichage.
+
+### Commandes
+
+- Touches de déplacements.
+- Touches de gameplay.
+- Touches diverses.
+
+Il est important de noter que les touches relatives à la souris ne devrait pas être modifié, et que les touches de la
+souris ne peuvent pas être utilisé lors d'un changement de touche actuellement.
 
 # Ce qu'on aurait aimé rajouter
 
