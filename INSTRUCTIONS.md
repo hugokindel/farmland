@@ -125,7 +125,13 @@ commandes comme `say bonjour` ou `setMoney "Robot 1" 1500`.
 La liste des commandes disponibles est noté dans la catégorie « Relatifs aux commandes de la console » de [FEATURES](FEATURES.md).  
 Ou sinon, il vous suffit d'invoquer la commande `help` pour voir les commandes disponibles au moment ou vous utiliser la console.
 
-### 2) Modification des paramètres
+### 2) Utiliser des paramètres de démarrage
+
+Le lancement en mode serveur dédié n'est pas le seul paramètre de démarrage disponible. Pour une liste plus complète,
+nous vous invitons à voir la catégorie « Relatif aux paramètres de démarrage » de [FEATURES](FEATURES.md).  
+Il est aussi possible de lancer le jeu avec le paramètre `--help` ou `-h`.
+
+### 3) Modification des paramètres
 
 Le menu des paramètres accessible depuis le menu principal vous permet de modifier certains paramètres, le premier
 permet d'activer/désactiver le son du jeu, ce que nous vous conseillons de faire, vous pouvez ensuite modifier le type
@@ -145,7 +151,7 @@ et vous ne pourrez pas choisir n'importe quelle touche de votre clavier.
   <img src="images/instructions4.png" style="image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;">
 </div>
 
-### 3) Voir les crédits
+### 4) Voir les crédits
 
 Le menu crédit est le dernier menu, celui-ci permet de conclure notre projet qui était de créer un jeu de gestion de
 la manière la plus réaliste qu'il soit à notre niveau de connaissance actuel.
