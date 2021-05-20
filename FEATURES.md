@@ -25,19 +25,6 @@ Cette boucle effectue 3 parties : *Input*, *Update*, *Render*.
 Bien sûr, il est important de noter qu'avant l'exécution de cette boucle, le jeu va d'abord s'initialiser. Et à la fin
 de cette boucle (lorsqu'il est temps de quitter le jeu), il va se détruire.
 
-Elle peut être visualisée comme ceci :  
-PS: Ceci est un graph visible sur gitlab uniquement.  
-
-```mermaid
-graph TD;
-  Initialization-->GameLoop;
-  GameLoop-->Input;
-  Input-->Update;
-  Update-->Render;
-  Render-->GameLoop;
-  GameLoop-->Shutdown;
-```
-
 Le nombre de fois que la boucle va être effectuée par seconde est défini comme ceci :
 - En mode client : Elle va s'effectuer autant de fois possible par seconde.
 - En mode serveur : Elle va s'effectuer 128 fois par seconde.
