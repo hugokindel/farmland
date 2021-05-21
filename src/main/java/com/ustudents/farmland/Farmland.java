@@ -440,7 +440,11 @@ public class Farmland extends Game {
         if(!actions.containsKey("showConsole")) {
             action = new Action();
             Mapping showConsole = new Mapping("keyboard");
-            showConsole.bindPressedAction(Key.GraveAccent);
+            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                showConsole.bindPressedAction(Key.BackSlash);
+            } else {
+                showConsole.bindPressedAction(Key.GraveAccent);
+            }
             action.addMapping(showConsole);
             config.commands.put("showConsole", action);
         }
@@ -477,7 +481,11 @@ public class Farmland extends Game {
             actions.get("showPerfomance").addFirstBindInMapping(Key.F2, "pressed");
         }
         if(actions.get("showConsole").getFirstBindInMapping() <= 0){
-            actions.get("showConsole").addFirstBindInMapping(Key.GraveAccent, "pressed");
+            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                actions.get("showConsole").addFirstBindInMapping(Key.BackSlash, "pressed");
+            } else {
+                actions.get("showConsole").addFirstBindInMapping(Key.GraveAccent, "pressed");
+            }
         }
     }
 

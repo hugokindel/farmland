@@ -348,6 +348,8 @@ public class SettingsKeybindMenu extends MenuScene{
     private String displayGoodKeyBind(int key){
         if(key >= 290 && key <= 302){
             return "F" + ((key%10) + 1);
+        }else if (key == 92 && System.getProperty("os.name").toLowerCase().contains("mac")) {
+            return "`";
         }else if(key > 32 && key < 96 || key >= 320 && key <= 329) {
             return GLFW.glfwGetKeyName(key, GLFW.glfwGetKeyScancode(key));
         }else if(key == 32){
@@ -364,7 +366,7 @@ public class SettingsKeybindMenu extends MenuScene{
                 return Resources.getLocalizedText("rAlt");
         }else if(key == 96){
             return Resources.getLocalizedText("graveAccent");
-        }else{
+        } else {
             return "[...]";
         }
     }
