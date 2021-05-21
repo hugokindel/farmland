@@ -100,8 +100,8 @@ public class InGameScene extends Scene {
         forceImGui = true;
 
         initializeEntities();
-        initializeGui();
         initializeGameplay();
+        initializeGui();
 
         updatePlayerFrame();
         updateGameplayButtons();
@@ -1245,11 +1245,7 @@ public class InGameScene extends Scene {
                     }
                 }
 
-
-                updateMoneyItemLabel();
-                updateLeaderboard();
-                updateTimer();
-                updatePlayerFrame();
+                updateUi();
             }
         }
 

@@ -460,10 +460,10 @@ public class Player {
 
             Farmland.get().getLoadedSave().getCell(position).setItem(selectedItemClone);
 
-            Farmland.get().getLoadedSave().getLocalPlayer().deleteFromInventory(selectedItem, InventoryType.WaitingToBePlanted);
+            Farmland.get().getLoadedSave().getCurrentPlayer().deleteFromInventory(selectedItem, InventoryType.WaitingToBePlanted);
 
             if (getItemFromInventory(selectedItem.id) == null) {
-                Farmland.get().getLoadedSave().getLocalPlayer().selectedItemId = null;
+                Farmland.get().getLoadedSave().getCurrentPlayer().selectedItemId = null;
             }
 
             Farmland.get().getLoadedSave().itemUsed.dispatch();
