@@ -147,13 +147,13 @@ public class Farmland extends Game {
             if (file.isFile()) {
                 String path = file.getPath().replace("\\", "/");
                 if (path.endsWith(".json")) {
-                    Save save = Json.deserialize(path, Save.class);
-                    if (save != null) {
-                        save.path = path.replace(Resources.getSavesDirectoryName() + "/", "");
-                        saves.put(save.name, save);
-                    } else {
-                        Out.printlnError("Cannot load savegame: " + path);
-                    }
+                	Save save = Json.deserialize(path, Save.class);
+	                if (save != null) {
+	                    save.path = path.replace(Resources.getSavesDirectoryName() + "/", "");
+	                    saves.put(save.name, save);
+	                } else {
+	                    Out.printlnError("Cannot load savegame: " + path);
+	                }
                 }
             }
         }
