@@ -420,7 +420,15 @@ public class GLFWWindow extends EmptyWindow {
                 glfwSetWindowSize(windowHandle, Resources.getConfig().windowedSize.x, Resources.getConfig().windowedSize.y);
                 glfwSetWindowPos(windowHandle, vidMode.width() / 2 - Resources.getConfig().windowedSize.x / 2,
                         vidMode.height() / 2 - Resources.getConfig().windowedSize.y / 2);
+
+                if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                    glfwSetWindowMonitor(windowHandle, NULL, 0, 0, Resources.getConfig().windowedSize.x, Resources.getConfig().windowedSize.y, 0);
+                    glfwSetWindowMonitor(windowHandle, NULL, vidMode.width() / 2 - Resources.getConfig().windowedSize.x / 2,
+                            vidMode.height() / 2 - Resources.getConfig().windowedSize.y / 2, Resources.getConfig().windowedSize.x, Resources.getConfig().windowedSize.y, 0);
+                }
             }
+
+            Game.get().forceResizeBeforeNextFrame();
 
             try {
                 Thread.sleep(10);

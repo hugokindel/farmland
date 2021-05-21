@@ -178,7 +178,7 @@ public abstract class MenuScene extends Scene {
             Sound musicSound = Resources.loadSound("music/main_menu_background.ogg");
             Entity music = createEntityWithName("backgroundMusic");
             music.keepOnLoad(true);
-            music.addComponent(new SoundComponent(musicSound, true, true));
+            music.addComponent(new SoundComponent(musicSound, Resources.getConfig().useSound, true));
         }
     }
 }

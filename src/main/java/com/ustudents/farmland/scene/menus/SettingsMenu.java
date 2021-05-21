@@ -1,5 +1,6 @@
 package com.ustudents.farmland.scene.menus;
 
+import com.ustudents.engine.Game;
 import com.ustudents.engine.audio.Sound;
 import com.ustudents.engine.audio.SoundManager;
 import com.ustudents.engine.core.Resources;
@@ -28,7 +29,7 @@ public class SettingsMenu extends MenuScene {
         String[] buttonNames = new String[5];
         String[] buttonIds = new String[5];
 
-        if(getEntityByName("backgroundMusic").getComponent(SoundComponent.class).source.isPaused() || getEntityByName("backgroundMusic").getComponent(SoundComponent.class).source.isStopped()){
+        if(!Resources.getConfig().useSound || getEntityByName("backgroundMusic").getComponent(SoundComponent.class).source.isPaused() || getEntityByName("backgroundMusic").getComponent(SoundComponent.class).source.isStopped()){
             buttonNames[0] = Resources.getLocalizedText("activateSound");
             buttonIds[0] = "activateSound";
         }else{
@@ -55,11 +56,13 @@ public class SettingsMenu extends MenuScene {
             eventListeners[i] = (dataType, data) -> {
                 switch (buttonIds[j]) {
                     case "activateSound": {
+                        Resources.getConfig().useSound = true;
                         getEntityByName("backgroundMusic").getComponent(SoundComponent.class).play();
                         changeScene(new SettingsMenu(), false);
                         break;
                     }
                     case "deactivateSound": {
+                        Resources.getConfig().useSound = false;
                         getEntityByName("backgroundMusic").getComponent(SoundComponent.class).pause();
                         changeScene(new SettingsMenu(), false);
                         break;

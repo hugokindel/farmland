@@ -59,7 +59,7 @@ public abstract class Game extends Runnable {
     protected boolean forceNoCustomIcon = false;
 
     @Option(names = "--no-sound", description = "Disable the sound system (for debugging purposes only).")
-    protected boolean forceNoSound = false;
+    public boolean forceNoSound = false;
 
     @Option(names = "--no-input", description = "Disable the input system (for debugging purposes only).")
     protected boolean forceNoInput = false;

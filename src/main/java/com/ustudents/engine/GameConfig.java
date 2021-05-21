@@ -19,6 +19,9 @@ public class GameConfig {
     public Boolean useVsync = true;
 
     @JsonSerializable(necessary = false)
+    public Boolean useSound = true;
+
+    @JsonSerializable(necessary = false)
     public String language = "fr";
 
     @JsonSerializable(necessary = false)
