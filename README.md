@@ -22,7 +22,7 @@ Farmland is a management game where you need to take care of your farm while bei
 - Useful debugging tools and console system.
 - An easy to extend codebase (add an item, add a language, etc.).
 
-To see more details about the features included and the project architecture, please take a look [here](FEATURES.md).
+To see more details about the features included and the project's architecture, please take a look [here](FEATURES.md).
 
 ## Architecture
 
